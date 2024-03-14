@@ -1,0 +1,144 @@
+@use '@/assets/css/constants' as constants;
+
+[data-component=tools-store] {
+  .search {
+    display: flex;
+    position: sticky;
+    width: 100%;
+    margin-top: 20px;
+    top: 20px;
+    z-index: 10;
+    justify-content: center;
+    transition: all 0.3s ease;
+
+    > * {
+      width: 80%;
+    }
+
+    &.hide {
+      transform: translateY(-60px);
+    }
+  }
+
+  .root-content {
+    padding: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    > .card-box {
+      width: 180px;
+      height: 290px;
+      flex: 0 0 auto;
+      cursor: pointer;
+
+      .common-card {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        align-items: center;
+
+        > * {
+          display: block;
+          flex: 0 0 auto;
+        }
+
+
+        .icon {
+          display: flex;
+          padding-top: 40px;
+          padding-bottom: 20px;
+          color: constants.$production-color;
+          font-size: constants.$SIZE_ICON_XL;
+          justify-content: center;
+
+          img {
+            width: constants.$SIZE_ICON_XL;
+          }
+        }
+
+        .version {
+          position: absolute;
+          left: 10px;
+          top: 10px;
+        }
+
+        .info {
+          padding-top: 20px;
+
+          .tool-name {
+            font-weight: bolder;
+            font-size: 1.6em;
+          }
+
+          .tool-desc {
+            margin-top: 10px;
+            color: constants.$font-secondary-color;
+          }
+        }
+
+        .author {
+          display: flex;
+          margin-top: auto;
+          flex-direction: row;
+          justify-content: end;
+          padding-bottom: 10px;
+          gap: 10px;
+
+          .avatar {
+            > * {
+              width: 24px;
+              height: 24px;
+            }
+          }
+
+          .author-name {
+            display: flex;
+            align-items: center;
+          }
+        }
+
+        .operation {
+          position: absolute;
+          top: 6px;
+          right: 12px;
+          font-size: 1.6em;
+
+          > *:hover {
+            color: constants.$font-secondary-color;
+          }
+        }
+      }
+
+      .load-more-card {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        align-items: center;
+
+        .icon {
+          display: flex;
+          font-size: constants.$SIZE_ICON_XXL;
+          color: constants.$production-color;
+          align-items: center;
+          transform: translateY(-20px);
+        }
+
+        .text {
+          position: absolute;
+          top: 60%;
+          font-size: 1.2em;
+          font-weight: bolder;
+        }
+      }
+    }
+
+    .no-tool {
+      display: flex;
+      justify-content: center;
+      font-size: 1.4em;
+      font-weight: bolder;
+      color: constants.$font-secondary-color;
+    }
+  }
+}

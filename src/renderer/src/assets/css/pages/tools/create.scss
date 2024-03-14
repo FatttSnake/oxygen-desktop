@@ -1,0 +1,48 @@
+@use "@/assets/css/mixins" as mixins;
+@use "@/assets/css/constants" as constants;
+
+[data-component=tools-create] {
+  .root-content {
+    padding: 20px;
+    gap: 20px;
+    height: 100%;
+    width: 100%;
+
+    > * {
+      gap: 10px;
+      width: 0;
+
+      .title {
+        flex: 0 0 auto;
+        height: 40px;
+
+        > * {
+          height: 100%;
+          width: 100%;
+          justify-content: center;
+          align-items: center;
+          font-size: 1.6em;
+          color: constants.$production-color;
+          font-weight: bolder;
+        }
+      }
+
+      .config {
+        .config-content {
+          padding: 20px;
+
+          .help {
+            margin-left: 6px;
+            color: constants.$font-main-color;
+            font-size: 0.8em;
+          }
+
+          .create-bt {
+            width: 100%;
+            font-weight: bold;
+          }
+        }
+      }
+    }
+  }
+}

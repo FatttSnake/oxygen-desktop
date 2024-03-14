@@ -1,0 +1,188 @@
+@use '@/assets/css/constants' as constants;
+
+[data-component=tools-store-user] .root-content {
+  padding: {
+    top: 80px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+  };
+
+  .root-box {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    align-items: center;
+    min-width: 900px;
+    padding-bottom: 20px;
+
+    > .info {
+      margin-left: 40px;
+      transform: translateY(-40px);
+
+      > * {
+        flex: 0 0 auto;
+      }
+
+      .avatar-box {
+        background-color: white;
+        padding: 4px;
+        border-radius: 50%;
+        box-shadow: 5px 5px 15px 0 rgba(0, 0, 0, 0.1);
+
+        .avatar {
+          background-color: transparent !important;
+        }
+      }
+
+      .info-name {
+        margin: {
+          top: 20px;
+          left: 24px;
+        };
+        justify-content: center;
+
+        > * {
+          flex: 0 0 auto;
+        }
+
+        .nickname {
+          font-size: 2.4em;
+          font-weight: bolder;
+          color: constants.$production-color;
+        }
+
+        .url {
+          cursor: pointer;
+
+          > span {
+            margin-left: 8px;
+          }
+        }
+      }
+    }
+
+    .tools {
+      padding: 20px;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+
+      > .card-box {
+        width: 180px;
+        height: 290px;
+        flex: 0 0 auto;
+        cursor: pointer;
+
+        .common-card {
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          align-items: center;
+
+          > * {
+            display: block;
+            flex: 0 0 auto;
+          }
+
+
+          .icon {
+            display: flex;
+            padding-top: 40px;
+            padding-bottom: 20px;
+            color: constants.$production-color;
+            font-size: constants.$SIZE_ICON_XL;
+            justify-content: center;
+
+            img {
+              width: constants.$SIZE_ICON_XL;
+            }
+          }
+
+          .version {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+          }
+
+          .info {
+            padding-top: 20px;
+
+            .tool-name {
+              font-weight: bolder;
+              font-size: 1.6em;
+            }
+
+            .tool-desc {
+              margin-top: 10px;
+              color: constants.$font-secondary-color;
+            }
+          }
+
+          .author {
+            display: flex;
+            margin-top: auto;
+            flex-direction: row;
+            justify-content: end;
+            padding-bottom: 10px;
+            gap: 10px;
+
+            .avatar {
+              > * {
+                width: 24px;
+                height: 24px;
+              }
+            }
+
+            .author-name {
+              display: flex;
+              align-items: center;
+            }
+          }
+
+          .operation {
+            position: absolute;
+            top: 6px;
+            right: 12px;
+            font-size: 1.6em;
+
+            > *:hover {
+              color: constants.$font-secondary-color;
+            }
+          }
+        }
+
+        .load-more-card {
+          width: 100%;
+          height: 100%;
+          text-align: center;
+          align-items: center;
+
+          .icon {
+            display: flex;
+            font-size: constants.$SIZE_ICON_XXL;
+            color: constants.$production-color;
+            align-items: center;
+            transform: translateY(-20px);
+          }
+
+          .text {
+            position: absolute;
+            top: 60%;
+            font-size: 1.2em;
+            font-weight: bolder;
+          }
+        }
+      }
+
+      .no-tool {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        font-weight: bolder;
+        color: constants.$font-secondary-color;
+      }
+    }
+  }
+}
