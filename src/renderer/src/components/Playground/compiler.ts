@@ -1,6 +1,7 @@
 import esbuild, { Loader, OnLoadArgs, Plugin, PluginBuild } from 'esbuild-wasm'
 import localforage from 'localforage'
 import axios from 'axios'
+import esbuildWasmUrl from 'esbuild-wasm/esbuild.wasm?url'
 import { IFiles, IImportMap } from '@/components/Playground/shared'
 import { cssToJs, jsonToJs, addReactImport } from '@/components/Playground/files'
 
@@ -16,7 +17,7 @@ class Compiler {
             void esbuild
                 .initialize({
                     worker: true,
-                    wasmURL: 'https://esm.sh/esbuild-wasm@0.20.1/esbuild.wasm'
+                    wasmURL: esbuildWasmUrl
                 })
                 .finally(() => {
                     this.init = true
