@@ -1,7 +1,6 @@
 import { loader } from '@monaco-editor/react'
+import * as monaco from 'monaco-editor'
 
 loader.config({
-    paths: {
-        vs: 'https://unpkg.com/monaco-editor@0.45.0/min/vs'
-    }
+    monaco
 })
