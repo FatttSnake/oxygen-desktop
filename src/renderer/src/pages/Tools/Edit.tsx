@@ -21,6 +21,7 @@ import Playground from '@/components/Playground'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import FlexBox from '@/components/common/FlexBox'
 import LoadingMask from '@/components/common/LoadingMask'
+import Card from '@/components/common/Card'
 
 const Edit = () => {
     const navigate = useNavigate()
@@ -403,41 +404,43 @@ const Edit = () => {
     return (
         <>
             <FitFullscreen data-component={'tools-edit'}>
-                <FlexBox direction={'horizontal'} className={'root-content'}>
-                    <LoadingMask hidden={!loading}>
-                        <Playground.CodeEditor
-                            tsconfig={tsconfig}
-                            files={{
-                                ...files,
-                                [IMPORT_MAP_FILE_NAME]: {
-                                    name: IMPORT_MAP_FILE_NAME,
-                                    language: 'json',
-                                    value: importMapRaw
-                                },
-                                [TS_CONFIG_FILE_NAME]: {
-                                    name: TS_CONFIG_FILE_NAME,
-                                    language: 'json',
-                                    value: tsconfigRaw
-                                }
-                            }}
-                            notRemovable={[entryPoint]}
-                            selectedFileName={selectedFileName}
-                            onAddFile={(_, files) => setFiles(files)}
-                            onRemoveFile={(_, files) => setFiles(files)}
-                            onRenameFile={(_, __, files) => setFiles(files)}
-                            onChangeFileContent={handleOnChangeFileContent}
-                            onSelectedFileChange={setSelectedFileName}
-                        />
-                        <Playground.Output
-                            files={files}
-                            selectedFileName={selectedFileName}
-                            importMap={importMap!}
-                            entryPoint={entryPoint}
-                            postExpansionCode={baseDist}
-                        />
-                    </LoadingMask>
-                    {showDraggableMask && <div className={'draggable-mask'} />}
-                </FlexBox>
+                <Card>
+                    <FlexBox direction={'horizontal'} className={'root-content'}>
+                        <LoadingMask hidden={!loading}>
+                            <Playground.CodeEditor
+                                tsconfig={tsconfig}
+                                files={{
+                                    ...files,
+                                    [IMPORT_MAP_FILE_NAME]: {
+                                        name: IMPORT_MAP_FILE_NAME,
+                                        language: 'json',
+                                        value: importMapRaw
+                                    },
+                                    [TS_CONFIG_FILE_NAME]: {
+                                        name: TS_CONFIG_FILE_NAME,
+                                        language: 'json',
+                                        value: tsconfigRaw
+                                    }
+                                }}
+                                notRemovable={[entryPoint]}
+                                selectedFileName={selectedFileName}
+                                onAddFile={(_, files) => setFiles(files)}
+                                onRemoveFile={(_, files) => setFiles(files)}
+                                onRenameFile={(_, __, files) => setFiles(files)}
+                                onChangeFileContent={handleOnChangeFileContent}
+                                onSelectedFileChange={setSelectedFileName}
+                            />
+                            <Playground.Output
+                                files={files}
+                                selectedFileName={selectedFileName}
+                                importMap={importMap!}
+                                entryPoint={entryPoint}
+                                postExpansionCode={baseDist}
+                            />
+                        </LoadingMask>
+                        {showDraggableMask && <div className={'draggable-mask'} />}
+                    </FlexBox>
+                </Card>
                 <Draggable
                     onStart={() => setShowDraggableMask(true)}
                     onStop={() => setShowDraggableMask(false)}

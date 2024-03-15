@@ -1,22 +1,29 @@
 [data-component=tools-edit] {
-  .root-content {
-    width: 100%;
+  padding: 20px;
+
+  .card-box {
     height: 100%;
+    width: 100%;
 
-    > * {
-      width: 0;
-    }
-
-    .draggable-mask {
-      position: absolute;
+    .root-content {
       width: 100%;
       height: 100%;
+
+      > * {
+        width: 0;
+      }
+
+      .draggable-mask {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 
   .draggable-content {
     position: fixed;
-    inset-inline-end: 32px;
+    inset-inline-end: 48px;
     inset-block-end: 48px;
 
     > * {

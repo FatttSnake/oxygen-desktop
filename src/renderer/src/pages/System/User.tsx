@@ -1010,7 +1010,7 @@ const User = () => {
         <>
             <FitFullscreen>
                 <HideScrollbar
-                    style={{ padding: 30 }}
+                    style={{ padding: 20 }}
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}
                 >
