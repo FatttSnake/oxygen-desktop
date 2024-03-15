@@ -1,4 +1,4 @@
-import { resolve } from 'path'
+import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import AutoImport from 'unplugin-auto-import/vite'
@@ -82,7 +82,7 @@ export default defineConfig({
         ],
         resolve: {
             alias: {
-                '@': resolve('src/renderer/src')
+                '@': fileURLToPath(new URL('./src/renderer/src', import.meta.url))
             }
         }
     }
