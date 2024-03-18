@@ -26,6 +26,9 @@ import Card from '@/components/common/Card'
 const Edit = () => {
     const navigate = useNavigate()
     const { toolId } = useParams()
+    const [searchParams] = useSearchParams({
+        platform: import.meta.env.VITE_PLATFORM
+    })
     const [form] = AntdForm.useForm<ToolUpdateParam>()
     const formValues = AntdForm.useWatch([], form)
     const [loading, setLoading] = useState(false)
@@ -98,13 +101,13 @@ const Edit = () => {
                     case TOOL_UNDER_REVIEW:
                         void message.error('保存失败：工具审核中')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
                         void message.error('保存失败：工具已发布')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:
@@ -164,13 +167,13 @@ const Edit = () => {
                     case TOOL_UNDER_REVIEW:
                         void message.error('保存失败：工具审核中')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
                         void message.error('保存失败：工具已发布')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:
@@ -211,7 +214,7 @@ const Edit = () => {
         setLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        void r_tool_detail('!', toolId!, 'latest')
+        void r_tool_detail('!', toolId!, 'latest', searchParams.get('platform') as Platform)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -225,20 +228,20 @@ const Edit = () => {
                             case 'PROCESSING':
                                 void message.warning('工具审核中，请勿修改')
                                 setTimeout(() => {
-                                    navigate(-1)
+                                    navigate('/')
                                 }, 3000)
                                 break
                             default:
                                 void message.warning('请先创建新版本后编辑工具')
                                 setTimeout(() => {
-                                    navigate(-1)
+                                    navigate('/')
                                 }, 3000)
                         }
                         break
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:
@@ -301,6 +304,10 @@ const Edit = () => {
     }, [formValues])
 
     useEffect(() => {
+        if (!['WEB', 'DESKTOP', 'ANDROID'].includes(searchParams.get('platform')!)) {
+            navigate('/')
+            return
+        }
         getTool()
     }, [])
 

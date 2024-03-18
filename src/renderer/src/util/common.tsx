@@ -118,7 +118,7 @@ export const formatByteSize = (byteSize: number): string => {
 }
 
 const formatByte = (size: number, unit: ByteUnit): string => {
-    let precision
+    let precision: number
     if ((size * 1000) % 10 > 0) {
         precision = 3
     } else if ((size * 100) % 10 > 0) {
@@ -131,3 +131,5 @@ const formatByte = (size: number, unit: ByteUnit): string => {
 
     return `${size.toFixed(precision)}${unit}`
 }
+
+export const checkDesktop = () => import.meta.env.VITE_PLATFORM === 'DESKTOP'

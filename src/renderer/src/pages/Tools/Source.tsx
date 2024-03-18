@@ -11,6 +11,9 @@ import { getLoginStatus } from '@/util/auth'
 const Source = () => {
     const navigate = useNavigate()
     const { username, toolId, ver } = useParams()
+    const [searchParams] = useSearchParams({
+        platform: import.meta.env.VITE_PLATFORM
+    })
     const [loading, setLoading] = useState(false)
     const [files, setFiles] = useState<IFiles>({})
     const [selectedFileName, setSelectedFileName] = useState('')
@@ -31,7 +34,12 @@ const Source = () => {
         setLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        void r_tool_detail(username!, toolId!, ver || 'latest')
+        void r_tool_detail(
+            username!,
+            toolId!,
+            ver || 'latest',
+            searchParams.get('platform') as Platform
+        )
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -41,7 +49,7 @@ const Source = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:
@@ -57,7 +65,7 @@ const Source = () => {
     useEffect(() => {
         if (username === '!' && !getLoginStatus()) {
             setTimeout(() => {
-                navigate(-1)
+                navigate('/')
             }, 3000)
             return
         }
@@ -67,6 +75,10 @@ const Source = () => {
         }
         if (username === '!' && !ver) {
             navigate(`/source/!/${toolId}/latest`)
+            return
+        }
+        if (!['WEB', 'DESKTOP', 'ANDROID'].includes(searchParams.get('platform')!)) {
+            navigate('/')
             return
         }
         getTool()

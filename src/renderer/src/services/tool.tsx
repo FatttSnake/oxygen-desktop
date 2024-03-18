@@ -7,7 +7,8 @@ import {
     URL_TOOL_TEMPLATE
 } from '@/constants/urls.constants'
 
-export const r_tool_template_get = () => request.get<ToolTemplateVo[]>(URL_TOOL_TEMPLATE)
+export const r_tool_template_get = (param: { platform: string }) =>
+    request.get<ToolTemplateVo[]>(URL_TOOL_TEMPLATE, param)
 
 export const r_tool_template_get_one = (id: string) =>
     request.get<ToolTemplateVo>(`${URL_TOOL_TEMPLATE}/${id}`)
@@ -20,8 +21,8 @@ export const r_tool_upgrade = (param: ToolUpgradeParam) => request.patch<ToolVo>
 
 export const r_tool_get = () => request.get<ToolVo[]>(URL_TOOL)
 
-export const r_tool_detail = (username: string, toolId: string, ver: string) =>
-    request.get<ToolVo>(`${URL_TOOL_DETAIL}/${username}/${toolId}/${ver}`)
+export const r_tool_detail = (username: string, toolId: string, ver: string, platform: Platform) =>
+    request.get<ToolVo>(`${URL_TOOL_DETAIL}/${username}/${toolId}/${ver}`, { platform })
 
 export const r_tool_update = (param: ToolUpdateParam) => request.put<ToolVo>(URL_TOOL, param)
 

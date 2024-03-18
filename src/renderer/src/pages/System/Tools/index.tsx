@@ -76,6 +76,16 @@ const Tools = () => {
         { dataIndex: 'toolId', title: '工具 ID' },
         { dataIndex: 'ver', title: '版本' },
         {
+            title: '平台',
+            dataIndex: 'platform',
+            render: (value: string) => `${value.slice(0, 1)}${value.slice(1).toLowerCase()}`,
+            filters: [
+                { text: 'Web', value: 'WEB' },
+                { text: 'Desktop', value: 'DESKTOP' },
+                { text: 'Android', value: 'ANDROID' }
+            ]
+        },
+        {
             title: '作者',
             render: (_, record) => `${record.author.userInfo.nickname}(${record.author.username})`
         },
@@ -381,7 +391,7 @@ const Tools = () => {
                 .confirm({
                     title: '确定删除',
                     maskClosable: true,
-                    content: `确定删除工具 ${value.author.username}:${value.toolId}:${value.ver} 吗？`
+                    content: `确定删除工具 ${value.author.username}:${value.toolId}:${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}:${value.ver} 吗？`
                 })
                 .then(
                     (confirmed) => {

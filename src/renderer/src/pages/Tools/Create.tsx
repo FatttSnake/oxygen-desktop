@@ -42,9 +42,11 @@ const Create = () => {
                 switch (response.code) {
                     case DATABASE_INSERT_SUCCESS:
                         void message.success(
-                            `创建工具 ${response.data!.name}<${response.data!.toolId}>:${response.data!.ver} 成功`
+                            `创建工具 ${response.data!.name}<${response.data!.toolId}:${response.data!.platform.slice(0, 1)}${response.data!.platform.slice(1).toLowerCase()}:${response.data!.ver}> 成功`
                         )
-                        navigate(`/edit/${response.data!.toolId}`)
+                        navigate(
+                            `/edit/${response.data!.toolId}${response.data!.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${response.data!.platform}` : ''}`
+                        )
                         break
                     case DATABASE_DUPLICATE_KEY:
                         void message.warning('已存在相同 ID 的应用')
@@ -82,6 +84,30 @@ const Create = () => {
         return false
     }
 
+    const handleOnPlatformChange = (value: string) => {
+        setLoadingTemplate(true)
+        void r_tool_template_get({
+            platform: value
+        })
+            .then((res) => {
+                const response = res.data
+                switch (response.code) {
+                    case DATABASE_SELECT_SUCCESS:
+                        setTemplateData(response.data!)
+                        response.data?.length
+                            ? form.setFieldValue('templateId', response.data?.[0].id)
+                            : form.setFieldValue('templateId', null)
+                        response.data?.length && handleOnTemplateChange(response.data?.[0].id)
+                        break
+                    default:
+                        void message.error('获取模板列表失败，请稍后重试')
+                }
+            })
+            .finally(() => {
+                setLoadingTemplate(false)
+            })
+    }
+
     const handleOnTemplateChange = (value: string) => {
         setPreviewTemplate(value)
         if (templateDetailData[value]) {
@@ -110,6 +136,7 @@ const Create = () => {
         if (!template) {
             return
         }
+        setCompiledCode('')
         try {
             const baseDist = base64ToStr(template.base.dist.data!)
             const files = base64ToFiles(template.source.data!)
@@ -123,6 +150,7 @@ const Create = () => {
                 })
                 .catch((reason) => {
                     void message.error(`编译失败：${reason}`)
+                    setCompiledCode(baseDist)
                 })
         } catch (e) {
             void message.error(`载入模板 ${templateDetailData[previewTemplate].name} 失败`)
@@ -140,22 +168,7 @@ const Create = () => {
     }, [form, formValues?.keywords])
 
     useEffect(() => {
-        setLoadingTemplate(true)
         setLoadingCategory(true)
-        void r_tool_template_get()
-            .then((res) => {
-                const response = res.data
-                switch (response.code) {
-                    case DATABASE_SELECT_SUCCESS:
-                        setTemplateData(response.data!)
-                        break
-                    default:
-                        void message.error('获取模板列表失败，请稍后重试')
-                }
-            })
-            .finally(() => {
-                setLoadingTemplate(false)
-            })
         void r_tool_category_get()
             .then((res) => {
                 const response = res.data
@@ -254,6 +267,24 @@ const Create = () => {
                                             placeholder={'请输入工具 ID'}
                                         />
                                     </AntdForm.Item>
+                                    <AntdForm.Item
+                                        label={'平台'}
+                                        name={'platform'}
+                                        rules={[{ required: true }]}
+                                    >
+                                        <AntdSelect
+                                            placeholder={'请选择平台'}
+                                            onChange={handleOnPlatformChange}
+                                        >
+                                            <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
+                                            <AntdSelect.Option key={'DESKTOP'}>
+                                                Desktop
+                                            </AntdSelect.Option>
+                                            <AntdSelect.Option key={'ANDROID'}>
+                                                Android
+                                            </AntdSelect.Option>
+                                        </AntdSelect>
+                                    </AntdForm.Item>
                                     <AntdForm.Item label={'简介'} name={'description'}>
                                         <AntdInput.TextArea
                                             autoSize={{ minRows: 6, maxRows: 6 }}
@@ -344,11 +375,13 @@ const Create = () => {
                         <FlexBox>预览</FlexBox>
                     </Card>
                     <Card className={'preview'}>
-                        {compiledCode && (
+                        {compiledCode ? (
                             <Playground.Output.Preview.Render
                                 iframeKey={previewTemplate}
                                 compiledCode={compiledCode}
                             />
+                        ) : (
+                            <span className={'no-preview'}>暂无预览</span>
                         )}
                     </Card>
                 </FlexBox>

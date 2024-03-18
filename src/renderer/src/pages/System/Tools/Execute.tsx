@@ -51,7 +51,7 @@ const Execute = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:

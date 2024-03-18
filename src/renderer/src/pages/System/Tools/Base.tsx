@@ -41,6 +41,17 @@ const Base = () => {
             currentLocation.pathname !== nextLocation.pathname && Object.keys(hasEdited).length > 0
     )
     const [modal, contextHolder] = AntdModal.useModal()
+    const [tableParams, setTableParams] = useState<TableParam>({
+        pagination: {
+            current: 1,
+            pageSize: 20,
+            position: ['bottomCenter'],
+            showTotal: (total, range) =>
+                `第 ${
+                    range[0] === range[1] ? `${range[0]}` : `${range[0]}~${range[1]}`
+                } 项 共 ${total} 项`
+        }
+    })
     const [form] = AntdForm.useForm<ToolBaseAddEditParam>()
     const formValues = AntdForm.useWatch([], form)
     const [addFileForm] = AntdForm.useForm<{ fileName: string }>()
@@ -62,6 +73,32 @@ const Base = () => {
     const [compiling, setCompiling] = useState(false)
     const [compileForm] = AntdForm.useForm<{ entryFileName: string }>()
 
+    const handleOnTableChange = (
+        pagination: _TablePaginationConfig,
+        filters: Record<string, _FilterValue | null>,
+        sorter: _SorterResult<ToolBaseVo> | _SorterResult<ToolBaseVo>[]
+    ) => {
+        pagination = { ...tableParams.pagination, ...pagination }
+        if (Array.isArray(sorter)) {
+            setTableParams({
+                pagination,
+                filters,
+                sortField: sorter.map((value) => value.field).join(',')
+            })
+        } else {
+            setTableParams({
+                pagination,
+                filters,
+                sortField: sorter.field,
+                sortOrder: sorter.order
+            })
+        }
+
+        if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+            setBaseData([])
+        }
+    }
+
     useBeforeUnload(
         useCallback(
             (event) => {
@@ -78,8 +115,9 @@ const Base = () => {
     const handleOnAddBtnClick = () => {
         setIsDrawerEdit(false)
         setIsDrawerOpen(true)
-        form.setFieldValue('id', undefined)
+        form.setFieldValue('id', null)
         form.setFieldValue('name', newFormValues?.name)
+        form.setFieldValue('platform', newFormValues?.platform)
     }
 
     const baseColumns: _ColumnsType<ToolBaseVo> = [
@@ -90,6 +128,16 @@ const Base = () => {
                     {record.name}
                 </span>
             )
+        },
+        {
+            title: '平台',
+            dataIndex: 'platform',
+            render: (value: string) => `${value.slice(0, 1)}${value.slice(1).toLowerCase()}`,
+            filters: [
+                { text: 'Web', value: 'WEB' },
+                { text: 'Desktop', value: 'DESKTOP' },
+                { text: 'Android', value: 'ANDROID' }
+            ]
         },
         {
             title: '创建时间',
@@ -371,6 +419,7 @@ const Base = () => {
             setIsDrawerOpen(true)
             form.setFieldValue('id', value.id)
             form.setFieldValue('name', value.name)
+            form.setFieldValue('platform', value.platform)
             void form.validateFields()
         }
     }
@@ -478,11 +527,28 @@ const Base = () => {
         }
         setIsLoading(true)
 
-        void r_sys_tool_base_get()
+        void r_sys_tool_base_get({
+            currentPage: tableParams.pagination?.current,
+            pageSize: tableParams.pagination?.pageSize,
+            sortField:
+                tableParams.sortField && tableParams.sortOrder
+                    ? (tableParams.sortField as string)
+                    : undefined,
+            sortOrder:
+                tableParams.sortField && tableParams.sortOrder ? tableParams.sortOrder : undefined,
+            ...tableParams.filters
+        })
             .then((res) => {
                 const response = res.data
                 if (response.code === DATABASE_SELECT_SUCCESS) {
-                    setBaseData(response.data!)
+                    setBaseData(response.data!.records)
+                    setTableParams({
+                        ...tableParams,
+                        pagination: {
+                            ...tableParams.pagination,
+                            total: response.data!.total
+                        }
+                    })
                 } else {
                     void message.error('获取失败，请稍后重试')
                 }
@@ -940,14 +1006,21 @@ const Base = () => {
 
         if (!isDrawerEdit && formValues) {
             setNewFormValues({
-                name: formValues.name
+                name: formValues.name,
+                platform: formValues.platform
             })
         }
     }, [formValues])
 
     useEffect(() => {
         getBase()
-    }, [])
+    }, [
+        JSON.stringify(tableParams.filters),
+        JSON.stringify(tableParams.sortField),
+        JSON.stringify(tableParams.sortOrder),
+        JSON.stringify(tableParams.pagination?.pageSize),
+        JSON.stringify(tableParams.pagination?.current)
+    ])
 
     const drawerToolbar = (
         <AntdSpace>
@@ -977,6 +1050,18 @@ const Base = () => {
             >
                 <AntdInput allowClear />
             </AntdForm.Item>
+            <AntdForm.Item
+                name={'platform'}
+                label={'平台'}
+                rules={[{ required: true }]}
+                hidden={isDrawerEdit}
+            >
+                <AntdSelect>
+                    <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
+                    <AntdSelect.Option key={'DESKTOP'}>Desktop</AntdSelect.Option>
+                    <AntdSelect.Option key={'ANDROID'}>Android</AntdSelect.Option>
+                </AntdSelect>
+            </AntdForm.Item>
         </AntdForm>
     )
 
@@ -990,12 +1075,13 @@ const Base = () => {
                                 dataSource={baseData}
                                 columns={baseColumns}
                                 rowKey={(record) => record.id}
+                                pagination={tableParams.pagination}
                                 loading={isLoading}
-                                pagination={false}
                                 expandable={{
                                     expandedRowRender,
                                     onExpand: handleOnExpand
                                 }}
+                                onChange={handleOnTableChange}
                             />
                         </Card>
                         {editingFileName && (

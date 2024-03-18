@@ -1,7 +1,10 @@
 /// <reference types="vite/client" />
 /// <reference types="./ant-design" />
 
+type Platform = 'WEB' | 'DESKTOP' | 'ANDROID'
+
 interface ImportMetaEnv {
+    readonly VITE_PLATFORM: Platform
     readonly VITE_API_URL: string
     readonly VITE_API_TOKEN_URL: string
     readonly VITE_TURNSTILE_SITE_KEY: string
@@ -545,6 +548,7 @@ interface ToolBaseVo {
     name: string
     source: ToolDataVo
     dist: ToolDataVo
+    platform: Platform
     compiled: boolean
     createTime: string
     updateTime: string
@@ -555,6 +559,7 @@ interface ToolBaseAddEditParam {
     name?: string
     source?: string
     dist?: string
+    platform?: Platform
 }
 
 interface ToolTemplateVo {
@@ -562,6 +567,7 @@ interface ToolTemplateVo {
     name: string
     baseId: string
     source: ToolDataVo
+    platform: Platform
     entryPoint: string
     enable: boolean
     createTime: string
@@ -574,6 +580,7 @@ interface ToolTemplateAddEditParam {
     name?: string
     baseId?: string
     source?: string
+    platform?: Platform
     entryPoint?: string
     enable?: boolean
 }
@@ -583,6 +590,7 @@ interface ToolVo {
     name: string
     toolId: string
     icon: string
+    platform: Platform
     description: string
     base: ToolBaseVo
     author: UserWithInfoVo
@@ -602,6 +610,7 @@ interface ToolCreateParam {
     name: string
     toolId: string
     icon: string
+    platform: Platform
     description: string
     ver: string
     templateId: string
@@ -612,6 +621,7 @@ interface ToolCreateParam {
 interface ToolUpgradeParam {
     toolId: string
     ver: string
+    platform: Platform
 }
 
 interface ToolUpdateParam {

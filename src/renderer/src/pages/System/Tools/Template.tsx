@@ -16,7 +16,7 @@ import {
     r_sys_tool_template_add,
     r_sys_tool_template_get,
     r_sys_tool_template_get_one,
-    r_sys_tool_base_get
+    r_sys_tool_base_get_list
 } from '@/services/system'
 import { IFile, IFiles, ITsconfig } from '@/components/Playground/shared'
 import {
@@ -39,6 +39,17 @@ const Template = () => {
             currentLocation.pathname !== nextLocation.pathname && Object.keys(hasEdited).length > 0
     )
     const [modal, contextHolder] = AntdModal.useModal()
+    const [tableParams, setTableParams] = useState<TableParam>({
+        pagination: {
+            current: 1,
+            pageSize: 20,
+            position: ['bottomCenter'],
+            showTotal: (total, range) =>
+                `第 ${
+                    range[0] === range[1] ? `${range[0]}` : `${range[0]}~${range[1]}`
+                } 项 共 ${total} 项`
+        }
+    })
     const [form] = AntdForm.useForm<ToolTemplateAddEditParam>()
     const formValues = AntdForm.useWatch([], form)
     const [addFileForm] = AntdForm.useForm<{ fileName: string }>()
@@ -59,6 +70,32 @@ const Template = () => {
     const [templateDetailData, setTemplateDetailData] = useState<Record<string, ToolTemplateVo>>({})
     const [templateDetailLoading, setTemplateDetailLoading] = useState<Record<string, boolean>>({})
     const [tsconfig, setTsconfig] = useState<ITsconfig>()
+
+    const handleOnTableChange = (
+        pagination: _TablePaginationConfig,
+        filters: Record<string, _FilterValue | null>,
+        sorter: _SorterResult<ToolTemplateVo> | _SorterResult<ToolTemplateVo>[]
+    ) => {
+        pagination = { ...tableParams.pagination, ...pagination }
+        if (Array.isArray(sorter)) {
+            setTableParams({
+                pagination,
+                filters,
+                sortField: sorter.map((value) => value.field).join(',')
+            })
+        } else {
+            setTableParams({
+                pagination,
+                filters,
+                sortField: sorter.field,
+                sortOrder: sorter.order
+            })
+        }
+
+        if (pagination.pageSize !== tableParams.pagination?.pageSize) {
+            setBaseData([])
+        }
+    }
 
     useBeforeUnload(
         useCallback(
@@ -94,6 +131,16 @@ const Template = () => {
                     {record.name}
                 </span>
             )
+        },
+        {
+            title: '平台',
+            dataIndex: 'platform',
+            render: (value: string) => `${value.slice(0, 1)}${value.slice(1).toLowerCase()}`,
+            filters: [
+                { text: 'Web', value: 'WEB' },
+                { text: 'Desktop', value: 'DESKTOP' },
+                { text: 'Android', value: 'ANDROID' }
+            ]
         },
         {
             title: '基板',
@@ -264,9 +311,6 @@ const Template = () => {
         }
     }
 
-    const filterOption = (input: string, option?: { label: string; value: string }) =>
-        (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-
     const handleOnSubmit = () => {
         if (isSubmitting) {
             return
@@ -294,7 +338,12 @@ const Template = () => {
                     setIsSubmitting(false)
                 })
         } else {
-            void r_sys_tool_template_add(formValues)
+            void r_sys_tool_template_add({
+                ...formValues,
+                baseId: formValues.baseId
+                    ? (formValues.baseId as unknown as string[])[1]
+                    : undefined
+            })
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -331,11 +380,28 @@ const Template = () => {
         }
         setIsLoading(true)
 
-        void r_sys_tool_template_get()
+        void r_sys_tool_template_get({
+            currentPage: tableParams.pagination?.current,
+            pageSize: tableParams.pagination?.pageSize,
+            sortField:
+                tableParams.sortField && tableParams.sortOrder
+                    ? (tableParams.sortField as string)
+                    : undefined,
+            sortOrder:
+                tableParams.sortField && tableParams.sortOrder ? tableParams.sortOrder : undefined,
+            ...tableParams.filters
+        })
             .then((res) => {
                 const response = res.data
                 if (response.code === DATABASE_SELECT_SUCCESS) {
-                    setTemplateData(response.data!)
+                    setTemplateData(response.data!.records)
+                    setTableParams({
+                        ...tableParams,
+                        pagination: {
+                            ...tableParams.pagination,
+                            total: response.data!.total
+                        }
+                    })
                 } else {
                     void message.error('获取失败，请稍后重试')
                 }
@@ -786,7 +852,7 @@ const Template = () => {
         }
         setIsLoadingBaseData(true)
 
-        void r_sys_tool_base_get()
+        void r_sys_tool_base_get_list()
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -831,9 +897,64 @@ const Template = () => {
         }
     }, [formValues])
 
+    const baseDataGroupByPlatform = () => {
+        interface Node {
+            label: string
+            value: string
+            children?: Node[]
+        }
+        const temp: Node[] = []
+        baseData.forEach((value) => {
+            if (!temp.length) {
+                temp.push({
+                    label: `${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}`,
+                    value: value.platform,
+                    children: [
+                        {
+                            label: value.name,
+                            value: value.id
+                        }
+                    ]
+                })
+            } else {
+                if (
+                    !temp.some((platform, platformIndex) => {
+                        if (platform.value === value.platform) {
+                            temp[platformIndex].children!.push({
+                                label: value.name,
+                                value: value.id
+                            })
+                            return true
+                        }
+                        return false
+                    })
+                ) {
+                    temp.push({
+                        label: `${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}`,
+                        value: value.platform,
+                        children: [
+                            {
+                                label: value.name,
+                                value: value.id
+                            }
+                        ]
+                    })
+                }
+            }
+        })
+
+        return temp
+    }
+
     useEffect(() => {
         getTemplate()
-    }, [])
+    }, [
+        JSON.stringify(tableParams.filters),
+        JSON.stringify(tableParams.sortField),
+        JSON.stringify(tableParams.sortOrder),
+        JSON.stringify(tableParams.pagination?.pageSize),
+        JSON.stringify(tableParams.pagination?.current)
+    ])
 
     const drawerToolbar = (
         <AntdSpace>
@@ -868,15 +989,13 @@ const Template = () => {
             >
                 <AntdInput allowClear />
             </AntdForm.Item>
-            <AntdForm.Item name={'baseId'} label={'基板'} rules={[{ required: true }]}>
-                <AntdSelect
-                    showSearch
-                    filterOption={filterOption}
-                    options={baseData.map((value) => ({
-                        value: value.id,
-                        label: value.name
-                    }))}
-                />
+            <AntdForm.Item
+                hidden={isDrawerEdit}
+                name={'baseId'}
+                label={'基板'}
+                rules={[{ required: true }]}
+            >
+                <AntdCascader showSearch allowClear={false} options={baseDataGroupByPlatform()} />
             </AntdForm.Item>
             <AntdForm.Item name={'entryPoint'} label={'入口'} rules={[{ required: true }]}>
                 <AntdInput allowClear />
@@ -897,13 +1016,14 @@ const Template = () => {
                                 dataSource={templateData}
                                 columns={templateColumns}
                                 rowKey={(record) => record.id}
+                                pagination={tableParams.pagination}
                                 loading={isLoading}
-                                pagination={false}
                                 scroll={{ x: true }}
                                 expandable={{
                                     expandedRowRender,
                                     onExpand: handleOnExpand
                                 }}
+                                onChange={handleOnTableChange}
                             />
                         </Card>
                         {editingFileName && (

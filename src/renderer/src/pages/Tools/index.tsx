@@ -14,6 +14,7 @@ import {
     TOOL_SUBMIT_SUCCESS,
     TOOL_UNDER_REVIEW
 } from '@/constants/common.constants'
+import { checkDesktop } from '@/util/common'
 import { getLoginStatus } from '@/util/auth'
 import {
     r_tool_cancel,
@@ -138,18 +139,30 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
     const navigate = useNavigate()
     const [selectedTool, setSelectedTool] = useState(tools[0])
 
-    const handleOnVersionChange = (value: string) => {
-        setSelectedTool(tools.find((item) => item.id === value)!)
+    const handleOnVersionChange = (value: (string | number)[]) => {
+        setSelectedTool(tools.find((item) => item.id === value[1])!)
     }
 
     const handleOnOpenTool = () => {
-        navigate(`/view/!/${selectedTool.toolId}/${selectedTool.ver}`)
+        if (checkDesktop() || selectedTool.platform !== 'DESKTOP') {
+            navigate(
+                `/view/!/${selectedTool.toolId}/${selectedTool.ver}${selectedTool.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${selectedTool.platform}` : ''}`
+            )
+        } else {
+            void message.warning('此应用需要桌面端环境，请在桌面端打开')
+        }
     }
 
     const handleOnEditTool = () => {
         if (['NONE', 'REJECT'].includes(selectedTool.review)) {
             return () => {
-                navigate(`/edit/${tools[0].toolId}`)
+                if (checkDesktop() || selectedTool.platform !== 'DESKTOP') {
+                    navigate(
+                        `/edit/${selectedTool.toolId}${selectedTool.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${selectedTool.platform}` : ''}`
+                    )
+                } else {
+                    void message.warning('此应用需要桌面端环境，请在桌面端编辑')
+                }
             }
         }
         return undefined
@@ -158,7 +171,9 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
     const handleOnSourceTool = () => {
         if (selectedTool.review === 'PASS') {
             return () => {
-                navigate(`/source/!/${selectedTool.toolId}/${selectedTool.ver}`)
+                navigate(
+                    `/source/!/${selectedTool.toolId}/${selectedTool.ver}${selectedTool.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${selectedTool.platform}` : ''}`
+                )
             }
         }
         return undefined
@@ -190,6 +205,55 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
         onUpgrade?.(selectedTool)
     }
 
+    const toolsGroupByPlatform = (tools: ToolVo[]) => {
+        interface Node {
+            label: string
+            value: string
+            children?: Node[]
+        }
+        const temp: Node[] = []
+        tools.forEach((value) => {
+            if (!temp.length) {
+                temp.push({
+                    label: `${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}`,
+                    value: value.platform,
+                    children: [
+                        {
+                            label: `${value.ver}${value.review !== 'PASS' ? '*' : ''}`,
+                            value: value.id
+                        }
+                    ]
+                })
+            } else {
+                if (
+                    !temp.some((platform, platformIndex) => {
+                        if (platform.value === value.platform) {
+                            temp[platformIndex].children!.push({
+                                label: `${value.ver}${value.review !== 'PASS' ? '*' : ''}`,
+                                value: value.id
+                            })
+                            return true
+                        }
+                        return false
+                    })
+                ) {
+                    temp.push({
+                        label: `${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}`,
+                        value: value.platform,
+                        children: [
+                            {
+                                label: `${value.ver}${value.review !== 'PASS' ? '*' : ''}`,
+                                value: value.id
+                            }
+                        ]
+                    })
+                }
+            }
+        })
+
+        return temp
+    }
+
     return (
         <CommonCard
             icon={<img src={`data:image/svg+xml;base64,${selectedTool.icon}`} alt={'Icon'} />}
@@ -202,15 +266,17 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
             onCancelReview={handleOnCancelReview()}
             onDelete={handleOnDeleteTool}
         >
-            <AntdSelect
+            <AntdCascader
                 className={'version-select'}
                 size={'small'}
-                value={selectedTool.id}
+                allowClear={false}
+                value={[
+                    tools.find((value) => value.id === selectedTool.id)!.platform,
+                    selectedTool.id
+                ]}
+                displayRender={(label: string[]) => `${label[0].slice(0, 1)}-${label[1]}`}
                 onChange={handleOnVersionChange}
-                options={tools.map((value) => ({
-                    value: value.id,
-                    label: `${value.ver}${value.review !== 'PASS' ? '*' : ''}`
-                }))}
+                options={toolsGroupByPlatform(tools)}
             />
             {tools.every((value) => value.review === 'PASS') && (
                 <AntdTooltip title={'更新'}>
@@ -237,7 +303,7 @@ const Tools = () => {
             .confirm({
                 title: '删除',
                 maskClosable: true,
-                content: `确定删除工具 ${tool.name}:${tool.ver} 吗？`
+                content: `确定删除工具 ${tool.toolId}:${tool.platform.slice(0, 1)}${tool.platform.slice(1).toLowerCase()}:${tool.ver} 吗？`
             })
             .then(
                 (confirmed) => {
@@ -313,14 +379,22 @@ const Tools = () => {
                     () => {
                         return new Promise<void>((resolve, reject) => {
                             void r_tool_upgrade({
-                                toolId: upgradeForm.getFieldValue('toolId') as string,
-                                ver: upgradeForm.getFieldValue('ver') as string
+                                toolId: tool.toolId,
+                                ver: upgradeForm.getFieldValue('ver') as string,
+                                platform: tool.platform
                             }).then((res) => {
                                 const response = res.data
                                 switch (response.code) {
                                     case DATABASE_UPDATE_SUCCESS:
                                         void message.success('创建新版本成功')
-                                        navigate(`/edit/${response.data!.toolId}`)
+                                        if (
+                                            checkDesktop() ||
+                                            response.data!.platform !== 'DESKTOP'
+                                        ) {
+                                            navigate(
+                                                `/edit/${response.data!.toolId}${response.data!.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${response.data!.platform}` : ''}`
+                                            )
+                                        }
                                         resolve()
                                         break
                                     case TOOL_ILLEGAL_VERSION:

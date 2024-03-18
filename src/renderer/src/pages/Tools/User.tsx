@@ -159,7 +159,7 @@ const User = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.warning('用户不存在')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:

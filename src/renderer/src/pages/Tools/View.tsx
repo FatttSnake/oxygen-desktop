@@ -12,6 +12,9 @@ import Card from '@/components/common/Card'
 const View = () => {
     const navigate = useNavigate()
     const { username, toolId, ver } = useParams()
+    const [searchParams] = useSearchParams({
+        platform: import.meta.env.VITE_PLATFORM
+    })
     const [loading, setLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
 
@@ -52,7 +55,12 @@ const View = () => {
         setLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        void r_tool_detail(username!, toolId!, ver || 'latest')
+        void r_tool_detail(
+            username!,
+            toolId!,
+            ver || 'latest',
+            searchParams.get('platform') as Platform
+        )
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -62,7 +70,7 @@ const View = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:
@@ -78,7 +86,7 @@ const View = () => {
     useEffect(() => {
         if (username === '!' && !getLoginStatus()) {
             setTimeout(() => {
-                navigate(-1)
+                navigate('/')
             }, 3000)
             return
         }
@@ -88,6 +96,10 @@ const View = () => {
         }
         if (username === '!' && !ver) {
             navigate(`/view/!/${toolId}/latest`)
+            return
+        }
+        if (!['WEB', 'DESKTOP', 'ANDROID'].includes(searchParams.get('platform')!)) {
+            navigate('/')
             return
         }
         getTool()

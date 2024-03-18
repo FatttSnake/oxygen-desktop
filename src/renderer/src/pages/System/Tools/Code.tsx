@@ -2,6 +2,7 @@ import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
 import '@/assets/css/pages/system/tools/code.scss'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
+import { checkDesktop } from '@/util/common'
 import { r_sys_tool_get_one } from '@/services/system'
 import { IFiles } from '@/components/Playground/shared'
 import { base64ToFiles } from '@/components/Playground/files'
@@ -15,15 +16,21 @@ const Code = () => {
     const [loading, setLoading] = useState(false)
     const [files, setFiles] = useState<IFiles>({})
     const [selectedFileName, setSelectedFileName] = useState('')
+    const [platform, setPlatform] = useState<Platform>('WEB')
 
     const handleOnRunTool = () => {
-        navigate(`/system/tools/execute/${id}`)
+        if (checkDesktop() || platform !== 'DESKTOP') {
+            navigate(`/system/tools/execute/${id}`)
+        } else {
+            void message.warning('此应用需要桌面端环境，请在桌面端运行')
+        }
     }
 
     const render = (toolVo: ToolVo) => {
         try {
             setFiles(base64ToFiles(toolVo.source.data!))
             setSelectedFileName(toolVo.entryPoint)
+            setPlatform(toolVo.platform)
         } catch (e) {
             void message.error('载入工具失败')
         }
@@ -46,7 +53,7 @@ const Code = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate(-1)
+                            navigate('/')
                         }, 3000)
                         break
                     default:
