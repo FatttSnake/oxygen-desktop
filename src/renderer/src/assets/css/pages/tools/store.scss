@@ -99,10 +99,12 @@
         }
 
         .operation {
+          display: flex;
           position: absolute;
-          top: 6px;
+          top: 10px;
           right: 12px;
           font-size: 1.6em;
+          gap: 4px;
 
           > *:hover {
             color: constants.$font-secondary-color;
@@ -140,5 +142,11 @@
       font-weight: bolder;
       color: constants.$font-secondary-color;
     }
+  }
+
+  .android-qrcode {
+    align-items: center;
+    transform: translateX(-16px);
+    gap: 20px;
   }
 }

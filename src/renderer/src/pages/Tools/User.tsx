@@ -1,12 +1,15 @@
 import { DetailedHTMLProps, HTMLAttributes, MouseEvent, ReactNode } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
+import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
 import '@/assets/css/pages/tools/user.scss'
 import {
     COLOR_BACKGROUND,
+    COLOR_MAIN,
     DATABASE_NO_RECORD_FOUND,
     DATABASE_SELECT_SUCCESS
 } from '@/constants/common.constants'
+import { checkDesktop } from '@/util/common'
 import { r_sys_user_info_get_basic } from '@/services/system'
 import { r_tool_store_get_by_username } from '@/services/tool'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -21,9 +24,10 @@ interface CommonCardProps
     toolId: string
     toolDesc: string
     options?: TiltOptions
-    url: string
     authorUsername: string
     ver: string
+    platform: Platform
+    supportPlatform: Platform[]
 }
 
 const CommonCard = ({
@@ -41,12 +45,14 @@ const CommonCard = ({
         ['max-glare']: 0.3,
         scale: 1.03
     },
-    url,
     authorUsername,
     ver,
+    platform,
+    supportPlatform,
     ...props
 }: CommonCardProps) => {
     const navigate = useNavigate()
+    const [modal, contextHolder] = AntdModal.useModal()
     const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -54,38 +60,142 @@ const CommonCard = ({
     }, [options])
 
     const handleCardOnClick = () => {
-        url && navigate(url)
+        if (!checkDesktop() && platform === 'DESKTOP') {
+            void message.warning('此应用需要桌面端环境，请在桌面端打开')
+            return
+        }
+        if (platform === 'ANDROID') {
+            void modal.info({
+                icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
+                title: 'Android 端',
+                centered: true,
+                maskClosable: true,
+                content: (
+                    <FlexBox className={'android-qrcode'}>
+                        <AntdQRCode
+                            value={`oxygen://openurl/view/${authorUsername}/${toolId}`}
+                            size={300}
+                        />
+                        <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
+                    </FlexBox>
+                )
+            })
+            return
+        }
+        navigate(
+            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
+        )
     }
 
     const handleOnSourceBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigate(`/source/${authorUsername}/${toolId}`)
+        navigate(
+            `/source/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
+        )
+    }
+
+    const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        void modal.info({
+            icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
+            title: 'Android 端',
+            centered: true,
+            maskClosable: true,
+            content: (
+                <FlexBox className={'android-qrcode'}>
+                    <AntdQRCode
+                        value={`oxygen://openurl/view/${authorUsername}/${toolId}`}
+                        size={300}
+                    />
+                    <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
+                </FlexBox>
+            )
+        })
+    }
+
+    const handleOnDesktopBtnClick = (e: MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        if (!checkDesktop()) {
+            void message.loading({ content: '启动桌面端中……', key: 'LOADING', duration: 0 })
+            protocolCheck(
+                `oxygen://openurl/view/${authorUsername}/${toolId}`,
+                () => {
+                    void message.warning('打开失败,此应用需要桌面端环境,请安装桌面端后重试')
+                    void message.destroy('LOADING')
+                },
+                () => {
+                    void message.destroy('LOADING')
+                },
+                2000,
+                () => {
+                    void message.warning('打开失败,此应用需要桌面端环境,请安装桌面端后重试')
+                    void message.destroy('LOADING')
+                }
+            )
+            return
+        }
+        navigate(
+            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
+        )
+    }
+
+    const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        navigate(
+            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
+        )
     }
 
     return (
-        <Card
-            style={{ overflow: 'visible', ...style }}
-            ref={cardRef}
-            {...props}
-            onClick={handleCardOnClick}
-        >
-            <FlexBox className={'common-card'}>
-                <div className={'icon'}>{icon}</div>
-                <div className={'version'}>
-                    <AntdTag>V{ver}</AntdTag>
-                </div>
-                <div className={'info'}>
-                    <div className={'tool-name'}>{toolName}</div>
-                    <div className={'tool-id'}>{`ID: ${toolId}`}</div>
-                    {toolDesc && <div className={'tool-desc'}>{`简介：${toolDesc}`}</div>}
-                </div>
-                <div className={'operation'}>
-                    <AntdTooltip title={'源码'}>
-                        <Icon component={IconOxygenCode} onClick={handleOnSourceBtnClick} />
-                    </AntdTooltip>
-                </div>
-            </FlexBox>
-        </Card>
+        <>
+            <Card
+                style={{ overflow: 'visible', ...style }}
+                ref={cardRef}
+                {...props}
+                onClick={handleCardOnClick}
+            >
+                <FlexBox className={'common-card'}>
+                    <div className={'icon'}>{icon}</div>
+                    <div className={'version'}>
+                        <AntdTag>
+                            {platform.slice(0, 1)}-{ver}
+                        </AntdTag>
+                    </div>
+                    <div className={'info'}>
+                        <div className={'tool-name'}>{toolName}</div>
+                        <div className={'tool-id'}>{`ID: ${toolId}`}</div>
+                        {toolDesc && <div className={'tool-desc'}>{`简介：${toolDesc}`}</div>}
+                    </div>
+                    <div className={'operation'}>
+                        {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
+                            <AntdTooltip title={'Android 端'}>
+                                <Icon
+                                    component={IconOxygenMobile}
+                                    onClick={handleOnAndroidBtnClick}
+                                />
+                            </AntdTooltip>
+                        )}
+                        {platform === 'DESKTOP' && supportPlatform.includes('WEB') && (
+                            <AntdTooltip title={'Web 端'}>
+                                <Icon component={IconOxygenBrowser} onClick={handleOnWebBtnClick} />
+                            </AntdTooltip>
+                        )}
+                        {platform === 'WEB' && supportPlatform.includes('DESKTOP') && (
+                            <AntdTooltip title={'桌面端'}>
+                                <Icon
+                                    component={IconOxygenDesktop}
+                                    onClick={handleOnDesktopBtnClick}
+                                />
+                            </AntdTooltip>
+                        )}
+                        <AntdTooltip title={'源码'}>
+                            <Icon component={IconOxygenCode} onClick={handleOnSourceBtnClick} />
+                        </AntdTooltip>
+                    </div>
+                </FlexBox>
+            </Card>
+            {contextHolder}
+        </>
     )
 }
 
@@ -266,23 +376,56 @@ const User = () => {
                             {!toolData.length && (
                                 <div className={'no-tool'}>该开发者暂未发布任何工具</div>
                             )}
-                            {toolData?.map((value) => (
-                                <CommonCard
-                                    key={value.id}
-                                    icon={
-                                        <img
-                                            src={`data:image/svg+xml;base64,${value.icon}`}
-                                            alt={'Icon'}
-                                        />
+                            {toolData
+                                ?.reduce((previousValue: ToolVo[], currentValue) => {
+                                    if (
+                                        !previousValue.some(
+                                            (value) =>
+                                                value.author.id === currentValue.author.id &&
+                                                value.toolId === currentValue.toolId
+                                        )
+                                    ) {
+                                        previousValue.push(currentValue)
                                     }
-                                    toolName={value.name}
-                                    toolId={value.toolId}
-                                    toolDesc={value.description}
-                                    url={`/view/${value.author.username}/${value.toolId}`}
-                                    authorUsername={value.author.username}
-                                    ver={value.ver}
-                                />
-                            ))}
+                                    return previousValue
+                                }, [])
+                                .map((item) => {
+                                    const tools = toolData.filter(
+                                        (value) =>
+                                            value.author.id === item.author.id &&
+                                            value.toolId === item.toolId
+                                    )
+                                    const webTool = tools.find((value) => value.platform === 'WEB')
+                                    const desktopTool = tools.find(
+                                        (value) => value.platform === 'DESKTOP'
+                                    )
+                                    const androidTool = tools.find(
+                                        (value) => value.platform === 'ANDROID'
+                                    )
+                                    const firstTool =
+                                        (checkDesktop()
+                                            ? desktopTool || webTool
+                                            : webTool || desktopTool) || androidTool
+
+                                    return (
+                                        <CommonCard
+                                            key={firstTool!.id}
+                                            icon={
+                                                <img
+                                                    src={`data:image/svg+xml;base64,${firstTool!.icon}`}
+                                                    alt={'Icon'}
+                                                />
+                                            }
+                                            toolName={firstTool!.name}
+                                            toolId={firstTool!.toolId}
+                                            toolDesc={firstTool!.description}
+                                            authorUsername={firstTool!.author.username}
+                                            ver={firstTool!.ver}
+                                            platform={firstTool!.platform}
+                                            supportPlatform={tools.map((value) => value.platform)}
+                                        />
+                                    )
+                                })}
                             {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
                         </FlexBox>
                     </Card>

@@ -10,7 +10,10 @@ createRoot(document.getElementById('root')!).render(
     <StrictMode>
         <AntdConfigProvider
             theme={{
-                token: { colorPrimary: COLOR_MAIN, colorLinkHover: COLOR_MAIN },
+                token: {
+                    colorPrimary: COLOR_MAIN,
+                    colorLinkHover: COLOR_MAIN
+                },
                 components: {
                     Tree: {
                         colorBgContainer: 'transparent'

@@ -18,6 +18,7 @@ if (!app.isPackaged) {
 }
 args.push('--')
 app.setAsDefaultProtocolClient(import.meta.env.VITE_PROTOCOL, process.execPath, args)
+// app.removeAsDefaultProtocolClient(import.meta.env.VITE_PROTOCOL, process.execPath, args)
 
 const handleArgv = (argv: string[]) => {
     const prefix = `${import.meta.env.VITE_PROTOCOL}:`

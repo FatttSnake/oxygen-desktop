@@ -149,7 +149,10 @@ const matchComponents: IMatcher[] = [
         pattern: /^Mentions/,
         styleDir: 'mentions'
     },
-
+    {
+        pattern: /^QRCode/,
+        styleDir: 'qr-code'
+    },
     {
         pattern: /^Step/,
         styleDir: 'steps'
@@ -337,6 +340,7 @@ const primitiveNames = [
     'Rate',
     'Result',
     'Row',
+    'QRCode',
     'Select',
     'SelectOptGroup',
     'SelectOption',
