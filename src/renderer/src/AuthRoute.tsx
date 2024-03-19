@@ -3,6 +3,7 @@ import { getRedirectUrl } from '@/util/route'
 import { getLoginStatus, getVerifyStatus_async } from '@/util/auth'
 
 const AuthRoute = () => {
+    const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const matches = useMatches()
     const lastMatch = matches.reduce((_, second) => second)
@@ -11,6 +12,12 @@ const AuthRoute = () => {
     const outlet = useOutlet()
     const isLogin = getLoginStatus()
     const isVerify = getVerifyStatus_async()
+
+    useEffect(() => {
+        window.electronAPI.ipcRenderer.on('open-url', (_, url: string) => {
+            navigate(url)
+        })
+    }, [])
 
     return useMemo(() => {
         document.title = `${handle?.titlePrefix ?? ''}${

@@ -6,17 +6,22 @@
   "author": "example.com",
   "homepage": "https://electron-vite.org",
   "scripts": {
-    "dev": "electron-vite dev",
+    "dev": "electron-vite dev --sourcemap --remote-debugging-port=9000",
     "format": "prettier --write .",
     "lint": "eslint . --ext .js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "typecheck": "tsc",
     "start": "electron-vite preview",
     "build": "electron-vite build && npm run typecheck",
+    "build-test": "electron-vite build --mode testing && npm run typecheck",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
+    "build-test:unpack": "npm run build-test && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:linux": "electron-vite build && electron-builder --linux"
+    "build-test:win": "npm run build-test && electron-builder --win",
+    "build:mac": "npm run build && electron-builder --mac",
+    "build-test:mac": "npm run build-test && electron-builder --mac",
+    "build:linux": "npm run build && electron-builder --linux",
+    "build-test:linux": "npm run build-test && electron-builder --linux"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.0",

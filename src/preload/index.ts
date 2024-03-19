@@ -9,15 +9,15 @@ const api = {}
 // just add to the DOM global.
 if (process.contextIsolated) {
     try {
-        contextBridge.exposeInMainWorld('electron', electronAPI)
+        contextBridge.exposeInMainWorld('electronAPI', electronAPI)
         contextBridge.exposeInMainWorld('api', api)
-        contextBridge.exposeInMainWorld('notification', Notification)
+        contextBridge.exposeInMainWorld('Notification', Notification)
     } catch (error) {
         console.error(error)
     }
 } else {
     // @ts-expect-error (define in dts)
-    window.electron = electronAPI
+    window.electronAPI = electronAPI
     // @ts-expect-error (define in dts)
     window.api = api
     // @ts-expect-error (define in dts)

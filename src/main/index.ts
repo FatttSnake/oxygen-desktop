@@ -1,11 +1,58 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, webContents } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/logo.ico?asset'
+import * as path from 'node:path'
+
+let mainWindow: BrowserWindow
+
+// Application singleton execution
+if (!app.requestSingleInstanceLock()) {
+    app.quit()
+}
+
+// Register protocol client
+const args: string[] = []
+if (!app.isPackaged) {
+    args.push(path.resolve(process.argv[1]))
+}
+args.push('--')
+app.setAsDefaultProtocolClient(import.meta.env.VITE_PROTOCOL, process.execPath, args)
+
+const handleArgv = (argv: string[]) => {
+    const prefix = `${import.meta.env.VITE_PROTOCOL}:`
+    const offset = app.isPackaged ? 1 : 2
+    const url = argv.find((arg, index) => index >= offset && arg.startsWith(prefix))
+    if (url) {
+        handleUrl(url)
+    }
+}
+
+const handleUrl = (url: string) => {
+    const { hostname, pathname } = new URL(url)
+    if (hostname === 'openurl') {
+        webContents.getAllWebContents().forEach((webContent) => {
+            webContent.send('open-url', pathname)
+        })
+    }
+}
+
+// Windows
+handleArgv(process.argv)
+app.on('second-instance', (_, argv) => {
+    if (process.platform === 'win32') {
+        handleArgv(argv)
+    }
+})
+
+// macOS
+app.on('open-url', (_, argv) => {
+    handleUrl(argv)
+})
 
 function createWindow(): void {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 900,
         height: 670,
         show: false,
