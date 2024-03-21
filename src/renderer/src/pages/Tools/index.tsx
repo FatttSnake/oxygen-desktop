@@ -278,7 +278,9 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
                 onChange={handleOnVersionChange}
                 options={toolsGroupByPlatform(tools)}
             />
-            {tools.every((value) => value.review === 'PASS') && (
+            {tools
+                .filter((value) => value.platform === selectedTool.platform)
+                .every((value) => value.review === 'PASS') && (
                 <AntdTooltip title={'更新'}>
                     <Icon
                         component={IconOxygenUpgrade}
@@ -349,6 +351,7 @@ const Tools = () => {
                                 ref?.getFieldInstance('toolId').focus()
                             }, 50)
                         }}
+                        labelCol={{ span: 4 }}
                     >
                         <AntdForm.Item
                             initialValue={tool.toolId}
@@ -357,6 +360,17 @@ const Tools = () => {
                             style={{ marginTop: 10 }}
                         >
                             <AntdInput disabled />
+                        </AntdForm.Item>
+                        <AntdForm.Item
+                            initialValue={tool.platform}
+                            label={'平台'}
+                            name={'platform'}
+                        >
+                            <AntdSelect disabled>
+                                <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
+                                <AntdSelect.Option key={'DESKTOP'}>Desktop</AntdSelect.Option>
+                                <AntdSelect.Option key={'ANDROID'}>Android</AntdSelect.Option>
+                            </AntdSelect>
                         </AntdForm.Item>
                         <AntdForm.Item
                             name={'ver'}
