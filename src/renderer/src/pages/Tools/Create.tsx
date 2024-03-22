@@ -379,6 +379,7 @@ const Create = () => {
                             <Playground.Output.Preview.Render
                                 iframeKey={previewTemplate}
                                 compiledCode={compiledCode}
+                                mobileMode={formValues.platform === 'ANDROID'}
                             />
                         ) : (
                             <span className={'no-preview'}>暂无预览</span>
