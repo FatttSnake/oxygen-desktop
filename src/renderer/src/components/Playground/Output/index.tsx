@@ -11,6 +11,7 @@ interface OutputProps {
     entryPoint: string
     preExpansionCode?: string
     postExpansionCode?: string
+    mobileMode?: boolean
 }
 
 const Output = ({
@@ -19,7 +20,8 @@ const Output = ({
     importMap,
     entryPoint,
     preExpansionCode,
-    postExpansionCode
+    postExpansionCode,
+    mobileMode = false
 }: OutputProps) => {
     const [selectedTab, setSelectedTab] = useState('Preview')
 
@@ -42,6 +44,7 @@ const Output = ({
                     entryPoint={entryPoint}
                     preExpansionCode={preExpansionCode}
                     postExpansionCode={postExpansionCode}
+                    mobileMode={mobileMode}
                 />
             )}
             {selectedTab === 'Transform' && <Transform file={files[selectedFileName]} />}

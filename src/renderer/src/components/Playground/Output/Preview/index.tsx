@@ -10,6 +10,7 @@ interface PreviewProps {
     entryPoint: string
     preExpansionCode?: string
     postExpansionCode?: string
+    mobileMode?: boolean
 }
 
 const Preview = ({
@@ -18,7 +19,8 @@ const Preview = ({
     importMap,
     entryPoint,
     preExpansionCode = '',
-    postExpansionCode = ''
+    postExpansionCode = '',
+    mobileMode = false
 }: PreviewProps) => {
     const [errorMsg, setErrorMsg] = useState('')
     const [compiledCode, setCompiledCode] = useState('')
@@ -41,7 +43,7 @@ const Preview = ({
 
     return (
         <div data-component={'playground-preview'}>
-            <Render iframeKey={iframeKey} compiledCode={compiledCode} />
+            <Render iframeKey={iframeKey} compiledCode={compiledCode} mobileMode={mobileMode} />
             {errorMsg && <div className={'playground-error-message'}>{errorMsg}</div>}
         </div>
     )

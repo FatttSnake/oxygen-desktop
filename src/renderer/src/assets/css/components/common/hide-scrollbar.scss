@@ -14,8 +14,8 @@
     -ms-overflow-style: none;
 
     .hide-scrollbar-content {
-      display: inline-block;
-      width: 100%;
+      width: fit-content;
+      min-width: 100%;
     }
   }
 

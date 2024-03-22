@@ -1,6 +1,80 @@
+@use '@/assets/css/constants' as constants;
+
 [data-component=playground-output-preview-render] {
   border: none;
   height: 100%;
   width: 100%;
   flex: 1;
+}
+
+.mobile-mode-background {
+  background-color: rgba(204, 204, 204, 0.66);
+
+  .mobile-mode-content {
+    padding: 80px;
+  }
+
+  .device {
+    display: flex;
+    flex-direction: column;
+    background-color: #EEEFF2;
+    width: fit-content;
+    margin: 0 auto;
+    border-radius: 40px;
+
+    &.rotate {
+      flex-direction: row;
+    }
+
+    .device-header {
+      margin: 20px auto;
+      width: 60px;
+      height: 10px;
+      border-radius: 5px;
+      background-color: #C8C9CC;
+
+      &.rotate {
+        margin: auto 20px;
+        width: 10px;
+        height: 60px;
+      }
+    }
+
+    .device-content {
+      margin: 0 10px;
+      background-color: white;
+
+      &.rotate {
+        margin: 10px 0;
+      }
+    }
+
+    .device-footer {
+      margin: 20px auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #C8C9CC;
+
+      &.rotate {
+        margin: auto 20px;
+      }
+    }
+  }
+}
+
+.switch-device, .switch-zoom {
+  display: flex;
+  position: absolute;
+  top: 10px;
+  align-items: center;
+  gap: 4px;
+}
+
+.switch-device {
+  left: 10px;
+}
+
+.switch-zoom {
+  right: 10px;
 }

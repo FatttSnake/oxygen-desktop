@@ -1,8 +1,7 @@
 [data-component=playground-preview] {
   display: flex;
   position: relative;
-  width: 100%;
-  height: 100%;
+  height: 0;
 
   .playground-error-message {
     position: absolute;

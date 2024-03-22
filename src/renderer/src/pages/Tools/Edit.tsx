@@ -443,6 +443,7 @@ const Edit = () => {
                                 importMap={importMap!}
                                 entryPoint={entryPoint}
                                 postExpansionCode={baseDist}
+                                mobileMode={toolData?.platform === 'ANDROID'}
                             />
                         </LoadingMask>
                         {showDraggableMask && <div className={'draggable-mask'} />}

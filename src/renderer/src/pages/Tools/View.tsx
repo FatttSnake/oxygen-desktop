@@ -17,8 +17,10 @@ const View = () => {
     })
     const [loading, setLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
+    const [isAndroid, setIsAndroid] = useState(false)
 
     const render = (toolVo: ToolVo) => {
+        setIsAndroid(toolVo.platform === 'ANDROID')
         if (username === '!') {
             try {
                 const baseDist = base64ToStr(toolVo.base.dist.data!)
@@ -111,6 +113,7 @@ const View = () => {
                 <Playground.Output.Preview.Render
                     iframeKey={`${username}:${toolId}:${ver}`}
                     compiledCode={compiledCode}
+                    mobileMode={isAndroid}
                 />
             </Card>
         </FitFullscreen>

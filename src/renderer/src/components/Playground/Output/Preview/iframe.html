@@ -36,6 +36,10 @@
       document.body.appendChild(script);
       URL.revokeObjectURL(oldSrc);
     }
+
+    if (data?.type === "SCALE") {
+      document.getElementById("root").style.zoom = data.data.zoom
+    }
   });
 </script>
 <script type="module" id="appSrc"></script>
