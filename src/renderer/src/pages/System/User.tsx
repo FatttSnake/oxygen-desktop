@@ -821,7 +821,11 @@ const User = () => {
                     </AntdForm.Item>
                 </>
             )}
-            <AntdForm.Item name={'nickname'} label={'昵称'} rules={[{ whitespace: false }]}>
+            <AntdForm.Item
+                name={'nickname'}
+                label={'昵称'}
+                rules={[{ required: true, whitespace: false }]}
+            >
                 <AntdInput allowClear />
             </AntdForm.Item>
             <AntdForm.Item
