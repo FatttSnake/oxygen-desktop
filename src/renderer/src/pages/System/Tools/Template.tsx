@@ -985,7 +985,7 @@ const Template = () => {
             <AntdForm.Item
                 name={'name'}
                 label={'名称'}
-                rules={[{ required: true, whitespace: false }]}
+                rules={[{ required: true, whitespace: true }]}
             >
                 <AntdInput allowClear />
             </AntdForm.Item>

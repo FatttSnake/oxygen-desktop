@@ -806,7 +806,7 @@ const User = () => {
             <AntdForm.Item
                 name={'username'}
                 label={'用户名'}
-                rules={[{ required: true, whitespace: false }]}
+                rules={[{ required: true, whitespace: true }]}
             >
                 <AntdInput allowClear />
             </AntdForm.Item>
@@ -815,7 +815,7 @@ const User = () => {
                     <AntdForm.Item
                         name={'password'}
                         label={'密码'}
-                        rules={[{ required: true, whitespace: false }]}
+                        rules={[{ required: true, whitespace: true }]}
                     >
                         <AntdInput.Password allowClear />
                     </AntdForm.Item>
@@ -824,14 +824,14 @@ const User = () => {
             <AntdForm.Item
                 name={'nickname'}
                 label={'昵称'}
-                rules={[{ required: true, whitespace: false }]}
+                rules={[{ required: true, whitespace: true }]}
             >
                 <AntdInput allowClear />
             </AntdForm.Item>
             <AntdForm.Item
                 name={'email'}
                 label={'邮箱'}
-                rules={[{ required: true, whitespace: false, type: 'email' }]}
+                rules={[{ required: true, whitespace: true, type: 'email' }]}
             >
                 <AntdInput type={'email'} allowClear />
             </AntdForm.Item>
