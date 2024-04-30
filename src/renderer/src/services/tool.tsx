@@ -40,7 +40,10 @@ export const r_tool_store_get_by_username = (username: string, param: ToolStoreG
     request.get<PageVo<ToolVo>>(`${URL_TOOL_STORE}/${username}`, param)
 
 export const r_tool_add_favorite = (param: ToolFavoriteAddRemoveParam) =>
-    request.post(`${URL_TOOL_FAVORITE}`, param)
+    request.post(URL_TOOL_FAVORITE, param)
 
 export const r_tool_remove_favorite = (param: ToolFavoriteAddRemoveParam) =>
-    request.delete(`${URL_TOOL_FAVORITE}`, param)
+    request.delete(URL_TOOL_FAVORITE, param)
+
+export const r_tool_get_favorite = (param: PageParam) =>
+    request.get<PageVo<ToolVo>>(URL_TOOL_FAVORITE, param)

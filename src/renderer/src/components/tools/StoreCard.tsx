@@ -9,6 +9,7 @@ import { navigateToSource, navigateToStore, navigateToView } from '@/util/naviga
 import { r_tool_add_favorite, r_tool_remove_favorite } from '@/services/tool'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
+import { getUserId } from '@/util/auth.tsx'
 
 interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: ReactNode
@@ -16,9 +17,8 @@ interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement
     toolId: string
     toolDesc: string
     options?: TiltOptions
-    authorName?: string
-    authorAvatar?: string
-    authorUsername: string
+    author: UserWithInfoVo
+    showAuthor?: boolean
     ver: string
     platform: Platform
     supportPlatform: Platform[]
@@ -40,9 +40,8 @@ const StoreCard = ({
         ['max-glare']: 0.3,
         scale: 1.03
     },
-    authorName,
-    authorAvatar,
-    authorUsername,
+                       author,
+                       showAuthor = true,
     ver,
     platform,
     supportPlatform,
@@ -53,9 +52,11 @@ const StoreCard = ({
     const [modal, contextHolder] = AntdModal.useModal()
     const cardRef = useRef<HTMLDivElement>(null)
     const [favorite_, setFavorite_] = useState<boolean>(favorite)
+    const [userId, setUserId] = useState('')
 
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
+        getUserId().then((value) => setUserId(value))
     }, [options])
 
     const handleCardOnClick = () => {
@@ -72,7 +73,7 @@ const StoreCard = ({
                 content: (
                     <FlexBox className={'android-qrcode'}>
                         <AntdQRCode
-                            value={`oxygen://openurl/view/${authorUsername}/${toolId}`}
+                            value={`oxygen://openurl/view/${author.username}/${toolId}`}
                             size={300}
                         />
                         <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
@@ -81,24 +82,24 @@ const StoreCard = ({
             })
             return
         }
-        navigateToView(navigate, authorUsername, toolId, platform)
+        navigateToView(navigate, author.username, toolId, platform)
     }
 
     const handleOnClickAuthor = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigateToStore(navigate, authorUsername)
+        navigateToStore(navigate, author.username)
     }
 
     const handleOnSourceBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigateToSource(navigate, authorUsername, toolId, platform)
+        navigateToSource(navigate, author.username, toolId, platform)
     }
 
     const handleOnStarBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
         if (favorite_) {
             void r_tool_remove_favorite({
-                username: authorUsername,
+                authorId: author.id,
                 toolId: toolId,
                 platform: platform
             }).then((res) => {
@@ -111,7 +112,7 @@ const StoreCard = ({
             })
         } else {
             void r_tool_add_favorite({
-                username: authorUsername,
+                authorId: author.id,
                 toolId: toolId,
                 platform: platform
             }).then((res) => {
@@ -135,7 +136,7 @@ const StoreCard = ({
             content: (
                 <FlexBox className={'android-qrcode'}>
                     <AntdQRCode
-                        value={`oxygen://openurl/view/${authorUsername}/${toolId}`}
+                        value={`oxygen://openurl/view/${author.username}/${toolId}`}
                         size={300}
                     />
                     <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
@@ -149,7 +150,7 @@ const StoreCard = ({
         if (!checkDesktop()) {
             void message.loading({ content: '启动桌面端中……', key: 'LOADING', duration: 0 })
             protocolCheck(
-                `oxygen://openurl/view/${authorUsername}/${toolId}`,
+                `oxygen://openurl/view/${author.username}/${toolId}`,
                 () => {
                     void message.warning('打开失败,此应用需要桌面端环境,请安装桌面端后重试')
                     void message.destroy('LOADING')
@@ -165,12 +166,12 @@ const StoreCard = ({
             )
             return
         }
-        navigateToView(navigate, authorUsername, toolId, platform)
+        navigateToView(navigate, author.username, toolId, platform)
     }
 
     const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigateToView(navigate, authorUsername, toolId, platform)
+        navigateToView(navigate, author.username, toolId, platform)
     }
 
     return (
@@ -194,22 +195,22 @@ const StoreCard = ({
                         <div className={'tool-id'}>{`ID: ${toolId}`}</div>
                         {toolDesc && <div className={'tool-desc'}>{`简介：${toolDesc}`}</div>}
                     </div>
-                    {authorAvatar && authorName && (
+                    {showAuthor && (
                         <div className={'author'} onClick={handleOnClickAuthor}>
                             <div className={'avatar'}>
                                 <AntdAvatar
                                     src={
                                         <AntdImage
                                             preview={false}
-                                            src={`data:image/png;base64,${authorAvatar}`}
+                                            src={`data:image/png;base64,${author.userInfo.avatar}`}
                                             alt={'Avatar'}
                                         />
                                     }
                                     style={{ background: COLOR_BACKGROUND }}
                                 />
                             </div>
-                            <AntdTooltip title={authorUsername}>
-                                <div className={'author-name'}>{authorName}</div>
+                            <AntdTooltip title={author.username}>
+                                <div className={'author-name'}>{author.userInfo.nickname}</div>
                             </AntdTooltip>
                         </div>
                     )}
@@ -238,13 +239,15 @@ const StoreCard = ({
                         <AntdTooltip title={'源码'}>
                             <Icon component={IconOxygenCode} onClick={handleOnSourceBtnClick} />
                         </AntdTooltip>
-                        <AntdTooltip title={favorite_ ? '取消收藏' : '收藏'}>
-                            <Icon
-                                component={favorite_ ? IconOxygenStarFilled : IconOxygenStar}
-                                style={{ color: favorite_ ? COLOR_PRODUCTION : undefined }}
-                                onClick={handleOnStarBtnClick}
-                            />
-                        </AntdTooltip>
+                        {author.id !== userId && (
+                            <AntdTooltip title={favorite_ ? '取消收藏' : '收藏'}>
+                                <Icon
+                                    component={favorite_ ? IconOxygenStarFilled : IconOxygenStar}
+                                    style={{ color: favorite_ ? COLOR_PRODUCTION : undefined }}
+                                    onClick={handleOnStarBtnClick}
+                                />
+                            </AntdTooltip>
+                        )}
                     </div>
                 </FlexBox>
             </Card>

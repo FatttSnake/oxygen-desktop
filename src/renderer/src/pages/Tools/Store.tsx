@@ -143,9 +143,7 @@ const Store = () => {
                                         toolName={firstTool!.name}
                                         toolId={firstTool!.toolId}
                                         toolDesc={firstTool!.description}
-                                        authorName={firstTool!.author.userInfo.nickname}
-                                        authorAvatar={firstTool!.author.userInfo.avatar}
-                                        authorUsername={firstTool!.author.username}
+                                        author={firstTool!.author}
                                         ver={firstTool!.ver}
                                         platform={firstTool!.platform}
                                         supportPlatform={tools.map((value) => value.platform)}

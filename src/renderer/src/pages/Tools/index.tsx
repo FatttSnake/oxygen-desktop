@@ -19,6 +19,7 @@ import {
     r_tool_cancel,
     r_tool_delete,
     r_tool_get,
+    r_tool_get_favorite,
     r_tool_submit,
     r_tool_upgrade
 } from '@/services/tool'
@@ -27,6 +28,7 @@ import HideScrollbar from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
 import RepositoryCard from '@/components/tools/RepositoryCard'
 import LoadMoreCard from '@/components/tools/LoadMoreCard'
+import StoreCard from '@/components/tools/StoreCard.tsx'
 
 interface ToolCardProps {
     tools: ToolVo[]
@@ -208,6 +210,9 @@ const Tools = () => {
     const [hasNextPage, setHasNextPage] = useState(false)
     const [toolData, setToolData] = useState<ToolVo[]>([])
     const [upgradeForm] = AntdForm.useForm<ToolUpgradeParam>()
+    const [currentStarPage, setCurrentStarPage] = useState(0)
+    const [hasNextStarPage, setHasNextStarPage] = useState(false)
+    const [starToolData, setStarToolData] = useState<ToolVo[]>([])
 
     const handleOnDeleteTool = (tool: ToolVo) => {
         modal
@@ -436,6 +441,13 @@ const Tools = () => {
         getTool(currentPage + 1)
     }
 
+    const handleOnLoadMoreStar = () => {
+        if (loading) {
+            return
+        }
+        getStarTool(currentStarPage + 1)
+    }
+
     const getTool = (page: number) => {
         if (loading) {
             return
@@ -471,6 +483,47 @@ const Tools = () => {
             .finally(() => {
                 setLoading(false)
                 message.destroy('LOADING')
+                if (currentStarPage === 0) {
+                    getStarTool(1)
+                }
+            })
+    }
+
+    const getStarTool = (page: number) => {
+        if (loading) {
+            return
+        }
+        setLoading(true)
+        void message.loading({ content: '加载收藏列表中', key: 'LOADING', duration: 0 })
+
+        void r_tool_get_favorite({ currentPage: page })
+            .then((res) => {
+                const response = res.data
+
+                switch (response.code) {
+                    case DATABASE_SELECT_SUCCESS:
+                        setCurrentStarPage(response.data!.current)
+                        if (
+                            response.data!.current === response.data!.pages ||
+                            response.data!.total === 0
+                        ) {
+                            setHasNextStarPage(false)
+                        } else {
+                            setHasNextStarPage(true)
+                        }
+                        if (response.data!.current === 1) {
+                            setStarToolData(response.data!.records)
+                        } else {
+                            setStarToolData([...starToolData, ...response.data!.records])
+                        }
+                        break
+                    default:
+                        void message.error('加载失败，请稍后重试')
+                }
+            })
+            .finally(() => {
+                setLoading(false)
+                message.destroy('LOADING')
             })
     }
 
@@ -485,30 +538,91 @@ const Tools = () => {
         <>
             <FitFullscreen data-component={'tools'}>
                 <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
-                    <FlexBox direction={'horizontal'} className={'root-content'}>
-                        <RepositoryCard
-                            icon={<Icon component={IconOxygenNewProject} />}
-                            toolName={'创建工具'}
-                            url={'/create'}
-                        />
-                        {toolData &&
-                            Object.values(
-                                toolData.reduce((result: Record<string, ToolVo[]>, item) => {
-                                    result[item.toolId] = result[item.toolId] || []
-                                    result[item.toolId].push(item)
-                                    return result
-                                }, {})
-                            ).map((value) => (
-                                <ToolCard
-                                    key={JSON.stringify(value)}
-                                    tools={value}
-                                    onDelete={handleOnDeleteTool}
-                                    onUpgrade={handleOnUpgradeTool}
-                                    onSubmit={handleOnSubmitTool}
-                                    onCancel={handleOnCancelTool}
-                                />
-                            ))}
-                        {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
+                    <FlexBox direction={'vertical'} className={'root-content'}>
+                        <FlexBox direction={'horizontal'} className={'own-content'}>
+                            <RepositoryCard
+                                icon={<Icon component={IconOxygenNewProject} />}
+                                toolName={'创建工具'}
+                                url={'/create'}
+                            />
+                            {toolData &&
+                                Object.values(
+                                    toolData.reduce((result: Record<string, ToolVo[]>, item) => {
+                                        result[item.toolId] = result[item.toolId] || []
+                                        result[item.toolId].push(item)
+                                        return result
+                                    }, {})
+                                ).map((value) => (
+                                    <ToolCard
+                                        key={JSON.stringify(value)}
+                                        tools={value}
+                                        onDelete={handleOnDeleteTool}
+                                        onUpgrade={handleOnUpgradeTool}
+                                        onSubmit={handleOnSubmitTool}
+                                        onCancel={handleOnCancelTool}
+                                    />
+                                ))}
+                            {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
+                        </FlexBox>
+                        <FlexBox className={'favorite-divider'}>
+                            <div />
+                            <div className={'divider-text'}>收藏</div>
+                            <div />
+                        </FlexBox>
+                        <FlexBox direction={'horizontal'} className={'star-content'}>
+                            {starToolData
+                                ?.reduce((previousValue: ToolVo[], currentValue) => {
+                                    if (
+                                        !previousValue.some(
+                                            (value) =>
+                                                value.author.id === currentValue.author.id &&
+                                                value.toolId === currentValue.toolId
+                                        )
+                                    ) {
+                                        previousValue.push(currentValue)
+                                    }
+                                    return previousValue
+                                }, [])
+                                .map((item) => {
+                                    const tools = starToolData.filter(
+                                        (value) =>
+                                            value.author.id === item.author.id &&
+                                            value.toolId === item.toolId
+                                    )
+                                    const webTool = tools.find((value) => value.platform === 'WEB')
+                                    const desktopTool = tools.find(
+                                        (value) => value.platform === 'DESKTOP'
+                                    )
+                                    const androidTool = tools.find(
+                                        (value) => value.platform === 'ANDROID'
+                                    )
+                                    const firstTool =
+                                        (checkDesktop()
+                                            ? desktopTool || webTool
+                                            : webTool || desktopTool) || androidTool
+
+                                    return (
+                                        <StoreCard
+                                            key={firstTool!.id}
+                                            icon={
+                                                <img
+                                                    src={`data:image/svg+xml;base64,${firstTool!.icon}`}
+                                                    alt={'Icon'}
+                                                />
+                                            }
+                                            toolName={firstTool!.name}
+                                            toolId={firstTool!.toolId}
+                                            toolDesc={firstTool!.description}
+                                            author={firstTool!.author}
+                                            ver={firstTool!.ver}
+                                            platform={firstTool!.platform}
+                                            supportPlatform={tools.map((value) => value.platform)}
+                                            favorite={firstTool!.favorite}
+                                        />
+                                    )
+                                })}
+                            {hasNextStarPage && <LoadMoreCard onClick={handleOnLoadMoreStar} />}
+                        </FlexBox>
                     </FlexBox>
                 </HideScrollbar>
             </FitFullscreen>

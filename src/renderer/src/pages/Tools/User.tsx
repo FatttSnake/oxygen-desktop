@@ -206,7 +206,8 @@ const User = () => {
                                             toolName={firstTool!.name}
                                             toolId={firstTool!.toolId}
                                             toolDesc={firstTool!.description}
-                                            authorUsername={firstTool!.author.username}
+                                            author={firstTool!.author}
+                                            showAuthor={false}
                                             ver={firstTool!.ver}
                                             platform={firstTool!.platform}
                                             supportPlatform={tools.map((value) => value.platform)}

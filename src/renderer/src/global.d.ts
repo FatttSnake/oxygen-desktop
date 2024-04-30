@@ -657,7 +657,7 @@ interface ToolStoreGetParam extends PageParam {
 }
 
 interface ToolFavoriteAddRemoveParam {
-    username: string
+    authorId: string
     toolId: string
     platform: Platform
 }
