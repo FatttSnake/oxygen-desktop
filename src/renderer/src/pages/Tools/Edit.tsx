@@ -24,6 +24,10 @@ import LoadingMask from '@/components/common/LoadingMask'
 import Card from '@/components/common/Card'
 
 const Edit = () => {
+    const blocker = useBlocker(
+        ({ currentLocation, nextLocation }) =>
+            currentLocation.pathname !== nextLocation.pathname && hasEdited
+    )
     const navigate = useNavigate()
     const { toolId } = useParams()
     const [searchParams] = useSearchParams({
@@ -48,6 +52,19 @@ const Edit = () => {
     const [hasEdited, setHasEdited] = useState(false)
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
     const [loadingCategory, setLoadingCategory] = useState(false)
+
+    useBeforeUnload(
+        useCallback(
+            (event) => {
+                if (hasEdited) {
+                    event.preventDefault()
+                    event.returnValue = ''
+                }
+            },
+            [hasEdited]
+        ),
+        { capture: true }
+    )
 
     const handleOnChangeFileContent = (content: string, fileName: string, files: IFiles) => {
         setHasEdited(true)
@@ -484,6 +501,20 @@ const Edit = () => {
             >
                 {editForm}
             </AntdDrawer>
+            <AntdModal
+                open={blocker.state === 'blocked'}
+                title={'未保存'}
+                onOk={() => blocker.proceed?.()}
+                onCancel={() => blocker.reset?.()}
+                footer={(_, { OkBtn, CancelBtn }) => (
+                    <>
+                        <OkBtn />
+                        <CancelBtn />
+                    </>
+                )}
+            >
+                离开此页面将丢失所有未保存数据，是否继续？
+            </AntdModal>
         </>
     )
 }
