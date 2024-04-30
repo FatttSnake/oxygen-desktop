@@ -2,6 +2,7 @@ import Icon from '@ant-design/icons'
 import { COLOR_ERROR } from '@/constants/common.constants'
 import { getRedirectUrl } from '@/util/route'
 import { getAvatar, getLoginStatus, getNickname, removeToken } from '@/util/auth'
+import { navigateToLogin, navigateToUser } from '@/util/navigation'
 import { r_auth_logout } from '@/services/auth'
 
 const Footer = () => {
@@ -15,9 +16,9 @@ const Footer = () => {
 
     const handleClickAvatar = () => {
         if (getLoginStatus()) {
-            navigate('/user')
+            navigateToUser(navigate)
         } else {
-            navigate(getRedirectUrl('/login', `${lastMatch.pathname}${location.search}`))
+            navigateToLogin(navigate, undefined, `${lastMatch.pathname}${location.search}`)
         }
     }
 

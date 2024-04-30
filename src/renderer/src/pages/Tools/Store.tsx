@@ -5,6 +5,7 @@ import Icon from '@ant-design/icons'
 import '@/assets/css/pages/tools/store.scss'
 import { COLOR_BACKGROUND, COLOR_MAIN, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
+import { navigateToSource, navigateToStore, navigateToView } from '@/util/navigation'
 import { r_tool_store_get } from '@/services/tool'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
@@ -80,21 +81,17 @@ const CommonCard = ({
             })
             return
         }
-        navigate(
-            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToView(navigate, authorUsername, toolId, platform)
     }
 
     const handleOnClickAuthor = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigate(authorUsername)
+        navigateToStore(navigate, authorUsername)
     }
 
     const handleOnSourceBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigate(
-            `/source/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToSource(navigate, authorUsername, toolId, platform)
     }
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -137,16 +134,12 @@ const CommonCard = ({
             )
             return
         }
-        navigate(
-            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToView(navigate, authorUsername, toolId, platform)
     }
 
     const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigate(
-            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToView(navigate, authorUsername, toolId, platform)
     }
 
     return (

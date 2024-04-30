@@ -8,6 +8,7 @@ import {
     TOOL_HAS_BEEN_PUBLISHED,
     TOOL_UNDER_REVIEW
 } from '@/constants/common.constants'
+import { navigateToRepository } from '@/util/navigation'
 import { r_tool_category_get, r_tool_detail, r_tool_update } from '@/services/tool'
 import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
 import {
@@ -118,13 +119,13 @@ const Edit = () => {
                     case TOOL_UNDER_REVIEW:
                         void message.error('保存失败：工具审核中')
                         setTimeout(() => {
-                            navigate('/repository')
+                            navigateToRepository(navigate)
                         }, 3000)
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
                         void message.error('保存失败：工具已发布')
                         setTimeout(() => {
-                            navigate('/repository')
+                            navigateToRepository(navigate)
                         }, 3000)
                         break
                     default:
@@ -184,13 +185,13 @@ const Edit = () => {
                     case TOOL_UNDER_REVIEW:
                         void message.error('保存失败：工具审核中')
                         setTimeout(() => {
-                            navigate('/repository')
+                            navigateToRepository(navigate)
                         }, 3000)
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
                         void message.error('保存失败：工具已发布')
                         setTimeout(() => {
-                            navigate('/repository')
+                            navigateToRepository(navigate)
                         }, 3000)
                         break
                     default:
@@ -245,20 +246,20 @@ const Edit = () => {
                             case 'PROCESSING':
                                 void message.warning('工具审核中，请勿修改')
                                 setTimeout(() => {
-                                    navigate('/repository')
+                                    navigateToRepository(navigate)
                                 }, 3000)
                                 break
                             default:
                                 void message.warning('请先创建新版本后编辑工具')
                                 setTimeout(() => {
-                                    navigate('/repository')
+                                    navigateToRepository(navigate)
                                 }, 3000)
                         }
                         break
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate('/repository')
+                            navigateToRepository(navigate)
                         }, 3000)
                         break
                     default:
@@ -322,7 +323,7 @@ const Edit = () => {
 
     useEffect(() => {
         if (!['WEB', 'DESKTOP', 'ANDROID'].includes(searchParams.get('platform')!)) {
-            navigate('/repository')
+            navigateToRepository(navigate)
             return
         }
         getTool()

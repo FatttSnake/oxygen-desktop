@@ -8,6 +8,7 @@ import {
     SYSTEM_MATCH_SENSITIVE_WORD
 } from '@/constants/common.constants'
 import { getLoginStatus, setToken } from '@/util/auth'
+import { navigateToLogin } from '@/util/navigation'
 import { r_auth_register, r_auth_resend } from '@/services/auth'
 import FitCenter from '@/components/common/FitCenter'
 import FlexBox from '@/components/common/FlexBox'
@@ -49,9 +50,7 @@ const SignUp = () => {
             return
         }
         if (getLoginStatus()) {
-            navigate(`/login${location.search}`, {
-                replace: true
-            })
+            navigateToLogin(navigate, location.search, undefined, { replace: true })
         }
     }, [location.pathname])
 
@@ -245,7 +244,9 @@ const SignUp = () => {
                             已有账号？
                             <a
                                 onClick={() =>
-                                    navigate(`/login${location.search}`, { replace: true })
+                                    navigateToLogin(navigate, location.search, undefined, {
+                                        replace: true
+                                    })
                                 }
                             >
                                 登录

@@ -1,5 +1,6 @@
 import '@/assets/css/pages/system/tools/execute.scss'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
+import { navigateToTools } from '@/util/navigation'
 import { r_sys_tool_get_one } from '@/services/system'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import Card from '@/components/common/Card'
@@ -51,7 +52,7 @@ const Execute = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate('/system/tools')
+                            navigateToTools(navigate)
                         }, 3000)
                         break
                     default:

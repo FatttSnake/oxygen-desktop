@@ -8,6 +8,7 @@ import {
     PERMISSION_USER_NOT_FOUND,
     SYSTEM_INVALID_CAPTCHA_CODE
 } from '@/constants/common.constants'
+import { navigateToLogin } from '@/util/navigation'
 import { r_auth_forget, r_auth_retrieve } from '@/services/auth'
 import FitCenter from '@/components/common/FitCenter'
 import FlexBox from '@/components/common/FlexBox'
@@ -272,7 +273,15 @@ const Forget = () => {
 
                         <div className={'footer'}>
                             找到了？
-                            <a onClick={() => navigate(`/login`, { replace: true })}>登录</a>
+                            <a
+                                onClick={() =>
+                                    navigateToLogin(navigate, undefined, undefined, {
+                                        replace: true
+                                    })
+                                }
+                            >
+                                登录
+                            </a>
                         </div>
                     </div>
                 </FlexBox>

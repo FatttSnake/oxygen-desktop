@@ -16,6 +16,7 @@ import {
 } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { getLoginStatus } from '@/util/auth'
+import { navigateToEdit, navigateToSource, navigateToView } from '@/util/navigation'
 import {
     r_tool_cancel,
     r_tool_delete,
@@ -145,8 +146,12 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
 
     const handleOnOpenTool = () => {
         if (checkDesktop() || selectedTool.platform !== 'DESKTOP') {
-            navigate(
-                `/view/!/${selectedTool.toolId}/${selectedTool.ver}${selectedTool.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${selectedTool.platform}` : ''}`
+            navigateToView(
+                navigate,
+                '!',
+                selectedTool.toolId,
+                selectedTool.platform,
+                selectedTool.ver
             )
         } else {
             void message.warning('此应用需要桌面端环境，请在桌面端打开')
@@ -157,9 +162,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
         if (['NONE', 'REJECT'].includes(selectedTool.review)) {
             return () => {
                 if (checkDesktop() || selectedTool.platform !== 'DESKTOP') {
-                    navigate(
-                        `/edit/${selectedTool.toolId}${selectedTool.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${selectedTool.platform}` : ''}`
-                    )
+                    navigateToEdit(navigate, selectedTool.toolId, selectedTool.platform)
                 } else {
                     void message.warning('此应用需要桌面端环境，请在桌面端编辑')
                 }
@@ -171,8 +174,12 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
     const handleOnSourceTool = () => {
         if (selectedTool.review === 'PASS') {
             return () => {
-                navigate(
-                    `/source/!/${selectedTool.toolId}/${selectedTool.ver}${selectedTool.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${selectedTool.platform}` : ''}`
+                navigateToSource(
+                    navigate,
+                    '!',
+                    selectedTool.toolId,
+                    selectedTool.platform,
+                    selectedTool.ver
                 )
             }
         }
@@ -406,8 +413,10 @@ const Tools = () => {
                                             checkDesktop() ||
                                             response.data!.platform !== 'DESKTOP'
                                         ) {
-                                            navigate(
-                                                `/edit/${response.data!.toolId}${response.data!.platform !== import.meta.env.VITE_PLATFORM ? `?platform=${response.data!.platform}` : ''}`
+                                            navigateToEdit(
+                                                navigate,
+                                                response.data!.toolId,
+                                                response.data!.platform
                                             )
                                         }
                                         resolve()

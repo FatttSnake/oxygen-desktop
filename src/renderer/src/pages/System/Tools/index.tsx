@@ -17,6 +17,7 @@ import {
     DATABASE_UPDATE_SUCCESS,
     TOOL_NOT_UNDER_REVIEW
 } from '@/constants/common.constants'
+import { navigateToCode } from '@/util/navigation'
 import FlexBox from '@/components/common/FlexBox'
 import Card from '@/components/common/Card'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -198,7 +199,7 @@ const Tools = () => {
 
     const handleOnViewBtnClick = (value: ToolVo) => {
         return () => {
-            navigate(`/system/tools/code/${value.id}`)
+            navigateToCode(navigate, value.id)
         }
     }
 

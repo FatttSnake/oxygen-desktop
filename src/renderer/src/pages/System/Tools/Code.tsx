@@ -3,6 +3,7 @@ import Icon from '@ant-design/icons'
 import '@/assets/css/pages/system/tools/code.scss'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
+import { navigateToExecute, navigateToRepository } from '@/util/navigation'
 import { r_sys_tool_get_one } from '@/services/system'
 import { IFiles } from '@/components/Playground/shared'
 import { base64ToFiles } from '@/components/Playground/files'
@@ -27,7 +28,7 @@ const Code = () => {
                 title: '注意',
                 content: '运行前请仔细查阅工具代码！',
                 onOk: () => {
-                    navigate(`/system/tools/execute/${id}`)
+                    navigateToExecute(navigate, id!)
                 }
             })
         } else {
@@ -62,7 +63,7 @@ const Code = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate('/repository')
+                            navigateToRepository(navigate)
                         }, 3000)
                         break
                     default:

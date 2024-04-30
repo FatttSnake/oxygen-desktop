@@ -1,6 +1,7 @@
 import '@/assets/css/pages/tools/view.scss'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
+import { navigateToRepository, navigateToRoot, navigateToView } from '@/util/navigation'
 import { r_tool_detail } from '@/services/tool'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'
@@ -72,7 +73,7 @@ const View = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate('/repository')
+                            navigateToRepository(navigate)
                         }, 3000)
                         break
                     default:
@@ -86,22 +87,23 @@ const View = () => {
     }
 
     useEffect(() => {
+        const platform = searchParams.get('platform')!
+        if (!['WEB', 'DESKTOP', 'ANDROID'].includes(platform)) {
+            navigateToRepository(navigate)
+            return
+        }
         if (username === '!' && !getLoginStatus()) {
             setTimeout(() => {
-                navigate('/')
+                navigateToRoot(navigate)
             }, 3000)
             return
         }
         if (username !== '!' && ver) {
-            navigate(`/view/${username}/${toolId}`)
+            navigateToView(navigate, username!, toolId!, platform as Platform)
             return
         }
         if (username === '!' && !ver) {
-            navigate(`/view/!/${toolId}/latest`)
-            return
-        }
-        if (!['WEB', 'DESKTOP', 'ANDROID'].includes(searchParams.get('platform')!)) {
-            navigate('/repository')
+            navigateToView(navigate, '!', toolId!, platform as Platform)
             return
         }
         getTool()

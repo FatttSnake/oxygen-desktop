@@ -10,6 +10,7 @@ import {
     DATABASE_SELECT_SUCCESS
 } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
+import { navigateToRoot, navigateToSource, navigateToView } from '@/util/navigation'
 import { r_sys_user_info_get_basic } from '@/services/system'
 import { r_tool_store_get_by_username } from '@/services/tool'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -82,16 +83,12 @@ const CommonCard = ({
             })
             return
         }
-        navigate(
-            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToView(navigate, authorUsername, toolId, platform)
     }
 
     const handleOnSourceBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigate(
-            `/source/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToSource(navigate, authorUsername, toolId, platform)
     }
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -134,16 +131,12 @@ const CommonCard = ({
             )
             return
         }
-        navigate(
-            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToView(navigate, authorUsername, toolId, platform)
     }
 
     const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigate(
-            `/view/${authorUsername}/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
-        )
+        navigateToView(navigate, authorUsername, toolId, platform)
     }
 
     return (
@@ -269,7 +262,7 @@ const User = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.warning('用户不存在')
                         setTimeout(() => {
-                            navigate('/')
+                            navigateToRoot(navigate)
                         }, 3000)
                         break
                     default:
