@@ -21,6 +21,8 @@ interface HideScrollbarProps
     minHeight?: string | number
     scrollbarWidth?: string | number
     autoHideWaitingTime?: number
+    scrollbarAsidePadding?: number
+    scrollbarEdgePadding?: number
 }
 
 export interface HideScrollbarElement {
@@ -74,6 +76,8 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
             children,
             style,
             className,
+            scrollbarAsidePadding = 12,
+            scrollbarEdgePadding = 4,
             ...props
         },
         ref
@@ -578,7 +582,8 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                         ? maskRef.current?.clientLeft +
                                           maskRef.current?.clientWidth -
                                           1
-                                        : undefined
+                                        : undefined,
+                                    padding: `${scrollbarAsidePadding}px ${scrollbarEdgePadding}px`
                                 }}
                             >
                                 <div className={'box'} style={{ width: scrollbarWidth }}>
@@ -620,7 +625,8 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                         ? maskRef.current?.clientTop +
                                           maskRef.current?.clientHeight -
                                           1
-                                        : undefined
+                                        : undefined,
+                                    padding: `${scrollbarAsidePadding}px ${scrollbarEdgePadding}px`
                                 }}
                             >
                                 <div className={'box'} style={{ height: scrollbarWidth }}>
