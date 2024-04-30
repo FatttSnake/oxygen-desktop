@@ -166,7 +166,13 @@ const FileSelector = ({
         <>
             <div data-component={'playground-file-selector'} className={'tab'}>
                 <div className={'multiple'}>
-                    <HideScrollbar ref={hideScrollbarRef}>
+                    <HideScrollbar
+                        ref={hideScrollbarRef}
+                        autoHideWaitingTime={800}
+                        scrollbarWidth={1}
+                        scrollbarAsidePadding={0}
+                        scrollbarEdgePadding={0}
+                    >
                         <FlexBox direction={'horizontal'} className={'tab-content'}>
                             {tabs.map((item, index) => (
                                 <Item
