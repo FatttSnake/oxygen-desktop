@@ -38,6 +38,7 @@ export const URL_TOOL_STORE = `${URL_TOOL}/store`
 export const URL_TOOL_TEMPLATE = `${URL_TOOL}/template`
 export const URL_TOOL_CATEGORY = `${URL_TOOL}/category`
 export const URL_TOOL_DETAIL = `${URL_TOOL}/detail`
+export const URL_TOOL_FAVORITE = `${URL_TOOL}/favorite`
 
 export const URL_API_V1 = '/api/v1'
 export const URL_API_V1_AVATAR_RANDOM_BASE64 = `${URL_API_V1}/avatar/base64`

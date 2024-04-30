@@ -3,10 +3,15 @@ import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
 import '@/assets/css/pages/tools/store.scss'
-import { COLOR_BACKGROUND, COLOR_MAIN, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
+import {
+    COLOR_BACKGROUND,
+    COLOR_MAIN,
+    COLOR_PRODUCTION,
+    DATABASE_SELECT_SUCCESS
+} from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { navigateToSource, navigateToStore, navigateToView } from '@/util/navigation'
-import { r_tool_store_get } from '@/services/tool'
+import { r_tool_add_favorite, r_tool_remove_favorite, r_tool_store_get } from '@/services/tool'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -25,6 +30,7 @@ interface CommonCardProps
     ver: string
     platform: Platform
     supportPlatform: Platform[]
+    favorite: boolean
 }
 
 const CommonCard = ({
@@ -48,11 +54,13 @@ const CommonCard = ({
     ver,
     platform,
     supportPlatform,
+    favorite,
     ...props
 }: CommonCardProps) => {
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
     const cardRef = useRef<HTMLDivElement>(null)
+    const [favorite_, setFavorite_] = useState<boolean>(favorite)
 
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
@@ -92,6 +100,37 @@ const CommonCard = ({
     const handleOnSourceBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
         navigateToSource(navigate, authorUsername, toolId, platform)
+    }
+
+    const handleOnStarBtnClick = (e: MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        if (favorite_) {
+            void r_tool_remove_favorite({
+                username: authorUsername,
+                toolId: toolId,
+                platform: platform
+            }).then((res) => {
+                const response = res.data
+                if (response.success) {
+                    setFavorite_(false)
+                } else {
+                    void message.error('取消收藏失败，请稍后重试')
+                }
+            })
+        } else {
+            void r_tool_add_favorite({
+                username: authorUsername,
+                toolId: toolId,
+                platform: platform
+            }).then((res) => {
+                const response = res.data
+                if (response.success) {
+                    setFavorite_(true)
+                } else {
+                    void message.error('收藏失败，请稍后重试')
+                }
+            })
+        }
     }
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -203,6 +242,13 @@ const CommonCard = ({
                         )}
                         <AntdTooltip title={'源码'}>
                             <Icon component={IconOxygenCode} onClick={handleOnSourceBtnClick} />
+                        </AntdTooltip>
+                        <AntdTooltip title={favorite_ ? '取消收藏' : '收藏'}>
+                            <Icon
+                                component={favorite_ ? IconOxygenStarFilled : IconOxygenStar}
+                                style={{ color: favorite_ ? COLOR_PRODUCTION : undefined }}
+                                onClick={handleOnStarBtnClick}
+                            />
                         </AntdTooltip>
                     </div>
                 </FlexBox>
@@ -382,6 +428,7 @@ const Store = () => {
                                         ver={firstTool!.ver}
                                         platform={firstTool!.platform}
                                         supportPlatform={tools.map((value) => value.platform)}
+                                        favorite={firstTool!.favorite}
                                     />
                                 )
                             })}
