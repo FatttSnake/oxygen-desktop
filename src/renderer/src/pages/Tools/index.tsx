@@ -300,11 +300,43 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
     )
 }
 
+interface LoadMoreCardProps {
+    onClick: () => void
+}
+
+const LoadMoreCard = ({ onClick }: LoadMoreCardProps) => {
+    const cardRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        cardRef.current &&
+            VanillaTilt.init(cardRef.current, {
+                reverse: true,
+                max: 8,
+                glare: true,
+                ['max-glare']: 0.3,
+                scale: 1.03
+            })
+    }, [])
+
+    return (
+        <Card style={{ overflow: 'visible' }} ref={cardRef} onClick={onClick}>
+            <FlexBox className={'load-more-card'}>
+                <div className={'icon'}>
+                    <Icon component={IconOxygenMore} />{' '}
+                </div>
+                <div className={'text'}>加载更多</div>
+            </FlexBox>
+        </Card>
+    )
+}
+
 const Tools = () => {
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
     const [loading, setLoading] = useState(false)
-    const [toolData, setToolData] = useState<ToolVo[]>()
+    const [currentPage, setCurrentPage] = useState(0)
+    const [hasNextPage, setHasNextPage] = useState(false)
+    const [toolData, setToolData] = useState<ToolVo[]>([])
     const [upgradeForm] = AntdForm.useForm<ToolUpgradeParam>()
 
     const handleOnDeleteTool = (tool: ToolVo) => {
@@ -324,7 +356,7 @@ const Tools = () => {
                                 const response = res.data
                                 if (response.code === DATABASE_DELETE_SUCCESS) {
                                     void message.success('删除成功')
-                                    getTool()
+                                    getTool(1)
                                 } else {
                                     void message.error('删除失败，请稍后重试')
                                 }
@@ -467,7 +499,7 @@ const Tools = () => {
                                 switch (response.code) {
                                     case TOOL_SUBMIT_SUCCESS:
                                         void message.success('提交审核成功')
-                                        getTool()
+                                        getTool(1)
                                         break
                                     case TOOL_UNDER_REVIEW:
                                         void message.warning('工具审核中，请勿重复提交')
@@ -519,7 +551,7 @@ const Tools = () => {
                             })
                             .finally(() => {
                                 setLoading(false)
-                                getTool()
+                                getTool(1)
                             })
                     }
                 },
@@ -527,20 +559,40 @@ const Tools = () => {
             )
     }
 
-    const getTool = () => {
+    const handleOnLoadMore = () => {
+        if (loading) {
+            return
+        }
+        getTool(currentPage + 1)
+    }
+
+    const getTool = (page: number) => {
         if (loading) {
             return
         }
         setLoading(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
-        void r_tool_get()
+        void r_tool_get({ currentPage: page })
             .then((res) => {
                 const response = res.data
 
                 switch (response.code) {
                     case DATABASE_SELECT_SUCCESS:
-                        setToolData(response.data!)
+                        setCurrentPage(response.data!.current)
+                        if (
+                            response.data!.current === response.data!.pages ||
+                            response.data!.total === 0
+                        ) {
+                            setHasNextPage(false)
+                        } else {
+                            setHasNextPage(true)
+                        }
+                        if (response.data!.current === 1) {
+                            setToolData(response.data!.records)
+                        } else {
+                            setToolData([...toolData, ...response.data!.records])
+                        }
                         break
                     default:
                         void message.error('获取工具失败，请稍后重试')
@@ -556,7 +608,7 @@ const Tools = () => {
         if (!getLoginStatus()) {
             return
         }
-        getTool()
+        getTool(1)
     }, [])
 
     return (
@@ -586,6 +638,7 @@ const Tools = () => {
                                     onCancel={handleOnCancelTool}
                                 />
                             ))}
+                        {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
                     </FlexBox>
                 </HideScrollbar>
             </FitFullscreen>
