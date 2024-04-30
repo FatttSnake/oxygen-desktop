@@ -190,8 +190,9 @@ const Group = () => {
     const handleOnListDeleteBtnClick = () => {
         modal
             .confirm({
-                title: '确定删除',
+                centered: true,
                 maskClosable: true,
+                title: '确定删除',
                 content: `确定删除选中的 ${tableSelectedItem.length} 个用户组吗？`
             })
             .then(
@@ -243,8 +244,9 @@ const Group = () => {
         return () => {
             modal
                 .confirm({
-                    title: '确定删除',
+                    centered: true,
                     maskClosable: true,
+                    title: '确定删除',
                     content: `确定删除角色 ${value.name} 吗？`
                 })
                 .then(
@@ -543,6 +545,7 @@ const Group = () => {
                     onChange={handleOnSearchNameChange}
                     onKeyDown={handleOnSearchNameKeyDown}
                     status={isRegexLegal ? undefined : 'error'}
+                    placeholder={'请输入搜索内容'}
                 />
             </Card>
             <Card style={{ overflow: 'inherit', flex: '0 0 auto' }}>
@@ -597,7 +600,7 @@ const Group = () => {
 
     const addAndEditForm = (
         <AntdForm form={form} disabled={isSubmitting} layout={'vertical'}>
-            <AntdForm.Item hidden={!isDrawerEdit} name={'id'} label={'ID'}>
+            <AntdForm.Item hidden name={'id'} label={'ID'}>
                 <AntdInput disabled />
             </AntdForm.Item>
             <AntdForm.Item
@@ -605,7 +608,7 @@ const Group = () => {
                 label={'名称'}
                 rules={[{ required: true, whitespace: true }]}
             >
-                <AntdInput allowClear />
+                <AntdInput allowClear placeholder={'请输入名称'} />
             </AntdForm.Item>
             <AntdForm.Item name={'roleIds'} label={'角色'}>
                 <AntdSelect
@@ -617,6 +620,7 @@ const Group = () => {
                         value: value.id,
                         label: `${value.name}${!value.enable ? '(已禁用)' : ''}`
                     }))}
+                    placeholder={'请选择角色'}
                 />
             </AntdForm.Item>
             <AntdForm.Item

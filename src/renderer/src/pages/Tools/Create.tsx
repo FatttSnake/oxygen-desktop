@@ -241,7 +241,7 @@ const Create = () => {
                                     <AntdForm.Item
                                         label={'名称'}
                                         name={'name'}
-                                        rules={[{ required: true }]}
+                                        rules={[{ required: true, whitespace: true }]}
                                     >
                                         <AntdInput
                                             maxLength={20}
@@ -253,7 +253,7 @@ const Create = () => {
                                         label={'工具 ID'}
                                         name={'toolId'}
                                         rules={[
-                                            { required: true },
+                                            { required: true, whitespace: true },
                                             {
                                                 pattern: /^[a-zA-Z-_][0-9a-zA-Z-_]{2,19}$/,
                                                 message:
@@ -270,11 +270,11 @@ const Create = () => {
                                     <AntdForm.Item
                                         label={'平台'}
                                         name={'platform'}
-                                        rules={[{ required: true }]}
+                                        rules={[{ required: true, whitespace: true }]}
                                     >
                                         <AntdSelect
-                                            placeholder={'请选择平台'}
                                             onChange={handleOnPlatformChange}
+                                            placeholder={'请选择平台'}
                                         >
                                             <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
                                             <AntdSelect.Option key={'DESKTOP'}>
@@ -297,7 +297,7 @@ const Create = () => {
                                         label={'版本'}
                                         name={'ver'}
                                         rules={[
-                                            { required: true },
+                                            { required: true, whitespace: true },
                                             {
                                                 pattern: /^\d+\.\d+\.\d+$/,
                                                 message: `格式必须为 '<数字>.<数字>.<数字>', eg. 1.0.3`
@@ -313,10 +313,9 @@ const Create = () => {
                                     <AntdForm.Item
                                         label={'模板'}
                                         name={'templateId'}
-                                        rules={[{ required: true }]}
+                                        rules={[{ required: true, whitespace: true }]}
                                     >
                                         <AntdSelect
-                                            placeholder={'请选择模板'}
                                             options={templateData?.map((value) => ({
                                                 value: value.id,
                                                 label: value.name
@@ -324,28 +323,28 @@ const Create = () => {
                                             loading={loadingTemplate}
                                             disabled={loadingTemplate}
                                             onChange={handleOnTemplateChange}
+                                            placeholder={'请选择模板'}
                                         />
                                     </AntdForm.Item>
                                     <AntdForm.Item
                                         label={'关键字'}
                                         tooltip={'工具搜索（每个不超过10个字符）'}
                                         name={'keywords'}
-                                        rules={[{ required: true, message: '请输入关键字' }]}
+                                        rules={[{ required: true, whitespace: true }]}
                                     >
                                         <AntdSelect
-                                            placeholder={'请输入关键字'}
                                             mode={'tags'}
                                             maxCount={20}
+                                            placeholder={'请输入关键字'}
                                         />
                                     </AntdForm.Item>
                                     <AntdForm.Item
                                         label={'类别'}
                                         tooltip={'工具分类'}
                                         name={'categories'}
-                                        rules={[{ required: true }]}
+                                        rules={[{ required: true, whitespace: true }]}
                                     >
                                         <AntdSelect
-                                            placeholder={'请选择类别'}
                                             mode={'multiple'}
                                             options={categoryData?.map((value) => ({
                                                 value: value.id,
@@ -353,6 +352,7 @@ const Create = () => {
                                             }))}
                                             loading={loadingCategory}
                                             disabled={loadingCategory}
+                                            placeholder={'请选择类别'}
                                         />
                                     </AntdForm.Item>
                                     <AntdForm.Item>

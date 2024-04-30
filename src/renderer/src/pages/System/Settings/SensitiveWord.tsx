@@ -153,7 +153,8 @@ const SensitiveWord = () => {
                             <Icon component={IconOxygenPlus} />
                         </AntdButton>
                     }
-                ></AntdInput>
+                    placeholder={'请输入敏感词'}
+                />
             </SettingsCard>
         </>
     )

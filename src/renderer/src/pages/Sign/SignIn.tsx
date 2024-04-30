@@ -124,6 +124,7 @@ const SignIn = () => {
                                         form={twoFactorForm}
                                         ref={(ref) => {
                                             setTimeout(() => {
+                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                                 ref?.getFieldInstance('twoFactorCode').focus()
                                             }, 50)
                                         }}
@@ -132,7 +133,7 @@ const SignIn = () => {
                                             name={'twoFactorCode'}
                                             label={'验证码'}
                                             style={{ marginTop: 10 }}
-                                            rules={[{ required: true, len: 6 }]}
+                                            rules={[{ required: true, whitespace: true, len: 6 }]}
                                         >
                                             <AntdInput
                                                 showCount
@@ -217,22 +218,28 @@ const SignIn = () => {
                     <AntdForm autoComplete={'on'} onFinish={handleOnFinish} className={'form'}>
                         <AntdForm.Item
                             name={'account'}
-                            rules={[{ required: true, message: '请输入账号' }]}
+                            rules={[
+                                { required: true, message: '请输入账号' },
+                                { whitespace: true, message: '账号不能为空字符' }
+                            ]}
                         >
                             <AntdInput
                                 prefix={<Icon component={IconOxygenUser} />}
-                                placeholder={'邮箱/用户名'}
                                 disabled={isSigningIn}
+                                placeholder={'邮箱/用户名'}
                             />
                         </AntdForm.Item>
                         <AntdForm.Item
                             name={'password'}
-                            rules={[{ required: true, message: '请输入密码' }]}
+                            rules={[
+                                { required: true, message: '请输入密码' },
+                                { whitespace: true, message: '密码不能为空字符' }
+                            ]}
                         >
                             <AntdInput.Password
                                 prefix={<Icon component={IconOxygenPassword} />}
-                                placeholder={'密码'}
                                 disabled={isSigningIn}
+                                placeholder={'密码'}
                             />
                         </AntdForm.Item>
                         <AntdForm.Item>

@@ -56,7 +56,7 @@ const Tools = () => {
                 <AntdAvatar
                     src={
                         <AntdImage
-                            preview={{ mask: <Icon component={IconOxygenEye}></Icon> }}
+                            preview={{ mask: <Icon component={IconOxygenEye} /> }}
                             src={`data:image/svg+xml;base64,${value}`}
                             alt={'Avatar'}
                         />
@@ -206,9 +206,9 @@ const Tools = () => {
         return () => {
             form.setFieldValue('pass', undefined)
             void modal.confirm({
-                title: '审核',
                 centered: true,
                 maskClosable: true,
+                title: '审核',
                 footer: (_, { OkBtn, CancelBtn }) => (
                     <>
                         <OkBtn />
@@ -354,8 +354,9 @@ const Tools = () => {
         return () => {
             modal
                 .confirm({
-                    title: '确定下架',
+                    centered: true,
                     maskClosable: true,
+                    title: '确定下架',
                     content: `确定下架工具 ${value.author.username}:${value.toolId}:${value.ver} 吗？`
                 })
                 .then(
@@ -389,8 +390,9 @@ const Tools = () => {
         return () => {
             modal
                 .confirm({
-                    title: '确定删除',
+                    centered: true,
                     maskClosable: true,
+                    title: '确定删除',
                     content: `确定删除工具 ${value.author.username}:${value.toolId}:${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}:${value.ver} 吗？`
                 })
                 .then(
@@ -554,6 +556,7 @@ const Tools = () => {
                     onChange={handleOnSearchValueChange}
                     onKeyDown={handleOnSearchValueKeyDown}
                     status={isRegexLegal ? undefined : 'error'}
+                    placeholder={'请输入搜索内容'}
                 />
             </Card>
             <Card style={{ overflow: 'inherit', flex: '0 0 auto' }}>

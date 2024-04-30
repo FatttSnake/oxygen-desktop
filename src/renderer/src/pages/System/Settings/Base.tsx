@@ -59,16 +59,20 @@ const Base = () => {
                     disabled={!hasPermission('system:settings:modify:base')}
                 >
                     <AntdForm.Item label={'应用名称'} name={'appName'}>
-                        <AntdInput />
+                        <AntdInput placeholder={'请输入应用名称'} />
                     </AntdForm.Item>
                     <AntdForm.Item label={'应用 URL'} name={'appUrl'}>
-                        <AntdInput />
+                        <AntdInput placeholder={'请输入应用 URL'} />
                     </AntdForm.Item>
                     <AntdForm.Item label={'验证邮箱 URL'} name={'verifyUrl'}>
-                        <AntdInput placeholder={'验证码使用 ${verifyCode} 代替'} />
+                        <AntdInput
+                            placeholder={'请输入验证邮箱 URL，验证码使用 ${verifyCode} 代替'}
+                        />
                     </AntdForm.Item>
                     <AntdForm.Item label={'找回密码 URL'} name={'retrieveUrl'}>
-                        <AntdInput placeholder={'验证码使用 ${retrieveCode} 代替'} />
+                        <AntdInput
+                            placeholder={'请输入找回密码 URL，验证码使用 ${retrieveCode} 代替'}
+                        />
                     </AntdForm.Item>
                 </AntdForm>
             </SettingsCard>

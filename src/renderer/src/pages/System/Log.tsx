@@ -250,6 +250,7 @@ const Log = () => {
                     value={searchRequestUrl}
                     onChange={handleOnSearchUrlChange}
                     onKeyDown={handleOnSearchUrlKeyDown}
+                    placeholder={'请输入搜索内容'}
                 />
             </Card>
             <Card style={{ overflow: 'inherit', flex: '0 0 auto' }}>

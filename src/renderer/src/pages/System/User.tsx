@@ -88,7 +88,7 @@ const User = () => {
                 <AntdAvatar
                     src={
                         <AntdImage
-                            preview={{ mask: <Icon component={IconOxygenEye}></Icon> }}
+                            preview={{ mask: <Icon component={IconOxygenEye} /> }}
                             src={`data:image/png;base64,${value}`}
                             alt={'Avatar'}
                         />
@@ -285,8 +285,9 @@ const User = () => {
     const handleOnListDeleteBtnClick = () => {
         modal
             .confirm({
-                title: '确定删除',
+                centered: true,
                 maskClosable: true,
+                title: '确定删除',
                 content: `确定删除选中的 ${tableSelectedItem.length} 个用户吗？`
             })
             .then(
@@ -326,6 +327,8 @@ const User = () => {
                 value.credentialsExpiration && isPastTime(value.credentialsExpiration)
             )
             void modal.confirm({
+                centered: true,
+                maskClosable: true,
                 icon: <></>,
                 title: (
                     <>
@@ -336,8 +339,6 @@ const User = () => {
                         修改用户 {value.username} 的密码
                     </>
                 ),
-                centered: true,
-                maskClosable: true,
                 footer: (_, { OkBtn, CancelBtn }) => (
                     <>
                         <OkBtn />
@@ -352,23 +353,17 @@ const User = () => {
                         wrapperCol={{ span: 18 }}
                         ref={(ref) => {
                             setTimeout(() => {
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 ref?.getFieldInstance('password').focus()
                             }, 50)
                         }}
                     >
-                        <AntdForm.Item name={'id'} label={'ID'} labelAlign={'right'}>
-                            <AntdInput disabled />
-                        </AntdForm.Item>
                         <AntdForm.Item
                             name={'password'}
                             label={'密码'}
-                            rules={[
-                                {
-                                    required: true
-                                }
-                            ]}
+                            rules={[{ required: true, whitespace: true }]}
                         >
-                            <AntdInput.Password />
+                            <AntdInput.Password placeholder={'请输入密码'} />
                         </AntdForm.Item>
                         <AntdForm.Item
                             name={'passwordConfirm'}
@@ -387,7 +382,7 @@ const User = () => {
                                 })
                             ]}
                         >
-                            <AntdInput.Password />
+                            <AntdInput.Password placeholder={'请确认密码'} />
                         </AntdForm.Item>
                         {value.id !== '0' && (
                             <AntdForm.Item
@@ -479,8 +474,9 @@ const User = () => {
         return () => {
             modal
                 .confirm({
-                    title: '确定删除',
+                    centered: true,
                     maskClosable: true,
+                    title: '确定删除',
                     content: `确定删除用户 ${value.username} 吗？`
                 })
                 .then(
@@ -800,7 +796,7 @@ const User = () => {
             <AntdForm.Item hidden name={'avatar'}>
                 <AntdInput />
             </AntdForm.Item>
-            <AntdForm.Item hidden={!isDrawerEdit} name={'id'} label={'ID'}>
+            <AntdForm.Item hidden name={'id'} label={'ID'}>
                 <AntdInput disabled />
             </AntdForm.Item>
             <AntdForm.Item
@@ -808,7 +804,7 @@ const User = () => {
                 label={'用户名'}
                 rules={[{ required: true, whitespace: true }]}
             >
-                <AntdInput allowClear />
+                <AntdInput allowClear placeholder={'请输入用户名'} />
             </AntdForm.Item>
             {!isDrawerEdit && (
                 <>
@@ -817,7 +813,7 @@ const User = () => {
                         label={'密码'}
                         rules={[{ required: true, whitespace: true }]}
                     >
-                        <AntdInput.Password allowClear />
+                        <AntdInput.Password allowClear placeholder={'请输入密码'} />
                     </AntdForm.Item>
                 </>
             )}
@@ -826,14 +822,14 @@ const User = () => {
                 label={'昵称'}
                 rules={[{ required: true, whitespace: true }]}
             >
-                <AntdInput allowClear />
+                <AntdInput allowClear placeholder={'请输入昵称'} />
             </AntdForm.Item>
             <AntdForm.Item
                 name={'email'}
                 label={'邮箱'}
-                rules={[{ required: true, whitespace: true, type: 'email' }]}
+                rules={[{ required: true, type: 'email' }]}
             >
-                <AntdInput type={'email'} allowClear />
+                <AntdInput type={'email'} allowClear placeholder={'请输入邮箱'} />
             </AntdForm.Item>
             {formValues?.id !== '0' && (
                 <>
@@ -847,6 +843,7 @@ const User = () => {
                                 value: value.id,
                                 label: `${value.name}${!value.enable ? '(已禁用)' : ''}`
                             }))}
+                            placeholder={'请选择角色'}
                         />
                     </AntdForm.Item>
                     <AntdForm.Item name={'groupIds'} label={'用户组'}>
@@ -859,6 +856,7 @@ const User = () => {
                                 value: value.id,
                                 label: `${value.name}${!value.enable ? '(已禁用)' : ''}`
                             }))}
+                            placeholder={'请选择用户组'}
                         />
                     </AntdForm.Item>
                     <AntdForm.Item name={'verified'} label={'验证'}>
@@ -957,6 +955,7 @@ const User = () => {
                     onChange={handleOnSearchValueChange}
                     onKeyDown={handleOnSearchValueKeyDown}
                     status={isRegexLegal ? undefined : 'error'}
+                    placeholder={'请输入搜索内容'}
                 />
             </Card>
             <Card style={{ overflow: 'inherit', flex: '0 0 auto' }}>

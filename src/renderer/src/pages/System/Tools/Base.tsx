@@ -279,9 +279,9 @@ const Base = () => {
 
                     compileForm.setFieldValue('entryFileName', undefined)
                     void modal.confirm({
-                        title: '编译',
                         centered: true,
                         maskClosable: true,
+                        title: '编译',
                         footer: (_, { OkBtn, CancelBtn }) => (
                             <>
                                 <OkBtn />
@@ -295,7 +295,7 @@ const Base = () => {
                                         name={'entryFileName'}
                                         label={'入口文件'}
                                         style={{ marginTop: 10 }}
-                                        rules={[{ required: true, message: '请选择入口文件' }]}
+                                        rules={[{ required: true }]}
                                     >
                                         <AntdSelect
                                             options={Object.keys(files)
@@ -307,6 +307,7 @@ const Base = () => {
                                                         ].includes(value)
                                                 )
                                                 .map((value) => ({ value, label: value }))}
+                                            placeholder={'请选择入口文件'}
                                         />
                                     </AntdForm.Item>
                                 </AntdForm>
@@ -428,8 +429,9 @@ const Base = () => {
         return () => {
             modal
                 .confirm({
-                    title: '确定删除',
+                    centered: true,
                     maskClosable: true,
+                    title: '确定删除',
                     content: `确定删除基板 ${value.name} 吗？`
                 })
                 .then(
@@ -609,9 +611,9 @@ const Base = () => {
 
         const handleOnAddFile = () => {
             void modal.confirm({
-                title: '新建文件',
                 centered: true,
                 maskClosable: true,
+                title: '新建文件',
                 footer: (_, { OkBtn, CancelBtn }) => (
                     <>
                         <OkBtn />
@@ -623,6 +625,7 @@ const Base = () => {
                         form={addFileForm}
                         ref={(ref) => {
                             setTimeout(() => {
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 ref?.getFieldInstance('fileName').focus()
                             }, 50)
                         }}
@@ -652,7 +655,7 @@ const Base = () => {
                                 })
                             ]}
                         >
-                            <AntdInput />
+                            <AntdInput placeholder={'请输入文件名'} />
                         </AntdForm.Item>
                     </AntdForm>
                 ),
@@ -800,9 +803,9 @@ const Base = () => {
             return () => {
                 renameFileForm.setFieldValue('fileName', fileName)
                 void modal.confirm({
-                    title: '重命名文件',
                     centered: true,
                     maskClosable: true,
+                    title: '重命名文件',
                     footer: (_, { OkBtn, CancelBtn }) => (
                         <>
                             <OkBtn />
@@ -814,6 +817,7 @@ const Base = () => {
                             form={renameFileForm}
                             ref={(ref) => {
                                 setTimeout(() => {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                     ref?.getFieldInstance('fileName').focus()
                                 }, 50)
                             }}
@@ -846,7 +850,7 @@ const Base = () => {
                                     })
                                 ]}
                             >
-                                <AntdInput />
+                                <AntdInput placeholder={'请输入空文件名'} />
                             </AntdForm.Item>
                         </AntdForm>
                     ),
@@ -915,8 +919,9 @@ const Base = () => {
             return () => {
                 modal
                     .confirm({
-                        title: '确定删除',
+                        centered: true,
                         maskClosable: true,
+                        title: '确定删除',
                         content: `确定删除文件 ${fileName} 吗？`
                     })
                     .then(
@@ -1040,7 +1045,7 @@ const Base = () => {
 
     const addAndEditForm = (
         <AntdForm form={form} disabled={isSubmitting} layout={'vertical'}>
-            <AntdForm.Item hidden={!isDrawerEdit} name={'id'} label={'ID'}>
+            <AntdForm.Item hidden name={'id'} label={'ID'}>
                 <AntdInput disabled />
             </AntdForm.Item>
             <AntdForm.Item
@@ -1048,7 +1053,7 @@ const Base = () => {
                 label={'名称'}
                 rules={[{ required: true, whitespace: true }]}
             >
-                <AntdInput allowClear />
+                <AntdInput allowClear placeholder={'请输入名称'} />
             </AntdForm.Item>
             <AntdForm.Item
                 name={'platform'}
@@ -1056,7 +1061,7 @@ const Base = () => {
                 rules={[{ required: true }]}
                 hidden={isDrawerEdit}
             >
-                <AntdSelect>
+                <AntdSelect placeholder={'请选择平台'}>
                     <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
                     <AntdSelect.Option key={'DESKTOP'}>Desktop</AntdSelect.Option>
                     <AntdSelect.Option key={'ANDROID'}>Android</AntdSelect.Option>

@@ -115,6 +115,7 @@ const User = () => {
                     wrapperCol={{ span: 18 }}
                     ref={(ref) => {
                         setTimeout(() => {
+                            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                             ref?.getFieldInstance('originalPassword').focus()
                         }, 50)
                     }}
@@ -123,7 +124,7 @@ const User = () => {
                         name={'originalPassword'}
                         label={'原密码'}
                         labelAlign={'right'}
-                        rules={[{ required: true, message: '请输入原密码' }]}
+                        rules={[{ required: true, whitespace: true }]}
                     >
                         <AntdInput.Password placeholder={'请输入原密码'} />
                     </AntdForm.Item>
@@ -132,7 +133,7 @@ const User = () => {
                         label={'新密码'}
                         labelAlign={'right'}
                         rules={[
-                            { required: true, message: '请输入新密码' },
+                            { required: true, whitespace: true },
                             { min: 10, message: '密码至少为10位' },
                             { max: 30, message: '密码最多为30位' }
                         ]}
@@ -144,7 +145,7 @@ const User = () => {
                         label={'确认密码'}
                         labelAlign={'right'}
                         rules={[
-                            { required: true, message: '请确认密码' },
+                            { required: true },
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
                                     if (!value || getFieldValue('newPassword') === value) {
@@ -247,6 +248,7 @@ const User = () => {
                                         form={twoFactorForm}
                                         ref={(ref) => {
                                             setTimeout(() => {
+                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                                 ref?.getFieldInstance('twoFactorCode').focus()
                                             }, 50)
                                         }}
@@ -255,12 +257,13 @@ const User = () => {
                                             name={'twoFactorCode'}
                                             label={'验证码'}
                                             style={{ marginTop: 10 }}
-                                            rules={[{ required: true, len: 6 }]}
+                                            rules={[{ required: true, whitespace: true, len: 6 }]}
                                         >
                                             <AntdInput
                                                 showCount
                                                 maxLength={6}
                                                 autoComplete={'off'}
+                                                placeholder={'请输入验证码'}
                                             />
                                         </AntdForm.Item>
                                     </AntdForm>
@@ -334,6 +337,7 @@ const User = () => {
                                             form={twoFactorForm}
                                             ref={(ref) => {
                                                 setTimeout(() => {
+                                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                                     ref?.getFieldInstance('twoFactorCode').focus()
                                                 }, 50)
                                             }}
@@ -342,12 +346,15 @@ const User = () => {
                                                 name={'twoFactorCode'}
                                                 label={'验证码'}
                                                 style={{ marginTop: 10, marginRight: 30 }}
-                                                rules={[{ required: true, len: 6 }]}
+                                                rules={[
+                                                    { required: true, whitespace: true, len: 6 }
+                                                ]}
                                             >
                                                 <AntdInput
                                                     showCount
                                                     maxLength={6}
                                                     autoComplete={'off'}
+                                                    placeholder={'请输入验证码'}
                                                 />
                                             </AntdForm.Item>
                                         </AntdForm>
@@ -410,6 +417,7 @@ const User = () => {
                 setAvatar(userWithPowerInfoVo.userInfo.avatar)
                 form.setFieldValue('nickname', userWithPowerInfoVo.userInfo.nickname)
                 setUserWithPowerInfoVo(userWithPowerInfoVo)
+                void form.validateFields()
             })
             .finally(() => {
                 setIsLoading(false)
@@ -509,7 +517,7 @@ const User = () => {
                                         <AntdForm.Item
                                             name={'nickname'}
                                             rules={[
-                                                { required: true, message: '请输入昵称' },
+                                                { required: true, whitespace: true },
                                                 { min: 3, message: '昵称至少为3个字符' }
                                             ]}
                                             style={{ marginBottom: 0 }}
@@ -518,6 +526,7 @@ const User = () => {
                                                 maxLength={20}
                                                 showCount
                                                 disabled={isLoading}
+                                                placeholder={'请输入昵称'}
                                             />
                                         </AntdForm.Item>
                                     </AntdForm>

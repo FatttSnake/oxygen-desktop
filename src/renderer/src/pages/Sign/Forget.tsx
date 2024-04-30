@@ -155,8 +155,8 @@ const Forget = () => {
                                         >
                                             <AntdInput
                                                 prefix={<Icon component={IconOxygenEmail} />}
-                                                placeholder={'邮箱'}
                                                 disabled={isSending}
+                                                placeholder={'邮箱'}
                                             />
                                         </AntdForm.Item>
                                         <AntdForm.Item>
@@ -199,6 +199,7 @@ const Forget = () => {
                                         name={'password'}
                                         rules={[
                                             { required: true, message: '请输入密码' },
+                                            { whitespace: true, message: '密码不能为空字符' },
                                             { min: 10, message: '密码至少为10位' },
                                             { max: 30, message: '密码最多为30位' }
                                         ]}
@@ -208,8 +209,8 @@ const Forget = () => {
                                             addonBefore={
                                                 <span>新&nbsp;&nbsp;密&nbsp;&nbsp;码</span>
                                             }
-                                            placeholder={'密码'}
                                             disabled={isChanging}
+                                            placeholder={'密码'}
                                         />
                                     </AntdForm.Item>
                                     <AntdForm.Item
@@ -234,8 +235,8 @@ const Forget = () => {
                                         <AntdInput.Password
                                             id={'forget-password-confirm'}
                                             addonBefore={'确认密码'}
-                                            placeholder={'确认密码'}
                                             disabled={isChanging}
+                                            placeholder={'确认密码'}
                                         />
                                     </AntdForm.Item>
                                     <AntdForm.Item>

@@ -331,11 +331,11 @@ const Store = () => {
                 >
                     <div className={`search${hideSearch ? ' hide' : ''}`}>
                         <AntdInput.Search
-                            placeholder={'请输入工具名或关键字'}
                             enterButton
                             allowClear
                             loading={isLoading}
                             onSearch={handleOnSearch}
+                            placeholder={'请输入工具名或关键字'}
                         />
                     </div>
                     <FlexBox direction={'horizontal'} className={'root-content'}>

@@ -276,8 +276,9 @@ const Template = () => {
         return () => {
             modal
                 .confirm({
-                    title: '确定删除',
+                    centered: true,
                     maskClosable: true,
+                    title: '确定删除',
                     content: `确定删除模板 ${value.name} 吗？`
                 })
                 .then(
@@ -464,9 +465,9 @@ const Template = () => {
 
         const handleOnAddFile = () => {
             void modal.confirm({
-                title: '新建文件',
                 centered: true,
                 maskClosable: true,
+                title: '新建文件',
                 footer: (_, { OkBtn, CancelBtn }) => (
                     <>
                         <OkBtn />
@@ -478,6 +479,7 @@ const Template = () => {
                         form={addFileForm}
                         ref={(ref) => {
                             setTimeout(() => {
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 ref?.getFieldInstance('fileName').focus()
                             }, 50)
                         }}
@@ -507,7 +509,7 @@ const Template = () => {
                                 })
                             ]}
                         >
-                            <AntdInput />
+                            <AntdInput placeholder={'请输入文件名'} />
                         </AntdForm.Item>
                     </AntdForm>
                 ),
@@ -658,9 +660,9 @@ const Template = () => {
             return () => {
                 renameFileForm.setFieldValue('fileName', fileName)
                 void modal.confirm({
-                    title: '重命名文件',
                     centered: true,
                     maskClosable: true,
+                    title: '重命名文件',
                     footer: (_, { OkBtn, CancelBtn }) => (
                         <>
                             <OkBtn />
@@ -672,6 +674,7 @@ const Template = () => {
                             form={renameFileForm}
                             ref={(ref) => {
                                 setTimeout(() => {
+                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                     ref?.getFieldInstance('fileName').focus()
                                 }, 50)
                             }}
@@ -704,7 +707,7 @@ const Template = () => {
                                     })
                                 ]}
                             >
-                                <AntdInput />
+                                <AntdInput placeholder={'请输入新文件名'} />
                             </AntdForm.Item>
                         </AntdForm>
                     ),
@@ -773,8 +776,9 @@ const Template = () => {
             return () => {
                 modal
                     .confirm({
-                        title: '确定删除',
+                        centered: true,
                         maskClosable: true,
+                        title: '确定删除',
                         content: `确定删除文件 ${fileName} 吗？`
                     })
                     .then(
@@ -979,7 +983,7 @@ const Template = () => {
 
     const addAndEditForm = (
         <AntdForm form={form} disabled={isSubmitting} layout={'vertical'}>
-            <AntdForm.Item hidden={!isDrawerEdit} name={'id'} label={'ID'}>
+            <AntdForm.Item hidden name={'id'} label={'ID'}>
                 <AntdInput disabled />
             </AntdForm.Item>
             <AntdForm.Item
@@ -987,7 +991,7 @@ const Template = () => {
                 label={'名称'}
                 rules={[{ required: true, whitespace: true }]}
             >
-                <AntdInput allowClear />
+                <AntdInput allowClear placeholder={'请输入名称'} />
             </AntdForm.Item>
             <AntdForm.Item
                 hidden={isDrawerEdit}
@@ -995,10 +999,19 @@ const Template = () => {
                 label={'基板'}
                 rules={[{ required: true }]}
             >
-                <AntdCascader showSearch allowClear={false} options={baseDataGroupByPlatform()} />
+                <AntdCascader
+                    showSearch
+                    allowClear={false}
+                    options={baseDataGroupByPlatform()}
+                    placeholder={'请选择基板'}
+                />
             </AntdForm.Item>
-            <AntdForm.Item name={'entryPoint'} label={'入口'} rules={[{ required: true }]}>
-                <AntdInput allowClear />
+            <AntdForm.Item
+                name={'entryPoint'}
+                label={'入口文件'}
+                rules={[{ required: true, whitespace: true }]}
+            >
+                <AntdInput allowClear placeholder={'请输入入口文件'} />
             </AntdForm.Item>
             <AntdForm.Item name={'enable'} label={'状态'}>
                 <AntdSwitch checkedChildren={'启用'} unCheckedChildren={'禁用'} />

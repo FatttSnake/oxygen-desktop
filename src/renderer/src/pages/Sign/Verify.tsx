@@ -195,6 +195,7 @@ const Verify = () => {
                                     name={'nickname'}
                                     rules={[
                                         { required: true, message: '请输入昵称' },
+                                        { whitespace: true, message: '昵称不能为空字符' },
                                         { min: 3, message: '昵称至少为3个字符' }
                                     ]}
                                 >

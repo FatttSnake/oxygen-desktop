@@ -348,6 +348,7 @@ const Tools = () => {
                         form={upgradeForm}
                         ref={(ref) => {
                             setTimeout(() => {
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 ref?.getFieldInstance('toolId').focus()
                             }, 50)
                         }}
@@ -376,7 +377,7 @@ const Tools = () => {
                             name={'ver'}
                             label={'版本'}
                             rules={[
-                                { required: true },
+                                { required: true, whitespace: true },
                                 {
                                     pattern: /^\d+\.\d+\.\d+$/,
                                     message: `格式必须为 '<数字>.<数字>.<数字>', eg. 1.0.3`

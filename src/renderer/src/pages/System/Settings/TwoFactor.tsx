@@ -59,10 +59,15 @@ const TwoFactor = () => {
                     disabled={!hasPermission('system:settings:modify:two-factor')}
                 >
                     <AntdForm.Item label={'提供者'} name={'issuer'}>
-                        <AntdInput />
+                        <AntdInput placeholder={'请输入提供者'} />
                     </AntdForm.Item>
                     <AntdForm.Item label={'密钥长度'} name={'secretKeyLength'}>
-                        <AntdInputNumber min={3} max={64} style={{ width: '100%' }} />
+                        <AntdInputNumber
+                            min={3}
+                            max={64}
+                            style={{ width: '100%' }}
+                            placeholder={'请输入密钥长度'}
+                        />
                     </AntdForm.Item>
                 </AntdForm>
             </SettingsCard>

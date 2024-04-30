@@ -12,6 +12,7 @@ import Card from '@/components/common/Card'
 
 const Code = () => {
     const navigate = useNavigate()
+    const [modal, contextHolder] = AntdModal.useModal()
     const { id } = useParams()
     const [loading, setLoading] = useState(false)
     const [files, setFiles] = useState<IFiles>({})
@@ -20,7 +21,15 @@ const Code = () => {
 
     const handleOnRunTool = () => {
         if (checkDesktop() || platform !== 'DESKTOP') {
-            navigate(`/system/tools/execute/${id}`)
+            void modal.confirm({
+                centered: true,
+                maskClosable: true,
+                title: '注意',
+                content: '运行前请仔细查阅工具代码！',
+                onOk: () => {
+                    navigate(`/system/tools/execute/${id}`)
+                }
+            })
         } else {
             void message.warning('此应用需要桌面端环境，请在桌面端运行')
         }
@@ -71,26 +80,29 @@ const Code = () => {
     }, [])
 
     return (
-        <FitFullscreen data-component={'system-tools-code'}>
-            <Card>
-                <Playground.CodeEditor
-                    readonly
-                    files={files}
-                    selectedFileName={selectedFileName}
-                    onSelectedFileChange={setSelectedFileName}
-                />
-            </Card>
-
-            <Draggable bounds={'#root'}>
-                <div className={'draggable-content'}>
-                    <AntdFloatButton
-                        type={'primary'}
-                        icon={<Icon component={IconOxygenExecute} />}
-                        onClick={handleOnRunTool}
+        <>
+            <FitFullscreen data-component={'system-tools-code'}>
+                <Card>
+                    <Playground.CodeEditor
+                        readonly
+                        files={files}
+                        selectedFileName={selectedFileName}
+                        onSelectedFileChange={setSelectedFileName}
                     />
-                </div>
-            </Draggable>
-        </FitFullscreen>
+                </Card>
+
+                <Draggable bounds={'#root'}>
+                    <div className={'draggable-content'}>
+                        <AntdFloatButton
+                            type={'primary'}
+                            icon={<Icon component={IconOxygenExecute} />}
+                            onClick={handleOnRunTool}
+                        />
+                    </div>
+                </Draggable>
+            </FitFullscreen>
+            {contextHolder}
+        </>
     )
 }
 

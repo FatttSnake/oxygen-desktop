@@ -139,6 +139,7 @@ const SignUp = () => {
                                     name={'username'}
                                     rules={[
                                         { required: true, message: '请输入用户名' },
+                                        { whitespace: true, message: '用户名不能为空字符' },
                                         {
                                             pattern: /^[a-zA-Z-_][0-9a-zA-Z-_]{2,38}$/,
                                             message:
@@ -148,10 +149,10 @@ const SignUp = () => {
                                 >
                                     <AntdInput
                                         prefix={<Icon component={IconOxygenUser} />}
-                                        placeholder={'用户名'}
                                         maxLength={39}
                                         showCount={true}
                                         disabled={isSigningUp}
+                                        placeholder={'用户名'}
                                     />
                                 </AntdForm.Item>
                                 <AntdForm.Item
@@ -164,14 +165,15 @@ const SignUp = () => {
                                     <AntdInput
                                         type={'email'}
                                         prefix={<Icon component={IconOxygenEmail} />}
-                                        placeholder={'邮箱'}
                                         disabled={isSigningUp}
+                                        placeholder={'邮箱'}
                                     />
                                 </AntdForm.Item>
                                 <AntdForm.Item
                                     name={'password'}
                                     rules={[
                                         { required: true, message: '请输入密码' },
+                                        { whitespace: true, message: '密码不能为空字符' },
                                         { min: 10, message: '密码至少为10位' },
                                         { max: 30, message: '密码最多为30位' }
                                     ]}
@@ -179,8 +181,8 @@ const SignUp = () => {
                                     <AntdInput.Password
                                         id={'sign-up-password'}
                                         prefix={<Icon component={IconOxygenPassword} />}
-                                        placeholder={'密码'}
                                         disabled={isSigningUp}
+                                        placeholder={'密码'}
                                     />
                                 </AntdForm.Item>
                                 <AntdForm.Item
@@ -202,8 +204,8 @@ const SignUp = () => {
                                     <AntdInput.Password
                                         id={'sign-up-password-confirm'}
                                         prefix={<Icon component={IconOxygenPassword} />}
-                                        placeholder={'确认密码'}
                                         disabled={isSigningUp}
+                                        placeholder={'确认密码'}
                                     />
                                 </AntdForm.Item>
                                 <AntdForm.Item>

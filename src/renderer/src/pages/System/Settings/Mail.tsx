@@ -31,6 +31,7 @@ const Mail = () => {
                         form={mailSendForm}
                         ref={(ref) => {
                             setTimeout(() => {
+                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 ref?.getFieldInstance('to').focus()
                             }, 50)
                         }}
@@ -41,7 +42,7 @@ const Mail = () => {
                             style={{ marginTop: 10 }}
                             rules={[{ required: true, type: 'email' }]}
                         >
-                            <AntdInput />
+                            <AntdInput placeholder={'请输入接收人'} />
                         </AntdForm.Item>
                     </AntdForm>
                     <AntdTag style={{ whiteSpace: 'normal' }}>
@@ -134,29 +135,34 @@ const Mail = () => {
                     disabled={!hasPermission('system:settings:modify:mail')}
                 >
                     <AntdForm.Item label={'SMTP 服务器'} name={'host'}>
-                        <AntdInput />
+                        <AntdInput placeholder={'请输入 SMTP 服务器'} />
                     </AntdForm.Item>
-                    <AntdForm.Item label={'端口'} name={'port'}>
-                        <AntdInputNumber min={0} max={65535} style={{ width: '100%' }} />
+                    <AntdForm.Item label={'端口号'} name={'port'}>
+                        <AntdInputNumber
+                            min={0}
+                            max={65535}
+                            style={{ width: '100%' }}
+                            placeholder={'请输入端口号'}
+                        />
                     </AntdForm.Item>
                     <AntdForm.Item label={'安全类型'} name={'securityType'}>
-                        <AntdSelect>
+                        <AntdSelect placeholder={'请选择安全类型'}>
                             <AntdSelect.Option key={'None'}>None</AntdSelect.Option>
                             <AntdSelect.Option key={'SSL/TLS'}>SSL/TLS</AntdSelect.Option>
                             <AntdSelect.Option key={'StartTls'}>StartTls</AntdSelect.Option>
                         </AntdSelect>
                     </AntdForm.Item>
                     <AntdForm.Item label={'用户名'} name={'username'}>
-                        <AntdInput />
+                        <AntdInput placeholder={'请输入用户名'} />
                     </AntdForm.Item>
                     <AntdForm.Item label={'密码'} name={'password'}>
-                        <AntdInput.Password />
+                        <AntdInput.Password placeholder={'请输入密码'} />
                     </AntdForm.Item>
                     <AntdForm.Item label={'发送者'} name={'from'}>
-                        <AntdInput />
+                        <AntdInput placeholder={'请输入发送者'} />
                     </AntdForm.Item>
                     <AntdForm.Item label={'发送者名称'} name={'fromName'}>
-                        <AntdInput />
+                        <AntdInput placeholder={'请输入发送者名称'} />
                     </AntdForm.Item>
                 </AntdForm>
             </SettingsCard>

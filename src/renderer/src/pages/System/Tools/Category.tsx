@@ -121,8 +121,9 @@ const Category = () => {
         return () => {
             modal
                 .confirm({
-                    title: '确定删除',
+                    centered: true,
                     maskClosable: true,
+                    title: '确定删除',
                     content: `确定删除类别 ${value.name} 吗？`
                 })
                 .then(
@@ -266,7 +267,7 @@ const Category = () => {
 
     const addAndEditForm = (
         <AntdForm form={form} disabled={isSubmitting} layout={'vertical'}>
-            <AntdForm.Item hidden={!isDrawerEdit} name={'id'} label={'ID'}>
+            <AntdForm.Item hidden name={'id'} label={'ID'}>
                 <AntdInput disabled />
             </AntdForm.Item>
             <AntdForm.Item
@@ -274,7 +275,7 @@ const Category = () => {
                 label={'名称'}
                 rules={[{ required: true, whitespace: true }]}
             >
-                <AntdInput allowClear />
+                <AntdInput allowClear placeholder={'请输入名称'} />
             </AntdForm.Item>
             <AntdForm.Item name={'enable'} label={'状态'}>
                 <AntdSwitch checkedChildren={'启用'} unCheckedChildren={'禁用'} />
