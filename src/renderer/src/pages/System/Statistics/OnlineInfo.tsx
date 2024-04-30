@@ -11,7 +11,7 @@ const OnlineInfo = () => {
     const onlineInfoEChartsRef = useRef<echarts.EChartsType | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [currentOnlineCount, setCurrentOnlineCount] = useState(-1)
-    const [scope, setScope] = useState('WEAK')
+    const [scope, setScope] = useState('WEEK')
 
     useEffect(() => {
         const chartResizeObserver = new ResizeObserver(() => {
@@ -122,7 +122,7 @@ const OnlineInfo = () => {
                         style={{ width: '8em' }}
                     >
                         <AntdSelect.Option key={'DAY'}>最近24小时</AntdSelect.Option>
-                        <AntdSelect.Option key={'WEAK'}>最近7天</AntdSelect.Option>
+                        <AntdSelect.Option key={'WEEK'}>最近7天</AntdSelect.Option>
                         <AntdSelect.Option key={'MONTH'}>最近30天</AntdSelect.Option>
                         <AntdSelect.Option key={'QUARTER'}>最近3个月</AntdSelect.Option>
                         <AntdSelect.Option key={'YEAR'}>最近12个月</AntdSelect.Option>

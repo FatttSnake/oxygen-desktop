@@ -10,7 +10,7 @@ const ActiveInfo = () => {
     const activeInfoDivRef = useRef<HTMLDivElement>(null)
     const activeInfoEChartsRef = useRef<echarts.EChartsType | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [scope, setScope] = useState('WEAK')
+    const [scope, setScope] = useState('WEEK')
 
     useEffect(() => {
         const chartResizeObserver = new ResizeObserver(() => {
@@ -165,7 +165,7 @@ const ActiveInfo = () => {
                         disabled={isLoading}
                         style={{ width: '8em' }}
                     >
-                        <AntdSelect.Option key={'WEAK'}>最近7天</AntdSelect.Option>
+                        <AntdSelect.Option key={'WEEK'}>最近7天</AntdSelect.Option>
                         <AntdSelect.Option key={'MONTH'}>最近30天</AntdSelect.Option>
                         <AntdSelect.Option key={'QUARTER'}>最近3个月</AntdSelect.Option>
                         <AntdSelect.Option key={'YEAR'}>最近12个月</AntdSelect.Option>
