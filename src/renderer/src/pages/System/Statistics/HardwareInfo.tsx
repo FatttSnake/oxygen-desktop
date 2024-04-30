@@ -1,6 +1,6 @@
 import { r_sys_statistics_hardware } from '@/services/system'
 import FlexBox from '@/components/common/FlexBox'
-import { CommonCard } from '@/pages/System/Statistics'
+import StatisticsCard from '@/components/system/StatisticsCard'
 
 const HardwareInfo = () => {
     const [hardwareInfoData, setHardwareInfoData] = useState<HardwareInfoVo>()
@@ -17,7 +17,7 @@ const HardwareInfo = () => {
     }, [])
 
     return (
-        <CommonCard
+        <StatisticsCard
             icon={IconOxygenHardware}
             title={'硬件信息'}
             loading={hardwareInfoData === undefined}
@@ -56,7 +56,7 @@ const HardwareInfo = () => {
                     <div title={hardwareInfoData?.disks}>{hardwareInfoData?.disks}</div>
                 </FlexBox>
             </FlexBox>
-        </CommonCard>
+        </StatisticsCard>
     )
 }
 

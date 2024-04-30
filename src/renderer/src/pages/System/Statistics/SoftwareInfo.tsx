@@ -1,7 +1,7 @@
 import { utcToLocalTime } from '@/util/datetime'
 import { r_sys_statistics_software } from '@/services/system'
 import FlexBox from '@/components/common/FlexBox'
-import { CommonCard } from '@/pages/System/Statistics'
+import StatisticsCard from '@/components/system/StatisticsCard'
 
 const SoftwareInfo = () => {
     const [softwareInfoData, setSoftwareInfoData] = useState<SoftwareInfoVo>()
@@ -18,7 +18,7 @@ const SoftwareInfo = () => {
     }, [])
 
     return (
-        <CommonCard
+        <StatisticsCard
             icon={IconOxygenSoftware}
             title={'软件信息'}
             loading={softwareInfoData === undefined}
@@ -61,7 +61,7 @@ const SoftwareInfo = () => {
                     </div>
                 </FlexBox>
             </FlexBox>
-        </CommonCard>
+        </StatisticsCard>
     )
 }
 

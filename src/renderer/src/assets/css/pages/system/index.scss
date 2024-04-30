@@ -12,30 +12,6 @@
       height: 360px;
       flex: 0 0 auto;
       overflow: hidden !important;
-      cursor: pointer;
-
-      .common-card {
-        width: 100%;
-        height: 100%;
-        margin-top: 100px;
-        text-align: center;
-        gap: 42px;
-
-        > * {
-          flex: 0 0 auto;
-          display: block;
-        }
-
-        .icon {
-          color: constants.$production-color;
-          font-size: constants.$SIZE_ICON_XL;
-        }
-
-        .text {
-          font-weight: bolder;
-          font-size: 2em;
-        }
-      }
     }
   }
 }

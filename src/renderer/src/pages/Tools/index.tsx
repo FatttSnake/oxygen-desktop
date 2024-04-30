@@ -1,6 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import '@/assets/css/pages/tools/index.scss'
 import {
     DATABASE_DELETE_SUCCESS,
@@ -27,106 +25,8 @@ import {
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
-import Card from '@/components/common/Card'
-
-interface CommonCardProps
-    extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-    icon: ReactNode
-    toolName?: string
-    toolId?: string
-    options?: TiltOptions
-    url?: string
-    onOpen?: () => void
-    onEdit?: () => void
-    onSource?: () => void
-    onPublish?: () => void
-    onCancelReview?: () => void
-    onDelete?: () => void
-}
-
-const CommonCard = ({
-    style,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref,
-    icon,
-    toolName,
-    toolId,
-    options = {
-        reverse: true,
-        max: 8,
-        glare: true,
-        ['max-glare']: 0.3,
-        scale: 1.03
-    },
-    url,
-    onOpen,
-    onEdit,
-    onSource,
-    onPublish,
-    onCancelReview,
-    onDelete,
-    children,
-    ...props
-}: CommonCardProps) => {
-    const navigate = useNavigate()
-    const cardRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        cardRef.current && VanillaTilt.init(cardRef.current, options)
-    }, [options])
-
-    const handleCardOnClick = () => {
-        url && navigate(url)
-    }
-
-    return (
-        <Card
-            style={{ overflow: 'visible', ...style }}
-            ref={cardRef}
-            {...props}
-            onClick={handleCardOnClick}
-        >
-            <FlexBox className={'common-card'}>
-                <div className={'icon'}>{icon}</div>
-                <div className={'info'}>
-                    {toolName && <div className={'tool-name'}>{toolName}</div>}
-                    {toolId && <div className={'tool-id'}>{`ID: ${toolId}`}</div>}
-                </div>
-                <div className={'operation'}>
-                    {onOpen && (
-                        <AntdButton onClick={onOpen} size={'small'} type={'primary'}>
-                            打开
-                        </AntdButton>
-                    )}
-                    {onEdit && onPublish && (
-                        <div className={'edit'}>
-                            <AntdButton.Group size={'small'}>
-                                <AntdButton onClick={onEdit}>编辑</AntdButton>
-                                <AntdButton onClick={onPublish}>发布</AntdButton>
-                            </AntdButton.Group>
-                        </div>
-                    )}
-                    {onSource && (
-                        <AntdButton size={'small'} onClick={onSource}>
-                            源码
-                        </AntdButton>
-                    )}
-                    {onCancelReview && (
-                        <AntdButton size={'small'} onClick={onCancelReview}>
-                            取消审核
-                        </AntdButton>
-                    )}
-                    {onDelete && (
-                        <AntdButton size={'small'} danger onClick={onDelete}>
-                            删除
-                        </AntdButton>
-                    )}
-                </div>
-                {children}
-            </FlexBox>
-        </Card>
-    )
-}
+import RepositoryCard from '@/components/tools/RepositoryCard'
+import LoadMoreCard from '@/components/tools/LoadMoreCard'
 
 interface ToolCardProps {
     tools: ToolVo[]
@@ -262,7 +162,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
     }
 
     return (
-        <CommonCard
+        <RepositoryCard
             icon={<img src={`data:image/svg+xml;base64,${selectedTool.icon}`} alt={'Icon'} />}
             toolName={selectedTool.name}
             toolId={selectedTool.toolId}
@@ -296,37 +196,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
                     />
                 </AntdTooltip>
             )}
-        </CommonCard>
-    )
-}
-
-interface LoadMoreCardProps {
-    onClick: () => void
-}
-
-const LoadMoreCard = ({ onClick }: LoadMoreCardProps) => {
-    const cardRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        cardRef.current &&
-            VanillaTilt.init(cardRef.current, {
-                reverse: true,
-                max: 8,
-                glare: true,
-                ['max-glare']: 0.3,
-                scale: 1.03
-            })
-    }, [])
-
-    return (
-        <Card style={{ overflow: 'visible' }} ref={cardRef} onClick={onClick}>
-            <FlexBox className={'load-more-card'}>
-                <div className={'icon'}>
-                    <Icon component={IconOxygenMore} />{' '}
-                </div>
-                <div className={'text'}>加载更多</div>
-            </FlexBox>
-        </Card>
+        </RepositoryCard>
     )
 }
 
@@ -616,7 +486,7 @@ const Tools = () => {
             <FitFullscreen data-component={'tools'}>
                 <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
                     <FlexBox direction={'horizontal'} className={'root-content'}>
-                        <CommonCard
+                        <RepositoryCard
                             icon={<Icon component={IconOxygenNewProject} />}
                             toolName={'创建工具'}
                             url={'/create'}

@@ -5,7 +5,7 @@ import {
     r_sys_settings_mail_send,
     r_sys_settings_mail_update
 } from '@/services/system'
-import { SettingsCard } from '@/pages/System/Settings'
+import SettingsCard from '@/components/system/SettingCard'
 
 const Mail = () => {
     const [modal, contextHolder] = AntdModal.useModal()

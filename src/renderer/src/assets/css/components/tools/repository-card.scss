@@ -1,0 +1,47 @@
+@use '@/assets/css/constants' as constants;
+
+[data-component=component-repository-card] {
+  .repository-card {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    align-items: center;
+
+    > * {
+      display: block;
+      flex: 0 0 auto;
+    }
+
+    .version-select {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 9em;
+    }
+
+    .upgrade-bt {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.8em;
+    }
+
+    .icon {
+      display: flex;
+      padding-top: 50px;
+      padding-bottom: 20px;
+      color: constants.$production-color;
+      font-size: constants.$SIZE_ICON_XL;
+      justify-content: center;
+
+      img {
+        width: constants.$SIZE_ICON_XL;
+      }
+    }
+
+    .tool-name {
+      font-weight: bolder;
+      font-size: 1.6em;
+    }
+  }
+}

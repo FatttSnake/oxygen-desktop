@@ -8,7 +8,7 @@ import {
     barEChartsBaseOption,
     EChartsOption
 } from '@/pages/System/Statistics/shared'
-import { CommonCard } from '@/pages/System/Statistics'
+import StatisticsCard from '@/components/system/StatisticsCard'
 
 const StorageInfo = () => {
     const keyDivRef = useRef<HTMLDivElement>(null)
@@ -161,7 +161,7 @@ const StorageInfo = () => {
 
     return (
         <>
-            <CommonCard
+            <StatisticsCard
                 icon={IconOxygenMemory}
                 title={'内存信息'}
                 loading={isLoading}
@@ -191,7 +191,7 @@ const StorageInfo = () => {
                     <FlexBox className={'value-chart'} ref={storageInfoDivRef} />
                     <FlexBox className={'value-percent'} ref={percentDivRef} />
                 </FlexBox>
-            </CommonCard>
+            </StatisticsCard>
         </>
     )
 }

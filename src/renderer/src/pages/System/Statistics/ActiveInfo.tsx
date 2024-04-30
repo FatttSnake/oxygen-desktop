@@ -4,7 +4,7 @@ import { getTimesBetweenTwoTimes } from '@/util/datetime'
 import { r_sys_statistics_active } from '@/services/system'
 import FlexBox from '@/components/common/FlexBox'
 import { getTooltipTimeFormatter, lineEChartsBaseOption } from '@/pages/System/Statistics/shared'
-import { CommonCard } from '@/pages/System/Statistics'
+import StatisticsCard from '@/components/system/StatisticsCard'
 
 const ActiveInfo = () => {
     const activeInfoDivRef = useRef<HTMLDivElement>(null)
@@ -147,7 +147,7 @@ const ActiveInfo = () => {
     }
 
     return (
-        <CommonCard
+        <StatisticsCard
             icon={IconOxygenAnalysis}
             title={
                 <>
@@ -183,7 +183,7 @@ const ActiveInfo = () => {
             <FlexBox className={'card-content'} direction={'horizontal'}>
                 <div className={'big-chart'} ref={activeInfoDivRef} />
             </FlexBox>
-        </CommonCard>
+        </StatisticsCard>
     )
 }
 

@@ -1,226 +1,20 @@
-import { DetailedHTMLProps, HTMLAttributes, MouseEvent, ReactNode } from 'react'
-import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
-import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
 import '@/assets/css/pages/tools/user.scss'
 import {
     COLOR_BACKGROUND,
-    COLOR_MAIN,
     DATABASE_NO_RECORD_FOUND,
     DATABASE_SELECT_SUCCESS
 } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
-import { navigateToRoot, navigateToSource, navigateToView } from '@/util/navigation'
+import { navigateToRoot } from '@/util/navigation'
 import { r_sys_user_info_get_basic } from '@/services/system'
 import { r_tool_store_get_by_username } from '@/services/tool'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
-
-interface CommonCardProps
-    extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-    icon: ReactNode
-    toolName: string
-    toolId: string
-    toolDesc: string
-    options?: TiltOptions
-    authorUsername: string
-    ver: string
-    platform: Platform
-    supportPlatform: Platform[]
-}
-
-const CommonCard = ({
-    style,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    ref,
-    icon,
-    toolName,
-    toolId,
-    toolDesc,
-    options = {
-        reverse: true,
-        max: 8,
-        glare: true,
-        ['max-glare']: 0.3,
-        scale: 1.03
-    },
-    authorUsername,
-    ver,
-    platform,
-    supportPlatform,
-    ...props
-}: CommonCardProps) => {
-    const navigate = useNavigate()
-    const [modal, contextHolder] = AntdModal.useModal()
-    const cardRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        cardRef.current && VanillaTilt.init(cardRef.current, options)
-    }, [options])
-
-    const handleCardOnClick = () => {
-        if (!checkDesktop() && platform === 'DESKTOP') {
-            void message.warning('此应用需要桌面端环境，请在桌面端打开')
-            return
-        }
-        if (platform === 'ANDROID') {
-            void modal.info({
-                icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
-                title: 'Android 端',
-                centered: true,
-                maskClosable: true,
-                content: (
-                    <FlexBox className={'android-qrcode'}>
-                        <AntdQRCode
-                            value={`oxygen://openurl/view/${authorUsername}/${toolId}`}
-                            size={300}
-                        />
-                        <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
-                    </FlexBox>
-                )
-            })
-            return
-        }
-        navigateToView(navigate, authorUsername, toolId, platform)
-    }
-
-    const handleOnSourceBtnClick = (e: MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation()
-        navigateToSource(navigate, authorUsername, toolId, platform)
-    }
-
-    const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation()
-        void modal.info({
-            icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
-            title: 'Android 端',
-            centered: true,
-            maskClosable: true,
-            content: (
-                <FlexBox className={'android-qrcode'}>
-                    <AntdQRCode
-                        value={`oxygen://openurl/view/${authorUsername}/${toolId}`}
-                        size={300}
-                    />
-                    <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
-                </FlexBox>
-            )
-        })
-    }
-
-    const handleOnDesktopBtnClick = (e: MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation()
-        if (!checkDesktop()) {
-            void message.loading({ content: '启动桌面端中……', key: 'LOADING', duration: 0 })
-            protocolCheck(
-                `oxygen://openurl/view/${authorUsername}/${toolId}`,
-                () => {
-                    void message.warning('打开失败,此应用需要桌面端环境,请安装桌面端后重试')
-                    void message.destroy('LOADING')
-                },
-                () => {
-                    void message.destroy('LOADING')
-                },
-                2000,
-                () => {
-                    void message.warning('打开失败,此应用需要桌面端环境,请安装桌面端后重试')
-                    void message.destroy('LOADING')
-                }
-            )
-            return
-        }
-        navigateToView(navigate, authorUsername, toolId, platform)
-    }
-
-    const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
-        e.stopPropagation()
-        navigateToView(navigate, authorUsername, toolId, platform)
-    }
-
-    return (
-        <>
-            <Card
-                style={{ overflow: 'visible', ...style }}
-                ref={cardRef}
-                {...props}
-                onClick={handleCardOnClick}
-            >
-                <FlexBox className={'common-card'}>
-                    <div className={'icon'}>{icon}</div>
-                    <div className={'version'}>
-                        <AntdTag>
-                            {platform.slice(0, 1)}-{ver}
-                        </AntdTag>
-                    </div>
-                    <div className={'info'}>
-                        <div className={'tool-name'}>{toolName}</div>
-                        <div className={'tool-id'}>{`ID: ${toolId}`}</div>
-                        {toolDesc && <div className={'tool-desc'}>{`简介：${toolDesc}`}</div>}
-                    </div>
-                    <div className={'operation'}>
-                        {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
-                            <AntdTooltip title={'Android 端'}>
-                                <Icon
-                                    component={IconOxygenMobile}
-                                    onClick={handleOnAndroidBtnClick}
-                                />
-                            </AntdTooltip>
-                        )}
-                        {platform === 'DESKTOP' && supportPlatform.includes('WEB') && (
-                            <AntdTooltip title={'Web 端'}>
-                                <Icon component={IconOxygenBrowser} onClick={handleOnWebBtnClick} />
-                            </AntdTooltip>
-                        )}
-                        {platform === 'WEB' && supportPlatform.includes('DESKTOP') && (
-                            <AntdTooltip title={'桌面端'}>
-                                <Icon
-                                    component={IconOxygenDesktop}
-                                    onClick={handleOnDesktopBtnClick}
-                                />
-                            </AntdTooltip>
-                        )}
-                        <AntdTooltip title={'源码'}>
-                            <Icon component={IconOxygenCode} onClick={handleOnSourceBtnClick} />
-                        </AntdTooltip>
-                    </div>
-                </FlexBox>
-            </Card>
-            {contextHolder}
-        </>
-    )
-}
-
-interface LoadMoreCardProps {
-    onClick: () => void
-}
-
-const LoadMoreCard = ({ onClick }: LoadMoreCardProps) => {
-    const cardRef = useRef<HTMLDivElement>(null)
-
-    useEffect(() => {
-        cardRef.current &&
-            VanillaTilt.init(cardRef.current, {
-                reverse: true,
-                max: 8,
-                glare: true,
-                ['max-glare']: 0.3,
-                scale: 1.03
-            })
-    }, [])
-
-    return (
-        <Card style={{ overflow: 'visible' }} ref={cardRef} onClick={onClick}>
-            <FlexBox className={'load-more-card'}>
-                <div className={'icon'}>
-                    <Icon component={IconOxygenMore} />{' '}
-                </div>
-                <div className={'text'}>加载更多</div>
-            </FlexBox>
-        </Card>
-    )
-}
+import StoreCard from '@/components/tools/StoreCard'
+import LoadMoreCard from '@/components/tools/LoadMoreCard'
 
 const User = () => {
     const { username } = useParams()
@@ -401,7 +195,7 @@ const User = () => {
                                             : webTool || desktopTool) || androidTool
 
                                     return (
-                                        <CommonCard
+                                        <StoreCard
                                             key={firstTool!.id}
                                             icon={
                                                 <img
@@ -416,6 +210,7 @@ const User = () => {
                                             ver={firstTool!.ver}
                                             platform={firstTool!.platform}
                                             supportPlatform={tools.map((value) => value.platform)}
+                                            favorite={firstTool!.favorite}
                                         />
                                     )
                                 })}

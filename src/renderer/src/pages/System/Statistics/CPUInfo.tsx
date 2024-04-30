@@ -7,7 +7,7 @@ import {
     barEChartsBaseOption,
     EChartsOption
 } from '@/pages/System/Statistics/shared'
-import { CommonCard } from '@/pages/System/Statistics'
+import StatisticsCard from '@/components/system/StatisticsCard'
 
 const CPUInfo = () => {
     const keyDivRef = useRef<HTMLDivElement>(null)
@@ -142,7 +142,7 @@ const CPUInfo = () => {
 
     return (
         <>
-            <CommonCard
+            <StatisticsCard
                 icon={IconOxygenCpu}
                 title={'CPU 信息'}
                 loading={isLoading}
@@ -172,7 +172,7 @@ const CPUInfo = () => {
                     <FlexBox className={'value-chart'} ref={cpuInfoDivRef} />
                     <FlexBox className={'value-percent'} ref={percentDivRef} />
                 </FlexBox>
-            </CommonCard>
+            </StatisticsCard>
         </>
     )
 }

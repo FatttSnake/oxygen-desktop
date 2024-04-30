@@ -4,7 +4,7 @@ import { getTimesBetweenTwoTimes } from '@/util/datetime'
 import { r_sys_statistics_online } from '@/services/system'
 import FlexBox from '@/components/common/FlexBox'
 import { getTooltipTimeFormatter, lineEChartsBaseOption } from '@/pages/System/Statistics/shared'
-import { CommonCard } from '@/pages/System/Statistics'
+import StatisticsCard from '@/components/system/StatisticsCard'
 
 const OnlineInfo = () => {
     const onlineInfoDivRef = useRef<HTMLDivElement>(null)
@@ -148,7 +148,7 @@ const OnlineInfo = () => {
     }
 
     return (
-        <CommonCard
+        <StatisticsCard
             icon={IconOxygenOnline}
             title={
                 <>
@@ -188,7 +188,7 @@ const OnlineInfo = () => {
             <FlexBox className={'card-content'} direction={'horizontal'}>
                 <div className={'big-chart'} ref={onlineInfoDivRef} />
             </FlexBox>
-        </CommonCard>
+        </StatisticsCard>
     )
 }
 

@@ -1,0 +1,27 @@
+@use '@/assets/css/constants' as constants;
+
+[data-component=component-load-more-card] {
+  cursor: pointer;
+
+  .load-more-card {
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    align-items: center;
+
+    .icon {
+      display: flex;
+      font-size: constants.$SIZE_ICON_XXL;
+      color: constants.$production-color;
+      align-items: center;
+      transform: translateY(-20px);
+    }
+
+    .text {
+      position: absolute;
+      top: 60%;
+      font-size: 1.2em;
+      font-weight: bolder;
+    }
+  }
+}
