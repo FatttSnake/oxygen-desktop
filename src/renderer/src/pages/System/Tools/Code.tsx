@@ -62,7 +62,7 @@ const Code = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate('/')
+                            navigate('/repository')
                         }, 3000)
                         break
                     default:

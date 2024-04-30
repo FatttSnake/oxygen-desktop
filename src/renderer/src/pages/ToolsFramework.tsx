@@ -13,13 +13,13 @@ const ToolsFramework = () => {
                         <Sidebar.ItemList>
                             <Sidebar.Item
                                 end
-                                path={'/'}
+                                path={'/store'}
                                 icon={tools[0].icon}
                                 text={tools[0].name}
                             />
                             <Sidebar.Item
                                 end
-                                path={'/store'}
+                                path={'/repository'}
                                 icon={tools[1].icon}
                                 text={tools[1].name}
                             />
@@ -29,8 +29,8 @@ const ToolsFramework = () => {
                             <Sidebar.ItemList>
                                 {tools.map((tool) => {
                                     return tool.menu &&
-                                        tool.id !== 'tools' &&
-                                        tool.id !== 'tools-store' ? (
+                                        tool.id !== 'tools-store' &&
+                                        tool.id !== 'tools-repository' ? (
                                         <Sidebar.Item
                                             path={tool.absolutePath}
                                             icon={tool.icon}

@@ -81,7 +81,7 @@ const Verify = () => {
                         break
                     case PERMISSION_NO_VERIFICATION_REQUIRED:
                         void message.warning('账户已验证')
-                        navigate('/')
+                        navigate('/repository')
                         break
                     default:
                         void message.error('出错了，请稍后重试')
@@ -128,11 +128,7 @@ const Verify = () => {
                     setTimeout(() => {
                         void requestUserInfo().then(() => {
                             refreshRouter()
-                            if (searchParams.has('redirect')) {
-                                navigate(searchParams.get('redirect') ?? '/')
-                            } else {
-                                navigate('/')
-                            }
+                            navigate(searchParams.get('redirect') ?? '/repository')
                         })
                     }, 1500)
                     break

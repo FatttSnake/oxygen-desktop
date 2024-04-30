@@ -78,11 +78,7 @@ const SignIn = () => {
                         setTimeout(() => {
                             void getUserInfo().then((user) => {
                                 refreshRouter()
-                                if (searchParams.has('redirect')) {
-                                    navigate(searchParams.get('redirect') ?? '/')
-                                } else {
-                                    navigate('/')
-                                }
+                                navigate(searchParams.get('redirect') ?? '/repository')
 
                                 notification.success({
                                     message: '欢迎回来',
@@ -262,7 +258,7 @@ const SignIn = () => {
                                     navigate('/')
                                 }}
                             >
-                                返回首页
+                                返回主页
                             </a>
                             <a
                                 onClick={() => {

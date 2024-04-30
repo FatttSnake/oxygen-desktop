@@ -49,7 +49,7 @@ const Source = () => {
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
                         setTimeout(() => {
-                            navigate('/')
+                            navigate('/repository')
                         }, 3000)
                         break
                     default:
@@ -65,7 +65,7 @@ const Source = () => {
     useEffect(() => {
         if (username === '!' && !getLoginStatus()) {
             setTimeout(() => {
-                navigate('/')
+                navigate('/repository')
             }, 3000)
             return
         }
@@ -78,7 +78,7 @@ const Source = () => {
             return
         }
         if (!['WEB', 'DESKTOP', 'ANDROID'].includes(searchParams.get('platform')!)) {
-            navigate('/')
+            navigate('/repository')
             return
         }
         getTool()
