@@ -166,9 +166,10 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
 
     return (
         <RepositoryCard
-            icon={<img src={`data:image/svg+xml;base64,${selectedTool.icon}`} alt={'Icon'} />}
+            icon={selectedTool.icon}
             toolName={selectedTool.name}
             toolId={selectedTool.toolId}
+            ver={selectedTool.ver}
             onOpen={handleOnOpenTool}
             onEdit={handleOnEditTool()}
             onSource={handleOnSourceTool()}
@@ -563,65 +564,71 @@ const Tools = () => {
                                 ))}
                             {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
                         </FlexBox>
-                        <FlexBox className={'favorite-divider'}>
-                            <div />
-                            <div className={'divider-text'}>收藏</div>
-                            <div />
-                        </FlexBox>
-                        <FlexBox direction={'horizontal'} className={'star-content'}>
-                            {starToolData
-                                ?.reduce((previousValue: ToolVo[], currentValue) => {
-                                    if (
-                                        !previousValue.some(
-                                            (value) =>
-                                                value.author.id === currentValue.author.id &&
-                                                value.toolId === currentValue.toolId
-                                        )
-                                    ) {
-                                        previousValue.push(currentValue)
-                                    }
-                                    return previousValue
-                                }, [])
-                                .map((item) => {
-                                    const tools = starToolData.filter(
-                                        (value) =>
-                                            value.author.id === item.author.id &&
-                                            value.toolId === item.toolId
-                                    )
-                                    const webTool = tools.find((value) => value.platform === 'WEB')
-                                    const desktopTool = tools.find(
-                                        (value) => value.platform === 'DESKTOP'
-                                    )
-                                    const androidTool = tools.find(
-                                        (value) => value.platform === 'ANDROID'
-                                    )
-                                    const firstTool =
-                                        (checkDesktop()
-                                            ? desktopTool || webTool
-                                            : webTool || desktopTool) || androidTool
-
-                                    return (
-                                        <StoreCard
-                                            key={firstTool!.id}
-                                            icon={
-                                                <img
-                                                    src={`data:image/svg+xml;base64,${firstTool!.icon}`}
-                                                    alt={'Icon'}
-                                                />
+                        {starToolData.length ? (
+                            <>
+                                <FlexBox className={'favorite-divider'}>
+                                    <div />
+                                    <div className={'divider-text'}>收藏</div>
+                                    <div />
+                                </FlexBox>
+                                <FlexBox direction={'horizontal'} className={'star-content'}>
+                                    {starToolData
+                                        ?.reduce((previousValue: ToolVo[], currentValue) => {
+                                            if (
+                                                !previousValue.some(
+                                                    (value) =>
+                                                        value.author.id ===
+                                                            currentValue.author.id &&
+                                                        value.toolId === currentValue.toolId
+                                                )
+                                            ) {
+                                                previousValue.push(currentValue)
                                             }
-                                            toolName={firstTool!.name}
-                                            toolId={firstTool!.toolId}
-                                            toolDesc={firstTool!.description}
-                                            author={firstTool!.author}
-                                            ver={firstTool!.ver}
-                                            platform={firstTool!.platform}
-                                            supportPlatform={tools.map((value) => value.platform)}
-                                            favorite={firstTool!.favorite}
-                                        />
-                                    )
-                                })}
-                            {hasNextStarPage && <LoadMoreCard onClick={handleOnLoadMoreStar} />}
-                        </FlexBox>
+                                            return previousValue
+                                        }, [])
+                                        .map((item) => {
+                                            const tools = starToolData.filter(
+                                                (value) =>
+                                                    value.author.id === item.author.id &&
+                                                    value.toolId === item.toolId
+                                            )
+                                            const webTool = tools.find(
+                                                (value) => value.platform === 'WEB'
+                                            )
+                                            const desktopTool = tools.find(
+                                                (value) => value.platform === 'DESKTOP'
+                                            )
+                                            const androidTool = tools.find(
+                                                (value) => value.platform === 'ANDROID'
+                                            )
+                                            const firstTool =
+                                                (checkDesktop()
+                                                    ? desktopTool || webTool
+                                                    : webTool || desktopTool) || androidTool
+
+                                            return (
+                                                <StoreCard
+                                                    key={firstTool!.id}
+                                                    icon={firstTool!.icon}
+                                                    toolName={firstTool!.name}
+                                                    toolId={firstTool!.toolId}
+                                                    toolDesc={firstTool!.description}
+                                                    author={firstTool!.author}
+                                                    ver={firstTool!.ver}
+                                                    platform={firstTool!.platform}
+                                                    supportPlatform={tools.map(
+                                                        (value) => value.platform
+                                                    )}
+                                                    favorite={firstTool!.favorite}
+                                                />
+                                            )
+                                        })}
+                                    {hasNextStarPage && (
+                                        <LoadMoreCard onClick={handleOnLoadMoreStar} />
+                                    )}
+                                </FlexBox>
+                            </>
+                        ) : undefined}
                     </FlexBox>
                 </HideScrollbar>
             </FitFullscreen>

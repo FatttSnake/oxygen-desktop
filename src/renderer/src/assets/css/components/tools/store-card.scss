@@ -1,6 +1,7 @@
 @use '@/assets/css/constants' as constants;
 
 [data-component=component-store-card] {
+  height: 100%;
   cursor: pointer;
 
   .store-card {
@@ -14,10 +15,31 @@
       flex: 0 0 auto;
     }
 
+    .header {
+      display: flex;
+      width: 100%;
+      padding: 10px;
+      justify-content: space-between;
+
+      .version {
+        width: 0;
+      }
+
+      .operation {
+        display: flex;
+        font-size: 1.6em;
+        gap: 4px;
+        opacity: 0;
+
+        > *:hover {
+          color: constants.$font-secondary-color;
+        }
+      }
+    }
 
     .icon {
       display: flex;
-      padding-top: 40px;
+      padding-top: 10px;
       padding-bottom: 20px;
       color: constants.$production-color;
       font-size: constants.$SIZE_ICON_XL;
@@ -26,12 +48,6 @@
       img {
         width: constants.$SIZE_ICON_XL;
       }
-    }
-
-    .version {
-      position: absolute;
-      left: 10px;
-      top: 10px;
     }
 
     .info {
@@ -43,8 +59,16 @@
       }
 
       .tool-desc {
-        margin-top: 10px;
+        margin: {
+          top: 10px;
+          left: auto;
+          right: auto;
+        };
         color: constants.$font-secondary-color;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: 40px;
+        width: 80%;
       }
     }
 
@@ -68,17 +92,16 @@
         align-items: center;
       }
     }
+  }
 
-    .operation {
-      display: flex;
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      font-size: 1.6em;
-      gap: 4px;
+  :hover {
+    .header {
+      .version {
+        opacity: 0;
+      }
 
-      > *:hover {
-        color: constants.$font-secondary-color;
+      .operation {
+        opacity: 1;
       }
     }
   }

@@ -1,7 +1,7 @@
 export const PRODUCTION_NAME = 'Oxygen Toolbox'
 export const STORAGE_TOKEN_KEY = 'JWT_TOKEN'
 export const STORAGE_USER_INFO_KEY = 'USER_INFO'
-export const STORAGE_FAVORITE_KEY = 'FAVORITE'
+export const STORAGE_TOOL_MENU_ITEM_KEY = 'TOOL_MENU_ITEM'
 export const COLOR_ORIGIN = 'white'
 export const COLOR_PRODUCTION = '#4E47BB'
 export const COLOR_MAIN = COLOR_PRODUCTION

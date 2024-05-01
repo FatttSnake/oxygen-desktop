@@ -1,4 +1,4 @@
-import { DetailedHTMLProps, HTMLAttributes, MouseEvent, ReactNode } from 'react'
+import { DetailedHTMLProps, HTMLAttributes, MouseEvent } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
@@ -10,9 +10,11 @@ import { r_tool_add_favorite, r_tool_remove_favorite } from '@/services/tool'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import { getUserId } from '@/util/auth.tsx'
+import DragHandle from '@/components/dnd/DragHandle.tsx'
+import Draggable from '@/components/dnd/Draggable.tsx'
 
 interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-    icon: ReactNode
+    icon: string
     toolName: string
     toolId: string
     toolDesc: string
@@ -40,8 +42,8 @@ const StoreCard = ({
         ['max-glare']: 0.3,
         scale: 1.03
     },
-                       author,
-                       showAuthor = true,
+    author,
+    showAuthor = true,
     ver,
     platform,
     supportPlatform,
@@ -176,81 +178,101 @@ const StoreCard = ({
 
     return (
         <>
-            <Card
-                data-component={'component-store-card'}
-                style={{ overflow: 'visible', ...style }}
-                ref={cardRef}
-                {...props}
-                onClick={handleCardOnClick}
+            <Draggable
+                id={`${author.username}:${toolId}:${ver}`}
+                data={{ icon, toolName, toolId, authorUsername: author.username, ver: 'latest' }}
             >
-                <FlexBox className={'store-card'}>
-                    <div className={'icon'}>{icon}</div>
-                    <div className={'version'}>
-                        <AntdTag>
-                            {platform.slice(0, 1)}-{ver}
-                        </AntdTag>
-                    </div>
-                    <div className={'info'}>
-                        <div className={'tool-name'}>{toolName}</div>
-                        <div className={'tool-id'}>{`ID: ${toolId}`}</div>
-                        {toolDesc && <div className={'tool-desc'}>{`简介：${toolDesc}`}</div>}
-                    </div>
-                    {showAuthor && (
-                        <div className={'author'} onClick={handleOnClickAuthor}>
-                            <div className={'avatar'}>
-                                <AntdAvatar
-                                    src={
-                                        <AntdImage
-                                            preview={false}
-                                            src={`data:image/png;base64,${author.userInfo.avatar}`}
-                                            alt={'Avatar'}
-                                        />
-                                    }
-                                    style={{ background: COLOR_BACKGROUND }}
-                                />
+                <Card
+                    data-component={'component-store-card'}
+                    style={{ overflow: 'visible', ...style }}
+                    ref={cardRef}
+                    {...props}
+                    onClick={handleCardOnClick}
+                >
+                    <FlexBox className={'store-card'}>
+                        <div className={'header'}>
+                            <div className={'version'}>
+                                <AntdTag>
+                                    {platform.slice(0, 1)}-{ver}
+                                </AntdTag>
                             </div>
-                            <AntdTooltip title={author.username}>
-                                <div className={'author-name'}>{author.userInfo.nickname}</div>
-                            </AntdTooltip>
+                            <div className={'operation'}>
+                                {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
+                                    <AntdTooltip title={'Android 端'}>
+                                        <Icon
+                                            component={IconOxygenMobile}
+                                            onClick={handleOnAndroidBtnClick}
+                                        />
+                                    </AntdTooltip>
+                                )}
+                                {platform === 'DESKTOP' && supportPlatform.includes('WEB') && (
+                                    <AntdTooltip title={'Web 端'}>
+                                        <Icon
+                                            component={IconOxygenBrowser}
+                                            onClick={handleOnWebBtnClick}
+                                        />
+                                    </AntdTooltip>
+                                )}
+                                {platform === 'WEB' && supportPlatform.includes('DESKTOP') && (
+                                    <AntdTooltip title={'桌面端'}>
+                                        <Icon
+                                            component={IconOxygenDesktop}
+                                            onClick={handleOnDesktopBtnClick}
+                                        />
+                                    </AntdTooltip>
+                                )}
+                                <AntdTooltip title={'源码'}>
+                                    <Icon
+                                        component={IconOxygenCode}
+                                        onClick={handleOnSourceBtnClick}
+                                    />
+                                </AntdTooltip>
+                                {author.id !== userId && (
+                                    <AntdTooltip title={favorite_ ? '取消收藏' : '收藏'}>
+                                        <Icon
+                                            component={
+                                                favorite_ ? IconOxygenStarFilled : IconOxygenStar
+                                            }
+                                            style={{
+                                                color: favorite_ ? COLOR_PRODUCTION : undefined
+                                            }}
+                                            onClick={handleOnStarBtnClick}
+                                        />
+                                    </AntdTooltip>
+                                )}
+                                <DragHandle />
+                            </div>
                         </div>
-                    )}
-                    <div className={'operation'}>
-                        {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
-                            <AntdTooltip title={'Android 端'}>
-                                <Icon
-                                    component={IconOxygenMobile}
-                                    onClick={handleOnAndroidBtnClick}
-                                />
-                            </AntdTooltip>
+                        <div className={'icon'}>
+                            <img src={`data:image/svg+xml;base64,${icon}`} alt={'Icon'} />
+                        </div>
+                        <div className={'info'}>
+                            <div className={'tool-name'}>{toolName}</div>
+                            <div className={'tool-id'}>{`ID: ${toolId}`}</div>
+                            {toolDesc && <div className={'tool-desc'}>{`简介：${toolDesc}`}</div>}
+                        </div>
+                        {showAuthor && (
+                            <div className={'author'} onClick={handleOnClickAuthor}>
+                                <div className={'avatar'}>
+                                    <AntdAvatar
+                                        src={
+                                            <AntdImage
+                                                preview={false}
+                                                src={`data:image/png;base64,${author.userInfo.avatar}`}
+                                                alt={'Avatar'}
+                                            />
+                                        }
+                                        style={{ background: COLOR_BACKGROUND }}
+                                    />
+                                </div>
+                                <AntdTooltip title={author.username}>
+                                    <div className={'author-name'}>{author.userInfo.nickname}</div>
+                                </AntdTooltip>
+                            </div>
                         )}
-                        {platform === 'DESKTOP' && supportPlatform.includes('WEB') && (
-                            <AntdTooltip title={'Web 端'}>
-                                <Icon component={IconOxygenBrowser} onClick={handleOnWebBtnClick} />
-                            </AntdTooltip>
-                        )}
-                        {platform === 'WEB' && supportPlatform.includes('DESKTOP') && (
-                            <AntdTooltip title={'桌面端'}>
-                                <Icon
-                                    component={IconOxygenDesktop}
-                                    onClick={handleOnDesktopBtnClick}
-                                />
-                            </AntdTooltip>
-                        )}
-                        <AntdTooltip title={'源码'}>
-                            <Icon component={IconOxygenCode} onClick={handleOnSourceBtnClick} />
-                        </AntdTooltip>
-                        {author.id !== userId && (
-                            <AntdTooltip title={favorite_ ? '取消收藏' : '收藏'}>
-                                <Icon
-                                    component={favorite_ ? IconOxygenStarFilled : IconOxygenStar}
-                                    style={{ color: favorite_ ? COLOR_PRODUCTION : undefined }}
-                                    onClick={handleOnStarBtnClick}
-                                />
-                            </AntdTooltip>
-                        )}
-                    </div>
-                </FlexBox>
-            </Card>
+                    </FlexBox>
+                </Card>
+            </Draggable>
             {contextHolder}
         </>
     )

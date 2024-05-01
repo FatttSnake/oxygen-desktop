@@ -32,7 +32,10 @@ const View = () => {
                     .compile(files, importMap, toolVo.entryPoint)
                     .then((result) => {
                         const output = result.outputFiles[0].text
-                        setCompiledCode(`${output}\n${baseDist}`)
+                        setCompiledCode('')
+                        setTimeout(() => {
+                            setCompiledCode(`${output}\n${baseDist}`)
+                        })
                     })
                     .catch((reason) => {
                         void message.error(`编译失败：${reason}`)
@@ -72,9 +75,7 @@ const View = () => {
                         break
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
-                        setTimeout(() => {
-                            navigateToRepository(navigate)
-                        }, 3000)
+                        navigateToRepository(navigate)
                         break
                     default:
                         void message.error('获取工具信息失败，请稍后重试')
@@ -103,11 +104,11 @@ const View = () => {
             return
         }
         if (username === '!' && !ver) {
-            navigateToView(navigate, '!', toolId!, platform as Platform)
+            navigateToView(navigate, '!', toolId!, platform as Platform, 'latest')
             return
         }
         getTool()
-    }, [])
+    }, [username, toolId, ver, searchParams])
 
     return (
         <FitFullscreen data-component={'tools-view'}>

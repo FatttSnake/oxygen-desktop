@@ -1,6 +1,8 @@
 import { createRoot } from 'react-dom/client'
 import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
 import { floor } from 'lodash'
+import { getLocalStorage, setLocalStorage } from '@/util/browser.tsx'
+import { STORAGE_TOOL_MENU_ITEM_KEY } from '@/constants/common.constants.ts'
 
 export const randomInt = (start: number, end: number) => {
     if (start > end) {
@@ -133,3 +135,15 @@ const formatByte = (size: number, unit: ByteUnit): string => {
 }
 
 export const checkDesktop = () => import.meta.env.VITE_PLATFORM === 'DESKTOP'
+
+export const saveToolMenuItem = (toolMenuItem: ToolMenuItem[]) => {
+    setLocalStorage(STORAGE_TOOL_MENU_ITEM_KEY, JSON.stringify(toolMenuItem))
+}
+
+export const getToolMenuItem = (): ToolMenuItem[] => {
+    const s = getLocalStorage(STORAGE_TOOL_MENU_ITEM_KEY)
+    if (!s) {
+        return []
+    }
+    return JSON.parse(s) as ToolMenuItem[]
+}

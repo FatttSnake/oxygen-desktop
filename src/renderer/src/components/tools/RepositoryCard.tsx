@@ -1,14 +1,17 @@
-import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
+import { DetailedHTMLProps, HTMLAttributes } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import '@/assets/css/components/tools/repository-card.scss'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
+import Draggable from '@/components/dnd/Draggable'
+import DragHandle from '@/components/dnd/DragHandle.tsx'
 
 interface RepositoryCardProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
-    icon: ReactNode
+    icon: string
     toolName: string
     toolId: string
+    ver: string
     options?: TiltOptions
     onOpen?: () => void
     onEdit?: () => void
@@ -25,6 +28,7 @@ const RepositoryCard = ({
     icon,
     toolName,
     toolId,
+    ver,
     options = {
         reverse: true,
         max: 8,
@@ -48,51 +52,58 @@ const RepositoryCard = ({
     }, [options])
 
     return (
-        <Card
-            data-component={'component-repository-card'}
-            style={{ overflow: 'visible', ...style }}
-            ref={cardRef}
-            {...props}
-        >
-            <FlexBox className={'repository-card'}>
-                <div className={'icon'}>{icon}</div>
-                <div className={'info'}>
-                    {toolName && <div className={'tool-name'}>{toolName}</div>}
-                    {toolId && <div className={'tool-id'}>{`ID: ${toolId}`}</div>}
-                </div>
-                <div className={'operation'}>
-                    {onOpen && (
-                        <AntdButton onClick={onOpen} size={'small'} type={'primary'}>
-                            打开
-                        </AntdButton>
-                    )}
-                    {onEdit && onPublish && (
-                        <div className={'edit'}>
-                            <AntdButton.Group size={'small'}>
-                                <AntdButton onClick={onEdit}>编辑</AntdButton>
-                                <AntdButton onClick={onPublish}>发布</AntdButton>
-                            </AntdButton.Group>
-                        </div>
-                    )}
-                    {onSource && (
-                        <AntdButton size={'small'} onClick={onSource}>
-                            源码
-                        </AntdButton>
-                    )}
-                    {onCancelReview && (
-                        <AntdButton size={'small'} onClick={onCancelReview}>
-                            取消审核
-                        </AntdButton>
-                    )}
-                    {onDelete && (
-                        <AntdButton size={'small'} danger onClick={onDelete}>
-                            删除
-                        </AntdButton>
-                    )}
-                </div>
-                {children}
-            </FlexBox>
-        </Card>
+        <Draggable id={toolId} data={{ icon, toolName, toolId, authorUsername: '!', ver }}>
+            <Card
+                data-component={'component-repository-card'}
+                style={{ overflow: 'visible', ...style }}
+                ref={cardRef}
+                {...props}
+            >
+                <FlexBox className={'repository-card'}>
+                    <div className={'header'}>
+                        {children}
+                        <DragHandle />
+                    </div>
+                    <div className={'icon'}>
+                        <img src={`data:image/svg+xml;base64,${icon}`} alt={'Icon'} />
+                    </div>
+                    <div className={'info'}>
+                        <div className={'tool-name'}>{toolName}</div>
+                        <div className={'tool-id'}>{`ID: ${toolId}`}</div>
+                    </div>
+                    <div className={'operation'}>
+                        {onOpen && (
+                            <AntdButton onClick={onOpen} size={'small'} type={'primary'}>
+                                打开
+                            </AntdButton>
+                        )}
+                        {onEdit && onPublish && (
+                            <div className={'edit'}>
+                                <AntdButton.Group size={'small'}>
+                                    <AntdButton onClick={onEdit}>编辑</AntdButton>
+                                    <AntdButton onClick={onPublish}>发布</AntdButton>
+                                </AntdButton.Group>
+                            </div>
+                        )}
+                        {onSource && (
+                            <AntdButton size={'small'} onClick={onSource}>
+                                源码
+                            </AntdButton>
+                        )}
+                        {onCancelReview && (
+                            <AntdButton size={'small'} onClick={onCancelReview}>
+                                取消审核
+                            </AntdButton>
+                        )}
+                        {onDelete && (
+                            <AntdButton size={'small'} danger onClick={onDelete}>
+                                删除
+                            </AntdButton>
+                        )}
+                    </div>
+                </FlexBox>
+            </Card>
+        </Draggable>
     )
 }
 

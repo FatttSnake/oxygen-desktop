@@ -197,12 +197,7 @@ const User = () => {
                                     return (
                                         <StoreCard
                                             key={firstTool!.id}
-                                            icon={
-                                                <img
-                                                    src={`data:image/svg+xml;base64,${firstTool!.icon}`}
-                                                    alt={'Icon'}
-                                                />
-                                            }
+                                            icon={firstTool!.icon}
                                             toolName={firstTool!.name}
                                             toolId={firstTool!.toolId}
                                             toolDesc={firstTool!.description}
