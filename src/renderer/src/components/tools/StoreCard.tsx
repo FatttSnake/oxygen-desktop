@@ -281,9 +281,7 @@ const StoreCard = ({
                                         style={{ background: COLOR_BACKGROUND }}
                                     />
                                 </div>
-                                <AntdTooltip title={author.username}>
-                                    <div className={'author-name'}>{author.userInfo.nickname}</div>
-                                </AntdTooltip>
+                                <div className={'author-name'}>{author.userInfo.nickname}</div>
                             </div>
                         )}
                     </FlexBox>
