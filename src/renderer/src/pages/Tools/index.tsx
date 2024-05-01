@@ -170,6 +170,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
             toolName={selectedTool.name}
             toolId={selectedTool.toolId}
             ver={selectedTool.ver}
+            platform={selectedTool.platform}
             onOpen={handleOnOpenTool}
             onEdit={handleOnEditTool()}
             onSource={handleOnSourceTool()}

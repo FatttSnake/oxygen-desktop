@@ -668,4 +668,5 @@ interface ToolMenuItem {
     toolId: string
     authorUsername: string
     ver: string
+    platform: Platform
 }

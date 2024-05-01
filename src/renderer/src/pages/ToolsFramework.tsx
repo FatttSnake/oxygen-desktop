@@ -3,7 +3,7 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
 import '@/assets/css/pages/tools-framework.scss'
 import { tools } from '@/router/tools'
-import { getToolMenuItem, saveToolMenuItem } from '@/util/common'
+import { checkDesktop, getToolMenuItem, saveToolMenuItem } from '@/util/common'
 import { getViewPath } from '@/util/navigation'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import Sidebar from '@/components/common/Sidebar'
@@ -34,12 +34,12 @@ const ToolsFramework = () => {
     const handleOnDragEnd = ({ active, over }: DragEndEvent) => {
         if (over && active.id !== over?.id) {
             const activeIndex = toolMenuItem.findIndex(
-                ({ authorUsername, toolId, ver }) =>
-                    `${authorUsername}:${toolId}:${ver}` === active.id
+                ({ authorUsername, toolId, ver, platform }) =>
+                    `${authorUsername}:${toolId}:${ver}:${platform}` === active.id
             )
             const overIndex = toolMenuItem.findIndex(
-                ({ authorUsername, toolId, ver }) =>
-                    `${authorUsername}:${toolId}:${ver}` === over.id
+                ({ authorUsername, toolId, ver, platform }) =>
+                    `${authorUsername}:${toolId}:${ver}:${platform}` === over.id
             )
             setToolMenuItem(arrayMove(toolMenuItem, activeIndex, overIndex))
         }
@@ -47,8 +47,8 @@ const ToolsFramework = () => {
         if (!over) {
             setToolMenuItem(
                 toolMenuItem.filter(
-                    ({ authorUsername, toolId, ver }) =>
-                        `${authorUsername}:${toolId}:${ver}` !== active?.id
+                    ({ authorUsername, toolId, ver, platform }) =>
+                        `${authorUsername}:${toolId}:${ver}:${platform}` !== active?.id
                 )
             )
         }
@@ -63,7 +63,12 @@ const ToolsFramework = () => {
                         ver === newItem.ver
                 ) === -1
             ) {
-                setToolMenuItem([...toolMenuItem, newItem])
+                if (!checkDesktop() && newItem.platform === 'DESKTOP') {
+                    void message.warning('暂不支持添加桌面端应用')
+                    setToolMenuItem(toolMenuItem)
+                } else {
+                    setToolMenuItem([...toolMenuItem, newItem])
+                }
             }
         }
 
@@ -110,8 +115,8 @@ const ToolsFramework = () => {
                                     <Sidebar.ItemList>
                                         <SortableContext
                                             items={toolMenuItem.map(
-                                                ({ authorUsername, toolId, ver }) =>
-                                                    `${authorUsername}:${toolId}:${ver}`
+                                                ({ authorUsername, toolId, ver, platform }) =>
+                                                    `${authorUsername}:${toolId}:${ver}:${platform}`
                                             )}
                                         >
                                             {toolMenuItem.map(
@@ -120,16 +125,18 @@ const ToolsFramework = () => {
                                                     toolName,
                                                     toolId,
                                                     authorUsername,
-                                                    ver
+                                                    ver,
+                                                    platform
                                                 }) => (
                                                     <Sortable
-                                                        id={`${authorUsername}:${toolId}:${ver}`}
+                                                        id={`${authorUsername}:${toolId}:${ver}:${platform}`}
                                                         data={{
                                                             icon,
                                                             toolName,
                                                             toolId,
                                                             authorUsername,
-                                                            ver
+                                                            ver,
+                                                            platform
                                                         }}
                                                         isDelete={isDelete}
                                                     >
@@ -137,12 +144,12 @@ const ToolsFramework = () => {
                                                             path={getViewPath(
                                                                 authorUsername,
                                                                 toolId,
-                                                                import.meta.env.VITE_PLATFORM,
+                                                                platform,
                                                                 ver
                                                             )}
                                                             icon={icon}
                                                             text={toolName}
-                                                            key={`${authorUsername}:${toolId}`}
+                                                            key={`${authorUsername}:${toolId}:${ver}:${platform}`}
                                                             extend={<DragHandle padding={10} />}
                                                         />
                                                     </Sortable>

@@ -12,6 +12,7 @@ interface RepositoryCardProps
     toolName: string
     toolId: string
     ver: string
+    platform: Platform
     options?: TiltOptions
     onOpen?: () => void
     onEdit?: () => void
@@ -29,6 +30,7 @@ const RepositoryCard = ({
     toolName,
     toolId,
     ver,
+    platform,
     options = {
         reverse: true,
         max: 8,
@@ -52,7 +54,10 @@ const RepositoryCard = ({
     }, [options])
 
     return (
-        <Draggable id={toolId} data={{ icon, toolName, toolId, authorUsername: '!', ver }}>
+        <Draggable
+            id={`!:${toolId}:${ver}:${platform}`}
+            data={{ icon, toolName, toolId, authorUsername: '!', ver, platform }}
+        >
             <Card
                 data-component={'component-repository-card'}
                 style={{ overflow: 'visible', ...style }}

@@ -179,19 +179,26 @@ const StoreCard = ({
             )
             return
         }
-        navigateToView(navigate, author.username, toolId, platform)
+        navigateToView(navigate, author.username, toolId, 'DESKTOP')
     }
 
     const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigateToView(navigate, author.username, toolId, platform)
+        navigateToView(navigate, author.username, toolId, 'WEB')
     }
 
     return (
         <>
             <Draggable
-                id={`${author.username}:${toolId}:${ver}`}
-                data={{ icon, toolName, toolId, authorUsername: author.username, ver: '' }}
+                id={`${author.username}:${toolId}:${ver}:${platform}`}
+                data={{
+                    icon,
+                    toolName,
+                    toolId,
+                    authorUsername: author.username,
+                    ver: '',
+                    platform: platform
+                }}
             >
                 <Card
                     data-component={'component-store-card'}
