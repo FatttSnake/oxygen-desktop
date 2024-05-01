@@ -32,7 +32,7 @@ const Verify = () => {
         }
 
         if (!getLoginStatus()) {
-            navigateToLogin(navigate, undefined, `${location.pathname}${location.search}`, {
+            navigateToLogin(navigate, location.search, undefined, {
                 replace: true
             })
             return

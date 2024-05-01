@@ -275,7 +275,7 @@ const Forget = () => {
                             找到了？
                             <a
                                 onClick={() =>
-                                    navigateToLogin(navigate, undefined, undefined, {
+                                    navigateToLogin(navigate, location.search, undefined, {
                                         replace: true
                                     })
                                 }
