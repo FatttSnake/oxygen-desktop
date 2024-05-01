@@ -118,15 +118,11 @@ const Edit = () => {
                         break
                     case TOOL_UNDER_REVIEW:
                         void message.error('保存失败：工具审核中')
-                        setTimeout(() => {
-                            navigateToRepository(navigate)
-                        }, 3000)
+                        navigateToRepository(navigate)
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
                         void message.error('保存失败：工具已发布')
-                        setTimeout(() => {
-                            navigateToRepository(navigate)
-                        }, 3000)
+                        navigateToRepository(navigate)
                         break
                     default:
                         void message.error('保存失败，请稍后重试')
@@ -184,15 +180,11 @@ const Edit = () => {
                         break
                     case TOOL_UNDER_REVIEW:
                         void message.error('保存失败：工具审核中')
-                        setTimeout(() => {
-                            navigateToRepository(navigate)
-                        }, 3000)
+                        navigateToRepository(navigate)
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
                         void message.error('保存失败：工具已发布')
-                        setTimeout(() => {
-                            navigateToRepository(navigate)
-                        }, 3000)
+                        navigateToRepository(navigate)
                         break
                     default:
                         void message.error('保存失败，请稍后重试')
@@ -245,15 +237,11 @@ const Edit = () => {
                                 break
                             case 'PROCESSING':
                                 void message.warning('工具审核中，请勿修改')
-                                setTimeout(() => {
-                                    navigateToRepository(navigate)
-                                }, 3000)
+                                navigateToRepository(navigate)
                                 break
                             default:
                                 void message.warning('请先创建新版本后编辑工具')
-                                setTimeout(() => {
-                                    navigateToRepository(navigate)
-                                }, 3000)
+                                navigateToRepository(navigate)
                         }
                         break
                     case DATABASE_NO_RECORD_FOUND:

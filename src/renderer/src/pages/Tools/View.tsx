@@ -94,9 +94,8 @@ const View = () => {
             return
         }
         if (username === '!' && !getLoginStatus()) {
-            setTimeout(() => {
-                navigateToRoot(navigate)
-            }, 3000)
+            void message.error('未登录')
+            navigateToRoot(navigate)
             return
         }
         if (username !== '!' && ver) {
