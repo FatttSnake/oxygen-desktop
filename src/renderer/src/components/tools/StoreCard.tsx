@@ -74,7 +74,7 @@ const StoreCard = ({
             return
         }
         if (platform === 'ANDROID') {
-            void modal.info({
+            void modal.confirm({
                 icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
                 title: 'Android 端',
                 centered: true,
@@ -87,7 +87,12 @@ const StoreCard = ({
                         />
                         <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
                     </FlexBox>
-                )
+                ),
+                okText: '确定',
+                cancelText: '模拟器',
+                onCancel() {
+                    navigateToView(navigate, author.username, toolId, platform)
+                }
             })
             return
         }
@@ -141,7 +146,7 @@ const StoreCard = ({
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        void modal.info({
+        void modal.confirm({
             icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
             title: 'Android 端',
             centered: true,
@@ -154,7 +159,12 @@ const StoreCard = ({
                     />
                     <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
                 </FlexBox>
-            )
+            ),
+            okText: '确定',
+            cancelText: '模拟器',
+            onCancel() {
+                navigateToView(navigate, author.username, toolId, 'ANDROID')
+            }
         })
     }
 
