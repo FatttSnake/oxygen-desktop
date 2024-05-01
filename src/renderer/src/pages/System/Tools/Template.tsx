@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/system/tools/base.scss'
+import '@/assets/css/pages/system/tools/template.scss'
 import {
     COLOR_PRODUCTION,
     DATABASE_DELETE_SUCCESS,
@@ -1021,7 +1021,7 @@ const Template = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'system-tools-base'}>
+            <FitFullscreen data-component={'system-tools-template'}>
                 <HideScrollbar>
                     <FlexBox direction={'horizontal'} className={'root-content'}>
                         <Card>
