@@ -35,7 +35,7 @@ const View = () => {
                         setCompiledCode('')
                         setTimeout(() => {
                             setCompiledCode(`${output}\n${baseDist}`)
-                        })
+                        }, 100)
                     })
                     .catch((reason) => {
                         void message.error(`编译失败：${reason}`)
@@ -47,7 +47,10 @@ const View = () => {
             try {
                 const baseDist = base64ToStr(toolVo.base.dist.data!)
                 const dist = base64ToStr(toolVo.dist.data!)
-                setCompiledCode(`${dist}\n${baseDist}`)
+                setCompiledCode('')
+                setTimeout(() => {
+                    setCompiledCode(`${dist}\n${baseDist}`)
+                }, 100)
             } catch (e) {
                 void message.error('载入工具失败')
             }

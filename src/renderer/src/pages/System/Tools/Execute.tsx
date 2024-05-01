@@ -28,7 +28,7 @@ const Execute = () => {
                     setCompiledCode('')
                     setTimeout(() => {
                         setCompiledCode(`${output}\n${baseDist}`)
-                    })
+                    }, 100)
                 })
                 .catch((reason) => {
                     void message.error(`编译失败：${reason}`)
