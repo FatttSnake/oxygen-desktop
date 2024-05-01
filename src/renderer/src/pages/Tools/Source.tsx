@@ -49,9 +49,7 @@ const Source = () => {
                         break
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
-                        setTimeout(() => {
-                            navigateToRepository(navigate)
-                        }, 3000)
+                        navigateToRepository(navigate)
                         break
                     default:
                         void message.error('获取工具信息失败，请稍后重试')
@@ -70,9 +68,7 @@ const Source = () => {
             return
         }
         if (username === '!' && !getLoginStatus()) {
-            setTimeout(() => {
-                navigateToRepository(navigate)
-            }, 3000)
+            navigateToRepository(navigate)
             return
         }
         if (username !== '!' && ver) {
@@ -84,7 +80,7 @@ const Source = () => {
             return
         }
         getTool()
-    }, [])
+    }, [username, toolId, ver, searchParams])
 
     return (
         <FitFullscreen data-component={'tools-source'}>

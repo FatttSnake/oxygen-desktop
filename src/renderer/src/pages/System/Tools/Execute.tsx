@@ -51,9 +51,7 @@ const Execute = () => {
                         break
                     case DATABASE_NO_RECORD_FOUND:
                         void message.error('未找到指定工具')
-                        setTimeout(() => {
-                            navigateToTools(navigate)
-                        }, 3000)
+                        navigateToTools(navigate)
                         break
                     default:
                         void message.error('获取工具信息失败，请稍后重试')
@@ -67,7 +65,7 @@ const Execute = () => {
 
     useEffect(() => {
         getTool()
-    }, [])
+    }, [id])
 
     return (
         <FitFullscreen data-component={'system-tools-execute'}>
