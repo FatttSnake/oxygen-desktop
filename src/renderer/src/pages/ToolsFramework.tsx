@@ -1,25 +1,30 @@
 import { DndContext, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
-import Droppable from '@/components/dnd/Droppable'
+import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
 import '@/assets/css/pages/tools-framework.scss'
 import { tools } from '@/router/tools'
+import { getToolMenuItem, saveToolMenuItem } from '@/util/common'
+import { getViewPath } from '@/util/navigation'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import Sidebar from '@/components/common/Sidebar'
 import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
-import { arrayMove, SortableContext } from '@dnd-kit/sortable'
-import { getViewPath } from '@/util/navigation.tsx'
-import Sortable from '@/components/dnd/Sortable.tsx'
-import DragHandle from '@/components/dnd/DragHandle.tsx'
-import DraggableOverlay from '@/components/dnd/DraggableOverlay.tsx'
-import { getToolMenuItem, saveToolMenuItem } from '@/util/common.tsx'
+import Sortable from '@/components/dnd/Sortable'
+import DragHandle from '@/components/dnd/DragHandle'
+import DraggableOverlay from '@/components/dnd/DraggableOverlay'
+import DropMask from '@/components/dnd/DropMask'
+import Droppable from '@/components/dnd/Droppable'
 
 const ToolsFramework = () => {
     const [isDelete, setIsDelete] = useState(false)
     const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
     const [activeItem, setActiveItem] = useState<ToolMenuItem | null>(null)
+    const [showDropMask, setShowDropMask] = useState(false)
 
     const handleOnDragStart = ({ active }: DragStartEvent) => {
         setActiveItem(active.data.current as ToolMenuItem)
+        if (!active.data.current?.sortable) {
+            setShowDropMask(true)
+        }
     }
 
     const handleOnDragOver = ({ over }: DragOverEvent) => {
@@ -62,10 +67,8 @@ const ToolsFramework = () => {
             }
         }
 
-        console.log('active', active)
-        console.log('over', over)
-
         setActiveItem(null)
+        setShowDropMask(false)
     }
 
     const handleOnDragCancel = () => {
@@ -164,6 +167,7 @@ const ToolsFramework = () => {
                                         </DraggableOverlay>
                                     </Sidebar.ItemList>
                                 </Sidebar.Scroll>
+                                {showDropMask && <DropMask />}
                             </Droppable>
                         </Sidebar>
                     </div>

@@ -4,14 +4,19 @@ import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
 import '@/assets/css/components/tools/store-card.scss'
 import { COLOR_BACKGROUND, COLOR_MAIN, COLOR_PRODUCTION } from '@/constants/common.constants'
-import { checkDesktop } from '@/util/common'
-import { navigateToSource, navigateToStore, navigateToView } from '@/util/navigation'
+import { checkDesktop, omitText } from '@/util/common'
+import { getLoginStatus, getUserId } from '@/util/auth'
+import {
+    navigateToLogin,
+    navigateToSource,
+    navigateToStore,
+    navigateToView
+} from '@/util/navigation'
 import { r_tool_add_favorite, r_tool_remove_favorite } from '@/services/tool'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
-import { getUserId } from '@/util/auth.tsx'
-import DragHandle from '@/components/dnd/DragHandle.tsx'
-import Draggable from '@/components/dnd/Draggable.tsx'
+import DragHandle from '@/components/dnd/DragHandle'
+import Draggable from '@/components/dnd/Draggable'
 
 interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: string
@@ -58,7 +63,9 @@ const StoreCard = ({
 
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
-        getUserId().then((value) => setUserId(value))
+        if (getLoginStatus()) {
+            void getUserId().then((value) => setUserId(value))
+        }
     }, [options])
 
     const handleCardOnClick = () => {
@@ -99,6 +106,10 @@ const StoreCard = ({
 
     const handleOnStarBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
+        if (!getLoginStatus()) {
+            navigateToLogin(navigate, undefined, `${location.pathname}${location.search}`)
+            return
+        }
         if (favorite_) {
             void r_tool_remove_favorite({
                 authorId: author.id,
@@ -249,7 +260,12 @@ const StoreCard = ({
                         <div className={'info'}>
                             <div className={'tool-name'}>{toolName}</div>
                             <div className={'tool-id'}>{`ID: ${toolId}`}</div>
-                            {toolDesc && <div className={'tool-desc'}>{`简介：${toolDesc}`}</div>}
+                            {toolDesc && (
+                                <div
+                                    className={'tool-desc'}
+                                    title={toolDesc}
+                                >{`简介：${omitText(toolDesc, 18)}`}</div>
+                            )}
                         </div>
                         {showAuthor && (
                             <div className={'author'} onClick={handleOnClickAuthor}>

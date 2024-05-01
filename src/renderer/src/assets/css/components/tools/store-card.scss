@@ -23,6 +23,7 @@
 
       .version {
         width: 0;
+        transition: all 0.2s;
       }
 
       .operation {
@@ -30,6 +31,7 @@
         font-size: 1.6em;
         gap: 4px;
         opacity: 0;
+        transition: all 0.2s;
 
         > *:hover {
           color: constants.$font-secondary-color;

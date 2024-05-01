@@ -1,8 +1,8 @@
 import { createRoot } from 'react-dom/client'
-import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
 import { floor } from 'lodash'
-import { getLocalStorage, setLocalStorage } from '@/util/browser.tsx'
-import { STORAGE_TOOL_MENU_ITEM_KEY } from '@/constants/common.constants.ts'
+import { STORAGE_TOOL_MENU_ITEM_KEY } from '@/constants/common.constants'
+import { getLocalStorage, setLocalStorage } from '@/util/browser'
+import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
 
 export const randomInt = (start: number, end: number) => {
     if (start > end) {
@@ -146,4 +146,11 @@ export const getToolMenuItem = (): ToolMenuItem[] => {
         return []
     }
     return JSON.parse(s) as ToolMenuItem[]
+}
+
+export const omitText = (text: string, length: number) => {
+    if (text.length <= length) {
+        return text
+    }
+    return `${text.substring(0, length)}...`
 }
