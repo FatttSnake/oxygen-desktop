@@ -28,7 +28,8 @@ import HideScrollbar from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
 import RepositoryCard from '@/components/tools/RepositoryCard'
 import LoadMoreCard from '@/components/tools/LoadMoreCard'
-import StoreCard from '@/components/tools/StoreCard.tsx'
+import StoreCard from '@/components/tools/StoreCard'
+import UrlCard from '@/components/common/UrlCard'
 
 interface ToolCardProps {
     tools: ToolVo[]
@@ -540,11 +541,9 @@ const Tools = () => {
                 <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
                     <FlexBox direction={'vertical'} className={'root-content'}>
                         <FlexBox direction={'horizontal'} className={'own-content'}>
-                            <RepositoryCard
-                                icon={<Icon component={IconOxygenNewProject} />}
-                                toolName={'创建工具'}
-                                url={'/create'}
-                            />
+                            <UrlCard icon={IconOxygenNewProject} url={'/create'}>
+                                创建工具
+                            </UrlCard>
                             {toolData &&
                                 Object.values(
                                     toolData.reduce((result: Record<string, ToolVo[]>, item) => {

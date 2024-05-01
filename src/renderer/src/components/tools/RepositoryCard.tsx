@@ -7,10 +7,9 @@ import FlexBox from '@/components/common/FlexBox'
 interface RepositoryCardProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: ReactNode
-    toolName?: string
-    toolId?: string
+    toolName: string
+    toolId: string
     options?: TiltOptions
-    url?: string
     onOpen?: () => void
     onEdit?: () => void
     onSource?: () => void
@@ -33,7 +32,6 @@ const RepositoryCard = ({
         ['max-glare']: 0.3,
         scale: 1.03
     },
-    url,
     onOpen,
     onEdit,
     onSource,
@@ -43,16 +41,11 @@ const RepositoryCard = ({
     children,
     ...props
 }: RepositoryCardProps) => {
-    const navigate = useNavigate()
     const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
     }, [options])
-
-    const handleCardOnClick = () => {
-        url && navigate(url)
-    }
 
     return (
         <Card
@@ -60,7 +53,6 @@ const RepositoryCard = ({
             style={{ overflow: 'visible', ...style }}
             ref={cardRef}
             {...props}
-            onClick={handleCardOnClick}
         >
             <FlexBox className={'repository-card'}>
                 <div className={'icon'}>{icon}</div>
