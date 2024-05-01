@@ -16,9 +16,9 @@ const Mail = () => {
 
     const handleOnTest = () => {
         void modal.confirm({
-            title: '发送测试邮件',
             centered: true,
             maskClosable: true,
+            title: '发送测试邮件',
             footer: (_, { OkBtn, CancelBtn }) => (
                 <>
                     <OkBtn />

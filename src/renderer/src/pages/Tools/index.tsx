@@ -219,8 +219,9 @@ const Tools = () => {
     const handleOnDeleteTool = (tool: ToolVo) => {
         modal
             .confirm({
-                title: '删除',
+                centered: true,
                 maskClosable: true,
+                title: '删除',
                 content: `确定删除工具 ${tool.toolId}:${tool.platform.slice(0, 1)}${tool.platform.slice(1).toLowerCase()}:${tool.ver} 吗？`
             })
             .then(
@@ -249,9 +250,9 @@ const Tools = () => {
 
     const handleOnUpgradeTool = (tool: ToolVo) => {
         void modal.confirm({
-            title: '更新工具',
             centered: true,
             maskClosable: true,
+            title: '更新工具',
             footer: (_, { OkBtn, CancelBtn }) => (
                 <>
                     <OkBtn />
@@ -361,8 +362,9 @@ const Tools = () => {
     const handleOnSubmitTool = (tool: ToolVo) => {
         modal
             .confirm({
-                title: '提交审核',
+                centered: true,
                 maskClosable: true,
+                title: '提交审核',
                 content: `确定提交审核工具 ${tool.name}:${tool.ver} 吗？`
             })
             .then(
@@ -400,8 +402,9 @@ const Tools = () => {
     const handleOnCancelTool = (tool: ToolVo) => {
         modal
             .confirm({
-                title: '取消审核',
+                centered: true,
                 maskClosable: true,
+                title: '取消审核',
                 content: `确定取消审核工具 ${tool.name}:${tool.ver} 吗？`
             })
             .then(

@@ -112,8 +112,8 @@ const SignIn = () => {
                     case PERMISSION_NEED_TWO_FACTOR:
                         twoFactorForm.resetFields()
                         void modal.confirm({
-                            title: '双因素验证',
                             centered: true,
+                            title: '双因素验证',
                             footer: (_, { OkBtn, CancelBtn }) => (
                                 <>
                                     <OkBtn />

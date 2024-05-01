@@ -89,6 +89,8 @@ const User = () => {
         changePasswordForm.resetFields()
 
         void modal.confirm({
+            centered: true,
+            maskClosable: true,
             icon: <></>,
             title: (
                 <>
@@ -99,8 +101,6 @@ const User = () => {
                     修改密码
                 </>
             ),
-            centered: true,
-            maskClosable: true,
             footer: (_, { OkBtn, CancelBtn }) => (
                 <>
                     <OkBtn />
@@ -220,10 +220,10 @@ const User = () => {
             twoFactorForm.resetFields()
             if (enable) {
                 void modal.confirm({
-                    title: '双因素',
                     centered: true,
                     maskClosable: true,
                     focusTriggerAfterClose: false,
+                    title: '双因素',
                     footer: (_, { OkBtn, CancelBtn }) => (
                         <>
                             <OkBtn />
@@ -233,9 +233,9 @@ const User = () => {
                     content: '确定解除双因素？',
                     onOk: () => {
                         void modal.confirm({
-                            title: '解除双因素',
                             centered: true,
                             maskClosable: true,
+                            title: '解除双因素',
                             footer: (_, { OkBtn, CancelBtn }) => (
                                 <>
                                     <OkBtn />
@@ -313,9 +313,9 @@ const User = () => {
                         const response = res.data
                         if (response.success) {
                             void modal.confirm({
-                                title: '绑定双因素',
                                 centered: true,
                                 maskClosable: true,
+                                title: '绑定双因素',
                                 footer: (_, { OkBtn, CancelBtn }) => (
                                     <>
                                         <OkBtn />
