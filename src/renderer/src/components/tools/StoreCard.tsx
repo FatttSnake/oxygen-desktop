@@ -191,7 +191,7 @@ const StoreCard = ({
         <>
             <Draggable
                 id={`${author.username}:${toolId}:${ver}`}
-                data={{ icon, toolName, toolId, authorUsername: author.username, ver: 'latest' }}
+                data={{ icon, toolName, toolId, authorUsername: author.username, ver: '' }}
             >
                 <Card
                     data-component={'component-store-card'}

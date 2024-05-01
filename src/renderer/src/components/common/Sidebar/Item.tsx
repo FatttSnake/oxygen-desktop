@@ -42,9 +42,9 @@ const Item = (props: ItemProps) => {
                         isPending ? 'pending' : isActive ? 'active' : ''
                     }
                 >
-                    <div className={'icon-box'}>
-                        {props.icon &&
-                            (typeof props.icon === 'string' ? (
+                    {props.icon && (
+                        <div className={'icon-box'}>
+                            {typeof props.icon === 'string' ? (
                                 <img
                                     className={'icon'}
                                     src={`data:image/svg+xml;base64,${props.icon}`}
@@ -52,8 +52,9 @@ const Item = (props: ItemProps) => {
                                 />
                             ) : (
                                 <Icon className={'icon'} component={props.icon} />
-                            ))}
-                    </div>
+                            )}
+                        </div>
+                    )}
                     <span className={'text'}>{props.text}</span>
                     <div className={'extend'}>{props.extend}</div>
                 </NavLink>
