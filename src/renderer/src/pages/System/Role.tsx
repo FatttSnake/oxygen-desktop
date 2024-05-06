@@ -50,7 +50,7 @@ const Role = () => {
     const [isRegexLegal, setIsRegexLegal] = useState(true)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isDrawerEdit, setIsDrawerEdit] = useState(false)
-    const [submittable, setSubmittable] = useState(false)
+    const [isSubmittable, setIsSubmittable] = useState(false)
     const [powerTreeData, setPowerTreeData] = useState<_DataNode[]>([])
     const [isLoadingPower, setIsLoadingPower] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -480,10 +480,10 @@ const Role = () => {
     useEffect(() => {
         form.validateFields({ validateOnly: true }).then(
             () => {
-                setSubmittable(true)
+                setIsSubmittable(true)
             },
             () => {
-                setSubmittable(false)
+                setIsSubmittable(false)
             }
         )
 
@@ -598,7 +598,7 @@ const Role = () => {
             </AntdButton>
             <AntdButton
                 type={'primary'}
-                disabled={!submittable}
+                disabled={!isSubmittable}
                 loading={isSubmitting}
                 onClick={handleOnSubmit}
             >

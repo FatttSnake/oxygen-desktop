@@ -50,7 +50,7 @@ const Group = () => {
     const [isRegexLegal, setIsRegexLegal] = useState(true)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isDrawerEdit, setIsDrawerEdit] = useState(false)
-    const [submittable, setSubmittable] = useState(false)
+    const [isSubmittable, setIsSubmittable] = useState(false)
     const [roleData, setRoleData] = useState<RoleVo[]>([])
     const [isLoadingRole, setIsLoadingRole] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -471,10 +471,10 @@ const Group = () => {
     useEffect(() => {
         form.validateFields({ validateOnly: true }).then(
             () => {
-                setSubmittable(true)
+                setIsSubmittable(true)
             },
             () => {
-                setSubmittable(false)
+                setIsSubmittable(false)
             }
         )
 
@@ -589,7 +589,7 @@ const Group = () => {
             </AntdButton>
             <AntdButton
                 type={'primary'}
-                disabled={!submittable}
+                disabled={!isSubmittable}
                 loading={isSubmitting}
                 onClick={handleOnSubmit}
             >

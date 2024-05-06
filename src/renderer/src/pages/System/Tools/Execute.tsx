@@ -12,7 +12,7 @@ import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '@/components/P
 const Execute = () => {
     const navigate = useNavigate()
     const { id } = useParams()
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
 
     const render = (toolVo: ToolVo) => {
@@ -39,10 +39,10 @@ const Execute = () => {
     }
 
     const getTool = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
         void r_sys_tool_get_one(id!)
@@ -61,7 +61,7 @@ const Execute = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
                 message.destroy('LOADING')
             })
     }

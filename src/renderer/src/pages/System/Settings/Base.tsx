@@ -5,7 +5,7 @@ import SettingsCard from '@/components/system/SettingCard'
 const Base = () => {
     const [baseForm] = AntdForm.useForm<BaseSettingsParam>()
     const baseFormValues = AntdForm.useWatch([], baseForm)
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleOnReset = () => {
         getBaseSettings()
@@ -24,17 +24,17 @@ const Base = () => {
     }
 
     const getBaseSettings = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
 
         void r_sys_settings_base_get().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data
                 data && baseForm.setFieldsValue(data)
-                setLoading(false)
+                setIsLoading(false)
             }
         })
     }
@@ -48,7 +48,7 @@ const Base = () => {
             <SettingsCard
                 icon={IconOxygenBase}
                 title={'基础'}
-                loading={loading}
+                loading={isLoading}
                 onReset={handleOnReset}
                 onSave={handleOnSave}
                 modifyOperationCode={['system:settings:modify:base']}

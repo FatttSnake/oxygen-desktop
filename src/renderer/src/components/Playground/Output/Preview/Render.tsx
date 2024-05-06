@@ -42,7 +42,7 @@ const iframeUrl = getIframeUrl(iframeRaw)
 
 const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) => {
     const iframeRef = useRef<HTMLIFrameElement>(null)
-    const [loaded, setLoaded] = useState(false)
+    const [isLoaded, setIsLoaded] = useState(false)
     const [selectedDevice, setSelectedDevice] = useState('Pixel 7')
     const [zoom, setZoom] = useState(1)
     const [isRotate, setIsRotate] = useState(false)
@@ -148,7 +148,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
     }
 
     useEffect(() => {
-        if (loaded) {
+        if (isLoaded) {
             iframeRef.current?.contentWindow?.postMessage(
                 {
                     type: 'UPDATE',
@@ -157,10 +157,10 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                 '*'
             )
         }
-    }, [loaded, compiledCode])
+    }, [isLoaded, compiledCode])
 
     useEffect(() => {
-        if (loaded) {
+        if (isLoaded) {
             iframeRef.current?.contentWindow?.postMessage(
                 {
                     type: 'SCALE',
@@ -169,7 +169,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                 '*'
             )
         }
-    }, [loaded, zoom])
+    }, [isLoaded, zoom])
 
     return mobileMode ? (
         <>
@@ -202,7 +202,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                                 key={iframeKey}
                                 ref={iframeRef}
                                 src={iframeUrl}
-                                onLoad={() => setLoaded(true)}
+                                onLoad={() => setIsLoaded(true)}
                                 sandbox="allow-downloads allow-forms allow-modals allow-scripts"
                             />
                         </div>
@@ -244,7 +244,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
             key={iframeKey}
             ref={iframeRef}
             src={iframeUrl}
-            onLoad={() => setLoaded(true)}
+            onLoad={() => setIsLoaded(true)}
             sandbox="allow-downloads allow-forms allow-modals allow-scripts"
         />
     )

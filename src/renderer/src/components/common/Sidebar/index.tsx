@@ -17,18 +17,18 @@ interface SidebarProps extends PropsWithChildren {
 }
 
 const Sidebar = (props: SidebarProps) => {
-    const [hideSidebar, setHideSidebar] = useState(getLocalStorage('HIDE_SIDEBAR') === 'true')
+    const [isHideSidebar, setIsHideSidebar] = useState(getLocalStorage('HIDE_SIDEBAR') === 'true')
 
     const switchSidebar = () => {
-        setLocalStorage('HIDE_SIDEBAR', !hideSidebar ? 'true' : 'false')
-        setHideSidebar(!hideSidebar)
-        props.onSidebarSwitch?.(hideSidebar)
+        setLocalStorage('HIDE_SIDEBAR', !isHideSidebar ? 'true' : 'false')
+        setIsHideSidebar(!isHideSidebar)
+        props.onSidebarSwitch?.(isHideSidebar)
     }
 
     return (
         <>
             <div
-                className={`sidebar${hideSidebar ? ' hide' : ''}`}
+                className={`sidebar${isHideSidebar ? ' hide' : ''}`}
                 style={{ width: props.width ?? 'clamp(180px, 20vw, 240px)' }}
             >
                 <div className={'title'}>

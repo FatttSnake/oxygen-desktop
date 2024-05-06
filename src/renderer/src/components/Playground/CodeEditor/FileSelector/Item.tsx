@@ -31,7 +31,7 @@ const Item = ({
 }: ItemProps) => {
     const inputRef = useRef<HTMLInputElement>(null)
     const [fileName, setFileName] = useState(value)
-    const [creating, setCreating] = useState(prop.creating)
+    const [isCreating, setIsCreating] = useState(prop.creating)
 
     const handleOnClick = () => {
         if (hasEditing) {
@@ -52,35 +52,35 @@ const Item = ({
     }
 
     const finishNameFile = () => {
-        if (!creating || onValidate ? !onValidate?.(fileName, value) : false) {
+        if (!isCreating || onValidate ? !onValidate?.(fileName, value) : false) {
             inputRef.current?.focus()
             return
         }
 
         if (fileName === value && active) {
-            setCreating(false)
+            setIsCreating(false)
             setHasEditing?.(false)
             return
         }
 
         onOk?.(fileName)
-        setCreating(false)
+        setIsCreating(false)
         setHasEditing?.(false)
     }
 
     const cancelNameFile = () => {
         setFileName(value)
-        setCreating(false)
+        setIsCreating(false)
         setHasEditing?.(false)
         onCancel?.()
     }
 
     const handleOnDoubleClick = () => {
-        if (readonly || creating || hasEditing) {
+        if (readonly || isCreating || hasEditing) {
             return
         }
 
-        setCreating(true)
+        setIsCreating(true)
         setHasEditing?.(true)
         setFileName(value)
         setTimeout(() => {
@@ -112,7 +112,7 @@ const Item = ({
             className={`tab-item${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
             onClick={handleOnClick}
         >
-            {creating ? (
+            {isCreating ? (
                 <div className={'tab-item-input'}>
                     <input
                         ref={inputRef}

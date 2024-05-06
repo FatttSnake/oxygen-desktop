@@ -208,7 +208,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
 const Tools = () => {
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [currentPage, setCurrentPage] = useState(0)
     const [hasNextPage, setHasNextPage] = useState(false)
     const [toolData, setToolData] = useState<ToolVo[]>([])
@@ -228,7 +228,7 @@ const Tools = () => {
             .then(
                 (confirmed) => {
                     if (confirmed) {
-                        setLoading(true)
+                        setIsLoading(true)
 
                         void r_tool_delete(tool.id)
                             .then((res) => {
@@ -241,7 +241,7 @@ const Tools = () => {
                                 }
                             })
                             .finally(() => {
-                                setLoading(false)
+                                setIsLoading(false)
                             })
                     }
                 },
@@ -371,7 +371,7 @@ const Tools = () => {
             .then(
                 (confirmed) => {
                     if (confirmed) {
-                        setLoading(true)
+                        setIsLoading(true)
 
                         void r_tool_submit(tool.id)
                             .then((res) => {
@@ -392,7 +392,7 @@ const Tools = () => {
                                 }
                             })
                             .finally(() => {
-                                setLoading(false)
+                                setIsLoading(false)
                             })
                     }
                 },
@@ -411,7 +411,7 @@ const Tools = () => {
             .then(
                 (confirmed) => {
                     if (confirmed) {
-                        setLoading(true)
+                        setIsLoading(true)
 
                         void r_tool_cancel(tool.id)
                             .then((res) => {
@@ -431,7 +431,7 @@ const Tools = () => {
                                 }
                             })
                             .finally(() => {
-                                setLoading(false)
+                                setIsLoading(false)
                                 getTool(1)
                             })
                     }
@@ -441,24 +441,24 @@ const Tools = () => {
     }
 
     const handleOnLoadMore = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
         getTool(currentPage + 1)
     }
 
     const handleOnLoadMoreStar = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
         getStarTool(currentStarPage + 1)
     }
 
     const getTool = (page: number) => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
         void r_tool_get({ currentPage: page })
@@ -487,7 +487,7 @@ const Tools = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
                 message.destroy('LOADING')
                 if (currentStarPage === 0) {
                     getStarTool(1)
@@ -496,10 +496,10 @@ const Tools = () => {
     }
 
     const getStarTool = (page: number) => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
         void message.loading({ content: '加载收藏列表中', key: 'LOADING', duration: 0 })
 
         void r_tool_get_favorite({ currentPage: page })
@@ -528,7 +528,7 @@ const Tools = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
                 message.destroy('LOADING')
             })
     }

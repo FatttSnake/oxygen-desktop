@@ -10,7 +10,7 @@ import FlexBox from '@/components/common/FlexBox'
 
 const Log = () => {
     const [logData, setLogData] = useState<SysLogGetVo[]>([])
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [tableParams, setTableParams] = useState<TableParam>({
         pagination: {
             current: 1,
@@ -181,11 +181,11 @@ const Log = () => {
     }
 
     const getLog = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
 
-        setLoading(true)
+        setIsLoading(true)
 
         void r_sys_log_get({
             currentPage: tableParams.pagination?.current,
@@ -218,7 +218,7 @@ const Log = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
             })
     }
 
@@ -276,7 +276,7 @@ const Log = () => {
                 columns={dataColumns}
                 rowKey={(record) => record.id}
                 pagination={tableParams.pagination}
-                loading={loading}
+                loading={isLoading}
                 onChange={handleOnTableChange}
             />
         </Card>

@@ -15,7 +15,7 @@ const Source = () => {
     const [searchParams] = useSearchParams({
         platform: import.meta.env.VITE_PLATFORM
     })
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [files, setFiles] = useState<IFiles>({})
     const [selectedFileName, setSelectedFileName] = useState('')
 
@@ -29,10 +29,10 @@ const Source = () => {
     }
 
     const getTool = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
         void r_tool_detail(
@@ -56,7 +56,7 @@ const Source = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
                 message.destroy('LOADING')
             })
     }

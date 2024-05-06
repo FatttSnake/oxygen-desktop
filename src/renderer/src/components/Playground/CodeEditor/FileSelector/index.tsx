@@ -34,7 +34,7 @@ const FileSelector = ({
 }: FileSelectorProps) => {
     const hideScrollbarRef = useRef<HideScrollbarElement>(null)
     const [tabs, setTabs] = useState<string[]>([])
-    const [creating, setCreating] = useState(false)
+    const [isCreating, setIsCreating] = useState(false)
     const [hasEditing, setHasEditing] = useState(false)
 
     const getMaxSequenceTabName = (filesName: string[]) => {
@@ -56,7 +56,7 @@ const FileSelector = ({
         }
 
         setTabs([...tabs, getMaxSequenceTabName(tabs)])
-        setCreating(true)
+        setIsCreating(true)
         setTimeout(() => {
             hideScrollbarRef.current?.scrollRight(1000)
         })
@@ -64,16 +64,16 @@ const FileSelector = ({
 
     const handleOnCancel = () => {
         onError?.('')
-        if (!creating) {
+        if (!isCreating) {
             return
         }
         tabs.pop()
         setTabs([...tabs])
-        setCreating(false)
+        setIsCreating(false)
     }
 
     const handleOnClickTab = (fileName: string) => {
-        if (creating) {
+        if (isCreating) {
             return
         }
 
@@ -97,9 +97,9 @@ const FileSelector = ({
     }
 
     const handleOnSaveTab = (value: string, item: string) => {
-        if (creating) {
+        if (isCreating) {
             onAddFile?.(value)
-            setCreating(false)
+            setIsCreating(false)
         } else {
             onUpdateFileName?.(value, item)
         }
@@ -179,7 +179,7 @@ const FileSelector = ({
                                     key={index + item}
                                     value={item}
                                     active={selectedFileName === item}
-                                    creating={creating}
+                                    creating={isCreating}
                                     readonly={readonly || notRemovableFiles.includes(item)}
                                     hasEditing={hasEditing}
                                     setHasEditing={setHasEditing}

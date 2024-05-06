@@ -10,7 +10,7 @@ const Footer = () => {
     const lastMatch = matches.reduce((_, second) => second)
     const location = useLocation()
     const navigate = useNavigate()
-    const [exiting, setExiting] = useState(false)
+    const [isExiting, setIsExiting] = useState(false)
     const [nickname, setNickname] = useState('')
     const [avatar, setAvatar] = useState('')
 
@@ -23,11 +23,11 @@ const Footer = () => {
     }
 
     const handleLogout = () => {
-        if (exiting) {
+        if (isExiting) {
             return
         }
 
-        setExiting(true)
+        setIsExiting(true)
         void r_auth_logout().finally(() => {
             removeToken()
             notification.info({
@@ -83,8 +83,8 @@ const Footer = () => {
                 <div className={'content'}>
                     <span hidden={!getLoginStatus()} className={'icon-exit'} onClick={handleLogout}>
                         <Icon
-                            component={exiting ? IconOxygenLoading : IconOxygenExit}
-                            spin={exiting}
+                            component={isExiting ? IconOxygenLoading : IconOxygenExit}
+                            spin={isExiting}
                         />
                     </span>
                 </div>

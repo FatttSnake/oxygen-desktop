@@ -76,11 +76,11 @@ export const useEditor = () => {
 export const useTypesProgress = () => {
     const [progress, setProgress] = useState(0)
     const [total, setTotal] = useState(0)
-    const [finished, setFinished] = useState(false)
+    const [isFinished, setIsFinished] = useState(false)
 
     const onWatch = (typeHelper: TypeHelper) => {
         const handleStarted = () => {
-            setFinished(false)
+            setIsFinished(false)
         }
         typeHelper.addListener('started', handleStarted)
 
@@ -91,7 +91,7 @@ export const useTypesProgress = () => {
         typeHelper.addListener('progress', handleProgress)
 
         const handleFinished = () => {
-            setFinished(true)
+            setIsFinished(true)
         }
         typeHelper.addListener('progress', handleFinished)
 
@@ -105,7 +105,7 @@ export const useTypesProgress = () => {
     return {
         progress,
         total,
-        finished,
+        finished: isFinished,
         onWatch
     }
 }

@@ -16,7 +16,7 @@ const View = () => {
     const [searchParams] = useSearchParams({
         platform: import.meta.env.VITE_PLATFORM
     })
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
     const [isAndroid, setIsAndroid] = useState(false)
 
@@ -58,10 +58,10 @@ const View = () => {
     }
 
     const getTool = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
         void r_tool_detail(
@@ -85,7 +85,7 @@ const View = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
                 message.destroy('LOADING')
             })
     }

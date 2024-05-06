@@ -60,7 +60,7 @@ const Template = () => {
     const [isDrawerEdit, setIsDrawerEdit] = useState(false)
     const [baseData, setBaseData] = useState<ToolBaseVo[]>([])
     const [isLoadingBaseData, setIsLoadingBaseData] = useState(false)
-    const [submittable, setSubmittable] = useState(false)
+    const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [editingTemplateId, setEditingTemplateId] = useState<string>('')
     const [editingFiles, setEditingFiles] = useState<Record<string, IFiles>>({})
@@ -884,10 +884,10 @@ const Template = () => {
     useEffect(() => {
         form.validateFields({ validateOnly: true }).then(
             () => {
-                setSubmittable(true)
+                setIsSubmittable(true)
             },
             () => {
-                setSubmittable(false)
+                setIsSubmittable(false)
             }
         )
 
@@ -972,7 +972,7 @@ const Template = () => {
             </AntdButton>
             <AntdButton
                 type={'primary'}
-                disabled={!submittable}
+                disabled={!isSubmittable}
                 loading={isSubmitting}
                 onClick={handleOnSubmit}
             >

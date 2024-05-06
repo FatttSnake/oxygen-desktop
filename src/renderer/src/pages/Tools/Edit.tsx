@@ -36,7 +36,7 @@ const Edit = () => {
     })
     const [form] = AntdForm.useForm<ToolUpdateParam>()
     const formValues = AntdForm.useWatch([], form)
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [toolData, setToolData] = useState<ToolVo>()
     const [files, setFiles] = useState<IFiles>({})
     const [selectedFileName, setSelectedFileName] = useState('')
@@ -46,13 +46,13 @@ const Edit = () => {
     const [tsconfig, setTsconfig] = useState<ITsconfig>()
     const [entryPoint, setEntryPoint] = useState('')
     const [baseDist, setBaseDist] = useState('')
-    const [showDraggableMask, setShowDraggableMask] = useState(false)
+    const [isShowDraggableMask, setIsShowDraggableMask] = useState(false)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-    const [submittable, setSubmittable] = useState(false)
+    const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [hasEdited, setHasEdited] = useState(false)
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
-    const [loadingCategory, setLoadingCategory] = useState(false)
+    const [isLoadingCategory, setIsLoadingCategory] = useState(false)
 
     useBeforeUnload(
         useCallback(
@@ -196,10 +196,10 @@ const Edit = () => {
     }
 
     const getCategory = () => {
-        if (loadingCategory) {
+        if (isLoadingCategory) {
             return
         }
-        setLoadingCategory(true)
+        setIsLoadingCategory(true)
 
         void r_tool_category_get()
             .then((res) => {
@@ -213,15 +213,15 @@ const Edit = () => {
                 }
             })
             .finally(() => {
-                setLoadingCategory(false)
+                setIsLoadingCategory(false)
             })
     }
 
     const getTool = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
         void r_tool_detail('!', toolId!, 'latest', searchParams.get('platform') as Platform)
@@ -253,7 +253,7 @@ const Edit = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
                 message.destroy('LOADING')
             })
     }
@@ -299,10 +299,10 @@ const Edit = () => {
     useEffect(() => {
         form.validateFields({ validateOnly: true }).then(
             () => {
-                setSubmittable(true)
+                setIsSubmittable(true)
             },
             () => {
-                setSubmittable(false)
+                setIsSubmittable(false)
             }
         )
     }, [formValues])
@@ -327,7 +327,7 @@ const Edit = () => {
             </AntdButton>
             <AntdButton
                 type={'primary'}
-                disabled={!submittable}
+                disabled={!isSubmittable}
                 loading={isSubmitting}
                 onClick={handleOnSubmit}
             >
@@ -408,8 +408,8 @@ const Edit = () => {
                         value: value.id,
                         label: value.name
                     }))}
-                    loading={loadingCategory}
-                    disabled={loadingCategory}
+                    loading={isLoadingCategory}
+                    disabled={isLoadingCategory}
                     placeholder={'请选择类别'}
                 />
             </AntdForm.Item>
@@ -421,7 +421,7 @@ const Edit = () => {
             <FitFullscreen data-component={'tools-edit'}>
                 <Card>
                     <FlexBox direction={'horizontal'} className={'root-content'}>
-                        <LoadingMask hidden={!loading}>
+                        <LoadingMask hidden={!isLoading}>
                             <Playground.CodeEditor
                                 tsconfig={tsconfig}
                                 files={{
@@ -454,12 +454,12 @@ const Edit = () => {
                                 mobileMode={toolData?.platform === 'ANDROID'}
                             />
                         </LoadingMask>
-                        {showDraggableMask && <div className={'draggable-mask'} />}
+                        {isShowDraggableMask && <div className={'draggable-mask'} />}
                     </FlexBox>
                 </Card>
                 <Draggable
-                    onStart={() => setShowDraggableMask(true)}
-                    onStop={() => setShowDraggableMask(false)}
+                    onStart={() => setIsShowDraggableMask(true)}
+                    onStop={() => setIsShowDraggableMask(false)}
                     bounds={'#root'}
                 >
                     <div className={'draggable-content'}>

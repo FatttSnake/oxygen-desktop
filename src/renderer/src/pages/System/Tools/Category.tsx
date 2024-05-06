@@ -27,7 +27,7 @@ const Category = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isDrawerEdit, setIsDrawerEdit] = useState(false)
-    const [submittable, setSubmittable] = useState(false)
+    const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleOnAddBtnClick = () => {
@@ -230,10 +230,10 @@ const Category = () => {
     useEffect(() => {
         form.validateFields({ validateOnly: true }).then(
             () => {
-                setSubmittable(true)
+                setIsSubmittable(true)
             },
             () => {
-                setSubmittable(false)
+                setIsSubmittable(false)
             }
         )
 
@@ -256,7 +256,7 @@ const Category = () => {
             </AntdButton>
             <AntdButton
                 type={'primary'}
-                disabled={!submittable}
+                disabled={!isSubmittable}
                 loading={isSubmitting}
                 onClick={handleOnSubmit}
             >

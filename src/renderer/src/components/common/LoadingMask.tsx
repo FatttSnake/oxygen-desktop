@@ -7,6 +7,7 @@ interface LoadingMaskProps extends PropsWithChildren {
     hidden?: boolean
     maskContent?: ReactNode
 }
+
 const LoadingMask = (props: LoadingMaskProps) => {
     const loadingIcon = (
         <>

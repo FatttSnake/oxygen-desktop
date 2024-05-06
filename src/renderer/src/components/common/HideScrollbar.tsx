@@ -183,16 +183,16 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
         const [verticalScrollbarWidth, setVerticalScrollbarWidth] = useState(0)
         const [verticalScrollbarLength, setVerticalScrollbarLength] = useState(100)
         const [verticalScrollbarPosition, setVerticalScrollbarPosition] = useState(0)
-        const [verticalScrollbarOnClick, setVerticalScrollbarOnClick] = useState(false)
-        const [verticalScrollbarOnTouch, setVerticalScrollbarOnTouch] = useState(false)
-        const [verticalScrollbarAutoHide, setVerticalScrollbarAutoHide] = useState(false)
+        const [isVerticalScrollbarOnClick, setIsVerticalScrollbarOnClick] = useState(false)
+        const [isVerticalScrollbarOnTouch, setIsVerticalScrollbarOnTouch] = useState(false)
+        const [isVerticalScrollbarAutoHide, setIsVerticalScrollbarAutoHide] = useState(false)
 
         const [horizontalScrollbarWidth, setHorizontalScrollbarWidth] = useState(0)
         const [horizontalScrollbarLength, setHorizontalScrollbarLength] = useState(100)
         const [horizontalScrollbarPosition, setHorizontalScrollbarPosition] = useState(0)
-        const [horizontalScrollbarOnClick, setHorizontalScrollbarOnClick] = useState(false)
-        const [horizontalScrollbarOnTouch, setHorizontalScrollbarOnTouch] = useState(false)
-        const [horizontalScrollbarAutoHide, setHorizontalScrollbarAutoHide] = useState(false)
+        const [isHorizontalScrollbarOnClick, setIsHorizontalScrollbarOnClick] = useState(false)
+        const [isHorizontalScrollbarOnTouch, setIsHorizontalScrollbarOnTouch] = useState(false)
+        const [isHorizontalScrollbarAutoHide, setIsHorizontalScrollbarAutoHide] = useState(false)
 
         const isPreventAnyScroll =
             isPreventScroll || isPreventVerticalScroll || isPreventHorizontalScroll
@@ -201,10 +201,10 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
             if (autoHideWaitingTime === undefined) {
                 return
             }
-            setVerticalScrollbarAutoHide(false)
+            setIsVerticalScrollbarAutoHide(false)
             if (autoHideWaitingTime > 0) {
                 setTimeout(() => {
-                    setVerticalScrollbarAutoHide(true)
+                    setIsVerticalScrollbarAutoHide(true)
                 }, autoHideWaitingTime)
             }
         }, [autoHideWaitingTime, verticalScrollbarPosition])
@@ -213,10 +213,10 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
             if (autoHideWaitingTime === undefined) {
                 return
             }
-            setHorizontalScrollbarAutoHide(false)
+            setIsHorizontalScrollbarAutoHide(false)
             if (autoHideWaitingTime > 0) {
                 setTimeout(() => {
-                    setHorizontalScrollbarAutoHide(true)
+                    setIsHorizontalScrollbarAutoHide(true)
                 }, autoHideWaitingTime)
             }
         }, [autoHideWaitingTime, horizontalScrollbarPosition])
@@ -318,20 +318,20 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                         }
                         switch (scrollbarFlag) {
                             case 'vertical':
-                                setVerticalScrollbarOnClick(true)
+                                setIsVerticalScrollbarOnClick(true)
                                 break
                             case 'horizontal':
-                                setHorizontalScrollbarOnClick(true)
+                                setIsHorizontalScrollbarOnClick(true)
                                 break
                         }
                         break
                     case 'up':
                     case 'leave':
-                        setVerticalScrollbarOnClick(false)
-                        setHorizontalScrollbarOnClick(false)
+                        setIsVerticalScrollbarOnClick(false)
+                        setIsHorizontalScrollbarOnClick(false)
                         break
                     case 'move':
-                        if (verticalScrollbarOnClick) {
+                        if (isVerticalScrollbarOnClick) {
                             rootRef.current?.scrollTo({
                                 top:
                                     rootRef.current?.scrollTop +
@@ -341,7 +341,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                 behavior: 'instant'
                             })
                         }
-                        if (horizontalScrollbarOnClick) {
+                        if (isHorizontalScrollbarOnClick) {
                             rootRef.current?.scrollTo({
                                 left:
                                     rootRef.current?.scrollLeft +
@@ -372,23 +372,23 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                         }
                         switch (scrollbarFlag) {
                             case 'vertical':
-                                setVerticalScrollbarOnTouch(true)
+                                setIsVerticalScrollbarOnTouch(true)
                                 break
                             case 'horizontal':
-                                setHorizontalScrollbarOnTouch(true)
+                                setIsHorizontalScrollbarOnTouch(true)
                                 break
                         }
                         break
                     case 'end':
                     case 'cancel':
-                        setVerticalScrollbarOnTouch(false)
-                        setHorizontalScrollbarOnTouch(false)
+                        setIsVerticalScrollbarOnTouch(false)
+                        setIsHorizontalScrollbarOnTouch(false)
                         break
                     case 'move':
                         if (event.touches.length !== 1) {
                             return
                         }
-                        if (verticalScrollbarOnTouch) {
+                        if (isVerticalScrollbarOnTouch) {
                             rootRef.current?.scrollTo({
                                 top:
                                     rootRef.current?.scrollTop +
@@ -399,7 +399,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                 behavior: 'instant'
                             })
                         }
-                        if (horizontalScrollbarOnTouch) {
+                        if (isHorizontalScrollbarOnTouch) {
                             rootRef.current?.scrollTo({
                                 left:
                                     rootRef.current?.scrollLeft +
@@ -571,7 +571,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                         (!isHiddenVerticalScrollbarWhenFull || verticalScrollbarLength < 100) && (
                             <div
                                 className={`scrollbar vertical-scrollbar${
-                                    verticalScrollbarAutoHide ? ' hide' : ''
+                                    isVerticalScrollbarAutoHide ? ' hide' : ''
                                 }`}
                                 style={{
                                     height: maskRef.current
@@ -614,7 +614,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                             horizontalScrollbarLength < 100) && (
                             <div
                                 className={`scrollbar horizontal-scrollbar${
-                                    horizontalScrollbarAutoHide ? ' hide' : ''
+                                    isHorizontalScrollbarAutoHide ? ' hide' : ''
                                 }`}
                                 style={{
                                     width: maskRef.current

@@ -11,7 +11,7 @@ const Mail = () => {
     const [modal, contextHolder] = AntdModal.useModal()
     const [mailForm] = AntdForm.useForm<MailSettingsParam>()
     const mailFormValues = AntdForm.useWatch([], mailForm)
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [mailSendForm] = AntdForm.useForm<MailSendParam>()
 
     const handleOnTest = () => {
@@ -95,17 +95,17 @@ const Mail = () => {
     }
 
     const getMailSettings = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
 
-        setLoading(true)
+        setIsLoading(true)
         void r_sys_settings_mail_get().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data
                 data && mailForm.setFieldsValue(data)
-                setLoading(false)
+                setIsLoading(false)
             }
         })
     }
@@ -119,7 +119,7 @@ const Mail = () => {
             <SettingsCard
                 icon={IconOxygenEmail}
                 title={'邮件'}
-                loading={loading}
+                loading={isLoading}
                 onReset={handleOnReset}
                 onSave={handleOnSave}
                 modifyOperationCode={['system:settings:modify:mail']}

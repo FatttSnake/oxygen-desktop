@@ -15,7 +15,7 @@ const Code = () => {
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
     const { id } = useParams()
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [files, setFiles] = useState<IFiles>({})
     const [selectedFileName, setSelectedFileName] = useState('')
     const [platform, setPlatform] = useState<Platform>('WEB')
@@ -47,10 +47,10 @@ const Code = () => {
     }
 
     const getTool = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
         void r_sys_tool_get_one(id!)
@@ -69,7 +69,7 @@ const Code = () => {
                 }
             })
             .finally(() => {
-                setLoading(false)
+                setIsLoading(false)
                 message.destroy('LOADING')
             })
     }

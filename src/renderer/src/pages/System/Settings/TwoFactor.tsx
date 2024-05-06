@@ -5,7 +5,7 @@ import SettingsCard from '@/components/system/SettingCard'
 const TwoFactor = () => {
     const [twoFactorForm] = AntdForm.useForm<TwoFactorSettingsParam>()
     const twoFactorFormValues = AntdForm.useWatch([], twoFactorForm)
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleOnReset = () => {
         getTwoFactorSettings()
@@ -24,17 +24,17 @@ const TwoFactor = () => {
     }
 
     const getTwoFactorSettings = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
 
         void r_sys_settings_two_factor_get().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data
                 data && twoFactorForm.setFieldsValue(data)
-                setLoading(false)
+                setIsLoading(false)
             }
         })
     }
@@ -48,7 +48,7 @@ const TwoFactor = () => {
             <SettingsCard
                 icon={IconOxygenSafe}
                 title={'双因素'}
-                loading={loading}
+                loading={isLoading}
                 onReset={handleOnReset}
                 onSave={handleOnSave}
                 modifyOperationCode={['system:settings:modify:two-factor']}

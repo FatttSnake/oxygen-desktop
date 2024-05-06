@@ -15,7 +15,7 @@ const Store = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const [hasNextPage, setHasNextPage] = useState(false)
     const [toolData, setToolData] = useState<ToolVo[]>([])
-    const [hideSearch, setHideSearch] = useState(false)
+    const [isHideSearch, setIsHideSearch] = useState(false)
     const [searchValue, setSearchValue] = useState('')
 
     const handleOnSearch = (value: string) => {
@@ -25,9 +25,9 @@ const Store = () => {
 
     const handleOnScroll = (event: UIEvent<HTMLDivElement>) => {
         if (event.currentTarget.scrollTop < scrollTopRef.current) {
-            setHideSearch(false)
+            setIsHideSearch(false)
         } else {
-            setHideSearch(true)
+            setIsHideSearch(true)
         }
         scrollTopRef.current = event.currentTarget.scrollTop
     }
@@ -89,7 +89,7 @@ const Store = () => {
                     autoHideWaitingTime={1000}
                     onScroll={handleOnScroll}
                 >
-                    <div className={`search${hideSearch ? ' hide' : ''}`}>
+                    <div className={`search${isHideSearch ? ' hide' : ''}`}>
                         <AntdInput.Search
                             enterButton
                             allowClear

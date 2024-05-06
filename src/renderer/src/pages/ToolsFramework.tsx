@@ -18,12 +18,12 @@ const ToolsFramework = () => {
     const [isDelete, setIsDelete] = useState(false)
     const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
     const [activeItem, setActiveItem] = useState<ToolMenuItem | null>(null)
-    const [showDropMask, setShowDropMask] = useState(false)
+    const [isShowDropMask, setIsShowDropMask] = useState(false)
 
     const handleOnDragStart = ({ active }: DragStartEvent) => {
         setActiveItem(active.data.current as ToolMenuItem)
         if (!active.data.current?.sortable) {
-            setShowDropMask(true)
+            setIsShowDropMask(true)
         }
     }
 
@@ -73,7 +73,7 @@ const ToolsFramework = () => {
         }
 
         setActiveItem(null)
-        setShowDropMask(false)
+        setIsShowDropMask(false)
     }
 
     const handleOnDragCancel = () => {
@@ -174,7 +174,7 @@ const ToolsFramework = () => {
                                         </DraggableOverlay>
                                     </Sidebar.ItemList>
                                 </Sidebar.Scroll>
-                                {showDropMask && <DropMask />}
+                                {isShowDropMask && <DropMask />}
                             </Droppable>
                         </Sidebar>
                     </div>

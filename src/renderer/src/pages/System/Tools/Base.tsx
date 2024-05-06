@@ -60,7 +60,7 @@ const Base = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isDrawerEdit, setIsDrawerEdit] = useState(false)
-    const [submittable, setSubmittable] = useState(false)
+    const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [editingBaseId, setEditingBaseId] = useState<string>('')
     const [editingFiles, setEditingFiles] = useState<Record<string, IFiles>>({})
@@ -70,7 +70,7 @@ const Base = () => {
     const [baseDetailData, setBaseDetailData] = useState<Record<string, ToolBaseVo>>({})
     const [baseDetailLoading, setBaseDetailLoading] = useState<Record<string, boolean>>({})
     const [tsconfig, setTsconfig] = useState<ITsconfig>()
-    const [compiling, setCompiling] = useState(false)
+    const [isCompiling, setIsCompiling] = useState(false)
     const [compileForm] = AntdForm.useForm<{ entryFileName: string }>()
 
     useBeforeUnload(
@@ -220,10 +220,10 @@ const Base = () => {
 
     const handleOnCompileBtnClick = (value: ToolBaseVo) => {
         return () => {
-            if (compiling || isLoading) {
+            if (isCompiling || isLoading) {
                 return
             }
-            setCompiling(true)
+            setIsCompiling(true)
             setIsLoading(true)
             void message.loading({ content: '加载文件中', key: 'COMPILE_LOADING', duration: 0 })
 
@@ -263,7 +263,7 @@ const Base = () => {
                     const files = base64ToFiles(baseDetail!.source.data!)
                     if (!Object.keys(files).includes(IMPORT_MAP_FILE_NAME)) {
                         void message.warning(`编译中止：未包含 ${IMPORT_MAP_FILE_NAME} 文件`)
-                        setCompiling(false)
+                        setIsCompiling(false)
                         setIsLoading(false)
                         return
                     }
@@ -272,7 +272,7 @@ const Base = () => {
                         importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
                     } catch (e) {
                         void message.warning(`编译中止：Import Map 文件转换失败`)
-                        setCompiling(false)
+                        setIsCompiling(false)
                         setIsLoading(false)
                         return
                     }
@@ -353,14 +353,14 @@ const Base = () => {
                                                     })
                                                     .finally(() => {
                                                         message.destroy('UPLOADING')
-                                                        setCompiling(false)
+                                                        setIsCompiling(false)
                                                         setIsLoading(false)
                                                     })
                                             })
                                             .catch((e: Error) => {
                                                 void message.error(`编译失败：${e.message}`)
                                                 message.destroy('COMPILING')
-                                                setCompiling(false)
+                                                setIsCompiling(false)
                                                 setIsLoading(false)
                                             })
                                     })
@@ -372,13 +372,13 @@ const Base = () => {
                                 }
                             ),
                         onCancel: () => {
-                            setCompiling(false)
+                            setIsCompiling(false)
                             setIsLoading(false)
                         }
                     })
                 })
                 .catch(() => {
-                    setCompiling(false)
+                    setIsCompiling(false)
                     setIsLoading(false)
                     message.destroy('COMPILE_LOADING')
                 })
@@ -1002,10 +1002,10 @@ const Base = () => {
     useEffect(() => {
         form.validateFields({ validateOnly: true }).then(
             () => {
-                setSubmittable(true)
+                setIsSubmittable(true)
             },
             () => {
-                setSubmittable(false)
+                setIsSubmittable(false)
             }
         )
 
@@ -1034,7 +1034,7 @@ const Base = () => {
             </AntdButton>
             <AntdButton
                 type={'primary'}
-                disabled={!submittable}
+                disabled={!isSubmittable}
                 loading={isSubmitting}
                 onClick={handleOnSubmit}
             >

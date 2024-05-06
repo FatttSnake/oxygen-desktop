@@ -29,13 +29,13 @@ const Create = () => {
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
     const [templateDetailData, setTemplateDetailData] = useState<Record<string, ToolTemplateVo>>({})
     const [previewTemplate, setPreviewTemplate] = useState('')
-    const [loadingTemplate, setLoadingTemplate] = useState(false)
-    const [loadingCategory, setLoadingCategory] = useState(false)
-    const [creating, setCreating] = useState(false)
+    const [isLoadingTemplate, setIsLoadingTemplate] = useState(false)
+    const [isLoadingCategory, setIsLoadingCategory] = useState(false)
+    const [isCreating, setIsCreating] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
 
     const handleOnFinish = (toolAddParam: ToolCreateParam) => {
-        setCreating(true)
+        setIsCreating(true)
 
         void r_tool_create(toolAddParam)
             .then((res) => {
@@ -49,15 +49,15 @@ const Create = () => {
                         break
                     case DATABASE_DUPLICATE_KEY:
                         void message.warning('已存在相同 ID 的应用')
-                        setCreating(false)
+                        setIsCreating(false)
                         break
                     default:
                         void message.error('创建失败，请稍后重试')
-                        setCreating(false)
+                        setIsCreating(false)
                 }
             })
             .catch(() => {
-                setCreating(false)
+                setIsCreating(false)
             })
     }
 
@@ -84,7 +84,7 @@ const Create = () => {
     }
 
     const handleOnPlatformChange = (value: string) => {
-        setLoadingTemplate(true)
+        setIsLoadingTemplate(true)
         void r_tool_template_get({
             platform: value
         })
@@ -103,7 +103,7 @@ const Create = () => {
                 }
             })
             .finally(() => {
-                setLoadingTemplate(false)
+                setIsLoadingTemplate(false)
             })
     }
 
@@ -113,7 +113,7 @@ const Create = () => {
             return
         }
 
-        setLoadingTemplate(true)
+        setIsLoadingTemplate(true)
         void r_tool_template_get_one(value)
             .then((res) => {
                 const response = res.data
@@ -126,7 +126,7 @@ const Create = () => {
                 }
             })
             .finally(() => {
-                setLoadingTemplate(false)
+                setIsLoadingTemplate(false)
             })
     }
 
@@ -167,7 +167,7 @@ const Create = () => {
     }, [form, formValues?.keywords])
 
     useEffect(() => {
-        setLoadingCategory(true)
+        setIsLoadingCategory(true)
         void r_tool_category_get()
             .then((res) => {
                 const response = res.data
@@ -180,7 +180,7 @@ const Create = () => {
                 }
             })
             .finally(() => {
-                setLoadingCategory(false)
+                setIsLoadingCategory(false)
             })
     }, [])
 
@@ -198,7 +198,7 @@ const Create = () => {
                                     form={form}
                                     layout={'vertical'}
                                     onFinish={handleOnFinish}
-                                    disabled={creating}
+                                    disabled={isCreating}
                                 >
                                     <AntdForm.Item
                                         label={'图标'}
@@ -319,8 +319,8 @@ const Create = () => {
                                                 value: value.id,
                                                 label: value.name
                                             }))}
-                                            loading={loadingTemplate}
-                                            disabled={loadingTemplate}
+                                            loading={isLoadingTemplate}
+                                            disabled={isLoadingTemplate}
                                             onChange={handleOnTemplateChange}
                                             placeholder={'请选择模板'}
                                         />
@@ -349,8 +349,8 @@ const Create = () => {
                                                 value: value.id,
                                                 label: value.name
                                             }))}
-                                            loading={loadingCategory}
-                                            disabled={loadingCategory}
+                                            loading={isLoadingCategory}
+                                            disabled={isLoadingCategory}
                                             placeholder={'请选择类别'}
                                         />
                                     </AntdForm.Item>
@@ -359,7 +359,7 @@ const Create = () => {
                                             className={'create-bt'}
                                             type={'primary'}
                                             htmlType={'submit'}
-                                            loading={creating}
+                                            loading={isCreating}
                                         >
                                             创建
                                         </AntdButton>

@@ -13,7 +13,7 @@ const SensitiveWord = () => {
     const [dataSource, setDataSource] = useState<SensitiveWordVo[]>()
     const [targetKeys, setTargetKeys] = useState<string[]>([])
     const [selectedKeys, setSelectedKeys] = useState<string[]>([])
-    const [loading, setLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [isAdding, setIsAdding] = useState(false)
     const [newWord, setNewWord] = useState('')
 
@@ -47,10 +47,10 @@ const SensitiveWord = () => {
     }
 
     const getSensitiveWordSettings = () => {
-        if (loading) {
+        if (isLoading) {
             return
         }
-        setLoading(true)
+        setIsLoading(true)
 
         void r_sys_settings_sensitive_get().then((res) => {
             const response = res.data
@@ -58,7 +58,7 @@ const SensitiveWord = () => {
                 const data = response.data
                 data && setDataSource(data)
                 data && setTargetKeys(data.filter((value) => value.enable).map((value) => value.id))
-                setLoading(false)
+                setIsLoading(false)
             }
         })
     }
@@ -103,7 +103,7 @@ const SensitiveWord = () => {
             <SettingsCard
                 icon={IconOxygenSensitive}
                 title={'敏感词'}
-                loading={loading}
+                loading={isLoading}
                 onReset={handleOnReset}
                 onSave={handleOnSave}
                 modifyOperationCode={['system:settings:modify:sensitive']}
