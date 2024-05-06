@@ -138,8 +138,12 @@ const SensitiveWord = () => {
                     dataSource={dataSource}
                     targetKeys={targetKeys}
                     selectedKeys={selectedKeys}
-                    onChange={setTargetKeys}
-                    onSelectChange={setSelectedKeys}
+                    onChange={(value) => {
+                        setTargetKeys(value as string[])
+                    }}
+                    onSelectChange={(value) => {
+                        setSelectedKeys(value as string[])
+                    }}
                     rowKey={(item) => item.id}
                     render={(item) => item.word}
                 />
