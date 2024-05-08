@@ -75,10 +75,9 @@ const StoreCard = ({
         }
         if (platform === 'ANDROID') {
             void modal.confirm({
+                centered: true,
                 icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
                 title: 'Android 端',
-                centered: true,
-                maskClosable: true,
                 content: (
                     <FlexBox className={'android-qrcode'}>
                         <AntdQRCode
@@ -147,10 +146,9 @@ const StoreCard = ({
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
         void modal.confirm({
+            centered: true,
             icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
             title: 'Android 端',
-            centered: true,
-            maskClosable: true,
             content: (
                 <FlexBox className={'android-qrcode'}>
                     <AntdQRCode
