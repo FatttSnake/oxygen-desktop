@@ -126,6 +126,15 @@ service.interceptors.response.use(
             (error.code === 'ECONNABORTED' && error.message.includes('timeout'))
         ) {
             void message.error({ content: '请求超时，请稍后重试', key: 'TIMEOUT' })
+        } else if (error.code === 'ERR_NETWORK') {
+            void message.error({
+                content: (
+                    <>
+                        <strong>网络错误</strong>，请检查网络后重试
+                    </>
+                ),
+                key: 'NETWORK_ERROR'
+            })
         } else {
             void message.error({
                 content: (
