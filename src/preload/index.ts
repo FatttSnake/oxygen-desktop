@@ -1,8 +1,12 @@
-import { contextBridge, Notification } from 'electron'
+import { contextBridge, Notification, ipcRenderer } from 'electron'
 import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
-const api = {}
+const api = {
+    installTool: (newTools: Record<string, Record<Platform, ToolVo>>) =>
+        ipcRenderer.invoke('store:installTool', newTools),
+    getInstalledTool: () => ipcRenderer.invoke('store:getInstalledTool')
+}
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

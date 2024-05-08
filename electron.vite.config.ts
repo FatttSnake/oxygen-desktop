@@ -10,7 +10,7 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 
 export default defineConfig({
     main: {
-        plugins: [externalizeDepsPlugin()]
+        plugins: [externalizeDepsPlugin({ exclude: ['electron-store'] })]
     },
     preload: {
         plugins: [externalizeDepsPlugin()]

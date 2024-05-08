@@ -19,6 +19,7 @@ interface ImportMeta {
 interface Window {
     electronAPI: _ElectronAPI
     Notification: typeof _Notification
+    api: API
 }
 
 interface RouteJsonObject {
