@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, webContents } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/logo.ico?asset'
@@ -31,10 +31,9 @@ const handleArgv = (argv: string[]) => {
 
 const handleUrl = (url: string) => {
     const { hostname, pathname } = new URL(url)
-    if (hostname === 'openurl') {
-        webContents.getAllWebContents().forEach((webContent) => {
-            webContent.send('open-url', pathname)
-        })
+    if (hostname === 'openurl' && mainWindow) {
+        mainWindow.webContents.send('open-url', pathname)
+        mainWindow.show()
     }
 }
 
