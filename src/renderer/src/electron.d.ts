@@ -10,5 +10,7 @@ declare global {
         installTool: (
             newTools: Record<string, Record<Platform, ToolVo>>
         ) => Promise<Record<string, Record<Platform, ToolVo>>>
+
+        getInstalledTool: () => Promise<Record<string, Record<Platform, ToolVo>>>
     }
 }

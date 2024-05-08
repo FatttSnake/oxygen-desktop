@@ -20,6 +20,16 @@ export const tools: RouteJsonObject[] = [
         menu: true
     },
     {
+        path: 'install',
+        absolutePath: '/install',
+        id: 'tools-install',
+        component: lazy(() => import('@/pages/Tools/Local')),
+        name: '本地安装',
+        titlePostfix: ' - 本地',
+        icon: lazy(() => import('~icons/oxygen/installed')),
+        menu: true
+    },
+    {
         path: '',
         absolutePath: '/',
         element: <Navigate to="/store" replace />

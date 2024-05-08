@@ -47,3 +47,14 @@ export const r_tool_remove_favorite = (param: ToolFavoriteAddRemoveParam) =>
 
 export const r_tool_get_favorite = (param: PageParam) =>
     request.get<PageVo<ToolVo>>(URL_TOOL_FAVORITE, param)
+
+export const l_tool_get = () => window.api.getInstalledTool()
+
+export const l_tool_install = (tools: Record<string, Record<Platform, ToolVo>>) =>
+    window.api.installTool(tools)
+
+export const l_tool_detail = async (
+    username: string,
+    toolId: string,
+    platform: Platform
+): Promise<ToolVo | undefined> => (await l_tool_get())?.[`${username}:${toolId}`]?.[platform]

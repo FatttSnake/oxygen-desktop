@@ -3,7 +3,12 @@ import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
 import '@/assets/css/components/tools/store-card.scss'
-import { COLOR_BACKGROUND, COLOR_MAIN, COLOR_PRODUCTION } from '@/constants/common.constants'
+import {
+    COLOR_BACKGROUND,
+    COLOR_MAIN,
+    COLOR_PRODUCTION,
+    DATABASE_SELECT_SUCCESS
+} from '@/constants/common.constants'
 import { checkDesktop, omitText } from '@/util/common'
 import { getLoginStatus, getUserId } from '@/util/auth'
 import {
@@ -12,7 +17,13 @@ import {
     navigateToStore,
     navigateToView
 } from '@/util/navigation'
-import { r_tool_add_favorite, r_tool_remove_favorite } from '@/services/tool'
+import {
+    l_tool_get,
+    l_tool_install,
+    r_tool_add_favorite,
+    r_tool_detail,
+    r_tool_remove_favorite
+} from '@/services/tool'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import DragHandle from '@/components/dnd/DragHandle'
@@ -29,6 +40,7 @@ interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement
     ver: string
     platform: Platform
     supportPlatform: Platform[]
+    vers: Record<Platform, string>
     favorite: boolean
 }
 
@@ -52,6 +64,7 @@ const StoreCard = ({
     ver,
     platform,
     supportPlatform,
+    vers,
     favorite,
     ...props
 }: StoreCardProps) => {
@@ -60,6 +73,9 @@ const StoreCard = ({
     const cardRef = useRef<HTMLDivElement>(null)
     const [favorite_, setFavorite_] = useState<boolean>(favorite)
     const [userId, setUserId] = useState('')
+    const [isInstalling, setIsInstalling] = useState(false)
+    const [isInstalled, setIsInstalled] = useState(true)
+    const [isAvailableUpdate, setIsAvailableUpdate] = useState(false)
 
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
@@ -143,6 +159,59 @@ const StoreCard = ({
         }
     }
 
+    const handleOnInstallBtnClick = (e: MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        if (isInstalling) {
+            return
+        }
+        setIsInstalling(true)
+
+        void message.loading({
+            content: isAvailableUpdate ? '更新中' : '安装中',
+            key: 'INSTALLING',
+            duration: 0
+        })
+        const newTools = {} as Record<Platform, ToolVo>
+        const flags: boolean[] = []
+        supportPlatform.forEach((platform) => {
+            void r_tool_detail(author.username, toolId, 'latest', platform)
+                .then((res) => {
+                    const response = res.data
+                    switch (response.code) {
+                        case DATABASE_SELECT_SUCCESS:
+                            newTools[platform] = response.data!
+                            flags.push(true)
+                            break
+                        default:
+                            flags.push(false)
+                    }
+                })
+                .catch(() => {
+                    flags.push(false)
+                })
+                .finally(() => {
+                    message.destroy('INSTALLING')
+                    setIsInstalling(false)
+                    if (flags.length !== supportPlatform.length) {
+                        return
+                    }
+                    if (flags.every((item) => item)) {
+                        void l_tool_install({ [`${author.username}:${toolId}`]: newTools }).then(
+                            () => {
+                                void message.success(isAvailableUpdate ? '更新成功' : '安装成功')
+                                setIsInstalled(true)
+                                setIsAvailableUpdate(false)
+                            }
+                        )
+                    } else {
+                        void message.error(
+                            isAvailableUpdate ? '更新失败，请稍后重试' : '安装失败，请稍后重试'
+                        )
+                    }
+                })
+        })
+    }
+
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
         void modal.confirm({
@@ -195,6 +264,30 @@ const StoreCard = ({
         navigateToView(navigate, author.username, toolId, 'WEB')
     }
 
+    useEffect(() => {
+        void l_tool_get().then((value) => {
+            const tools = value[`${author.username}:${toolId}`]
+            if (!tools) {
+                setIsInstalled(false)
+                return
+            }
+            setIsInstalled(true)
+
+            if (
+                Object.keys(tools).length !== supportPlatform.length ||
+                !supportPlatform.every((platform) => Object.keys(tools).includes(platform))
+            ) {
+                setIsAvailableUpdate(true)
+                return
+            }
+
+            if (supportPlatform.some((platform) => vers[platform] !== tools[platform].ver)) {
+                setIsAvailableUpdate(true)
+                return
+            }
+        })
+    }, [])
+
     return (
         <>
             <Draggable
@@ -223,6 +316,15 @@ const StoreCard = ({
                                 </AntdTag>
                             </div>
                             <div className={'operation'}>
+                                {(!isInstalled || isAvailableUpdate) && (
+                                    <AntdTooltip title={isAvailableUpdate ? '更新' : '安装'}>
+                                        <Icon
+                                            component={IconOxygenDownload}
+                                            onClick={handleOnInstallBtnClick}
+                                            disabled={isInstalling}
+                                        />
+                                    </AntdTooltip>
+                                )}
                                 {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
                                     <AntdTooltip title={'Android 端'}>
                                         <Icon

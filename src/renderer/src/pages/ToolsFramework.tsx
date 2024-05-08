@@ -108,6 +108,12 @@ const ToolsFramework = () => {
                                     icon={tools[1].icon}
                                     text={tools[1].name}
                                 />
+                                <Sidebar.Item
+                                    end
+                                    path={'/install'}
+                                    icon={tools[2].icon}
+                                    text={tools[2].name}
+                                />
                             </Sidebar.ItemList>
                             <Sidebar.Separate />
                             <Droppable id={'menu'} className={'menu-droppable'}>
@@ -145,7 +151,8 @@ const ToolsFramework = () => {
                                                                 authorUsername,
                                                                 toolId,
                                                                 platform,
-                                                                ver
+                                                                ver === 'local' ? '' : ver,
+                                                                ver === 'local'
                                                             )}
                                                             icon={icon}
                                                             text={toolName}

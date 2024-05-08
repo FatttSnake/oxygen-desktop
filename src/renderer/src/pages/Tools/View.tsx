@@ -1,8 +1,13 @@
 import '@/assets/css/pages/tools/view.scss'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
-import { navigateToRepository, navigateToRoot, navigateToView } from '@/util/navigation'
-import { r_tool_detail } from '@/services/tool'
+import {
+    navigateToInstall,
+    navigateToRepository,
+    navigateToRoot,
+    navigateToView
+} from '@/util/navigation'
+import { l_tool_detail, r_tool_detail } from '@/services/tool'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'
 import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '@/components/Playground/files'
@@ -63,6 +68,24 @@ const View = () => {
         }
         setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
+
+        if (searchParams.get('source') === 'local') {
+            void l_tool_detail(username!, toolId!, searchParams.get('platform') as Platform)
+                .then((tool) => {
+                    if (!tool) {
+                        void message.error('未找到指定工具')
+                        navigateToInstall(navigate)
+                        return
+                    }
+                    render(tool)
+                })
+                .finally(() => {
+                    setIsLoading(false)
+                    message.destroy('LOADING')
+                })
+
+            return
+        }
 
         void r_tool_detail(
             username!,

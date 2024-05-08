@@ -17,6 +17,10 @@ export const navigateToRepository = (navigate: NavigateFunction, options?: Navig
     navigate('/repository', options)
 }
 
+export const navigateToInstall = (navigate: NavigateFunction, options?: NavigateOptions) => {
+    navigate('/install', options)
+}
+
 export const navigateToLogin = (
     navigate: NavigateFunction,
     locationSearch?: string,
@@ -35,12 +39,19 @@ export const navigateToView = (
     toolId: string,
     platform: Platform,
     version?: string,
+    local?: boolean,
     options?: NavigateOptions
 ) => {
-    navigate(
-        `/view/${username}/${toolId}${version ? `/${version}` : ''}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`,
-        options
+    const url = new URL(
+        `/view/${username}/${toolId}${version ? `/${version}` : ''}`,
+        window.location.href
     )
+    if (platform !== import.meta.env.VITE_PLATFORM) {
+        url.searchParams.append('platform', platform)
+    }
+    local && url.searchParams.append('source', 'local')
+
+    navigate(`${url.pathname}${url.search}`, options)
 }
 
 export const navigateToSource = (
@@ -51,10 +62,14 @@ export const navigateToSource = (
     version?: string,
     options?: NavigateOptions
 ) => {
-    navigate(
-        `/source/${username}/${toolId}${version ? `/${version}` : ''}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`,
-        options
+    const url = new URL(
+        `/source/${username}/${toolId}${version ? `/${version}` : ''}`,
+        window.location.href
     )
+    if (platform !== import.meta.env.VITE_PLATFORM) {
+        url.searchParams.append('platform', platform)
+    }
+    navigate(`${url.pathname}${url.search}`, options)
 }
 
 export const navigateToRedirect = (
@@ -104,10 +119,12 @@ export const navigateToEdit = (
     platform: Platform,
     options?: NavigateOptions
 ) => {
-    navigate(
-        `/edit/${toolId}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`,
-        options
-    )
+    const url = new URL(`/edit/${toolId}`, window.location.href)
+    if (platform !== import.meta.env.VITE_PLATFORM) {
+        url.searchParams.append('platform', platform)
+    }
+
+    navigate(`${url.pathname}${url.search}`, options)
 }
 
 export const navigateToUser = (navigate: NavigateFunction, options?: NavigateOptions) => {
@@ -122,6 +139,17 @@ export const getViewPath = (
     username: string,
     toolId: string,
     platform: Platform,
-    version?: string
-) =>
-    `/view/${username}/${toolId}${version ? `/${version}` : ''}${platform !== import.meta.env.VITE_PLATFORM ? `?platform=${platform}` : ''}`
+    version?: string,
+    local?: boolean
+) => {
+    const url = new URL(
+        `/view/${username}/${toolId}${version ? `/${version}` : ''}`,
+        window.location.href
+    )
+    if (platform !== import.meta.env.VITE_PLATFORM) {
+        url.searchParams.append('platform', platform)
+    }
+    local && url.searchParams.append('source', 'local')
+
+    return `${url.pathname}${url.search}`
+}

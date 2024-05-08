@@ -623,6 +623,14 @@ const Tools = () => {
                                                     supportPlatform={tools.map(
                                                         (value) => value.platform
                                                     )}
+                                                    vers={tools.reduce(
+                                                        (previousValue, currentValue) => ({
+                                                            ...previousValue,
+                                                            [currentValue.platform]:
+                                                                currentValue.ver
+                                                        }),
+                                                        {} as Record<Platform, string>
+                                                    )}
                                                     favorite={firstTool!.favorite}
                                                 />
                                             )
