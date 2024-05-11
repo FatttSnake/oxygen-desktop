@@ -12,8 +12,8 @@ type ItemProps = {
 }
 
 const Item = (props: ItemProps) => {
-    const [submenuTop, setSubmenuTop] = useState(0)
-    const [submenuLeft, setSubmenuLeft] = useState(0)
+    const [submenuTop, setSubmenuTop] = useState(Number.MAX_VALUE)
+    const [submenuLeft, setSubmenuLeft] = useState(Number.MAX_VALUE)
 
     const showSubmenu = (e: MouseEvent) => {
         const parentElement = e.currentTarget.parentElement
