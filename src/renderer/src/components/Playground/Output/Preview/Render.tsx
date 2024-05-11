@@ -204,6 +204,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                                 src={iframeUrl}
                                 onLoad={() => setIsLoaded(true)}
                                 sandbox="allow-downloads allow-forms allow-modals allow-scripts"
+                                allow={'clipboard-read; clipboard-write'}
                             />
                         </div>
                         <div className={`device-footer${isRotate ? ' rotate' : ''}`} />
@@ -246,6 +247,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
             src={iframeUrl}
             onLoad={() => setIsLoaded(true)}
             sandbox="allow-downloads allow-forms allow-modals allow-scripts"
+            allow={'clipboard-read; clipboard-write'}
         />
     )
 }
