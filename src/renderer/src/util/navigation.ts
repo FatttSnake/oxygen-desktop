@@ -153,3 +153,6 @@ export const getViewPath = (
 
     return `${url.pathname}${url.search}`
 }
+
+export const getAndroidUrl = (username: string, toolId: string) =>
+    `oxygen://opentool/${username}/${toolId}`

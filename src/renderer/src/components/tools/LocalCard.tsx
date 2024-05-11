@@ -4,7 +4,7 @@ import Icon from '@ant-design/icons'
 import '@/assets/css/components/tools/local-card.scss'
 import { COLOR_BACKGROUND, COLOR_MAIN } from '@/constants/common.constants'
 import { checkDesktop, omitText } from '@/util/common'
-import { navigateToStore, navigateToView } from '@/util/navigation'
+import { getAndroidUrl, navigateToStore, navigateToView } from '@/util/navigation'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import DragHandle from '@/components/dnd/DragHandle'
@@ -21,7 +21,6 @@ interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement
     ver: string
     platform: Platform
     supportPlatform: Platform[]
-    favorite: boolean
 }
 
 const StoreCard = ({
@@ -44,7 +43,6 @@ const StoreCard = ({
     ver,
     platform,
     supportPlatform,
-    favorite,
     ...props
 }: StoreCardProps) => {
     const navigate = useNavigate()
@@ -67,10 +65,7 @@ const StoreCard = ({
                 title: 'Android 端',
                 content: (
                     <FlexBox className={'android-qrcode'}>
-                        <AntdQRCode
-                            value={`oxygen://openurl/view/${author.username}/${toolId}`}
-                            size={300}
-                        />
+                        <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
                         <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
                     </FlexBox>
                 ),
@@ -98,10 +93,7 @@ const StoreCard = ({
             title: 'Android 端',
             content: (
                 <FlexBox className={'android-qrcode'}>
-                    <AntdQRCode
-                        value={`oxygen://openurl/view/${author.username}/${toolId}`}
-                        size={300}
-                    />
+                    <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
                     <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
                 </FlexBox>
             ),
