@@ -392,7 +392,7 @@ const Edit = () => {
                 label={'关键字'}
                 tooltip={'工具搜索（每个不超过10个字符）'}
                 name={'keywords'}
-                rules={[{ required: true, whitespace: true }]}
+                rules={[{ required: true }]}
             >
                 <AntdSelect mode={'tags'} maxCount={20} placeholder={'请输入关键字'} />
             </AntdForm.Item>
@@ -400,7 +400,7 @@ const Edit = () => {
                 label={'类别'}
                 tooltip={'工具分类'}
                 name={'categories'}
-                rules={[{ required: true, whitespace: true }]}
+                rules={[{ required: true }]}
             >
                 <AntdSelect
                     mode={'multiple'}
