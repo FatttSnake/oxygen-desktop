@@ -124,7 +124,6 @@ const Local = () => {
                                         ver={firstTool!.ver}
                                         platform={firstTool!.platform}
                                         supportPlatform={tools.map((value) => value.platform)}
-                                        favorite={firstTool!.favorite}
                                     />
                                 )
                             })}
