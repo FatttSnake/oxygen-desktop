@@ -39,6 +39,18 @@ const User = () => {
     const [userWithPowerInfoVo, setUserWithPowerInfoVo] = useState<UserWithPowerInfoVo>()
     const [changePasswordForm] = AntdForm.useForm<ChangePasswordFields>()
 
+    const handleOnCopyToClipboard = (username?: string) => {
+        return username
+            ? () => {
+                  void navigator.clipboard
+                      .writeText(new URL(`/store/${username}`, import.meta.env.VITE_UI_URL).href)
+                      .then(() => {
+                          void message.success('已复制到剪切板')
+                      })
+              }
+            : undefined
+    }
+
     const handleOnReset = () => {
         getProfile()
     }
@@ -474,20 +486,14 @@ const User = () => {
                                 </div>
                                 <a
                                     className={'url'}
-                                    href={
-                                        userWithPowerInfoVo?.username &&
-                                        new URL(
-                                            `/store/${userWithPowerInfoVo.username}`,
-                                            location.href
-                                        ).href
-                                    }
+                                    onClick={handleOnCopyToClipboard(userWithPowerInfoVo?.username)}
                                 >
                                     {userWithPowerInfoVo?.username &&
                                         new URL(
                                             `/store/${userWithPowerInfoVo.username}`,
-                                            location.href
+                                            import.meta.env.VITE_UI_URL
                                         ).href}
-                                    <Icon component={IconOxygenShare} />
+                                    <Icon component={IconOxygenCopy} />
                                 </a>
                             </FlexBox>
                         </FlexBox>

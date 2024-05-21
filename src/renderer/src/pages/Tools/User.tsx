@@ -30,7 +30,7 @@ const User = () => {
         return username
             ? () => {
                   void navigator.clipboard
-                      .writeText(new URL(`/store/${username}`, location.href).href)
+                      .writeText(new URL(`/store/${username}`, import.meta.env.VITE_UI_URL).href)
                       .then(() => {
                           void message.success('已复制到剪切板')
                       })
@@ -153,8 +153,10 @@ const User = () => {
                                     onClick={handleOnCopyToClipboard(userWithInfoVo?.username)}
                                 >
                                     {userWithInfoVo?.username &&
-                                        new URL(`/store/${userWithInfoVo.username}`, location.href)
-                                            .href}
+                                        new URL(
+                                            `/store/${userWithInfoVo.username}`,
+                                            import.meta.env.VITE_UI_URL
+                                        ).href}
                                     <Icon component={IconOxygenCopy} />
                                 </a>
                             </FlexBox>
