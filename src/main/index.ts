@@ -56,7 +56,8 @@ protocol.registerSchemesAsPrivileged([
         scheme: 'local',
         privileges: {
             standard: true,
-            secure: true
+            secure: true,
+            supportFetchAPI: true
         }
     }
 ])
