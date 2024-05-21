@@ -11,7 +11,7 @@
   window.addEventListener("message", ({ data }) => {
     if (data?.type === "UPDATE") {
       // Record old styles that need to be removed
-      const appStyleElement = document.querySelectorAll("style[id^=\"style_\"]") || [];
+      const appStyleElement = document.querySelectorAll("style:not(style[id$=\"_oxygen_base_style.css\"])") || [];
 
       // Remove old app
       const appSrcElement = document.querySelector("#appSrc");

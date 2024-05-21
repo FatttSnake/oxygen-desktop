@@ -637,8 +637,10 @@ const Base = () => {
                             rules={[
                                 { required: true },
                                 {
-                                    pattern: /\.(jsx|tsx|js|ts|css|json)$/,
-                                    message: '仅支持 *.jsx, *.tsx, *.js, *.ts, *.css, *.json 文件'
+                                    pattern:
+                                        /(\.jsx|\.tsx|\.js|\.ts|_oxygen_base_style\.css|\.json)$/,
+                                    message:
+                                        '仅支持 *.jsx, *.tsx, *.js, *.ts, *_oxygen_base_style.css, *.json 文件'
                                 },
                                 ({ getFieldValue }) => ({
                                     validator() {
@@ -829,9 +831,10 @@ const Base = () => {
                                 rules={[
                                     { required: true },
                                     {
-                                        pattern: /\.(jsx|tsx|js|ts|css|json)$/,
+                                        pattern:
+                                            /(\.jsx|\.tsx|\.js|\.ts|_oxygen_base_style\.css|\.json)$/,
                                         message:
-                                            '仅支持 *.jsx, *.tsx, *.js, *.ts, *.css, *.json 文件'
+                                            '仅支持 *.jsx, *.tsx, *.js, *.ts, *_oxygen_base_style.css, *.json 文件'
                                     },
                                     ({ getFieldValue }) => ({
                                         validator() {
