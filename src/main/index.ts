@@ -18,11 +18,11 @@ if (!app.isPackaged) {
     args.push(path.resolve(process.argv[1]))
 }
 args.push('--')
-app.setAsDefaultProtocolClient(import.meta.env.VITE_PROTOCOL, process.execPath, args)
-// app.removeAsDefaultProtocolClient(import.meta.env.VITE_PROTOCOL, process.execPath, args)
+app.setAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
+// app.removeAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
 
 const handleArgv = (argv: string[]) => {
-    const prefix = `${import.meta.env.VITE_PROTOCOL}:`
+    const prefix = `${import.meta.env.VITE_DESKTOP_PROTOCOL}:`
     const offset = app.isPackaged ? 1 : 2
     const url = argv.find((arg, index) => index >= offset && arg.startsWith(prefix))
     if (url) {

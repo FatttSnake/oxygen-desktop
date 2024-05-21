@@ -153,4 +153,4 @@ export const getViewPath = (
 }
 
 export const getAndroidUrl = (username: string, toolId: string) =>
-    `oxygen://opentool/${username}/${toolId}`
+    `${import.meta.env.VITE_APP_PROTOCOL}://opentool/${username}/${toolId}`

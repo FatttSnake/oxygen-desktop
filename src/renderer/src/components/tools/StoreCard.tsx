@@ -235,7 +235,7 @@ const StoreCard = ({
         if (!checkDesktop()) {
             void message.loading({ content: '启动桌面端中……', key: 'LOADING', duration: 0 })
             protocolCheck(
-                `oxygen://openurl/view/${author.username}/${toolId}`,
+                `${import.meta.env.VITE_DESKTOP_PROTOCOL}://openurl/view/${author.username}/${toolId}`,
                 () => {
                     void message.warning('打开失败,此应用需要桌面端环境,请安装桌面端后重试')
                     void message.destroy('LOADING')
