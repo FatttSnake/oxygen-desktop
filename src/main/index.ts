@@ -1,8 +1,9 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/logo.ico?asset'
-import * as path from 'node:path'
+import path from 'node:path'
+import url from 'node:url'
 
 let mainWindow: BrowserWindow
 
@@ -50,6 +51,16 @@ app.on('open-url', (_, argv) => {
     handleUrl(argv)
 })
 
+protocol.registerSchemesAsPrivileged([
+    {
+        scheme: 'local',
+        privileges: {
+            standard: true,
+            secure: true
+        }
+    }
+])
+
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -79,7 +90,10 @@ const createWindow = () => {
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
         void mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
     } else {
-        void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+        // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+        void mainWindow.loadURL(
+            `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
+        )
     }
 }
 
@@ -87,6 +101,17 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 void app.whenReady().then(() => {
+    protocol.handle('local', (request) => {
+        const { host } = new URL(request.url)
+        if (host === 'oxygen.fatweb.top') {
+            const filePath = request.url.slice('local://oxygen.fatweb.top/'.length)
+            return net.fetch(url.pathToFileURL(filePath).toString())
+        } else {
+            const filePath = request.url.slice('local://'.length)
+            return net.fetch(url.pathToFileURL(filePath).toString())
+        }
+    })
+
     // Set app user model id for windows
     electronApp.setAppUserModelId('top.fatweb')
 
