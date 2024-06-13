@@ -1,9 +1,14 @@
 {
   "name": "oxygen-desktop",
+  "private": true,
   "version": "1.0.0-SNAPSHOT",
   "description": "Oxygen Toolbox multi-platform desktop version",
   "main": "./out/main/index.js",
-  "author": "FatttSnake",
+  "author":  {
+    "name": "FatttSnake",
+    "email": "fatttsnake@fatweb.top",
+    "url": "https://fatweb.top"
+  },
   "homepage": "https://tool.fatweb.top",
   "scripts": {
     "dev": "electron-vite dev --sourcemap --remote-debugging-port=9000",
