@@ -623,10 +623,10 @@ const Base = () => {
                 content: (
                     <AntdForm
                         form={addFileForm}
-                        ref={(ref) => {
+                        ref={() => {
                             setTimeout(() => {
                                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                                ref?.getFieldInstance('fileName').focus()
+                                addFileForm?.getFieldInstance('fileName').focus()
                             }, 50)
                         }}
                     >
@@ -817,10 +817,10 @@ const Base = () => {
                     content: (
                         <AntdForm
                             form={renameFileForm}
-                            ref={(ref) => {
+                            ref={() => {
                                 setTimeout(() => {
                                     // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                                    ref?.getFieldInstance('fileName').focus()
+                                    renameFileForm?.getFieldInstance('fileName').focus()
                                 }, 50)
                             }}
                         >

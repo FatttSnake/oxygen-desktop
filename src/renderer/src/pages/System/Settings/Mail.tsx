@@ -29,10 +29,10 @@ const Mail = () => {
                 <>
                     <AntdForm
                         form={mailSendForm}
-                        ref={(ref) => {
+                        ref={() => {
                             setTimeout(() => {
                                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                                ref?.getFieldInstance('to').focus()
+                                mailSendForm?.getFieldInstance('to').focus()
                             }, 50)
                         }}
                     >

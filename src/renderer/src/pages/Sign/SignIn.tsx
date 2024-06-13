@@ -124,10 +124,13 @@ const SignIn = () => {
                                 <>
                                     <AntdForm
                                         form={twoFactorForm}
-                                        ref={(ref) => {
+                                        ref={() => {
                                             setTimeout(() => {
-                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                                                ref?.getFieldInstance('twoFactorCode').focus()
+                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                                                twoFactorForm
+                                                    .getFieldInstance('twoFactorCode')
+                                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                                                    .focus()
                                             }, 50)
                                         }}
                                     >

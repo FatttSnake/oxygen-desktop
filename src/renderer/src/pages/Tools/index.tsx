@@ -264,10 +264,10 @@ const Tools = () => {
                 <>
                     <AntdForm
                         form={upgradeForm}
-                        ref={(ref) => {
+                        ref={() => {
                             setTimeout(() => {
                                 // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
-                                ref?.getFieldInstance('toolId').focus()
+                                upgradeForm?.getFieldInstance('toolId').focus()
                             }, 50)
                         }}
                         labelCol={{ span: 4 }}
