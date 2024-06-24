@@ -1,4 +1,4 @@
-productName: oxygen-desktop
+productName: OxygenDesktop
 copyright: Copyright © 2017-2024 FatWeb. All rights reserved.
 appId: top.fatweb.oxygen.desktop
 artifactName: ${name}-${version}-${os}-${arch}.${ext}
@@ -44,11 +44,12 @@ mac:
   target:
     - default
   entitlementsInherit: build/entitlements.mac.plist
+  darkModeSupport: true
   extendInfo:
-    - NSCameraUsageDescription: Application requests access to the device's camera.
-    - NSMicrophoneUsageDescription: Application requests access to the device's microphone.
-    - NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
-    - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
+    NSCameraUsageDescription: Application requests access to the device's camera.
+    NSMicrophoneUsageDescription: Application requests access to the device's microphone.
+    NSDocumentsFolderUsageDescription: Application requests access to the user's Documents folder.
+    NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
 linux:
   target:
