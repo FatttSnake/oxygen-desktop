@@ -1,7 +1,7 @@
 import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/logo.ico?asset'
+import icon from '../../build/icon.ico?asset'
 import path from 'node:path'
 import url from 'node:url'
 
