@@ -126,18 +126,12 @@ export const tsconfigJsonDiagnosticsOptions: DiagnosticsOptions = {
         {
             uri: 'tsconfig.json',
             fileMatch: ['tsconfig.json'],
-            schema: {
-                type: 'object',
-                properties: tsconfigSchema
-            }
+            schema: tsconfigSchema
         },
         {
             uri: 'import-map.json',
             fileMatch: ['import-map.json'],
-            schema: {
-                type: 'object',
-                properties: importMapSchema
-            }
+            schema: importMapSchema
         }
     ]
 }

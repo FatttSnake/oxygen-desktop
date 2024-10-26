@@ -34,7 +34,7 @@ const Playground = ({
         try {
             setImportMap(JSON.parse(importMapRaw) as IImportMap)
         } catch (e) {
-            setImportMap({ imports: {} })
+            setImportMap({})
         }
     }
     if (!tsconfig) {

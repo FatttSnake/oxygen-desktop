@@ -1,6 +1,4 @@
 {
-  "imports": {
     "type": "object",
-    "description": "Import map"
-  }
+    "additionalProperties": {"type": "string"}
 }

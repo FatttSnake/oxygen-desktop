@@ -125,13 +125,13 @@ class Compiler {
                     }
                 }
 
-                let path = importMap.imports[args.path]
+                let path = importMap[args.path]
                 let tempPath = args.path
                 while (!path && tempPath.includes('/')) {
                     tempPath = tempPath.substring(0, tempPath.lastIndexOf('/'))
-                    if (importMap.imports[tempPath]) {
+                    if (importMap[tempPath]) {
                         const suffix = args.path.replace(tempPath, '')
-                        const importUrl = new URL(importMap.imports[tempPath])
+                        const importUrl = new URL(importMap[tempPath])
                         path = `${importUrl.origin}${importUrl.pathname}${suffix}${importUrl.search}`
                     }
                 }
@@ -140,7 +140,7 @@ class Compiler {
                 }
                 const pathUrl = new URL(path)
                 const externals = pathUrl.searchParams.get('external')?.split(',') ?? []
-                Object.keys(importMap.imports).forEach((item) => {
+                Object.keys(importMap).forEach((item) => {
                     if (!(item in externals)) {
                         externals.push(item)
                     }
