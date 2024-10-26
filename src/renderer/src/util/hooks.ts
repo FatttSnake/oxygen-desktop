@@ -12,7 +12,7 @@ export const useUpdatedEffect = (effect: EffectCallback, dependencies: Dependenc
     }, dependencies)
 }
 
-export const usePrevious = <T,>(value: T): T | undefined => {
+export const usePrevious = <T>(value: T): T | undefined => {
     const ref = useRef<T>()
     useEffect(() => {
         ref.current = value

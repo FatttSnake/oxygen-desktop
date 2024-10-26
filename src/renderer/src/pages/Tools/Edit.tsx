@@ -151,7 +151,6 @@ const Edit = () => {
 
         const reader = new FileReader()
         reader.addEventListener('load', () => {
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             form.setFieldValue('icon', reader.result!.toString().split(',')[1])
             void form.validateFields(['icon'])
         })

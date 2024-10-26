@@ -31,7 +31,6 @@ const Mail = () => {
                         form={mailSendForm}
                         ref={() => {
                             setTimeout(() => {
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 mailSendForm?.getFieldInstance('to').focus()
                             }, 50)
                         }}

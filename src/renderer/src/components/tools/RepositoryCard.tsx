@@ -24,7 +24,6 @@ interface RepositoryCardProps
 
 const RepositoryCard = ({
     style,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref,
     icon,
     toolName,

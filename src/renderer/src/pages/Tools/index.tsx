@@ -266,7 +266,6 @@ const Tools = () => {
                         form={upgradeForm}
                         ref={() => {
                             setTimeout(() => {
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 upgradeForm?.getFieldInstance('toolId').focus()
                             }, 50)
                         }}

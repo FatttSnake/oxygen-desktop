@@ -74,7 +74,6 @@ const Create = () => {
 
         const reader = new FileReader()
         reader.addEventListener('load', () => {
-            // eslint-disable-next-line @typescript-eslint/no-base-to-string
             form.setFieldValue('icon', reader.result!.toString().split(',')[1])
             void form.validateFields(['icon'])
         })
@@ -163,7 +162,7 @@ const Create = () => {
                 temp.push(item)
             }
         })
-        form.setFieldValue('keyword', temp)
+        form.setFieldValue('keywords', temp)
     }, [form, formValues?.keywords])
 
     useEffect(() => {

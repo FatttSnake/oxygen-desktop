@@ -7,7 +7,6 @@ interface DragHandleProps {
 }
 
 const DragHandle = ({ padding }: DragHandleProps) => {
-    // eslint-disable-next-line @typescript-eslint/unbound-method
     const { attributes, listeners, ref } = useContext(HandleContextInst)
 
     return (

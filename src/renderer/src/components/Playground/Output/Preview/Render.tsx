@@ -186,15 +186,15 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                             className={`device-content${isRotate ? ' rotate' : ''}`}
                             style={{
                                 width: isRotate
-                                    ? devices.find((value) => value.name === selectedDevice)
-                                          ?.height ?? 915
-                                    : devices.find((value) => value.name === selectedDevice)
-                                          ?.width ?? 412,
+                                    ? (devices.find((value) => value.name === selectedDevice)
+                                          ?.height ?? 915)
+                                    : (devices.find((value) => value.name === selectedDevice)
+                                          ?.width ?? 412),
                                 height: isRotate
-                                    ? devices.find((value) => value.name === selectedDevice)
-                                          ?.width ?? 412
-                                    : devices.find((value) => value.name === selectedDevice)
-                                          ?.height ?? 915
+                                    ? (devices.find((value) => value.name === selectedDevice)
+                                          ?.width ?? 412)
+                                    : (devices.find((value) => value.name === selectedDevice)
+                                          ?.height ?? 915)
                             }}
                         >
                             <iframe

@@ -14,8 +14,6 @@ import {
 import { BarChart, BarSeriesOption, LineChart, LineSeriesOption } from 'echarts/charts'
 import { SVGRenderer } from 'echarts/renderers'
 import { UniversalTransition } from 'echarts/features'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import { CallbackDataParams } from 'echarts/types/dist/shared'
 import { utcToLocalTime } from '@/util/datetime'
 
@@ -83,11 +81,13 @@ export const barEChartsBaseOption: EChartsOption = {
 
 export const getTooltipTimeFormatter = (format: string = 'yyyy-MM-DD HH:mm:ss') => {
     return (params: CallbackDataParams[]) =>
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-argument
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         `${utcToLocalTime(params[0].data[0], format)}<br>${params
             .map(
                 (param) =>
-                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-expect-error
                     `<span style="display: flex; justify-content: space-between;"><span>${param.marker}${param.seriesName}</span><span style="font-weight: bold; margin-left: 16px;">${param.data[1]}</span></span>`
             )
             .join('')}`

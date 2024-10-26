@@ -126,10 +126,8 @@ const SignIn = () => {
                                         form={twoFactorForm}
                                         ref={() => {
                                             setTimeout(() => {
-                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                                 twoFactorForm
                                                     .getFieldInstance('twoFactorCode')
-                                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                                                     .focus()
                                             }, 50)
                                         }}

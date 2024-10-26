@@ -71,7 +71,8 @@ const Editor = ({
 
         monacoRef.current = monaco
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         editor['_codeEditorService'].doOpenEditor = function (
             editor: editor.IStandaloneCodeEditor,
             input: { options: { selection: Selection }; resource: { path: string } }

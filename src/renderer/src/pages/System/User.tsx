@@ -353,7 +353,6 @@ const User = () => {
                         wrapperCol={{ span: 18 }}
                         ref={() => {
                             setTimeout(() => {
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 changePasswordForm?.getFieldInstance('password').focus()
                             }, 50)
                         }}

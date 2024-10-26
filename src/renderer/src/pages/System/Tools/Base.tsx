@@ -628,7 +628,6 @@ const Base = () => {
                         form={addFileForm}
                         ref={() => {
                             setTimeout(() => {
-                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                 addFileForm?.getFieldInstance('fileName').focus()
                             }, 50)
                         }}
@@ -822,7 +821,6 @@ const Base = () => {
                             form={renameFileForm}
                             ref={() => {
                                 setTimeout(() => {
-                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                                     renameFileForm?.getFieldInstance('fileName').focus()
                                 }, 50)
                             }}

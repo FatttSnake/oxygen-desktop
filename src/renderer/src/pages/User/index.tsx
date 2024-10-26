@@ -22,10 +22,6 @@ import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import HideScrollbar from '@/components/common/HideScrollbar'
 
-interface ChangePasswordFields extends UserUpdatePasswordParam {
-    newPasswordConfirm: string
-}
-
 const User = () => {
     const [modal, contextHolder] = AntdModal.useModal()
     const [form] = AntdForm.useForm<UserInfoUpdateParam>()
@@ -37,7 +33,7 @@ const User = () => {
     const [isGettingAvatar, setIsGettingAvatar] = useState(false)
     const [avatar, setAvatar] = useState('')
     const [userWithPowerInfoVo, setUserWithPowerInfoVo] = useState<UserWithPowerInfoVo>()
-    const [changePasswordForm] = AntdForm.useForm<ChangePasswordFields>()
+    const [changePasswordForm] = AntdForm.useForm<UserChangePasswordParam>()
 
     const handleOnCopyToClipboard = (username?: string) => {
         return username
@@ -127,7 +123,6 @@ const User = () => {
                     wrapperCol={{ span: 18 }}
                     ref={() => {
                         setTimeout(() => {
-                            // eslint-disable-next-line @typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-member-access
                             changePasswordForm?.getFieldInstance('originalPassword').focus()
                         }, 50)
                     }}
@@ -260,10 +255,8 @@ const User = () => {
                                         form={twoFactorForm}
                                         ref={() => {
                                             setTimeout(() => {
-                                                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                                 twoFactorForm
                                                     ?.getFieldInstance('twoFactorCode')
-                                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                                                     .focus()
                                             }, 50)
                                         }}
@@ -352,10 +345,8 @@ const User = () => {
                                             form={twoFactorForm}
                                             ref={() => {
                                                 setTimeout(() => {
-                                                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                                                     twoFactorForm
                                                         ?.getFieldInstance('twoFactorCode')
-                                                        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
                                                         .focus()
                                                 }, 50)
                                             }}

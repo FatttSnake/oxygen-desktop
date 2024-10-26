@@ -34,8 +34,7 @@ export interface TypeHelper {
 export const createATA = async (): Promise<TypeHelper> => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const ts = await import('https://esm.sh/typescript@5.3.3')
+    const ts = await import('https://esm.sh/typescript@5.6.3')
 
     const maxConcurrentRequests = 50
     let activeRequests = 0
@@ -63,14 +62,10 @@ export const createATA = async (): Promise<TypeHelper> => {
 
     const ata = setupTypeAcquisition({
         projectName: 'monaco-ts',
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         typescript: ts,
         logger: console,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         fetcher: (input, init) => {
             try {
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
                 return fetchWithQueue(input, init)
             } catch (error) {
                 console.error('Error fetching data:', error)
@@ -120,7 +115,6 @@ export const createATA = async (): Promise<TypeHelper> => {
     }
 
     return {
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         acquireType,
         addListener,
         removeListener,

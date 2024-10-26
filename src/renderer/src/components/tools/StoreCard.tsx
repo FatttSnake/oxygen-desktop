@@ -47,7 +47,6 @@ interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement
 
 const StoreCard = ({
     style,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     ref,
     icon,
     toolName,

@@ -82,94 +82,90 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
         },
         ref
     ) => {
-        useImperativeHandle<HideScrollbarElement, HideScrollbarElement>(
-            ref,
-            () => {
-                return {
-                    scrollTo(x, y, smooth?: boolean) {
-                        rootRef.current?.scrollTo({
-                            left: x,
-                            top: y,
-                            behavior: smooth === false ? 'instant' : 'smooth'
-                        })
-                    },
-                    scrollX(x, smooth?: boolean) {
-                        rootRef.current?.scrollTo({
-                            left: x,
-                            behavior: smooth === false ? 'instant' : 'smooth'
-                        })
-                    },
-                    scrollY(y, smooth?: boolean) {
-                        rootRef.current?.scrollTo({
-                            top: y,
-                            behavior: smooth === false ? 'instant' : 'smooth'
-                        })
-                    },
-                    scrollLeft(length, smooth?: boolean) {
-                        rootRef.current?.scrollTo({
-                            left: rootRef.current?.scrollLeft - length,
-                            behavior: smooth === false ? 'instant' : 'smooth'
-                        })
-                    },
-                    scrollRight(length, smooth?: boolean) {
-                        rootRef.current?.scrollTo({
-                            left: rootRef.current?.scrollLeft + length,
-                            behavior: smooth === false ? 'instant' : 'smooth'
-                        })
-                    },
-                    scrollUp(length, smooth?: boolean) {
-                        rootRef.current?.scrollTo({
-                            top: rootRef.current?.scrollTop - length,
-                            behavior: smooth === false ? 'instant' : 'smooth'
-                        })
-                    },
-                    scrollDown(length, smooth?: boolean) {
-                        rootRef.current?.scrollTo({
-                            top: rootRef.current?.scrollTop + length,
-                            behavior: smooth === false ? 'instant' : 'smooth'
-                        })
-                    },
-                    getX() {
-                        return rootRef.current?.scrollLeft ?? 0
-                    },
-                    getY() {
-                        return rootRef.current?.scrollTop ?? 0
-                    },
-                    addEventListenerWithType<K extends keyof HTMLElementEventMap>(
-                        type: K,
-                        listener: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => never,
-                        options?: boolean | AddEventListenerOptions
-                    ): void {
-                        rootRef.current?.addEventListener<K>(type, listener, options)
-                    },
-                    addEventListener(
-                        type: string,
-                        listener: EventListenerOrEventListenerObject,
-                        options?: boolean | AddEventListenerOptions
-                    ): void {
-                        rootRef.current?.addEventListener(type, listener, options)
-                    },
-                    removeEventListenerWithType<K extends keyof HTMLElementEventMap>(
-                        type: K,
-                        listener: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => never,
-                        options?: boolean | EventListenerOptions
-                    ): void {
-                        rootRef.current?.removeEventListener<K>(type, listener, options)
-                    },
-                    removeEventListener(
-                        type: string,
-                        listener: EventListenerOrEventListenerObject,
-                        options?: boolean | EventListenerOptions
-                    ): void {
-                        rootRef.current?.removeEventListener(type, listener, options)
-                    },
-                    refreshLayout(): void {
-                        refreshLayout()
-                    }
+        useImperativeHandle<HideScrollbarElement, HideScrollbarElement>(ref, () => {
+            return {
+                scrollTo(x, y, smooth?: boolean) {
+                    rootRef.current?.scrollTo({
+                        left: x,
+                        top: y,
+                        behavior: smooth === false ? 'instant' : 'smooth'
+                    })
+                },
+                scrollX(x, smooth?: boolean) {
+                    rootRef.current?.scrollTo({
+                        left: x,
+                        behavior: smooth === false ? 'instant' : 'smooth'
+                    })
+                },
+                scrollY(y, smooth?: boolean) {
+                    rootRef.current?.scrollTo({
+                        top: y,
+                        behavior: smooth === false ? 'instant' : 'smooth'
+                    })
+                },
+                scrollLeft(length, smooth?: boolean) {
+                    rootRef.current?.scrollTo({
+                        left: rootRef.current?.scrollLeft - length,
+                        behavior: smooth === false ? 'instant' : 'smooth'
+                    })
+                },
+                scrollRight(length, smooth?: boolean) {
+                    rootRef.current?.scrollTo({
+                        left: rootRef.current?.scrollLeft + length,
+                        behavior: smooth === false ? 'instant' : 'smooth'
+                    })
+                },
+                scrollUp(length, smooth?: boolean) {
+                    rootRef.current?.scrollTo({
+                        top: rootRef.current?.scrollTop - length,
+                        behavior: smooth === false ? 'instant' : 'smooth'
+                    })
+                },
+                scrollDown(length, smooth?: boolean) {
+                    rootRef.current?.scrollTo({
+                        top: rootRef.current?.scrollTop + length,
+                        behavior: smooth === false ? 'instant' : 'smooth'
+                    })
+                },
+                getX() {
+                    return rootRef.current?.scrollLeft ?? 0
+                },
+                getY() {
+                    return rootRef.current?.scrollTop ?? 0
+                },
+                addEventListenerWithType<K extends keyof HTMLElementEventMap>(
+                    type: K,
+                    listener: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => never,
+                    options?: boolean | AddEventListenerOptions
+                ): void {
+                    rootRef.current?.addEventListener<K>(type, listener, options)
+                },
+                addEventListener(
+                    type: string,
+                    listener: EventListenerOrEventListenerObject,
+                    options?: boolean | AddEventListenerOptions
+                ): void {
+                    rootRef.current?.addEventListener(type, listener, options)
+                },
+                removeEventListenerWithType<K extends keyof HTMLElementEventMap>(
+                    type: K,
+                    listener: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => never,
+                    options?: boolean | EventListenerOptions
+                ): void {
+                    rootRef.current?.removeEventListener<K>(type, listener, options)
+                },
+                removeEventListener(
+                    type: string,
+                    listener: EventListenerOrEventListenerObject,
+                    options?: boolean | EventListenerOptions
+                ): void {
+                    rootRef.current?.removeEventListener(type, listener, options)
+                },
+                refreshLayout(): void {
+                    refreshLayout()
                 }
-            },
-            []
-        )
+            }
+        }, [])
 
         const maskRef = useRef<HTMLDivElement>(null)
         const rootRef = useRef<HTMLDivElement>(null)

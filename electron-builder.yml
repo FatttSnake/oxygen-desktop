@@ -7,8 +7,12 @@ directories:
 files:
   - '!**/.vscode/*'
   - '!src/*'
+  - '!doc/*'
+  - '!resources/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
+  - '!{.eslintignore,.eslint.config.mjs,.prettierignore,.prettierrc.json,dev-app-update.yml,README.md,README_zh.md}'
+  - '!.eslintrc-auto-import.json'
+  - '!src/renderer/auto-import'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json}'
 asarUnpack:
