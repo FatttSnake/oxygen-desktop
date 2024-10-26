@@ -10,6 +10,7 @@ import {
 } from '@/constants/common.constants'
 import { utcToLocalTime } from '@/util/datetime'
 import { hasPermission } from '@/util/auth'
+import editorExtraLibs from '@/util/editorExtraLibs'
 import {
     r_sys_tool_template_update,
     r_sys_tool_template_delete,
@@ -1051,6 +1052,7 @@ const Template = () => {
                                         templateDetailLoading[editingTemplateId] ||
                                         !hasPermission('system:tool:modify:template')
                                     }
+                                    extraLibs={editorExtraLibs}
                                 />
                                 <div className={'close-editor-btn'} onClick={handleOnCloseBtnClick}>
                                     <Icon component={IconOxygenClose} />

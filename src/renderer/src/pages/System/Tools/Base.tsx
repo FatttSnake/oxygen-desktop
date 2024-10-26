@@ -10,6 +10,7 @@ import {
 } from '@/constants/common.constants'
 import { utcToLocalTime } from '@/util/datetime'
 import { hasPermission } from '@/util/auth'
+import editorExtraLibs from '@/util/editorExtraLibs'
 import {
     r_sys_tool_base_add,
     r_sys_tool_base_delete,
@@ -1107,6 +1108,7 @@ const Base = () => {
                                         baseDetailLoading[editingBaseId] ||
                                         !hasPermission('system:tool:modify:base')
                                     }
+                                    extraLibs={editorExtraLibs}
                                 />
                                 <div className={'close-editor-btn'} onClick={handleOnCloseBtnClick}>
                                     <Icon component={IconOxygenClose} />

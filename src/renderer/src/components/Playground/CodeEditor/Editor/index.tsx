@@ -6,7 +6,11 @@ import { IEditorOptions, IFiles, ITheme, ITsconfig } from '@/components/Playgrou
 import { fileNameToLanguage, tsconfigJsonDiagnosticsOptions } from '@/components/Playground/files'
 import { useEditor, useTypesProgress } from '@/components/Playground/CodeEditor/Editor/hooks'
 import { MonacoEditorConfig } from '@/components/Playground/CodeEditor/Editor/monacoConfig'
-import nativeApiDTS from '@/components/Playground/CodeEditor/Editor/_NativeApi.d.ts?raw'
+
+export interface ExtraLib {
+    path: string
+    content: string
+}
 
 interface EditorProps {
     tsconfig?: ITsconfig
@@ -17,6 +21,7 @@ interface EditorProps {
     options?: IEditorOptions
     theme?: ITheme
     onJumpFile?: (fileName: string) => void
+    extraLibs?: ExtraLib[]
 }
 
 const Editor = ({
@@ -27,7 +32,8 @@ const Editor = ({
     theme,
     onChange,
     options,
-    onJumpFile
+    onJumpFile,
+    extraLibs = []
 }: EditorProps) => {
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
     const monacoRef = useRef<Monaco>()
@@ -85,9 +91,8 @@ const Editor = ({
         }
 
         jsxSyntaxHighlightRef.current = loadJsxSyntaxHighlight(editor, monaco)
-        monaco.languages.typescript.typescriptDefaults.addExtraLib(
-            nativeApiDTS,
-            'file:///node_modules/_NativeApi.d.ts'
+        extraLibs.forEach((item) =>
+            monaco.languages.typescript.typescriptDefaults.addExtraLib(item.content, item.path)
         )
 
         void autoLoadExtraLib(editor, monaco, file.value, onWatch)

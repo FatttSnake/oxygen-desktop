@@ -2,6 +2,7 @@ import '@/assets/css/pages/tools/source.scss'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
 import { navigateToRepository, navigateToSource } from '@/util/navigation'
+import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_tool_detail } from '@/services/tool'
 import { IFiles } from '@/components/Playground/shared'
 import { base64ToFiles } from '@/components/Playground/files'
@@ -90,6 +91,7 @@ const Source = () => {
                     files={files}
                     selectedFileName={selectedFileName}
                     onSelectedFileChange={setSelectedFileName}
+                    extraLibs={editorExtraLibs}
                 />
             </Card>
         </FitFullscreen>

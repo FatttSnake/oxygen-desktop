@@ -9,6 +9,7 @@ import {
     TOOL_UNDER_REVIEW
 } from '@/constants/common.constants'
 import { navigateToRepository } from '@/util/navigation'
+import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_tool_category_get, r_tool_detail, r_tool_update } from '@/services/tool'
 import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
 import {
@@ -443,6 +444,7 @@ const Edit = () => {
                                 onRenameFile={(_, __, files) => setFiles(files)}
                                 onChangeFileContent={handleOnChangeFileContent}
                                 onSelectedFileChange={setSelectedFileName}
+                                extraLibs={editorExtraLibs}
                             />
                             <Playground.Output
                                 files={files}

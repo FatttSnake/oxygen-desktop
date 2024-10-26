@@ -9,7 +9,7 @@ import {
     TS_CONFIG_FILE_NAME
 } from '@/components/Playground/files'
 import FileSelector from '@/components/Playground/CodeEditor/FileSelector'
-import Editor from '@/components/Playground/CodeEditor/Editor'
+import Editor, { ExtraLib } from '@/components/Playground/CodeEditor/Editor'
 
 interface CodeEditorProps {
     theme?: ITheme
@@ -21,6 +21,7 @@ interface CodeEditorProps {
     notRemovable?: string[]
     selectedFileName?: string
     options?: IEditorOptions
+    extraLibs?: ExtraLib[]
     onSelectedFileChange?: (fileName: string) => void
     onAddFile?: (fileName: string, files: IFiles) => void
     onRemoveFile?: (fileName: string, files: IFiles) => void
@@ -44,6 +45,7 @@ const CodeEditor = ({
     onRenameFile,
     onChangeFileContent,
     onError,
+    extraLibs,
     ...props
 }: CodeEditorProps) => {
     const filteredFilesName = getFileNameList(files).filter(
@@ -153,6 +155,7 @@ const CodeEditor = ({
                     }
                     onChange={handleOnChangeFileContent}
                     onJumpFile={handleOnChangeSelectedFile}
+                    extraLibs={extraLibs}
                 />
                 {errorMsg && <div className={'playground-error-message'}>{errorMsg}</div>}
             </FlexBox>
