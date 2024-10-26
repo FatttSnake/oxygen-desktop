@@ -18,17 +18,17 @@
     </a>
 </div>
 
-# Overview ([ZH](README_zh.md), EN)
+# 概述 (ZH, [EN](README.md))
 
-This project is a desktop application of Oxygen Toolbox. Supports local installation of tools and supports native api.
+本项目是 Oxygen Toolbox 的桌面应用程序。支持工具本地安装，支持原生api。
 
-# Requires (One of)
+# 要求 (其中一个)
 
 - Linux
 - Windows
 - MacOS
 
-# Related projects
+# 关联项目
 
 [Web UI of Oxygen Toolbox](https://github.com/FatttSnake/oxygen-ui)
 
