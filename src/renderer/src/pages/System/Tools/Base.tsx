@@ -304,7 +304,10 @@ const Base = () => {
                                                         ![
                                                             IMPORT_MAP_FILE_NAME,
                                                             TS_CONFIG_FILE_NAME
-                                                        ].includes(value)
+                                                        ].includes(value) &&
+                                                        !value.endsWith('.d.ts') &&
+                                                        !value.endsWith('.css') &&
+                                                        !value.endsWith('.json')
                                                 )
                                                 .map((value) => ({ value, label: value }))}
                                             placeholder={'请选择入口文件'}
