@@ -169,18 +169,18 @@ const Base = () => {
                     )}
                 </>
             ),
-            width: '12em',
+            width: '14em',
             align: 'center',
             render: (_, record) => (
                 <>
                     <AntdSpace size={'middle'}>
-                        {!record.compiled && !Object.keys(hasEdited).length && (
+                        {!Object.keys(hasEdited).length && (
                             <Permission operationCode={['system:tool:modify:base']}>
                                 <a
                                     style={{ color: COLOR_PRODUCTION }}
                                     onClick={handleOnCompileBtnClick(record)}
                                 >
-                                    编译
+                                    {record.compiled ? '重新编译' : '编译'}
                                 </a>
                             </Permission>
                         )}
