@@ -27,7 +27,7 @@ const Execute = () => {
                     const output = result.outputFiles[0].text
                     setCompiledCode('')
                     setTimeout(() => {
-                        setCompiledCode(`${output}\n${baseDist}`)
+                        setCompiledCode(`(() => {${output}})();\n(() => {${baseDist}})();`)
                     }, 100)
                 })
                 .catch((reason) => {

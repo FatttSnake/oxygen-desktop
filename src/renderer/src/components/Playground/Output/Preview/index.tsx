@@ -32,7 +32,7 @@ const Preview = ({
         Compiler.compile(files, importMap, entryPoint)
             .then((result) => {
                 setCompiledCode(
-                    `${preExpansionCode}\n${result.outputFiles[0].text}\n${postExpansionCode}`
+                    `(()=>{${preExpansionCode}})();\n(()=>{${result.outputFiles[0].text}})();\n(()=>{${postExpansionCode}})();`
                 )
                 setErrorMsg('')
             })

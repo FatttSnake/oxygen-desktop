@@ -145,7 +145,7 @@ const Create = () => {
                 .compile(files, importMap, template.entryPoint)
                 .then((result) => {
                     const output = result.outputFiles[0].text
-                    setCompiledCode(`${output}\n${baseDist}`)
+                    setCompiledCode(`(() => {${output}})();\n(() => {${baseDist}})();`)
                 })
                 .catch((reason) => {
                     void message.error(`编译失败：${reason}`)

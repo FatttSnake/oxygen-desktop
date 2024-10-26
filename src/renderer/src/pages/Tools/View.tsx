@@ -39,7 +39,7 @@ const View = () => {
                         const output = result.outputFiles[0].text
                         setCompiledCode('')
                         setTimeout(() => {
-                            setCompiledCode(`${output}\n${baseDist}`)
+                            setCompiledCode(`(() => {${output}})();\n(() => {${baseDist}})();`)
                         }, 100)
                     })
                     .catch((reason) => {
@@ -54,7 +54,7 @@ const View = () => {
                 const dist = base64ToStr(toolVo.dist.data!)
                 setCompiledCode('')
                 setTimeout(() => {
-                    setCompiledCode(`${dist}\n${baseDist}`)
+                    setCompiledCode(`(() => {${dist}})();\n(() => {${baseDist}})();`)
                 }, 100)
             } catch (e) {
                 void message.error('载入工具失败')
