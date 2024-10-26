@@ -84,7 +84,7 @@ const Editor = ({
             input: { options: { selection: Selection }; resource: { path: string } }
         ) {
             const path = input.resource.path
-            if (!path.startsWith('/node_modules/')) {
+            if (!['/lib.dom.d.ts', '/node_modules/'].some((item) => path.startsWith(item))) {
                 onJumpFile?.(path.replace('/', ''))
                 doOpenEditor(editor, input)
             }
