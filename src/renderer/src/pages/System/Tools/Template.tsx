@@ -1044,7 +1044,7 @@ const Template = () => {
                                 <Playground.CodeEditor
                                     files={editingFiles[editingTemplateId]}
                                     selectedFileName={editingFileName}
-                                    onSelectedFileChange={() => {}}
+                                    onSelectedFileChange={setEditingFileName}
                                     onChangeFileContent={handleOnChangeFileContent}
                                     showFileSelector={false}
                                     tsconfig={tsconfig}

@@ -1100,7 +1100,7 @@ const Base = () => {
                                 <Playground.CodeEditor
                                     files={editingFiles[editingBaseId]}
                                     selectedFileName={editingFileName}
-                                    onSelectedFileChange={() => {}}
+                                    onSelectedFileChange={setEditingFileName}
                                     onChangeFileContent={handleOnChangeFileContent}
                                     showFileSelector={false}
                                     tsconfig={tsconfig}
