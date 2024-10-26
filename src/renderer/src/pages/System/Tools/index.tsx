@@ -221,7 +221,7 @@ const Tools = () => {
                         <AntdForm.Item
                             name={'pass'}
                             style={{ marginTop: 10 }}
-                            rules={[{ required: true }]}
+                            rules={[{ required: true, message: '请选择审核结果' }]}
                         >
                             <AntdRadio.Group>
                                 <AntdRadio value={true}>通过</AntdRadio>
