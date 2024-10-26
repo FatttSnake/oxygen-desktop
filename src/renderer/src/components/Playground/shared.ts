@@ -14,17 +14,6 @@ export interface IFiles {
     [key: string]: IFile
 }
 
-export interface ITemplate {
-    name: string
-    tsconfig: ITsconfig
-    importMap: IImportMap
-    files: IFiles
-}
-
-export interface ITemplates {
-    [key: string]: ITemplate
-}
-
 export interface IImportMap {
     imports: Record<string, string>
 }
