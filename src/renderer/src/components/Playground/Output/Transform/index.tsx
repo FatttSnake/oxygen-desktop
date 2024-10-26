@@ -2,7 +2,7 @@ import MonacoEditor from '@monaco-editor/react'
 import { Loader } from 'esbuild-wasm'
 import '@/components/Playground/Output/Transform/transform.scss'
 import { IFile, ITheme } from '@/components/Playground/shared'
-import { cssToJs, jsonToJs } from '@/components/Playground/files'
+import { cssToJsFromFile, jsonToJsFromFile } from '@/components/Playground/files'
 import Compiler from '@/components/Playground/compiler'
 import { MonacoEditorConfig } from '@/components/Playground/CodeEditor/Editor/monacoConfig'
 
@@ -39,10 +39,10 @@ const Transform = ({ file, theme }: OutputProps) => {
                         compile(code, 'jsx')
                         break
                     case 'css':
-                        setCompiledCode(cssToJs(file))
+                        setCompiledCode(cssToJsFromFile(file))
                         break
                     case 'json':
-                        setCompiledCode(jsonToJs(file))
+                        setCompiledCode(jsonToJsFromFile(file))
                         break
                     case 'xml':
                         setCompiledCode(code)

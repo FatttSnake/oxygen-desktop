@@ -83,26 +83,34 @@ export const jsToBlob = (code: string) => {
     return URL.createObjectURL(new Blob([code], { type: 'application/javascript' }))
 }
 
-export const jsonToJs = (file: IFile) => {
-    return `export default ${file.value}`
+export const jsonToJs = (code: string) => {
+    return `export default ${code}`
 }
 
-export const cssToJs = (file: IFile) => {
+export const jsonToJsFromFile = (file: IFile) => {
+    return jsonToJs(file.value)
+}
+
+export const cssToJs = (code: string, fileName?: string) => {
     const randomId = new Date().getTime()
     return `(() => {
-  let stylesheet = document.getElementById('style_${randomId}_${file.name}');
+  let stylesheet = document.getElementById('style_${randomId}${fileName ? `_${fileName}` : ''}');
   if (!stylesheet) {
     stylesheet = document.createElement('style')
-    stylesheet.setAttribute('id', 'style_${randomId}_${file.name}')
+    stylesheet.setAttribute('id', 'style_${randomId}_${fileName ? `_${fileName}` : ''}')
     document.head.appendChild(stylesheet)
   }
   const styles = document.createTextNode(
-\`${file.value}\`
+\`${code}\`
     )
   stylesheet.innerHTML = ''
   stylesheet.appendChild(styles)
 })()
 `
+}
+
+export const cssToJsFromFile = (file: IFile) => {
+    return cssToJs(file.value, file.name)
 }
 
 export const addReactImport = (code: string) => {
