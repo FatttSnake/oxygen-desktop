@@ -36,6 +36,31 @@ export const createATA = async (): Promise<TypeHelper> => {
     // @ts-expect-error
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const ts = await import('https://esm.sh/typescript@5.3.3')
+
+    const maxConcurrentRequests = 50
+    let activeRequests = 0
+    const requestQueue: Array<() => void> = []
+    const fetchWithQueue = (input: RequestInfo | URL, init?: RequestInit | undefined) =>
+        new Promise<Response>((resolve, reject) => {
+            const attemptRequest = () => {
+                if (activeRequests < maxConcurrentRequests) {
+                    activeRequests++
+                    fetch(input, init)
+                        .then((response) => resolve(response))
+                        .catch((error) => reject(error))
+                        .finally(() => {
+                            activeRequests--
+                            if (requestQueue.length > 0) {
+                                requestQueue.shift()?.()
+                            }
+                        })
+                } else {
+                    requestQueue.push(attemptRequest)
+                }
+            }
+            attemptRequest()
+        })
+
     const ata = setupTypeAcquisition({
         projectName: 'monaco-ts',
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -46,7 +71,7 @@ export const createATA = async (): Promise<TypeHelper> => {
         fetcher: (input, init) => {
             try {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-                return fetch(input, init)
+                return fetchWithQueue(input, init)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
@@ -95,6 +120,7 @@ export const createATA = async (): Promise<TypeHelper> => {
     }
 
     return {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         acquireType,
         addListener,
         removeListener,

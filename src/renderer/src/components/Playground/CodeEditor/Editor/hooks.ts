@@ -12,8 +12,8 @@ export const useEditor = () => {
         const selection = input.options ? input.options.selection : null
         if (selection) {
             if (
-                typeof selection.endLineNumber === 'number' &&
-                typeof selection.endColumn === 'number'
+                typeof selection?.endLineNumber === 'number' &&
+                typeof selection?.endColumn === 'number'
             ) {
                 editor.setSelection(selection)
                 editor.revealRangeInCenter(selection, ScrollType.Immediate)
