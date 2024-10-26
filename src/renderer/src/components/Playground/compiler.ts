@@ -136,7 +136,12 @@ class Compiler {
                     }
                 }
 
-                const path = importMap.imports[args.path]
+                let path = importMap.imports[args.path]
+                let tempPath = args.path
+                while (!path && tempPath.includes('/')) {
+                    tempPath = tempPath.substring(0, tempPath.lastIndexOf('/'))
+                    path = args.path.replace(tempPath, importMap.imports[tempPath])
+                }
 
                 if (!path) {
                     throw Error(`Import '${args.path}' not found in Import Map`)
