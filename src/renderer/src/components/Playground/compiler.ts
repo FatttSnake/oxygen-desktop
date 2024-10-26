@@ -2,7 +2,7 @@ import esbuild, { Loader, OnLoadArgs, Plugin, PluginBuild } from 'esbuild-wasm'
 import localforage from 'localforage'
 import axios from 'axios'
 import esbuildWasmUrl from 'esbuild-wasm/esbuild.wasm?url'
-import { IFiles, IImportMap } from '@/components/Playground/shared'
+import { IFile, IFiles, IImportMap } from '@/components/Playground/shared'
 import { addReactImport, cssToJs, jsonToJs } from '@/components/Playground/files'
 
 class Compiler {
@@ -62,7 +62,7 @@ class Compiler {
                 format: 'esm',
                 metafile: true,
                 write: false,
-                plugins: [this.fileResolverPlugin(files, importMap, entryPoint)]
+                plugins: [this.fileResolverPlugin(files, importMap)]
             })
         })
 
@@ -70,54 +70,16 @@ class Compiler {
         void esbuild.stop()
     }
 
-    private fileResolverPlugin = (
-        files: IFiles,
-        importMap: IImportMap,
-        entryPoint: string
-    ): Plugin => ({
+    private fileResolverPlugin = (files: IFiles, importMap: IImportMap): Plugin => ({
         name: 'file-resolver-plugin',
         setup: (build: PluginBuild) => {
             build.onResolve({ filter: /.*/ }, (args: esbuild.OnResolveArgs) => {
-                if (entryPoint === args.path) {
+                if (args.kind === 'entry-point') {
                     return {
-                        namespace: 'OxygenToolbox',
+                        namespace: 'oxygen',
                         path: args.path
                     }
                 }
-                if (args.path.startsWith('./') && files[args.path.substring(2)]) {
-                    return {
-                        namespace: 'OxygenToolbox',
-                        path: args.path.substring(2)
-                    }
-                }
-                if (args.path.startsWith('./') && files[`${args.path.substring(2)}.tsx`]) {
-                    return {
-                        namespace: 'OxygenToolbox',
-                        path: `${args.path.substring(2)}.tsx`
-                    }
-                }
-                if (args.path.startsWith('./') && files[`${args.path.substring(2)}.jsx`]) {
-                    return {
-                        namespace: 'OxygenToolbox',
-                        path: `${args.path.substring(2)}.jsx`
-                    }
-                }
-                if (args.path.startsWith('./') && files[`${args.path.substring(2)}.ts`]) {
-                    return {
-                        namespace: 'OxygenToolbox',
-                        path: `${args.path.substring(2)}.ts`
-                    }
-                }
-                if (args.path.startsWith('./') && files[`${args.path.substring(2)}.js`]) {
-                    return {
-                        namespace: 'OxygenToolbox',
-                        path: `${args.path.substring(2)}.js`
-                    }
-                }
-                if (/\.\/.*\.css/.test(args.path) && !args.resolveDir) {
-                    throw Error(`Css '${args.path}' not found`)
-                }
-
                 if (/^https?:\/\/.*/.test(args.path)) {
                     return {
                         namespace: 'default',
@@ -126,10 +88,20 @@ class Compiler {
                 }
 
                 if (
-                    args.path.includes('./') ||
-                    args.path.includes('../') ||
-                    args.path.startsWith('/')
+                    args.path.startsWith('./') &&
+                    (!args.resolveDir.length || args.resolveDir in files)
                 ) {
+                    const suffix = ['', '.tsx', '.jsx', '.ts', '.js'].find((suffix) => {
+                        return files[`${args.path.substring(2)}${suffix}`]
+                    })
+                    if (suffix !== undefined) {
+                        return {
+                            namespace: 'oxygen',
+                            path: `${args.path.substring(2)}${suffix}`
+                        }
+                    }
+                }
+                if (['./', '../', '/'].some((prefix) => args.path.startsWith(prefix))) {
                     return {
                         namespace: 'default',
                         path: new URL(args.path, args.resolveDir.substring(1)).href
@@ -140,16 +112,26 @@ class Compiler {
                 let tempPath = args.path
                 while (!path && tempPath.includes('/')) {
                     tempPath = tempPath.substring(0, tempPath.lastIndexOf('/'))
-                    path = args.path.replace(tempPath, importMap.imports[tempPath])
+                    if (importMap.imports[tempPath]) {
+                        const suffix = args.path.replace(tempPath, '')
+                        const importUrl = new URL(importMap.imports[tempPath])
+                        path = `${importUrl.origin}${importUrl.pathname}${suffix}${importUrl.search}`
+                    }
                 }
-
                 if (!path) {
                     throw Error(`Import '${args.path}' not found in Import Map`)
                 }
-
+                const pathUrl = new URL(path)
+                const externals = pathUrl.searchParams.get('external')?.split(',') ?? []
+                Object.keys(importMap.imports).forEach((item) => {
+                    if (!(item in externals)) {
+                        externals.push(item)
+                    }
+                })
+                pathUrl.searchParams.set('external', externals.join(','))
                 return {
                     namespace: 'default',
-                    path
+                    path: pathUrl.href
                 }
             })
 
@@ -169,40 +151,28 @@ class Compiler {
                 }
             })
 
+            build.onLoad({ namespace: 'oxygen', filter: /.*/ }, (args: OnLoadArgs) => {
+                let file: IFile | undefined
+
+                void ['', '.tsx', '.jsx', '.ts', '.js'].forEach((suffix) => {
+                    file = file || files[`${args.path}${suffix}`]
+                })
+                if (file) {
+                    return {
+                        loader: (() => {
+                            switch (file.language) {
+                                case 'javascript':
+                                    return 'jsx'
+                                default:
+                                    return 'tsx'
+                            }
+                        })(),
+                        contents: addReactImport(file.value)
+                    }
+                }
+            })
+
             build.onLoad({ filter: /.*/ }, async (args: OnLoadArgs) => {
-                if (entryPoint === args.path) {
-                    return {
-                        loader: 'tsx',
-                        contents: addReactImport(files[entryPoint].value)
-                    }
-                }
-
-                if (files[args.path]) {
-                    const contents = addReactImport(files[args.path].value)
-                    if (args.path.endsWith('.jsx')) {
-                        return {
-                            loader: 'jsx',
-                            contents
-                        }
-                    }
-                    if (args.path.endsWith('.ts')) {
-                        return {
-                            loader: 'ts',
-                            contents
-                        }
-                    }
-                    if (args.path.endsWith('.js')) {
-                        return {
-                            loader: 'js',
-                            contents
-                        }
-                    }
-                    return {
-                        loader: 'tsx',
-                        contents
-                    }
-                }
-
                 const cached = await this.fileCache.getItem<esbuild.OnLoadResult>(args.path)
 
                 if (cached) {
@@ -211,9 +181,9 @@ class Compiler {
 
                 const axiosResponse = await axios.get<string>(args.path)
                 const result: esbuild.OnLoadResult = {
-                    loader: 'jsx',
+                    loader: 'js',
                     contents: axiosResponse.data,
-                    resolveDir: (axiosResponse.request as XMLHttpRequest).responseURL
+                    resolveDir: args.path
                 }
 
                 await this.fileCache.setItem(args.path, result)
