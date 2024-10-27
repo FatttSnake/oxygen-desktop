@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import '@/assets/css/components/common/indicator.scss'
+import '@/assets/css/components/common/indicator.less'
 
 interface IndicatorProps {
     total: number

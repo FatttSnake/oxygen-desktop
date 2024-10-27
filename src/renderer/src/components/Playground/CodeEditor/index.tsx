@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import '@/components/Playground/CodeEditor/code-editor.scss'
+import '@/components/Playground/CodeEditor/code-editor.less'
 import FlexBox from '@/components/common/FlexBox'
 import { IEditorOptions, IFiles, ITheme, ITsconfig } from '@/components/Playground/shared'
 import {

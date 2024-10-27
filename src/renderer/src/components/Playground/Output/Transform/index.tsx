@@ -1,6 +1,6 @@
 import MonacoEditor from '@monaco-editor/react'
 import { Loader } from 'esbuild-wasm'
-import '@/components/Playground/Output/Transform/transform.scss'
+import '@/components/Playground/Output/Transform/transform.less'
 import { IFile, ITheme } from '@/components/Playground/shared'
 import { cssToJsFromFile, jsonToJsFromFile } from '@/components/Playground/files'
 import Compiler from '@/components/Playground/compiler'

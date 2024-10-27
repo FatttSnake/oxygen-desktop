@@ -1,5 +1,5 @@
 import { UIEvent } from 'react'
-import '@/assets/css/pages/tools/store.scss'
+import '@/assets/css/pages/tools/store.less'
 import { DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { r_tool_store_get } from '@/services/tool'

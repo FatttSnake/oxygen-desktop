@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes, MouseEvent } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/tools/local-card.scss'
+import '@/assets/css/components/tools/local-card.less'
 import { COLOR_BACKGROUND, COLOR_MAIN } from '@/constants/common.constants'
 import { checkDesktop, omitText } from '@/util/common'
 import { getAndroidUrl, navigateToStore, navigateToView } from '@/util/navigation'

@@ -6,7 +6,7 @@ import {
     HTMLAttributes,
     UIEvent
 } from 'react'
-import '@/assets/css/components/common/hide-scrollbar.scss'
+import '@/assets/css/components/common/hide-scrollbar.less'
 
 interface HideScrollbarProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -622,7 +622,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                           maskRef.current?.clientHeight -
                                           1
                                         : undefined,
-                                    padding: `${scrollbarAsidePadding}px ${scrollbarEdgePadding}px`
+                                    padding: `${scrollbarEdgePadding}px ${scrollbarAsidePadding}px`
                                 }}
                             >
                                 <div className={'box'} style={{ height: scrollbarWidth }}>

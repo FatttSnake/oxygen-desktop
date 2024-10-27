@@ -1,6 +1,6 @@
 import VanillaTilt from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/tools/load-more-card.scss'
+import '@/assets/css/components/tools/load-more-card.less'
 import FlexBox from '@/components/common/FlexBox'
 import Card from '@/components/common/Card'
 

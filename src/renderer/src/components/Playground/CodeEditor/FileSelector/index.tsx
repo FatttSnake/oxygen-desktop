@@ -1,4 +1,4 @@
-import '@/components/Playground/CodeEditor/FileSelector/file-selector.scss'
+import '@/components/Playground/CodeEditor/FileSelector/file-selector.less'
 import HideScrollbar, { HideScrollbarElement } from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
 import { IFiles } from '@/components/Playground/shared'

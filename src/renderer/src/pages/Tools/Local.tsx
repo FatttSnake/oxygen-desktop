@@ -1,5 +1,5 @@
 import { UIEvent } from 'react'
-import '@/assets/css/pages/tools/local.scss'
+import '@/assets/css/pages/tools/local.less'
 import { checkDesktop } from '@/util/common'
 import { l_tool_get } from '@/services/tool'
 import FlexBox from '@/components/common/FlexBox'
@@ -65,7 +65,7 @@ const Local = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'tools-store'}>
+            <FitFullscreen data-component={'tools-local'}>
                 <HideScrollbar
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}

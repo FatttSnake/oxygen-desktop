@@ -1,0 +1,33 @@
+@import "@/assets/css/constants";
+
+[data-component=component-setting-card] {
+  .settings-card {
+    padding: 20px;
+    gap: 20px;
+    color: @main-color;
+
+    > .head {
+      align-items: center;
+      gap: 5px;
+
+      .icon {
+        font-size: @SIZE_ICON_MD;
+        flex: 0 0 auto;
+      }
+
+      .title {
+        display: flex;
+        font-size: 1.2em;
+      }
+
+      :nth-child(n+3) {
+        flex: 0 0 auto;
+        color: @font-main-color;
+      }
+
+      .bt-save {
+        color: @main-color;
+      }
+    }
+  }
+}

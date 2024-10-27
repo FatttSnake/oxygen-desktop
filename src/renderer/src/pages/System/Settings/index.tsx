@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system/settings.scss'
+import '@/assets/css/pages/system/settings.less'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'

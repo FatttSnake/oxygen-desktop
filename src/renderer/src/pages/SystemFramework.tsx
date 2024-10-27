@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system-framework.scss'
+import '@/assets/css/pages/system-framework.less'
 import { getSystemRouteJson } from '@/router/system'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import Sidebar from '@/components/common/Sidebar'

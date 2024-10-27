@@ -1,4 +1,4 @@
-import '@/components/Playground/playground.scss'
+import '@/components/Playground/playground.less'
 import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
 import {
     ENTRY_FILE_NAME,

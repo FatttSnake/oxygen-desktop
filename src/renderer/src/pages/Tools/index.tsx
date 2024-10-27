@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/tools/index.scss'
+import '@/assets/css/pages/tools/index.less'
 import {
     DATABASE_DELETE_SUCCESS,
     DATABASE_SELECT_SUCCESS,

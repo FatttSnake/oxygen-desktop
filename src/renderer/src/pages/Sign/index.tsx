@@ -1,4 +1,4 @@
-import '@/assets/css/pages/sign.scss'
+import '@/assets/css/pages/sign.less'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import FitCenter from '@/components/common/FitCenter'
 import FlexBox from '@/components/common/FlexBox'

@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/user/index.scss'
+import '@/assets/css/pages/user/index.less'
 import {
     COLOR_BACKGROUND,
     COLOR_ERROR,

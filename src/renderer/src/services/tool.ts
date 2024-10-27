@@ -1,4 +1,4 @@
-import request from '@/services/index'
+import request from '@/services'
 import {
     URL_TOOL,
     URL_TOOL_CATEGORY,

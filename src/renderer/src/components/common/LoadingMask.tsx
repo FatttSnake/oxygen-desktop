@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/common/loading-mask.scss'
+import '@/assets/css/components/common/loading-mask.less'
 import { COLOR_FONT_MAIN } from '@/constants/common.constants'
 
 interface LoadingMaskProps extends PropsWithChildren {

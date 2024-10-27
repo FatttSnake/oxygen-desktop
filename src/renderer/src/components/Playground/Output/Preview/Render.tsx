@@ -1,5 +1,5 @@
 import { ChangeEvent } from 'react'
-import '@/components/Playground/Output/Preview/render.scss'
+import '@/components/Playground/Output/Preview/render.less'
 import { COLOR_FONT_MAIN } from '@/constants/common.constants'
 import iframeRaw from '@/components/Playground/Output/Preview/iframe.html?raw'
 import HideScrollbar from '@/components/common/HideScrollbar'
@@ -246,7 +246,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
             ref={iframeRef}
             src={iframeUrl}
             onLoad={() => setIsLoaded(true)}
-            sandbox="allow-downloads allow-forms allow-modals allow-scripts"
+            sandbox={'allow-downloads allow-forms allow-modals allow-scripts'}
             allow={'clipboard-read; clipboard-write'}
         />
     )

@@ -1,6 +1,6 @@
 import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/system/tools/code.scss'
+import '@/assets/css/pages/system/tools/code.less'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { navigateToExecute, navigateToRepository } from '@/util/navigation'

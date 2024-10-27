@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/common/fullscreen-loading-mask.scss'
+import '@/assets/css/components/common/fullscreen-loading-mask.less'
 import { COLOR_FONT_MAIN } from '@/constants/common.constants'
 import FitFullscreen from '@/components/common/FitFullscreen'
 

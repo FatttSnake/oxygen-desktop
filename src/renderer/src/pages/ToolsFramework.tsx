@@ -1,7 +1,7 @@
 import { DndContext, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
-import '@/assets/css/pages/tools-framework.scss'
+import '@/assets/css/pages/tools-framework.less'
 import { tools } from '@/router/tools'
 import { checkDesktop, getToolMenuItem, saveToolMenuItem } from '@/util/common'
 import { getViewPath } from '@/util/navigation'

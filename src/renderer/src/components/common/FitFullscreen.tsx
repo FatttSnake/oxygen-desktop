@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import '@/assets/css/components/common/fit-fullscreen.scss'
+import '@/assets/css/components/common/fit-fullscreen.less'
 
 interface FitFullscreenProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {

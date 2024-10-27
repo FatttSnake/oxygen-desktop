@@ -1,4 +1,4 @@
-import '@/assets/css/pages/user-framework.scss'
+import '@/assets/css/pages/user-framework.less'
 import user from '@/router/user'
 import { hasPathPermission } from '@/util/auth'
 import FitFullscreen from '@/components/common/FitFullscreen'

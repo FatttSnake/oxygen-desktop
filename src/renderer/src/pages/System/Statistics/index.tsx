@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system/statistics.scss'
+import '@/assets/css/pages/system/statistics.less'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'

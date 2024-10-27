@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system/tools/execute.scss'
+import '@/assets/css/pages/system/tools/execute.less'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { navigateToTools } from '@/util/navigation'
 import { r_sys_tool_get_one } from '@/services/system'

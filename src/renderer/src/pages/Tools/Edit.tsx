@@ -1,4 +1,4 @@
-import '@/assets/css/pages/tools/edit.scss'
+import '@/assets/css/pages/tools/edit.less'
 import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
 import {

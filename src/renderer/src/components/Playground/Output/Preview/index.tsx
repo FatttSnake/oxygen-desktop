@@ -1,4 +1,4 @@
-import '@/components/Playground/Output/Preview/preview.scss'
+import '@/components/Playground/Output/Preview/preview.less'
 import { IFiles, IImportMap } from '@/components/Playground/shared'
 import Compiler from '@/components/Playground/compiler'
 import Render from '@/components/Playground/Output/Preview/Render'

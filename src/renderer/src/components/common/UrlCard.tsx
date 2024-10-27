@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
-import '@/assets/css/components/common/url-card.scss'
+import '@/assets/css/components/common/url-card.less'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 

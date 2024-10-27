@@ -2,7 +2,7 @@ import { DetailedHTMLProps, HTMLAttributes, MouseEvent } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/tools/store-card.scss'
+import '@/assets/css/components/tools/store-card.less'
 import {
     COLOR_BACKGROUND,
     COLOR_MAIN,

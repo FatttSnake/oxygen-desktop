@@ -1,6 +1,6 @@
 import { HandleContextInst } from '@/components/dnd/HandleContext'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/dnd/drag-handle.scss'
+import '@/assets/css/components/dnd/drag-handle.less'
 
 interface DragHandleProps {
     padding?: string | number

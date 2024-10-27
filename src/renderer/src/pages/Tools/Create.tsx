@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/tools/create.scss'
+import '@/assets/css/pages/tools/create.less'
 import {
     DATABASE_DUPLICATE_KEY,
     DATABASE_INSERT_SUCCESS,

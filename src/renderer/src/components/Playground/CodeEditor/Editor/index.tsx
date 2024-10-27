@@ -1,6 +1,6 @@
 import { editor, Selection } from 'monaco-editor'
 import MonacoEditor, { Monaco } from '@monaco-editor/react'
-import '@/components/Playground/CodeEditor/Editor/editor.scss'
+import '@/components/Playground/CodeEditor/Editor/editor.less'
 import '@/components/Playground/CodeEditor/Editor/loader'
 import { IEditorOptions, IFiles, ITheme, ITsconfig } from '@/components/Playground/shared'
 import { fileNameToLanguage, tsconfigJsonDiagnosticsOptions } from '@/components/Playground/files'

@@ -1,4 +1,4 @@
-import '@/assets/css/components/dnd/drop-mask.scss'
+import '@/assets/css/components/dnd/drop-mask.less'
 import Icon from '@ant-design/icons'
 
 const DropMask = () => {

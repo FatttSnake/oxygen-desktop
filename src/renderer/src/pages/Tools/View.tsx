@@ -1,4 +1,4 @@
-import '@/assets/css/pages/tools/view.scss'
+import '@/assets/css/pages/tools/view.less'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
 import {

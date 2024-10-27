@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/system/tools/template.scss'
+import '@/assets/css/pages/system/tools/template.less'
 import {
     COLOR_PRODUCTION,
     DATABASE_DELETE_SUCCESS,

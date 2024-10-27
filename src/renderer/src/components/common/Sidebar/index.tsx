@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/common/sidebar.scss'
+import '@/assets/css/components/common/sidebar.less'
 import { getLocalStorage, setLocalStorage } from '@/util/browser'
 import Item from '@/components/common/Sidebar/Item'
 import ItemList from '@/components/common/Sidebar/ItemList'
