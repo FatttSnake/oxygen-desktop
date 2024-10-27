@@ -1,4 +1,4 @@
-import '@/assets/css/pages/user-framework.less'
+import styles from '@/assets/css/pages/user-framework.module.less'
 import user from '@/router/user'
 import { hasPathPermission } from '@/util/auth'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -8,8 +8,8 @@ import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
 const UserFramework = () => {
     return (
         <>
-            <FitFullscreen data-component={'user-framework'} className={'flex-horizontal'}>
-                <div className={'left-panel'}>
+            <FitFullscreen className={`${styles.root} flex-horizontal`}>
+                <div className={styles.leftPanel}>
                     <Sidebar
                         title={'个人中心'}
                         bottomFixed={
@@ -46,7 +46,7 @@ const UserFramework = () => {
                         </Sidebar.ItemList>
                     </Sidebar>
                 </div>
-                <div className={'right-panel'}>
+                <div className={styles.rightPanel}>
                     <Suspense
                         fallback={
                             <>

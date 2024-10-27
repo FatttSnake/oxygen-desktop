@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system/tools/execute.less'
+import styles from '@/assets/css/pages/system/tools/execute.module.less'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { navigateToTools } from '@/util/navigation'
 import { r_sys_tool_get_one } from '@/services/system'
@@ -71,8 +71,8 @@ const Execute = () => {
     }, [id])
 
     return (
-        <FitFullscreen data-component={'system-tools-execute'}>
-            <Card>
+        <FitFullscreen className={styles.root}>
+            <Card className={styles.rootBox}>
                 <Playground.Output.Preview.Render iframeKey={`${id}`} compiledCode={compiledCode} />
             </Card>
         </FitFullscreen>

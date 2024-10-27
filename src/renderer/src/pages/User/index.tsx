@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/user/index.less'
+import styles from '@/assets/css/pages/user/index.module.less'
 import {
     COLOR_BACKGROUND,
     COLOR_ERROR,
@@ -450,16 +450,16 @@ const User = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'user'}>
+            <FitFullscreen>
                 <HideScrollbar
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}
-                    className={'root-content'}
+                    className={styles.root}
                 >
-                    <Card>
-                        <FlexBox className={'info'} direction={'horizontal'}>
+                    <Card className={styles.content}>
+                        <FlexBox className={styles.info} direction={'horizontal'}>
                             <AntdTooltip title={'点击获取新头像'}>
-                                <div className={'avatar-box'}>
+                                <div className={styles.avatarBox}>
                                     <AntdAvatar
                                         src={
                                             <img
@@ -472,17 +472,17 @@ const User = () => {
                                             background: COLOR_BACKGROUND,
                                             cursor: 'pointer'
                                         }}
-                                        className={'avatar'}
+                                        className={styles.avatar}
                                         onClick={handleOnChangeAvatar}
                                     />
                                 </div>
                             </AntdTooltip>
-                            <FlexBox className={'info-name'}>
-                                <div className={'nickname'}>
+                            <FlexBox className={styles.infoName}>
+                                <div className={styles.nickname}>
                                     {userWithPowerInfoVo?.userInfo.nickname}
                                 </div>
                                 <a
-                                    className={'url'}
+                                    className={styles.url}
                                     onClick={handleOnCopyToClipboard(userWithPowerInfoVo?.username)}
                                 >
                                     {userWithPowerInfoVo?.username &&
@@ -494,10 +494,10 @@ const User = () => {
                                 </a>
                             </FlexBox>
                         </FlexBox>
-                        <FlexBox className={'title'}>
-                            <FlexBox direction={'horizontal'} className={'content'}>
-                                <div className={'text'}>档案管理</div>
-                                <FlexBox className={'operation'} direction={'horizontal'}>
+                        <FlexBox className={styles.title}>
+                            <FlexBox direction={'horizontal'} className={styles.content}>
+                                <div className={styles.text}>档案管理</div>
+                                <FlexBox className={styles.operation} direction={'horizontal'}>
                                     <AntdButton onClick={handleOnReset} loading={isLoading}>
                                         重置
                                     </AntdButton>
@@ -511,11 +511,11 @@ const User = () => {
                                 </FlexBox>
                             </FlexBox>
                         </FlexBox>
-                        <div className={'divide'} />
-                        <FlexBox className={'profile table'}>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>昵称</div>
-                                <div className={'input'}>
+                        <div className={styles.divide} />
+                        <FlexBox className={styles.profile}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>昵称</div>
+                                <div className={styles.input}>
                                     <AntdForm form={form}>
                                         <AntdForm.Item
                                             name={'nickname'}
@@ -535,24 +535,24 @@ const User = () => {
                                     </AntdForm>
                                 </div>
                             </FlexBox>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>用户名</div>
-                                <div className={'input'}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>用户名</div>
+                                <div className={styles.input}>
                                     <AntdInput disabled value={userWithPowerInfoVo?.username} />
                                 </div>
                             </FlexBox>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>邮箱</div>
-                                <div className={'input'}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>邮箱</div>
+                                <div className={styles.input}>
                                     <AntdInput
                                         disabled
                                         value={userWithPowerInfoVo?.userInfo.email}
                                     />
                                 </div>
                             </FlexBox>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>注册时间</div>
-                                <div className={'input'}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>注册时间</div>
+                                <div className={styles.input}>
                                     <AntdInput
                                         disabled
                                         value={utcToLocalTime(
@@ -562,17 +562,17 @@ const User = () => {
                                 </div>
                             </FlexBox>
                         </FlexBox>
-                        <div className={'divide'} />
-                        <FlexBox className={'security table'}>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>上次登录 IP</div>
-                                <div className={'input'}>
+                        <div className={styles.divide} />
+                        <FlexBox className={styles.security}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>上次登录 IP</div>
+                                <div className={styles.input}>
                                     <AntdInput disabled value={userWithPowerInfoVo?.lastLoginIp} />
                                 </div>
                             </FlexBox>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>上次登录时间</div>
-                                <div className={'input'}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>上次登录时间</div>
+                                <div className={styles.input}>
                                     <AntdInput
                                         disabled
                                         value={utcToLocalTime(
@@ -581,9 +581,9 @@ const User = () => {
                                     />
                                 </div>
                             </FlexBox>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>密码</div>
-                                <div className={'input'}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>密码</div>
+                                <div className={styles.input}>
                                     <AntdSpace.Compact>
                                         <AntdInput disabled value={'********'} />
                                         <AntdButton
@@ -597,9 +597,9 @@ const User = () => {
                                     </AntdSpace.Compact>
                                 </div>
                             </FlexBox>
-                            <FlexBox className={'row'} direction={'horizontal'}>
-                                <div className={'label'}>双因素</div>
-                                <div className={'input'}>
+                            <FlexBox className={styles.row} direction={'horizontal'}>
+                                <div className={styles.label}>双因素</div>
+                                <div className={styles.input}>
                                     <AntdSpace.Compact>
                                         <AntdInput
                                             disabled

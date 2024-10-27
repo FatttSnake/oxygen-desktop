@@ -636,7 +636,7 @@ const Group = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'system-group'}>
+            <FitFullscreen>
                 <HideScrollbar
                     style={{ padding: 20 }}
                     isShowVerticalScrollbar

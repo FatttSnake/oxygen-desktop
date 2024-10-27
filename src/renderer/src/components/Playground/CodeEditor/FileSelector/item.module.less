@@ -1,0 +1,47 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: 30px;
+  padding: 0 20px;
+  border: 1px solid #f0f0f0;
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 6px 6px 0 0;
+  cursor: pointer;
+
+  .tabItemInput {
+    position: relative;
+    min-width: 40px;
+    transform: translateY(1px);
+
+    .tabItemInputMask {
+      display: inline-block;
+      color: transparent;
+    }
+    input {
+      position: absolute;
+      background-color: transparent;
+      width: 100%;
+      font-size: 1em;
+    }
+  }
+
+  .tabItemClose {
+    transform: translateX(10px);
+
+    :hover {
+      fill: #888;
+    }
+
+    svg {
+      height: 8px;
+      fill: #666;
+    }
+  }
+
+  &.active {
+    background-color: white;
+    border-bottom: none;
+  }
+}

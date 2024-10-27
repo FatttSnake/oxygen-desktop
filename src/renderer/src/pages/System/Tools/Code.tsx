@@ -1,6 +1,6 @@
 import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/system/tools/code.less'
+import styles from '@/assets/css/pages/system/tools/code.module.less'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { navigateToExecute, navigateToRepository } from '@/util/navigation'
@@ -81,8 +81,8 @@ const Code = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'system-tools-code'}>
-                <Card>
+            <FitFullscreen className={styles.root}>
+                <Card className={styles.rootBox}>
                     <Playground.CodeEditor
                         readonly
                         files={files}
@@ -93,7 +93,7 @@ const Code = () => {
                 </Card>
 
                 <Draggable bounds={'#root'}>
-                    <div className={'draggable-content'}>
+                    <div className={styles.draggableContent}>
                         <AntdFloatButton
                             type={'primary'}
                             icon={<Icon component={IconOxygenExecute} />}

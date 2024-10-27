@@ -1,10 +1,10 @@
-import '@/assets/css/components/dnd/drop-mask.less'
 import Icon from '@ant-design/icons'
+import styles from '@/assets/css/components/dnd/drop-mask.module.less'
 
 const DropMask = () => {
     return (
-        <div data-component={'component-drop-mask'}>
-            <div className={'drop-mask-border'}>
+        <div className={styles.root}>
+            <div className={styles.dropMaskBorder}>
                 <Icon component={IconOxygenReceive} />
             </div>
         </div>

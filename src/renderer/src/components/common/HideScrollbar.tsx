@@ -6,7 +6,7 @@ import {
     HTMLAttributes,
     UIEvent
 } from 'react'
-import '@/assets/css/components/common/hide-scrollbar.less'
+import styles from '@/assets/css/components/common/hide-scrollbar.module.less'
 
 interface HideScrollbarProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
@@ -515,7 +515,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
         return (
             <>
                 <div
-                    className={'hide-scrollbar-mask'}
+                    className={styles.hideScrollbarMask}
                     ref={maskRef}
                     onMouseMove={
                         !isPreventScroll ? handleScrollbarMouseEvent('move', 'all') : undefined
@@ -538,7 +538,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                 >
                     <div
                         ref={rootRef}
-                        className={`hide-scrollbar-selection${className ? ` ${className}` : ''}`}
+                        className={`${styles.hideScrollbarSelection}${className ? ` ${className}` : ''}`}
                         tabIndex={0}
                         style={{
                             width: `calc(${maskRef.current?.clientWidth}px + ${verticalScrollbarWidth}px)`,
@@ -555,7 +555,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                         onScroll={handleDefaultScroll}
                     >
                         <div
-                            className={'hide-scrollbar-content'}
+                            className={styles.hideScrollbarContent}
                             ref={contentRef}
                             style={{ minWidth, minHeight }}
                             data-refresh={refreshTime}
@@ -566,8 +566,8 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                     {isShowVerticalScrollbar &&
                         (!isHiddenVerticalScrollbarWhenFull || verticalScrollbarLength < 100) && (
                             <div
-                                className={`scrollbar vertical-scrollbar${
-                                    isVerticalScrollbarAutoHide ? ' hide' : ''
+                                className={`${styles.scrollbar} ${styles.verticalScrollbar}${
+                                    isVerticalScrollbarAutoHide ? ` ${styles.hide}` : ''
                                 }`}
                                 style={{
                                     height: maskRef.current
@@ -582,9 +582,9 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                     padding: `${scrollbarAsidePadding}px ${scrollbarEdgePadding}px`
                                 }}
                             >
-                                <div className={'box'} style={{ width: scrollbarWidth }}>
+                                <div className={styles.box} style={{ width: scrollbarWidth }}>
                                     <div
-                                        className={'block'}
+                                        className={styles.block}
                                         style={{
                                             height: `${verticalScrollbarLength}%`,
                                             top: `clamp(0px, ${verticalScrollbarPosition}%, ${
@@ -609,8 +609,8 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                         (!isHiddenHorizontalScrollbarWhenFull ||
                             horizontalScrollbarLength < 100) && (
                             <div
-                                className={`scrollbar horizontal-scrollbar${
-                                    isHorizontalScrollbarAutoHide ? ' hide' : ''
+                                className={`${styles.scrollbar} ${styles.horizontalScrollbar}${
+                                    isHorizontalScrollbarAutoHide ? ` ${styles.hide}` : ''
                                 }`}
                                 style={{
                                     width: maskRef.current
@@ -625,9 +625,9 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                     padding: `${scrollbarEdgePadding}px ${scrollbarAsidePadding}px`
                                 }}
                             >
-                                <div className={'box'} style={{ height: scrollbarWidth }}>
+                                <div className={styles.box} style={{ height: scrollbarWidth }}>
                                     <div
-                                        className={'block'}
+                                        className={styles.block}
                                         style={{
                                             width: `${horizontalScrollbarLength}%`,
                                             left: `clamp(0px, ${horizontalScrollbarPosition}%, ${

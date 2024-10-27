@@ -1,5 +1,5 @@
 import { UIEvent } from 'react'
-import '@/assets/css/pages/tools/local.less'
+import styles from '@/assets/css/pages/tools/local.module.less'
 import { checkDesktop } from '@/util/common'
 import { l_tool_get } from '@/services/tool'
 import FlexBox from '@/components/common/FlexBox'
@@ -65,13 +65,13 @@ const Local = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'tools-local'}>
+            <FitFullscreen className={styles.root}>
                 <HideScrollbar
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}
                     onScroll={handleOnScroll}
                 >
-                    <div className={`search${isHideSearch ? ' hide' : ''}`}>
+                    <div className={`${styles.search}${isHideSearch ? ` ${styles.hide}` : ''}`}>
                         <AntdInput.Search
                             enterButton
                             allowClear
@@ -80,8 +80,8 @@ const Local = () => {
                             placeholder={'请输入工具名或关键字'}
                         />
                     </div>
-                    <FlexBox direction={'horizontal'} className={'root-content'}>
-                        {!toolData.length && <div className={'no-tool'}>未找到任何工具</div>}
+                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
+                        {!toolData.length && <div className={styles.noTool}>未找到任何工具</div>}
                         {toolData
                             ?.reduce((previousValue: ToolVo[], currentValue) => {
                                 if (

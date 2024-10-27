@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, KeyboardEvent, ChangeEvent, MouseEvent } from 'react'
+import styles from '@/components/Playground/CodeEditor/FileSelector/item.module.less'
 
 interface ItemProps {
     className?: string
@@ -109,11 +110,11 @@ const Item = ({
 
     return (
         <div
-            className={`tab-item${active ? ' active' : ''}${className ? ` ${className}` : ''}`}
+            className={`${styles.root}${active ? ` ${styles.active}` : ''}${className ? ` ${className}` : ''}`}
             onClick={handleOnClick}
         >
             {isCreating ? (
-                <div className={'tab-item-input'}>
+                <div className={styles.tabItemInput}>
                     <input
                         ref={inputRef}
                         value={fileName}
@@ -122,13 +123,13 @@ const Item = ({
                         onKeyDown={handleKeyDown}
                         spellCheck={'false'}
                     />
-                    <span className={'tab-item-input-mask'}>{fileName}</span>
+                    <span className={styles.tabItemInputMask}>{fileName}</span>
                 </div>
             ) : (
                 <>
                     <div onDoubleClick={handleOnDoubleClick}>{value}</div>
                     {!readonly && (
-                        <div className={'tab-item-close'} onClick={handleOnDelete}>
+                        <div className={styles.tabItemClose} onClick={handleOnDelete}>
                             <IconOxygenClose />
                         </div>
                     )}

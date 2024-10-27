@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/tools/create.less'
+import styles from '@/assets/css/pages/tools/create.module.less'
 import {
     DATABASE_DUPLICATE_KEY,
     DATABASE_INSERT_SUCCESS,
@@ -184,15 +184,15 @@ const Create = () => {
     }, [])
 
     return (
-        <FitFullscreen data-component={'tools-create'}>
-            <FlexBox direction={'horizontal'} className={'root-content'}>
+        <FitFullscreen>
+            <FlexBox direction={'horizontal'} className={styles.root}>
                 <FlexBox>
-                    <Card className={'title'}>
+                    <Card className={styles.title}>
                         <FlexBox>配置</FlexBox>
                     </Card>
-                    <Card className={'config'}>
+                    <Card className={styles.config}>
                         <HideScrollbar>
-                            <div className={'config-content'}>
+                            <div className={styles.configContent}>
                                 <AntdForm
                                     form={form}
                                     layout={'vertical'}
@@ -355,7 +355,7 @@ const Create = () => {
                                     </AntdForm.Item>
                                     <AntdForm.Item>
                                         <AntdButton
-                                            className={'create-bt'}
+                                            className={styles.createBt}
                                             type={'primary'}
                                             htmlType={'submit'}
                                             loading={isCreating}
@@ -369,10 +369,10 @@ const Create = () => {
                     </Card>
                 </FlexBox>
                 <FlexBox>
-                    <Card className={'title'}>
+                    <Card className={styles.title}>
                         <FlexBox>预览</FlexBox>
                     </Card>
-                    <Card className={'preview'}>
+                    <Card className={styles.preview}>
                         {compiledCode ? (
                             <Playground.Output.Preview.Render
                                 iframeKey={previewTemplate}
@@ -380,7 +380,7 @@ const Create = () => {
                                 mobileMode={formValues.platform === 'ANDROID'}
                             />
                         ) : (
-                            <span className={'no-preview'}>暂无预览</span>
+                            <span className={styles.noPreview}>暂无预览</span>
                         )}
                     </Card>
                 </FlexBox>

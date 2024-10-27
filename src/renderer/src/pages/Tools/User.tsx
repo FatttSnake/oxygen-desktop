@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/tools/user.less'
+import styles from '@/assets/css/pages/tools/user.module.less'
 import {
     COLOR_BACKGROUND,
     DATABASE_NO_RECORD_FOUND,
@@ -120,15 +120,15 @@ const User = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'tools-store-user'}>
+            <FitFullscreen>
                 <HideScrollbar
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}
-                    className={'root-content'}
+                    className={styles.root}
                 >
-                    <Card className={'root-box'}>
-                        <FlexBox className={'info'} direction={'horizontal'}>
-                            <div className={'avatar-box'}>
+                    <Card className={styles.rootBox}>
+                        <FlexBox className={styles.info} direction={'horizontal'}>
+                            <div className={styles.avatarBox}>
                                 <AntdAvatar
                                     src={
                                         <img
@@ -141,15 +141,15 @@ const User = () => {
                                         background: COLOR_BACKGROUND,
                                         cursor: 'pointer'
                                     }}
-                                    className={'avatar'}
+                                    className={styles.avatar}
                                 />
                             </div>
-                            <FlexBox className={'info-name'}>
-                                <div className={'nickname'}>
+                            <FlexBox className={styles.infoName}>
+                                <div className={styles.nickname}>
                                     {userWithInfoVo?.userInfo.nickname}
                                 </div>
                                 <a
-                                    className={'url'}
+                                    className={styles.url}
                                     onClick={handleOnCopyToClipboard(userWithInfoVo?.username)}
                                 >
                                     {userWithInfoVo?.username &&
@@ -161,9 +161,9 @@ const User = () => {
                                 </a>
                             </FlexBox>
                         </FlexBox>
-                        <FlexBox direction={'horizontal'} className={'tools'}>
+                        <FlexBox direction={'horizontal'} className={styles.tools}>
                             {!toolData.length && (
-                                <div className={'no-tool'}>该开发者暂未发布任何工具</div>
+                                <div className={styles.noTool}>该开发者暂未发布任何工具</div>
                             )}
                             {toolData
                                 ?.reduce((previousValue: ToolVo[], currentValue) => {

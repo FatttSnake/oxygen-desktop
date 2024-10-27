@@ -285,7 +285,7 @@ const Category = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'system-tools-category'}>
+            <FitFullscreen>
                 <HideScrollbar
                     style={{ padding: 20 }}
                     isShowVerticalScrollbar

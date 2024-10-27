@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import '@/assets/css/components/common/indicator.less'
+import styles from '@/assets/css/components/common/indicator.module.less'
 
 interface IndicatorProps {
     total: number
@@ -16,15 +16,15 @@ const Indicator = ({ total, current, onSwitch }: IndicatorProps) => {
 
     return (
         <>
-            <ul className={'dot-list flex-vertical'}>
+            <ul className={`${styles.dotList} flex-vertical`}>
                 {_.range(0, total).map((_value, index) => {
                     return (
                         <li
                             key={index}
-                            className={`item center-box${index === current ? ' active' : ''}`}
+                            className={`${styles.item} center-box${index === current ? ` ${styles.active}` : ''}`}
                             onClick={handleClick(index)}
                         >
-                            <div className={'dot'} />
+                            <div className={styles.dot} />
                         </li>
                     )
                 })}

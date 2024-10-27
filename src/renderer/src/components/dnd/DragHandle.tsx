@@ -1,6 +1,6 @@
 import { HandleContextInst } from '@/components/dnd/HandleContext'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/dnd/drag-handle.less'
+import styles from '@/assets/css/components/dnd/drag-handle.module.less'
 
 interface DragHandleProps {
     padding?: string | number
@@ -11,10 +11,9 @@ const DragHandle = ({ padding }: DragHandleProps) => {
 
     return (
         <button
-            data-component={'component-drag-handle'}
+            className={styles.root}
             style={{ padding }}
             ref={ref}
-            className={'drag-handle'}
             {...attributes}
             {...listeners}
         >

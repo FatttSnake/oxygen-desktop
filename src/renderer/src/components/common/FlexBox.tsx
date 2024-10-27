@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import '@/assets/css/components/common/flex-box.less'
+import styles from '@/assets/css/components/common/flex-box.module.less'
 
 interface FlexBoxProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     direction?: 'horizontal' | 'vertical'
@@ -10,7 +10,7 @@ const FlexBox = forwardRef<HTMLDivElement, FlexBoxProps>(
     ({ className, direction, gap, style, ...props }, ref) => {
         return (
             <div
-                className={`flex-box ${
+                className={`${styles.flexBox} ${
                     direction === 'horizontal' ? 'flex-horizontal' : 'flex-vertical'
                 }${className ? ` ${className}` : ''}`}
                 style={{ gap, ...style }}

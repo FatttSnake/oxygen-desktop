@@ -1,4 +1,4 @@
-import '@/assets/css/pages/tools/source.less'
+import styles from '@/assets/css/pages/tools/source.module.less'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
 import { navigateToRepository, navigateToSource } from '@/util/navigation'
@@ -84,8 +84,8 @@ const Source = () => {
     }, [username, toolId, ver, searchParams])
 
     return (
-        <FitFullscreen data-component={'tools-source'}>
-            <Card>
+        <FitFullscreen className={styles.root}>
+            <Card className={styles.rootBox}>
                 <Playground.CodeEditor
                     readonly
                     files={files}

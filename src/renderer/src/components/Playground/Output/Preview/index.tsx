@@ -1,4 +1,4 @@
-import '@/components/Playground/Output/Preview/preview.less'
+import styles from '@/components/Playground/Output/Preview/index.module.less'
 import { IFiles, IImportMap } from '@/components/Playground/shared'
 import Compiler from '@/components/Playground/compiler'
 import Render from '@/components/Playground/Output/Preview/Render'
@@ -42,9 +42,9 @@ const Preview = ({
     }, [files, Compiler, importMap, entryPoint])
 
     return (
-        <div data-component={'playground-preview'}>
+        <div className={styles.root}>
             <Render iframeKey={iframeKey} compiledCode={compiledCode} mobileMode={mobileMode} />
-            {errorMsg && <div className={'playground-error-message'}>{errorMsg}</div>}
+            {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
         </div>
     )
 }

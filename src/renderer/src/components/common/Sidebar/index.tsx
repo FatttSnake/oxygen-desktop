@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/common/sidebar.less'
+import styles from '@/assets/css/components/common/sidebar.module.less'
 import { getLocalStorage, setLocalStorage } from '@/util/browser'
 import Item from '@/components/common/Sidebar/Item'
 import ItemList from '@/components/common/Sidebar/ItemList'
@@ -28,18 +28,18 @@ const Sidebar = (props: SidebarProps) => {
     return (
         <>
             <div
-                className={`sidebar${isHideSidebar ? ' hide' : ''}`}
+                className={`${styles.sidebar}${isHideSidebar ? ` ${styles.hide}` : ''}`}
                 style={{ width: props.width ?? 'clamp(180px, 20vw, 240px)' }}
             >
-                <div className={'title'}>
-                    <span className={'icon-box'} onClick={switchSidebar}>
+                <div className={styles.title}>
+                    <span className={styles.iconBox} onClick={switchSidebar}>
                         <Icon component={IconOxygenExpand} />
                     </span>
-                    <span className={'text'}>{props.title}</span>
+                    <span className={styles.text}>{props.title}</span>
                 </div>
                 <Separate style={{ marginTop: 0 }} />
-                <div className={'content'}>{props.children}</div>
-                <div className={'bottom-fixed'} style={{ flex: 'none' }}>
+                <div className={styles.content}>{props.children}</div>
+                <div className={styles.bottomFixed} style={{ flex: 'none' }}>
                     {props.bottomFixed}
                 </div>
                 <Separate style={{ marginTop: 0, marginBottom: 0 }} />

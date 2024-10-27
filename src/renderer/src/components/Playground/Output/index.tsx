@@ -26,7 +26,7 @@ const Output = ({
     const [selectedTab, setSelectedTab] = useState('Preview')
 
     return (
-        <FlexBox data-component={'playground-code-output'}>
+        <FlexBox>
             <Playground.CodeEditor.FileSelector
                 files={{
                     Preview: { name: 'Preview', language: 'json', value: '' },

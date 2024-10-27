@@ -1,6 +1,6 @@
 import { editor, Selection } from 'monaco-editor'
 import MonacoEditor, { Monaco } from '@monaco-editor/react'
-import '@/components/Playground/CodeEditor/Editor/editor.less'
+import styles from '@/components/Playground/CodeEditor/Editor/index.module.less'
 import '@/components/Playground/CodeEditor/Editor/loader'
 import { IEditorOptions, IFiles, ITheme, ITsconfig } from '@/components/Playground/shared'
 import { fileNameToLanguage, tsconfigJsonDiagnosticsOptions } from '@/components/Playground/files'
@@ -112,7 +112,7 @@ const Editor = ({
 
     return (
         <>
-            <div data-component={'playground-code-editor-editor'}>
+            <div className={styles.root}>
                 <MonacoEditor
                     theme={theme}
                     path={file.name}
@@ -129,7 +129,7 @@ const Editor = ({
                         readOnly: readonly
                     }}
                 />
-                {total > 0 && !finished && <div className={'playground-code-editor-loading'} />}
+                {total > 0 && !finished && <div className={styles.playgroundCodeEditorLoading} />}
             </div>
         </>
     )

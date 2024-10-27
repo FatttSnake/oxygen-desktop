@@ -1,4 +1,4 @@
-import '@/assets/css/pages/tools/view.less'
+import styles from '@/assets/css/pages/tools/view.module.less'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
 import {
@@ -136,8 +136,8 @@ const View = () => {
     }, [username, toolId, ver, searchParams])
 
     return (
-        <FitFullscreen data-component={'tools-view'}>
-            <Card>
+        <FitFullscreen className={styles.root}>
+            <Card className={styles.rootBox}>
                 <Playground.Output.Preview.Render
                     iframeKey={`${username}:${toolId}:${ver}`}
                     compiledCode={compiledCode}

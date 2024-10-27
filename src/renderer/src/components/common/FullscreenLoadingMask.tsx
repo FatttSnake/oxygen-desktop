@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/common/fullscreen-loading-mask.less'
+import styles from '@/assets/css/components/common/fullscreen-loading-mask.module.less'
 import { COLOR_FONT_MAIN } from '@/constants/common.constants'
 import FitFullscreen from '@/components/common/FitFullscreen'
 
@@ -16,7 +16,7 @@ const FullscreenLoadingMask = () => {
     return (
         <>
             <FitFullscreen>
-                <div className={'fullscreen-loading-mask'}>
+                <div className={styles.fullscreenLoadingMask}>
                     <AntdSpin indicator={loadingIcon} />
                 </div>
             </FitFullscreen>

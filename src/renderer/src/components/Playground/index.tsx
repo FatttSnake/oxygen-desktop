@@ -1,4 +1,4 @@
-import '@/components/Playground/playground.less'
+import styles from '@/components/Playground/index.module.less'
 import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
 import {
     ENTRY_FILE_NAME,
@@ -77,7 +77,7 @@ const Playground = ({
     }, [tsconfigRaw])
 
     return (
-        <FlexBox data-component={'playground'} direction={'horizontal'}>
+        <FlexBox className={styles.root} direction={'horizontal'}>
             <CodeEditor
                 tsconfig={tsconfig}
                 files={{

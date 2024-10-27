@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import '@/components/Playground/CodeEditor/code-editor.less'
+import styles from '@/components/Playground/CodeEditor/index.module.less'
 import FlexBox from '@/components/common/FlexBox'
 import { IEditorOptions, IFiles, ITheme, ITsconfig } from '@/components/Playground/shared'
 import {
@@ -122,7 +122,7 @@ const CodeEditor = ({
 
     return (
         <>
-            <FlexBox data-component={'playground-code-editor'}>
+            <FlexBox className={styles.root}>
                 {showFileSelector && (
                     <FileSelector
                         files={files}
@@ -157,7 +157,7 @@ const CodeEditor = ({
                     onJumpFile={handleOnChangeSelectedFile}
                     extraLibs={extraLibs}
                 />
-                {errorMsg && <div className={'playground-error-message'}>{errorMsg}</div>}
+                {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
             </FlexBox>
         </>
     )

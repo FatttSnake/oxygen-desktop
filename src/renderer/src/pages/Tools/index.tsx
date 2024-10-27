@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/tools/index.less'
+import styles from '@/assets/css/pages/tools/index.module.less'
 import {
     DATABASE_DELETE_SUCCESS,
     DATABASE_SELECT_SUCCESS,
@@ -194,11 +194,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
                 .filter((value) => value.platform === selectedTool.platform)
                 .every((value) => value.review === 'PASS') && (
                 <AntdTooltip title={'更新'}>
-                    <Icon
-                        component={IconOxygenUpgrade}
-                        className={'upgrade-bt'}
-                        onClick={handleOnUpgradeTool}
-                    />
+                    <Icon component={IconOxygenUpgrade} onClick={handleOnUpgradeTool} />
                 </AntdTooltip>
             )}
         </RepositoryCard>
@@ -541,10 +537,10 @@ const Tools = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'tools'}>
+            <FitFullscreen>
                 <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
-                    <FlexBox direction={'vertical'} className={'root-content'}>
-                        <FlexBox direction={'horizontal'} className={'own-content'}>
+                    <FlexBox direction={'vertical'} className={styles.root}>
+                        <FlexBox direction={'horizontal'} className={styles.ownContent}>
                             <UrlCard icon={IconOxygenNewProject} url={'/create'}>
                                 创建工具
                             </UrlCard>
@@ -569,12 +565,12 @@ const Tools = () => {
                         </FlexBox>
                         {starToolData.length ? (
                             <>
-                                <FlexBox className={'favorite-divider'}>
+                                <FlexBox className={styles.favoriteDivider}>
                                     <div />
-                                    <div className={'divider-text'}>收藏</div>
+                                    <div className={styles.dividerText}>收藏</div>
                                     <div />
                                 </FlexBox>
-                                <FlexBox direction={'horizontal'} className={'star-content'}>
+                                <FlexBox direction={'horizontal'} className={styles.starContent}>
                                     {starToolData
                                         ?.reduce((previousValue: ToolVo[], currentValue) => {
                                             if (

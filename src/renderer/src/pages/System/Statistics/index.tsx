@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system/statistics.less'
+import styles from '@/assets/css/pages/system/statistics.module.less'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
@@ -13,9 +13,9 @@ import StorageInfo from '@/pages/System/Statistics/StorageInfo'
 const Statistics = () => {
     return (
         <>
-            <FitFullscreen data-component={'system-statistics'}>
+            <FitFullscreen className={styles.root}>
                 <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
-                    <FlexBox direction={'horizontal'} className={'root-content'}>
+                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
                         <Permission operationCode={['system:statistics:query:usage']}>
                             <OnlineInfo />
                             <ActiveInfo />

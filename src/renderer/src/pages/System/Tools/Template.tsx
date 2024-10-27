@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import '@/assets/css/pages/system/tools/template.less'
+import styles from '@/assets/css/pages/system/tools/template.module.less'
 import {
     COLOR_PRODUCTION,
     DATABASE_DELETE_SUCCESS,
@@ -128,7 +128,7 @@ const Template = () => {
         {
             title: '名称',
             render: (_, record) => (
-                <span className={hasEdited[record.id] ? 'has-edited' : undefined}>
+                <span className={hasEdited[record.id] ? styles.hasEdited : undefined}>
                     {record.name}
                 </span>
             )
@@ -1020,9 +1020,9 @@ const Template = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'system-tools-template'}>
+            <FitFullscreen className={styles.root}>
                 <HideScrollbar>
-                    <FlexBox direction={'horizontal'} className={'root-content'}>
+                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
                         <Card>
                             <AntdTable
                                 dataSource={templateData}
@@ -1054,7 +1054,10 @@ const Template = () => {
                                     }
                                     extraLibs={editorExtraLibs}
                                 />
-                                <div className={'close-editor-btn'} onClick={handleOnCloseBtnClick}>
+                                <div
+                                    className={styles.closeEditorBtn}
+                                    onClick={handleOnCloseBtnClick}
+                                >
                                     <Icon component={IconOxygenClose} />
                                 </div>
                             </Card>

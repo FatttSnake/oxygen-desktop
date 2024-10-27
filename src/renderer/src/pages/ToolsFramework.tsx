@@ -1,7 +1,7 @@
 import { DndContext, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
-import '@/assets/css/pages/tools-framework.less'
+import styles from '@/assets/css/pages/tools-framework.module.less'
 import { tools } from '@/router/tools'
 import { checkDesktop, getToolMenuItem, saveToolMenuItem } from '@/util/common'
 import { getViewPath } from '@/util/navigation'
@@ -86,14 +86,14 @@ const ToolsFramework = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'tools-framework'} className={'flex-horizontal'}>
+            <FitFullscreen className={`${styles.root} flex-horizontal`}>
                 <DndContext
                     onDragStart={handleOnDragStart}
                     onDragOver={handleOnDragOver}
                     onDragEnd={handleOnDragEnd}
                     onDragCancel={handleOnDragCancel}
                 >
-                    <div className={'left-panel'}>
+                    <div className={styles.leftPanel}>
                         <Sidebar title={'氧工具'}>
                             <Sidebar.ItemList>
                                 <Sidebar.Item
@@ -116,7 +116,7 @@ const ToolsFramework = () => {
                                 />
                             </Sidebar.ItemList>
                             <Sidebar.Separate />
-                            <Droppable id={'menu'} className={'menu-droppable'}>
+                            <Droppable id={'menu'} className={styles.menuDroppable}>
                                 <Sidebar.Scroll>
                                     <Sidebar.ItemList>
                                         <SortableContext
@@ -185,7 +185,7 @@ const ToolsFramework = () => {
                             </Droppable>
                         </Sidebar>
                     </div>
-                    <div className={'right-panel'}>
+                    <div className={styles.rightPanel}>
                         <Suspense
                             fallback={
                                 <>

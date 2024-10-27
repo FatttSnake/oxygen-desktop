@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system-framework.less'
+import styles from '@/assets/css/pages/system-framework.module.less'
 import { getSystemRouteJson } from '@/router/system'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import Sidebar from '@/components/common/Sidebar'
@@ -7,8 +7,8 @@ import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
 const SystemFramework = () => {
     return (
         <>
-            <FitFullscreen data-component={'system-framework'} className={'flex-horizontal'}>
-                <div className={'left-panel'}>
+            <FitFullscreen className={`${styles.root} flex-horizontal`}>
+                <div className={styles.leftPanel}>
                     <Sidebar title={'系统配置'}>
                         <Sidebar.Scroll>
                             <Sidebar.ItemList>
@@ -43,7 +43,7 @@ const SystemFramework = () => {
                         </Sidebar.Scroll>
                     </Sidebar>
                 </div>
-                <div className={'right-panel'}>
+                <div className={styles.rightPanel}>
                     <Suspense
                         fallback={
                             <>

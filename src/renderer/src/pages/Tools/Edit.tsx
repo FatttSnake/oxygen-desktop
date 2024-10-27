@@ -1,6 +1,6 @@
-import '@/assets/css/pages/tools/edit.less'
 import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
+import styles from '@/assets/css/pages/tools/edit.module.less'
 import {
     DATABASE_NO_RECORD_FOUND,
     DATABASE_SELECT_SUCCESS,
@@ -418,9 +418,9 @@ const Edit = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'tools-edit'}>
-                <Card>
-                    <FlexBox direction={'horizontal'} className={'root-content'}>
+            <FitFullscreen className={styles.root}>
+                <Card className={styles.rootBox}>
+                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
                         <LoadingMask hidden={!isLoading}>
                             <Playground.CodeEditor
                                 tsconfig={tsconfig}
@@ -455,7 +455,7 @@ const Edit = () => {
                                 mobileMode={toolData?.platform === 'ANDROID'}
                             />
                         </LoadingMask>
-                        {isShowDraggableMask && <div className={'draggable-mask'} />}
+                        {isShowDraggableMask && <div className={styles.draggableMask} />}
                     </FlexBox>
                 </Card>
                 <Draggable
@@ -463,7 +463,7 @@ const Edit = () => {
                     onStop={() => setIsShowDraggableMask(false)}
                     bounds={'#root'}
                 >
-                    <div className={'draggable-content'}>
+                    <div className={styles.draggableContent}>
                         {hasEdited ? (
                             <AntdFloatButton
                                 type={'primary'}

@@ -1,6 +1,6 @@
 import MonacoEditor from '@monaco-editor/react'
 import { Loader } from 'esbuild-wasm'
-import '@/components/Playground/Output/Transform/transform.less'
+import styles from '@/components/Playground/Output/Transform/index.module.less'
 import { IFile, ITheme } from '@/components/Playground/shared'
 import { cssToJsFromFile, jsonToJsFromFile } from '@/components/Playground/files'
 import Compiler from '@/components/Playground/compiler'
@@ -57,14 +57,14 @@ const Transform = ({ file, theme }: OutputProps) => {
     }, [file, Compiler])
 
     return (
-        <div data-component={'playground-transform'}>
+        <div className={styles.root}>
             <MonacoEditor
                 theme={theme}
                 language={'javascript'}
                 value={compiledCode}
                 options={{ ...MonacoEditorConfig, readOnly: true }}
             />
-            {errorMsg && <div className={'playground-error-message'}>{errorMsg}</div>}
+            {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
         </div>
     )
 }

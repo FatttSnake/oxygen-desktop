@@ -1,3 +1,4 @@
+import styles from '@/assets/css/pages/sign/verify.module.less'
 import {
     COLOR_BACKGROUND,
     PERMISSION_ACCOUNT_NEED_INIT,
@@ -145,21 +146,18 @@ const Verify = () => {
 
     return (
         <>
-            <div className={'verify'}>
+            <div className={styles.root}>
                 <FitCenter>
                     <FlexBox>
-                        <div className={'title'}>
-                            <div className={'primary'}>验证账号</div>
-                            <div className={'secondary'}>Verify account</div>
+                        <div className={styles.title}>
+                            <div className={styles.primary}>验证账号</div>
+                            <div className={styles.secondary}>Verify account</div>
                         </div>
-                        <AntdForm className={'form'} onFinish={handleOnFinish}>
-                            <div className={'no-verify-need'} hidden={needVerify}>
+                        <AntdForm className={styles.form} onFinish={handleOnFinish}>
+                            <div hidden={needVerify}>
                                 账号已验证通过，无需验证，点击&nbsp;<a href={'/'}>回到首页</a>
                             </div>
-                            <div
-                                className={'verify-process'}
-                                hidden={!needVerify || !hasCode || !isValid}
-                            >
+                            <div hidden={!needVerify || !hasCode || !isValid}>
                                 <div
                                     style={{
                                         display: 'flex',
@@ -214,11 +212,11 @@ const Verify = () => {
                                     </AntdButton>
                                 </AntdForm.Item>
                             </div>
-                            <div className={'no-code'} hidden={hasCode}>
+                            <div hidden={hasCode}>
                                 在继续使用之前，我们需要确定您的电子邮箱地址的有效性，请点击&nbsp;
                                 <a onClick={handleOnResend}>发送验证邮件</a>
                             </div>
-                            <div className={'not-valid'} hidden={!hasCode || isValid}>
+                            <div hidden={!hasCode || isValid}>
                                 此链接有误或已失效，请点击&nbsp;
                                 <a onClick={handleOnResend}>重新发送验证邮件</a>
                             </div>

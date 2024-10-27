@@ -1,4 +1,4 @@
-import '@/assets/css/pages/system/settings.less'
+import styles from '@/assets/css/pages/system/settings.module.less'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
@@ -11,10 +11,10 @@ import TwoFactor from '@/pages/System/Settings/TwoFactor'
 const Settings = () => {
     return (
         <>
-            <FitFullscreen data-component={'system-settings'}>
+            <FitFullscreen className={styles.root}>
                 <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
-                    <FlexBox direction={'horizontal'} className={'root-content'}>
-                        <FlexBox className={'root-col'}>
+                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
+                        <FlexBox className={styles.rootCol}>
                             <Permission operationCode={['system:settings:query:base']}>
                                 <Base />
                             </Permission>
@@ -22,7 +22,7 @@ const Settings = () => {
                                 <SensitiveWord />
                             </Permission>
                         </FlexBox>
-                        <FlexBox className={'root-col'}>
+                        <FlexBox className={styles.rootCol}>
                             <Permission operationCode={['system:settings:query:mail']}>
                                 <Mail />
                             </Permission>

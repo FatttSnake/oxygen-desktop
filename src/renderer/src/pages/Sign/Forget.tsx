@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
+import styles from '@/assets/css/pages/sign/forget.module.less'
 import {
     H_CAPTCHA_SITE_KEY,
     PERMISSION_FORGET_SUCCESS,
@@ -135,14 +136,14 @@ const Forget = () => {
     }
 
     return (
-        <div className={'forget'}>
+        <div className={styles.root}>
             <FitCenter>
                 <FlexBox>
-                    <div className={'title'}>
-                        <div className={'primary'}>找回密码</div>
-                        <div className={'secondary'}>Retrieve password</div>
+                    <div className={styles.title}>
+                        <div className={styles.primary}>找回密码</div>
+                        <div className={styles.secondary}>Retrieve password</div>
                     </div>
-                    <div className={'form'}>
+                    <div className={styles.form}>
                         {!searchParams.get('code') ? (
                             !isSent ? (
                                 <>
@@ -188,7 +189,7 @@ const Forget = () => {
                                     </AntdForm>
                                 </>
                             ) : (
-                                <div className={'retry'}>
+                                <div className={styles.retry}>
                                     我们向您发送了一封包含找回密码链接的邮件，如未收到，可能被归为垃圾邮件，请仔细检查。
                                     <a onClick={handleOnRetry}>重新发送</a>
                                 </div>
@@ -268,10 +269,10 @@ const Forget = () => {
                                 </AntdForm>
                             </>
                         ) : (
-                            <div className={'success'}>恭喜你，密码已更新，请重新登录。</div>
+                            <div className={styles.success}>恭喜你，密码已更新，请重新登录。</div>
                         )}
 
-                        <div className={'footer'}>
+                        <div className={styles.footer}>
                             找到了？
                             <a
                                 onClick={() =>

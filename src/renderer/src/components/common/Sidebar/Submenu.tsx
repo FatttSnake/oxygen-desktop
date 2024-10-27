@@ -1,4 +1,5 @@
 import { PropsWithChildren } from 'react'
+import styles from '@/assets/css/components/common/sidebar.module.less'
 
 interface SidebarSubmenuProps extends PropsWithChildren {
     submenuTop: number
@@ -8,13 +9,13 @@ interface SidebarSubmenuProps extends PropsWithChildren {
 const Submenu = (props: SidebarSubmenuProps) => {
     return (
         <ul
-            className={'submenu'}
+            className={styles.submenu}
             style={{
                 top: props.submenuTop,
                 left: props.submenuLeft
             }}
         >
-            <div className={'content'}>{props.children}</div>
+            <div className={styles.content}>{props.children}</div>
         </ul>
     )
 }

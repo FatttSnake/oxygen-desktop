@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes, MouseEvent } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
-import '@/assets/css/components/tools/local-card.less'
+import styles from '@/assets/css/components/tools/local-card.module.less'
 import { COLOR_BACKGROUND, COLOR_MAIN } from '@/constants/common.constants'
 import { checkDesktop, omitText } from '@/util/common'
 import { getAndroidUrl, navigateToStore, navigateToView } from '@/util/navigation'
@@ -63,9 +63,9 @@ const StoreCard = ({
                 icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
                 title: 'Android 端',
                 content: (
-                    <FlexBox className={'android-qrcode'}>
+                    <FlexBox className={styles.androidQrcode}>
                         <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
-                        <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
+                        <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                     </FlexBox>
                 ),
                 okText: '确定',
@@ -91,9 +91,9 @@ const StoreCard = ({
             icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
             title: 'Android 端',
             content: (
-                <FlexBox className={'android-qrcode'}>
+                <FlexBox className={styles.androidQrcode}>
                     <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
-                    <AntdTag className={'tag'}>请使用手机端扫描上方二维码</AntdTag>
+                    <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                 </FlexBox>
             ),
             okText: '确定',
@@ -123,20 +123,20 @@ const StoreCard = ({
                 }}
             >
                 <Card
-                    data-component={'component-local-card'}
+                    className={styles.root}
                     style={{ overflow: 'visible', ...style }}
                     ref={cardRef}
                     {...props}
                     onClick={handleCardOnClick}
                 >
-                    <FlexBox className={'local-card'}>
-                        <div className={'header'}>
-                            <div className={'version'}>
+                    <FlexBox className={styles.localCard}>
+                        <div className={styles.header}>
+                            <div className={styles.version}>
                                 <AntdTag>
                                     {platform.slice(0, 1)}-{ver}
                                 </AntdTag>
                             </div>
-                            <div className={'operation'}>
+                            <div className={styles.operation}>
                                 {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
                                     <AntdTooltip title={'Android 端'}>
                                         <Icon
@@ -156,22 +156,22 @@ const StoreCard = ({
                                 <DragHandle />
                             </div>
                         </div>
-                        <div className={'icon'}>
+                        <div className={styles.icon}>
                             <img src={`data:image/svg+xml;base64,${icon}`} alt={'Icon'} />
                         </div>
-                        <div className={'info'}>
-                            <div className={'tool-name'}>{toolName}</div>
-                            <div className={'tool-id'}>{`ID: ${toolId}`}</div>
+                        <div className={styles.info}>
+                            <div className={styles.toolName}>{toolName}</div>
+                            <div>{`ID: ${toolId}`}</div>
                             {toolDesc && (
                                 <div
-                                    className={'tool-desc'}
+                                    className={styles.toolDesc}
                                     title={toolDesc}
                                 >{`简介：${omitText(toolDesc, 18)}`}</div>
                             )}
                         </div>
                         {showAuthor && (
-                            <div className={'author'} onClick={handleOnClickAuthor}>
-                                <div className={'avatar'}>
+                            <div className={styles.author} onClick={handleOnClickAuthor}>
+                                <div className={styles.avatar}>
                                     <AntdAvatar
                                         src={
                                             <AntdImage
@@ -183,7 +183,7 @@ const StoreCard = ({
                                         style={{ background: COLOR_BACKGROUND }}
                                     />
                                 </div>
-                                <div className={'author-name'}>{author.userInfo.nickname}</div>
+                                <div className={styles.authorName}>{author.userInfo.nickname}</div>
                             </div>
                         )}
                     </FlexBox>

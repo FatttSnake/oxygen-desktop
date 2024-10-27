@@ -1,5 +1,5 @@
 import { UIEvent } from 'react'
-import '@/assets/css/pages/tools/store.less'
+import styles from '@/assets/css/pages/tools/store.module.less'
 import { DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { r_tool_store_get } from '@/services/tool'
@@ -83,13 +83,13 @@ const Store = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'tools-store'}>
+            <FitFullscreen className={styles.root}>
                 <HideScrollbar
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}
                     onScroll={handleOnScroll}
                 >
-                    <div className={`search${isHideSearch ? ' hide' : ''}`}>
+                    <div className={`${styles.search}${isHideSearch ? ` ${styles.hide}` : ''}`}>
                         <AntdInput.Search
                             enterButton
                             allowClear
@@ -98,8 +98,8 @@ const Store = () => {
                             placeholder={'请输入工具名或关键字'}
                         />
                     </div>
-                    <FlexBox direction={'horizontal'} className={'root-content'}>
-                        {!toolData.length && <div className={'no-tool'}>未找到任何工具</div>}
+                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
+                        {!toolData.length && <div className={styles.noTool}>未找到任何工具</div>}
                         {toolData
                             ?.reduce((previousValue: ToolVo[], currentValue) => {
                                 if (

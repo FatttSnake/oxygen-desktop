@@ -1,4 +1,4 @@
-import '@/assets/css/pages/sign.less'
+import styles from '@/assets/css/pages/sign/index.module.less'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import FitCenter from '@/components/common/FitCenter'
 import FlexBox from '@/components/common/FlexBox'
@@ -42,23 +42,25 @@ const Sign = () => {
 
     return (
         <>
-            <FitFullscreen data-component={'sign'}>
+            <FitFullscreen className={styles.root}>
                 <FitCenter>
                     <FlexBox
                         direction={'horizontal'}
-                        className={`sign-box${isSwitch ? ' switch' : ''}`}
+                        className={`${styles.signBox}${isSwitch ? ` ${styles.switch}` : ''}`}
                     >
-                        <div className={`left${!isSwitch ? ' hidden' : ''}`}>{leftComponent()}</div>
-                        <div className={`right${isSwitch ? ' hidden' : ''}`}>
+                        <div className={`${styles.left}${!isSwitch ? ` ${styles.hidden}` : ''}`}>
+                            {leftComponent()}
+                        </div>
+                        <div className={`${styles.right}${isSwitch ? ` ${styles.hidden}` : ''}`}>
                             {rightComponent()}
                         </div>
-                        <FlexBox className={'cover'}>
-                            <div className={'ball-box'}>
-                                <div className={'ball'} />
+                        <FlexBox className={styles.cover}>
+                            <div className={styles.ballBox}>
+                                <div className={styles.ball} />
                             </div>
-                            <div className={'ball-box'}>
-                                <div className={'mask'}>
-                                    <div className={'ball'} />
+                            <div className={styles.ballBox}>
+                                <div className={styles.mask}>
+                                    <div className={styles.ball} />
                                 </div>
                             </div>
                         </FlexBox>

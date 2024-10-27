@@ -1,5 +1,6 @@
 import { ReactNode, MouseEvent } from 'react'
 import Icon from '@ant-design/icons'
+import styles from '@/assets/css/components/common/sidebar.module.less'
 import Submenu from '@/components/common/Sidebar/Submenu'
 
 type ItemProps = {
@@ -33,30 +34,26 @@ const Item = (props: ItemProps) => {
     }
 
     return (
-        <li className={'item'}>
-            <div className={'menu-bt'} onMouseEnter={showSubmenu}>
+        <li className={styles.item}>
+            <div className={styles.menuBt} onMouseEnter={showSubmenu}>
                 <NavLink
                     end={props.end}
                     to={props.path}
                     className={({ isActive, isPending }) =>
-                        isPending ? 'pending' : isActive ? 'active' : ''
+                        isPending ? 'pending' : isActive ? `${styles.active}` : ''
                     }
                 >
                     {props.icon && (
-                        <div className={'icon-box'}>
+                        <div className={styles.iconBox}>
                             {typeof props.icon === 'string' ? (
-                                <img
-                                    className={'icon'}
-                                    src={`data:image/svg+xml;base64,${props.icon}`}
-                                    alt={'icon'}
-                                />
+                                <img src={`data:image/svg+xml;base64,${props.icon}`} alt={'icon'} />
                             ) : (
-                                <Icon className={'icon'} component={props.icon} />
+                                <Icon component={props.icon} />
                             )}
                         </div>
                     )}
-                    <span className={'text'}>{props.text}</span>
-                    <div className={'extend'}>{props.extend}</div>
+                    <span className={styles.text}>{props.text}</span>
+                    <div className={styles.extend}>{props.extend}</div>
                 </NavLink>
             </div>
             {props.children && (

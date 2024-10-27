@@ -1,4 +1,5 @@
 import Icon from '@ant-design/icons'
+import styles from '@/assets/css/components/common/sidebar.module.less'
 import { COLOR_ERROR } from '@/constants/common.constants'
 import { getRedirectUrl } from '@/util/route'
 import { getAvatar, getLoginStatus, getNickname, removeToken } from '@/util/auth'
@@ -55,9 +56,9 @@ const Footer = () => {
     }, [loginStatus])
 
     return (
-        <div className={'footer'}>
+        <div className={styles.footer}>
             <span
-                className={'icon-user'}
+                className={styles.iconUser}
                 onClick={handleClickAvatar}
                 title={getLoginStatus() ? '个人中心' : '登录'}
             >
@@ -67,21 +68,25 @@ const Footer = () => {
                     <Icon viewBox={'-20 0 1024 1024'} component={IconOxygenUser} />
                 )}
             </span>
-            <span hidden={getLoginStatus()} className={'text'}>
+            <span hidden={getLoginStatus()} className={styles.text}>
                 未
                 <NavLink to={getRedirectUrl('/login', `${lastMatch.pathname}${location.search}`)}>
                     登录
                 </NavLink>
             </span>
-            <span hidden={!getLoginStatus()} className={'text'} title={nickname}>
+            <span hidden={!getLoginStatus()} className={styles.text} title={nickname}>
                 {nickname}
             </span>
             <div
                 hidden={!getLoginStatus()}
-                className={`submenu-exit${!getLoginStatus() ? ' hide' : ''}`}
+                className={`${styles.submenuExit}${!getLoginStatus() ? ` ${styles.hide}` : ''}`}
             >
-                <div className={'content'}>
-                    <span hidden={!getLoginStatus()} className={'icon-exit'} onClick={handleLogout}>
+                <div className={styles.content}>
+                    <span
+                        hidden={!getLoginStatus()}
+                        className={styles.iconExit}
+                        onClick={handleLogout}
+                    >
                         <Icon
                             component={isExiting ? IconOxygenLoading : IconOxygenExit}
                             spin={isExiting}

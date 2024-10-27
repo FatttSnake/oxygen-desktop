@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
+import styles from '@/assets/css/pages/sign/sign-up.module.less'
 import {
     DATABASE_DUPLICATE_KEY,
     H_CAPTCHA_SITE_KEY,
@@ -124,14 +125,14 @@ const SignUp = () => {
     }
 
     return (
-        <div className={'sign-up'}>
+        <div className={styles.root}>
             <FitCenter>
                 <FlexBox>
-                    <div className={'title'}>
-                        <div className={'primary'}>创建账号</div>
-                        <div className={'secondary'}>Create account</div>
+                    <div className={styles.title}>
+                        <div className={styles.primary}>创建账号</div>
+                        <div className={styles.secondary}>Create account</div>
                     </div>
-                    <AntdForm autoComplete={'on'} onFinish={handleOnFinish} className={'form'}>
+                    <AntdForm autoComplete={'on'} onFinish={handleOnFinish} className={styles.form}>
                         {!isFinish ? (
                             <>
                                 <AntdForm.Item
@@ -234,13 +235,13 @@ const SignUp = () => {
                                 </AntdForm.Item>
                             </>
                         ) : (
-                            <div className={'retry'}>
+                            <div className={styles.retry}>
                                 我们发送了一封包含验证账号链接的邮件到您的邮箱里，如未收到，可能被归为垃圾邮件，请仔细检查。
                                 <a onClick={handleOnResend}>重新发送</a>
                             </div>
                         )}
 
-                        <div className={'footer'} hidden={isFinish}>
+                        <div className={styles.footer} hidden={isFinish}>
                             已有账号？
                             <a
                                 onClick={() =>

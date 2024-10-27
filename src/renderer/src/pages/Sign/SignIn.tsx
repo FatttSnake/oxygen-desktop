@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
+import styles from '@/assets/css/pages/sign/sign-in.module.less'
 import {
     H_CAPTCHA_SITE_KEY,
     PERMISSION_LOGIN_SUCCESS,
@@ -211,14 +212,14 @@ const SignIn = () => {
     }
 
     return (
-        <div className={'sign-in'}>
+        <div className={styles.root}>
             <FitCenter>
                 <FlexBox>
-                    <div className={'title'}>
-                        <div className={'primary'}>欢迎回来</div>
-                        <div className={'secondary'}>Welcome back</div>
+                    <div className={styles.title}>
+                        <div className={styles.primary}>欢迎回来</div>
+                        <div className={styles.secondary}>Welcome back</div>
                     </div>
-                    <AntdForm autoComplete={'on'} onFinish={handleOnFinish} className={'form'}>
+                    <AntdForm autoComplete={'on'} onFinish={handleOnFinish} className={styles.form}>
                         <AntdForm.Item
                             name={'account'}
                             rules={[
@@ -259,7 +260,7 @@ const SignIn = () => {
                                 data-refresh={refreshTime}
                             />
                         </AntdForm.Item>
-                        <FlexBox direction={'horizontal'} className={'addition'}>
+                        <FlexBox direction={'horizontal'} className={styles.addition}>
                             <a
                                 onClick={() => {
                                     navigateToRoot(navigate)
@@ -286,7 +287,7 @@ const SignIn = () => {
                                 登&ensp;&ensp;&ensp;&ensp;录
                             </AntdButton>
                         </AntdForm.Item>
-                        <div className={'footer'}>
+                        <div className={styles.footer}>
                             还没有账号？
                             <a
                                 onClick={() =>

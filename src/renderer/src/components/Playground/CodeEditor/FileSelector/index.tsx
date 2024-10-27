@@ -1,4 +1,4 @@
-import '@/components/Playground/CodeEditor/FileSelector/file-selector.less'
+import styles from '@/components/Playground/CodeEditor/FileSelector/index.module.less'
 import HideScrollbar, { HideScrollbarElement } from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
 import { IFiles } from '@/components/Playground/shared'
@@ -164,8 +164,8 @@ const FileSelector = ({
 
     return (
         <>
-            <div data-component={'playground-file-selector'} className={'tab'}>
-                <div className={'multiple'}>
+            <div className={styles.root}>
+                <div className={styles.multiple}>
                     <HideScrollbar
                         ref={hideScrollbarRef}
                         autoHideWaitingTime={800}
@@ -173,7 +173,7 @@ const FileSelector = ({
                         scrollbarAsidePadding={0}
                         scrollbarEdgePadding={0}
                     >
-                        <FlexBox direction={'horizontal'} className={'tab-content'}>
+                        <FlexBox direction={'horizontal'} className={styles.tabContent}>
                             {tabs.map((item, index) => (
                                 <Item
                                     key={index + item}
@@ -192,20 +192,20 @@ const FileSelector = ({
                             ))}
                             {!readonly && (
                                 <Item
-                                    className={'tab-item-add'}
+                                    className={styles.tabItemAdd}
                                     value={'+'}
                                     onClick={addTab}
                                     readonly
                                 />
                             )}
-                            <div className={'tabs-margin-right'}>
+                            <div className={styles.tabsMarginRight}>
                                 <div />
                             </div>
                         </FlexBox>
                     </HideScrollbar>
                 </div>
                 {(files[IMPORT_MAP_FILE_NAME] || files[TS_CONFIG_FILE_NAME]) && (
-                    <div className={'sticky'}>
+                    <div className={styles.sticky}>
                         {files[TS_CONFIG_FILE_NAME] && (
                             <Item
                                 value={'tsconfig.json'}
