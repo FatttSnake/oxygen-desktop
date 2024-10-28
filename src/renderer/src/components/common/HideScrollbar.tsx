@@ -540,7 +540,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                 >
                     <div
                         ref={rootRef}
-                        className={cx(styles.hideScrollbarSelection, className)}
+                        className={`${styles.hideScrollbarSelection}${className ? ` ${className}` : ''}`}
                         tabIndex={0}
                         style={{
                             width: `calc(${maskRef.current?.clientWidth}px + ${verticalScrollbarWidth}px)`,
@@ -571,7 +571,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                 className={cx(
                                     styles.scrollbar,
                                     styles.verticalScrollbar,
-                                    isVerticalScrollbarAutoHide ? ` ${styles.hide}` : ''
+                                    isVerticalScrollbarAutoHide ? styles.hide : ''
                                 )}
                                 style={{
                                     height: maskRef.current
@@ -619,7 +619,7 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                                 className={cx(
                                     styles.scrollbar,
                                     styles.horizontalScrollbar,
-                                    isHorizontalScrollbarAutoHide ? ` ${styles.hide}` : ''
+                                    isHorizontalScrollbarAutoHide ? styles.hide : ''
                                 )}
                                 style={{
                                     width: maskRef.current

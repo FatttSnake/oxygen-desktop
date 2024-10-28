@@ -3,6 +3,25 @@ import { floor } from 'lodash'
 import { STORAGE_TOOL_MENU_ITEM_KEY } from '@/constants/common.constants'
 import { getLocalStorage, setLocalStorage } from '@/util/browser'
 import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
+import { MessageInstance } from 'antd/es/message/interface'
+import { NotificationInstance } from 'antd/es/notification/interface'
+import { HookAPI } from 'antd/es/modal/useModal'
+
+let message: MessageInstance
+let notification: NotificationInstance
+let modal: HookAPI
+
+export const init = (
+    messageInstance: MessageInstance,
+    notificationInstance: NotificationInstance,
+    modalInstance: HookAPI
+) => {
+    message = messageInstance
+    notification = notificationInstance
+    modal = modalInstance
+}
+
+export { message, notification, modal }
 
 export const randomInt = (start: number, end: number) => {
     if (start > end) {

@@ -6,6 +6,7 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '@/constants/common.constants'
+import { message, modal } from '@/util/common'
 import { utcToLocalTime } from '@/util/datetime'
 import {
     r_sys_tool_category_add,
@@ -20,7 +21,6 @@ import HideScrollbar from '@/components/common/HideScrollbar'
 
 const Category = () => {
     const theme = useTheme()
-    const [modal, contextHolder] = AntdModal.useModal()
     const [form] = AntdForm.useForm<ToolCategoryAddEditParam>()
     const formValues = AntdForm.useWatch([], form)
     const [newFormValues, setNewFormValues] = useState<ToolCategoryAddEditParam>()
@@ -298,6 +298,7 @@ const Category = () => {
                             columns={categoryColumns}
                             rowKey={(record) => record.id}
                             loading={isLoading}
+                            scroll={{ x: true }}
                             pagination={false}
                         />
                     </Card>
@@ -313,7 +314,6 @@ const Category = () => {
             >
                 {addAndEditForm}
             </AntdDrawer>
-            {contextHolder}
         </>
     )
 }

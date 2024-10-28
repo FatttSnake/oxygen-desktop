@@ -11,6 +11,7 @@ import {
     PERMISSION_USERNAME_NOT_FOUND,
     SYSTEM_INVALID_CAPTCHA_CODE
 } from '@/constants/common.constants'
+import { message, notification, modal } from '@/util/common'
 import { getUserInfo, setToken } from '@/util/auth'
 import { utcToLocalTime } from '@/util/datetime'
 import {
@@ -26,7 +27,6 @@ import FlexBox from '@/components/common/FlexBox'
 
 const SignIn = () => {
     const { styles } = useStyles()
-    const [modal, contextHolder] = AntdModal.useModal()
     const { refreshRouter, isDarkMode } = useContext(AppContext)
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
@@ -82,8 +82,7 @@ const SignIn = () => {
                 switch (code) {
                     case PERMISSION_LOGIN_SUCCESS:
                         setToken(data?.token ?? '')
-                        void message.success('登录成功')
-                        setTimeout(() => {
+                        message.success('登录成功').then(() => {
                             void getUserInfo().then((user) => {
                                 refreshRouter()
                                 navigateToRedirect(navigate, searchParams, '/repository')
@@ -109,7 +108,7 @@ const SignIn = () => {
                                     placement: 'topRight'
                                 })
                             })
-                        }, 1500)
+                        })
                         break
                     case PERMISSION_NEED_TWO_FACTOR:
                         twoFactorForm.resetFields()
@@ -299,7 +298,6 @@ const SignIn = () => {
                     </div>
                 </AntdForm>
             </FlexBox>
-            {contextHolder}
         </FitCenter>
     )
 }

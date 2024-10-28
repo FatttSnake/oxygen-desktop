@@ -8,6 +8,7 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '@/constants/common.constants'
+import { message, modal } from '@/util/common'
 import { utcToLocalTime } from '@/util/datetime'
 import { hasPermission, powerListToPowerTree } from '@/util/auth'
 import {
@@ -27,7 +28,6 @@ import Card from '@/components/common/Card'
 
 const Role = () => {
     const theme = useTheme()
-    const [modal, contextHolder] = AntdModal.useModal()
     const [form] = AntdForm.useForm<RoleAddEditParam>()
     const formValues = AntdForm.useWatch([], form)
     const [newFormValues, setNewFormValues] = useState<RoleAddEditParam>()
@@ -572,6 +572,7 @@ const Role = () => {
                 rowKey={(record) => record.id}
                 pagination={tableParams.pagination}
                 loading={isLoading}
+                scroll={{ x: true }}
                 onChange={handleOnTableChange}
                 rowSelection={
                     hasPermission('system:role:delete:multiple')
@@ -664,7 +665,6 @@ const Role = () => {
             >
                 {addAndEditForm}
             </AntdDrawer>
-            {contextHolder}
         </>
     )
 }

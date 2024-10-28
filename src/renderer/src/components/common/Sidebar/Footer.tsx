@@ -1,6 +1,7 @@
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/common/sidebar/footer.style'
 import { SidebarContext } from '@/components/common/Sidebar/index'
+import { notification } from '@/util/common'
 import { getRedirectUrl } from '@/util/route'
 import { getAvatar, getLoginStatus, getNickname, removeToken } from '@/util/auth'
 import { navigateToLogin, navigateToUser } from '@/util/navigation'

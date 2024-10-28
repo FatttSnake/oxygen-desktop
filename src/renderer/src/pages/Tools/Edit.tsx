@@ -8,6 +8,7 @@ import {
     TOOL_HAS_BEEN_PUBLISHED,
     TOOL_UNDER_REVIEW
 } from '@/constants/common.constants'
+import { message } from '@/util/common'
 import { navigateToRepository } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_tool_category_get, r_tool_detail, r_tool_update } from '@/services/tool'
@@ -121,12 +122,14 @@ const Edit = () => {
                         getTool()
                         break
                     case TOOL_UNDER_REVIEW:
-                        void message.error('保存失败：工具审核中')
-                        navigateToRepository(navigate)
+                        message.error('保存失败：工具审核中').then(() => {
+                            navigateToRepository(navigate)
+                        })
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
-                        void message.error('保存失败：工具已发布')
-                        navigateToRepository(navigate)
+                        message.error('保存失败：工具已发布').then(() => {
+                            navigateToRepository(navigate)
+                        })
                         break
                     default:
                         void message.error('保存失败，请稍后重试')
@@ -182,12 +185,14 @@ const Edit = () => {
                         getTool()
                         break
                     case TOOL_UNDER_REVIEW:
-                        void message.error('保存失败：工具审核中')
-                        navigateToRepository(navigate)
+                        message.error('保存失败：工具审核中').then(() => {
+                            navigateToRepository(navigate)
+                        })
                         break
                     case TOOL_HAS_BEEN_PUBLISHED:
-                        void message.error('保存失败：工具已发布')
-                        navigateToRepository(navigate)
+                        message.error('保存失败：工具已发布').then(() => {
+                            navigateToRepository(navigate)
+                        })
                         break
                     default:
                         void message.error('保存失败，请稍后重试')
@@ -239,17 +244,20 @@ const Edit = () => {
                                 setHasEdited(false)
                                 break
                             case 'PROCESSING':
-                                void message.warning('工具审核中，请勿修改')
-                                navigateToRepository(navigate)
+                                message.warning('工具审核中，请勿修改').then(() => {
+                                    navigateToRepository(navigate)
+                                })
                                 break
                             default:
-                                void message.warning('请先创建新版本后编辑工具')
-                                navigateToRepository(navigate)
+                                message.warning('请先创建新版本后编辑工具').then(() => {
+                                    navigateToRepository(navigate)
+                                })
                         }
                         break
                     case DATABASE_NO_RECORD_FOUND:
-                        void message.error('未找到指定工具')
-                        navigateToRepository(navigate)
+                        message.error('未找到指定工具').then(() => {
+                            navigateToRepository(navigate)
+                        })
                         break
                     default:
                         void message.error('获取工具信息失败，请稍后重试')

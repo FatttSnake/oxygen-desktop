@@ -6,15 +6,11 @@ interface FitCenterProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement
 }
 
 const FitCenter = ({ className, vertical, ...props }: FitCenterProps) => {
-    const { styles, cx } = useStyles()
+    const { styles } = useStyles()
 
     return (
         <div
-            className={cx(
-                styles.fitCenter,
-                className,
-                vertical ? ' flex-vertical' : ' flex-horizontal'
-            )}
+            className={`${styles.fitCenter}${vertical ? ' flex-vertical' : ' flex-horizontal'}${className ? ` ${className}` : ''}`}
             {...props}
         />
     )

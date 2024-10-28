@@ -4,6 +4,7 @@ import BaseStyles from '@/assets/css/base.style'
 import CommonStyles from '@/assets/css/common.style'
 import { COLOR_PRODUCTION } from '@/constants/common.constants'
 import { getRouter } from '@/router'
+import { init } from '@/util/common'
 import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
 
 export const AppContext = createContext({
@@ -12,10 +13,14 @@ export const AppContext = createContext({
 })
 
 const App = () => {
+    const [messageInstance, messageHolder] = message.useMessage()
+    const [notificationInstance, notificationHolder] = notification.useNotification()
+    const [modalInstance, modalHolder] = AntdModal.useModal()
     const [routerState, setRouterState] = useState(getRouter)
     const [isDarkMode, setIsDarkMode] = useState(false)
 
     useEffect(() => {
+        init(messageInstance, notificationInstance, modalInstance)
         const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)')
         setIsDarkMode(darkThemeMq.matches)
         const listener = (ev: MediaQueryListEvent) => {
@@ -59,6 +64,9 @@ const App = () => {
                     <RouterProvider router={routerState} />
                 </Suspense>
             </AppContext.Provider>
+            {messageHolder}
+            {notificationHolder}
+            {modalHolder}
         </AntdConfigProvider>
     )
 }

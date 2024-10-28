@@ -7,6 +7,7 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '@/constants/common.constants'
+import { message, modal } from '@/util/common'
 import { utcToLocalTime } from '@/util/datetime'
 import { hasPermission } from '@/util/auth'
 import editorExtraLibs from '@/util/editorExtraLibs'
@@ -41,7 +42,6 @@ const Template = () => {
         ({ currentLocation, nextLocation }) =>
             currentLocation.pathname !== nextLocation.pathname && Object.keys(hasEdited).length > 0
     )
-    const [modal, contextHolder] = AntdModal.useModal()
     const [tableParams, setTableParams] = useState<TableParam>({
         pagination: {
             current: 1,
@@ -1078,7 +1078,6 @@ const Template = () => {
                     {addAndEditForm}
                 </AntdDrawer>
             </FitFullscreen>
-            {contextHolder}
             <AntdModal
                 open={blocker.state === 'blocked'}
                 title={'未保存'}

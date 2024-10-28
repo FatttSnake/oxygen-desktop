@@ -9,11 +9,11 @@ interface FitFullscreenProps
 
 const FitFullscreen = forwardRef<HTMLDivElement, FitFullscreenProps>(
     ({ zIndex, backgroundColor, className, style, ...props }, ref) => {
-        const { styles, cx } = useStyles()
+        const { styles } = useStyles()
 
         return (
             <div
-                className={cx(styles.fitFullscreen, className)}
+                className={`${styles.fitFullscreen}${className ? ` ${className}` : ''}`}
                 style={{
                     zIndex,
                     backgroundColor,

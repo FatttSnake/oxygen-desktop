@@ -9,6 +9,7 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '@/constants/common.constants'
+import { message, modal } from '@/util/common'
 import { hasPermission } from '@/util/auth'
 import { utcToLocalTime, isPastTime, localTimeToUtc, dayjsToUtc, getNowUtc } from '@/util/datetime'
 import {
@@ -35,7 +36,6 @@ interface ChangePasswordFields extends UserUpdatePasswordParam {
 
 const User = () => {
     const theme = useTheme()
-    const [modal, contextHolder] = AntdModal.useModal()
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isDrawerEdit, setIsDrawerEdit] = useState(false)
@@ -972,6 +972,7 @@ const User = () => {
                 rowKey={(record) => record.id}
                 pagination={tableParams.pagination}
                 loading={isLoadingUserData}
+                scroll={{ x: true }}
                 onChange={handleOnTableChange}
                 rowSelection={
                     hasPermission('system:user:delete:multiple')
@@ -1031,7 +1032,6 @@ const User = () => {
             >
                 {addAndEditForm}
             </AntdDrawer>
-            {contextHolder}
         </>
     )
 }

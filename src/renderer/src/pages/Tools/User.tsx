@@ -1,7 +1,7 @@
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/pages/tools/user.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { checkDesktop } from '@/util/common'
+import { message, checkDesktop } from '@/util/common'
 import { navigateToRoot } from '@/util/navigation'
 import { r_sys_user_info_get_basic } from '@/services/system'
 import { r_tool_store_get_by_username } from '@/services/tool'
@@ -40,7 +40,7 @@ const User = () => {
             return
         }
         setIsLoading(true)
-        void message.loading({ content: '加载中', key: 'LOADING', duration: 0 })
+        void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
         void r_sys_user_info_get_basic(username!)
             .then((res) => {
@@ -51,10 +51,9 @@ const User = () => {
                         getTool(1)
                         break
                     case DATABASE_NO_RECORD_FOUND:
-                        void message.warning('用户不存在')
-                        setTimeout(() => {
+                        void message.warning('用户不存在').then(() => {
                             navigateToRoot(navigate)
-                        }, 3000)
+                        })
                         break
                     default:
                         void message.error('获取失败请稍后重试')

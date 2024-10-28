@@ -1,7 +1,7 @@
 import { UIEvent } from 'react'
 import useStyles from '@/assets/css/pages/tools/store.style'
 import { DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { checkDesktop } from '@/util/common'
+import { message, checkDesktop } from '@/util/common'
 import { r_tool_store_get } from '@/services/tool'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'

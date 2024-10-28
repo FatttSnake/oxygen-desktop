@@ -9,6 +9,7 @@ import {
     PERMISSION_USER_NOT_FOUND,
     SYSTEM_INVALID_CAPTCHA_CODE
 } from '@/constants/common.constants'
+import { message } from '@/util/common'
 import { navigateToLogin } from '@/util/navigation'
 import { r_auth_forget, r_auth_retrieve } from '@/services/auth'
 import { AppContext } from '@/App'

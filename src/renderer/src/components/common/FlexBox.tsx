@@ -8,15 +8,11 @@ interface FlexBoxProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>,
 
 const FlexBox = forwardRef<HTMLDivElement, FlexBoxProps>(
     ({ className, direction, gap, style, ...props }, ref) => {
-        const { styles, cx } = useStyles()
+        const { styles } = useStyles()
 
         return (
             <div
-                className={cx(
-                    styles.flexBox,
-                    className,
-                    direction === 'horizontal' ? 'flex-horizontal' : 'flex-vertical'
-                )}
+                className={`${styles.flexBox}${direction === 'horizontal' ? ' flex-horizontal' : ' flex-vertical'}${className ? ` ${className}` : ''}`}
                 style={{ gap, ...style }}
                 {...props}
                 ref={ref}

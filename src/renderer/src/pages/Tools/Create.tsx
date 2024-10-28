@@ -5,6 +5,7 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS
 } from '@/constants/common.constants'
+import { message } from '@/util/common'
 import { navigateToEdit } from '@/util/navigation'
 import {
     r_tool_category_get,

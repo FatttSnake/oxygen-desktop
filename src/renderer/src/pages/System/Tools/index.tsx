@@ -7,6 +7,7 @@ import {
     DATABASE_UPDATE_SUCCESS,
     TOOL_NOT_UNDER_REVIEW
 } from '@/constants/common.constants'
+import { message, modal } from '@/util/common'
 import { navigateToCode } from '@/util/navigation'
 import {
     r_sys_tool_delete,
@@ -28,7 +29,6 @@ import Permission from '@/components/common/Permission'
 const Tools = () => {
     const theme = useTheme()
     const navigate = useNavigate()
-    const [modal, contextHolder] = AntdModal.useModal()
     const [tableParams, setTableParams] = useState<TableParam>({
         pagination: {
             current: 1,
@@ -574,27 +574,25 @@ const Tools = () => {
                 columns={dataColumns}
                 pagination={tableParams.pagination}
                 loading={isLoading}
+                scroll={{ x: true }}
                 onChange={handleOnTableChange}
             />
         </Card>
     )
 
     return (
-        <>
-            <FitFullscreen>
-                <HideScrollbar
-                    style={{ padding: 20 }}
-                    isShowVerticalScrollbar
-                    autoHideWaitingTime={1000}
-                >
-                    <FlexBox gap={20}>
-                        {toolbar}
-                        {table}
-                    </FlexBox>
-                </HideScrollbar>
-            </FitFullscreen>
-            {contextHolder}
-        </>
+        <FitFullscreen>
+            <HideScrollbar
+                style={{ padding: 20 }}
+                isShowVerticalScrollbar
+                autoHideWaitingTime={1000}
+            >
+                <FlexBox gap={20}>
+                    {toolbar}
+                    {table}
+                </FlexBox>
+            </HideScrollbar>
+        </FitFullscreen>
     )
 }
 

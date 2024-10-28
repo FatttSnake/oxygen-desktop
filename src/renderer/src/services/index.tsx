@@ -8,6 +8,7 @@ import {
     PERMISSION_UNAUTHORIZED,
     SYSTEM_REQUEST_TOO_FREQUENT
 } from '@/constants/common.constants'
+import { message } from '@/util/common'
 import { getRedirectUrl } from '@/util/route'
 import { getToken, setToken, removeToken } from '@/util/auth'
 
@@ -68,34 +69,36 @@ service.interceptors.response.use(
         switch (response.data.code) {
             case PERMISSION_UNAUTHORIZED:
                 removeToken()
-                void message.error({
-                    content: (
-                        <>
-                            <strong>未登录</strong>
-                        </>
-                    ),
-                    key: 'NO_LOGIN'
-                })
-                setTimeout(() => {
-                    location.reload()
-                }, 1500)
+                message
+                    .error({
+                        content: (
+                            <>
+                                <strong>未登录</strong>
+                            </>
+                        ),
+                        key: 'NO_LOGIN'
+                    })
+                    .then(() => {
+                        location.reload()
+                    })
                 throw response?.data
             case PERMISSION_TOKEN_ILLEGAL:
             case PERMISSION_TOKEN_HAS_EXPIRED:
                 removeToken()
-                void message.error({
-                    content: (
-                        <>
-                            <strong>登录已过期</strong>
-                        </>
-                    ),
-                    key: 'LOGIN_HAS_EXPIRED'
-                })
-                setTimeout(() => {
-                    location.replace(
-                        getRedirectUrl('/login', `${location.pathname}${location.search}`)
-                    )
-                }, 1500)
+                message
+                    .error({
+                        content: (
+                            <>
+                                <strong>登录已过期</strong>
+                            </>
+                        ),
+                        key: 'LOGIN_HAS_EXPIRED'
+                    })
+                    .then(() => {
+                        location.replace(
+                            getRedirectUrl('/login', `${location.pathname}${location.search}`)
+                        )
+                    })
                 throw response?.data
             case PERMISSION_ACCESS_DENIED:
                 void message.error({

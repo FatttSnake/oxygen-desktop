@@ -1,6 +1,6 @@
 import { UIEvent } from 'react'
 import useStyles from '@/assets/css/pages/tools/local.style'
-import { checkDesktop } from '@/util/common'
+import { message, checkDesktop } from '@/util/common'
 import { l_tool_get } from '@/services/tool'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'

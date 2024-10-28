@@ -6,6 +6,7 @@ import {
     PERMISSION_VERIFY_SUCCESS,
     SYSTEM_MATCH_SENSITIVE_WORD
 } from '@/constants/common.constants'
+import { message } from '@/util/common'
 import { getLoginStatus, getUserInfo, requestUserInfo } from '@/util/auth'
 import { navigateToLogin, navigateToRedirect, navigateToRepository } from '@/util/navigation'
 import { r_auth_resend, r_auth_verify } from '@/services/auth'
@@ -125,13 +126,12 @@ const Verify = () => {
             const response = res.data
             switch (response.code) {
                 case PERMISSION_VERIFY_SUCCESS:
-                    void message.success('恭喜你，完成了')
-                    setTimeout(() => {
+                    message.success('恭喜你，完成了').then(() => {
                         void requestUserInfo().then(() => {
                             refreshRouter()
                             navigateToRedirect(navigate, searchParams, '/repository')
                         })
-                    }, 1500)
+                    })
                     break
                 case SYSTEM_MATCH_SENSITIVE_WORD:
                     void message.error('昵称包含敏感词，请重试')

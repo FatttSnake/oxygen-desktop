@@ -1,4 +1,5 @@
 import Icon from '@ant-design/icons'
+import { message, modal } from '@/util/common'
 import { hasPermission } from '@/util/auth'
 import {
     r_sys_settings_mail_get,
@@ -8,7 +9,6 @@ import {
 import SettingsCard from '@/components/system/SettingCard'
 
 const Mail = () => {
-    const [modal, contextHolder] = AntdModal.useModal()
     const [mailForm] = AntdForm.useForm<MailSettingsParam>()
     const mailFormValues = AntdForm.useWatch([], mailForm)
     const [isLoading, setIsLoading] = useState(false)
@@ -114,59 +114,56 @@ const Mail = () => {
     }, [])
 
     return (
-        <>
-            <SettingsCard
-                icon={IconOxygenEmail}
-                title={'邮件'}
-                loading={isLoading}
-                onReset={handleOnReset}
-                onSave={handleOnSave}
-                modifyOperationCode={['system:settings:modify:mail']}
-                expand={
-                    <AntdButton onClick={handleOnTest} title={'测试'}>
-                        <Icon component={IconOxygenTest} />
-                    </AntdButton>
-                }
+        <SettingsCard
+            icon={IconOxygenEmail}
+            title={'邮件'}
+            loading={isLoading}
+            onReset={handleOnReset}
+            onSave={handleOnSave}
+            modifyOperationCode={['system:settings:modify:mail']}
+            expand={
+                <AntdButton onClick={handleOnTest} title={'测试'}>
+                    <Icon component={IconOxygenTest} />
+                </AntdButton>
+            }
+        >
+            <AntdForm
+                form={mailForm}
+                labelCol={{ flex: '8em' }}
+                disabled={!hasPermission('system:settings:modify:mail')}
             >
-                <AntdForm
-                    form={mailForm}
-                    labelCol={{ flex: '8em' }}
-                    disabled={!hasPermission('system:settings:modify:mail')}
-                >
-                    <AntdForm.Item label={'SMTP 服务器'} name={'host'}>
-                        <AntdInput placeholder={'请输入 SMTP 服务器'} />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'端口号'} name={'port'}>
-                        <AntdInputNumber
-                            min={0}
-                            max={65535}
-                            style={{ width: '100%' }}
-                            placeholder={'请输入端口号'}
-                        />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'安全类型'} name={'securityType'}>
-                        <AntdSelect placeholder={'请选择安全类型'}>
-                            <AntdSelect.Option key={'None'}>None</AntdSelect.Option>
-                            <AntdSelect.Option key={'SSL/TLS'}>SSL/TLS</AntdSelect.Option>
-                            <AntdSelect.Option key={'StartTls'}>StartTls</AntdSelect.Option>
-                        </AntdSelect>
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'用户名'} name={'username'}>
-                        <AntdInput placeholder={'请输入用户名'} />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'密码'} name={'password'}>
-                        <AntdInput.Password placeholder={'请输入密码'} />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'发送者'} name={'from'}>
-                        <AntdInput placeholder={'请输入发送者'} />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'发送者名称'} name={'fromName'}>
-                        <AntdInput placeholder={'请输入发送者名称'} />
-                    </AntdForm.Item>
-                </AntdForm>
-            </SettingsCard>
-            {contextHolder}
-        </>
+                <AntdForm.Item label={'SMTP 服务器'} name={'host'}>
+                    <AntdInput placeholder={'请输入 SMTP 服务器'} />
+                </AntdForm.Item>
+                <AntdForm.Item label={'端口号'} name={'port'}>
+                    <AntdInputNumber
+                        min={0}
+                        max={65535}
+                        style={{ width: '100%' }}
+                        placeholder={'请输入端口号'}
+                    />
+                </AntdForm.Item>
+                <AntdForm.Item label={'安全类型'} name={'securityType'}>
+                    <AntdSelect placeholder={'请选择安全类型'}>
+                        <AntdSelect.Option key={'None'}>None</AntdSelect.Option>
+                        <AntdSelect.Option key={'SSL/TLS'}>SSL/TLS</AntdSelect.Option>
+                        <AntdSelect.Option key={'StartTls'}>StartTls</AntdSelect.Option>
+                    </AntdSelect>
+                </AntdForm.Item>
+                <AntdForm.Item label={'用户名'} name={'username'}>
+                    <AntdInput placeholder={'请输入用户名'} />
+                </AntdForm.Item>
+                <AntdForm.Item label={'密码'} name={'password'}>
+                    <AntdInput.Password placeholder={'请输入密码'} />
+                </AntdForm.Item>
+                <AntdForm.Item label={'发送者'} name={'from'}>
+                    <AntdInput placeholder={'请输入发送者'} />
+                </AntdForm.Item>
+                <AntdForm.Item label={'发送者名称'} name={'fromName'}>
+                    <AntdInput placeholder={'请输入发送者名称'} />
+                </AntdForm.Item>
+            </AntdForm>
+        </SettingsCard>
     )
 }
 

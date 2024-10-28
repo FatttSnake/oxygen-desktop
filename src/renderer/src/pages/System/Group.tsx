@@ -8,6 +8,7 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '@/constants/common.constants'
+import { message, modal } from '@/util/common'
 import { hasPermission } from '@/util/auth'
 import { utcToLocalTime } from '@/util/datetime'
 import {
@@ -27,7 +28,6 @@ import Card from '@/components/common/Card'
 
 const Group = () => {
     const theme = useTheme()
-    const [modal, contextHolder] = AntdModal.useModal()
     const [form] = AntdForm.useForm<GroupAddEditParam>()
     const formValues = AntdForm.useWatch([], form)
     const [newFormValues, setNewFormValues] = useState<GroupAddEditParam>()
@@ -246,7 +246,7 @@ const Group = () => {
                     centered: true,
                     maskClosable: true,
                     title: '确定删除',
-                    content: `确定删除角色 ${value.name} 吗？`
+                    content: `确定删除用户组 ${value.name} 吗？`
                 })
                 .then(
                     (confirmed) => {
@@ -300,7 +300,7 @@ const Group = () => {
                             getGroup()
                             break
                         case DATABASE_DUPLICATE_KEY:
-                            void message.error('已存在相同名称的角色')
+                            void message.error('已存在相同名称的用户组')
                             break
                         default:
                             void message.error('更新失败，请稍后重试')
@@ -321,7 +321,7 @@ const Group = () => {
                             getGroup()
                             break
                         case DATABASE_DUPLICATE_KEY:
-                            void message.error('已存在相同名称的角色')
+                            void message.error('已存在相同名称的用户组')
                             break
                         default:
                             void message.error('添加失败，请稍后重试')
@@ -563,6 +563,7 @@ const Group = () => {
                 rowKey={(record) => record.id}
                 pagination={tableParams.pagination}
                 loading={isLoading}
+                scroll={{ x: true }}
                 onChange={handleOnTableChange}
                 rowSelection={
                     hasPermission('system:group:delete:multiple')
@@ -657,7 +658,6 @@ const Group = () => {
             >
                 {addAndEditForm}
             </AntdDrawer>
-            {contextHolder}
         </>
     )
 }

@@ -1,6 +1,7 @@
 import { ChangeEvent } from 'react'
 import Icon from '@ant-design/icons'
 import { DATABASE_DUPLICATE_KEY, DATABASE_INSERT_SUCCESS } from '@/constants/common.constants'
+import { message } from '@/util/common'
 import {
     r_sys_settings_sensitive_add,
     r_sys_settings_sensitive_delete,

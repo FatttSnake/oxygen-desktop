@@ -2,7 +2,7 @@ import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { checkDesktop } from '@/util/common'
+import { message, modal, checkDesktop } from '@/util/common'
 import { navigateToExecute, navigateToRepository } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_sys_tool_get_one } from '@/services/system'
@@ -17,7 +17,6 @@ const Code = () => {
     const { styles } = useStyles()
     const { isDarkMode } = useContext(AppContext)
     const navigate = useNavigate()
-    const [modal, contextHolder] = AntdModal.useModal()
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState(false)
     const [files, setFiles] = useState<IFiles>({})
@@ -106,7 +105,6 @@ const Code = () => {
                     </div>
                 </Draggable>
             </FitFullscreen>
-            {contextHolder}
         </>
     )
 }

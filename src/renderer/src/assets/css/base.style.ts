@@ -7,7 +7,7 @@ export default createGlobalStyle(() => ({
     li: { listStyle: 'none' },
     img: { border: 0, verticalAlign: 'middle' },
     button: { cursor: 'pointer' },
-    a: { color: '#666', textDecoration: 'none' },
+    a: { color: '#666', textDecoration: 'none', whiteSpace: 'nowrap' },
     'button, input': {
         fontFamily:
             'Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\\5B8B\\4F53", sans-serif',
