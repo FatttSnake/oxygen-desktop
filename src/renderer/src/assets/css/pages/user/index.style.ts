@@ -8,7 +8,7 @@ export default createStyles(({ token }) => ({
     content: {
         width: '100%',
         height: '100%',
-        overflow: 'visible',
+        overflow: 'visible !important',
         alignItems: 'center',
         minWidth: 900,
         paddingBottom: 20,
@@ -23,7 +23,7 @@ export default createStyles(({ token }) => ({
         transform: 'translateY(-40px)',
 
         '> *': {
-            flex: '0 0 auto !important'
+            flex: '0 0 auto'
         }
     },
 

@@ -56,6 +56,7 @@ export default createStyles(({ cx, css, token }) => {
             padding: `0 ${token.paddingXS}px`,
             width: 40,
             height: 40,
+            flex: '0 0 auto',
             fontSize: token.sizeMD,
             cursor: 'pointer',
 

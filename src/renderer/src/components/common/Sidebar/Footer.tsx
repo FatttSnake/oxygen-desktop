@@ -79,7 +79,7 @@ const Footer = () => {
             </span>
             <span
                 hidden={!getLoginStatus()}
-                className={cx(styles.text, isCollapse ? styles.collapsedExit : '')}
+                className={cx(styles.text, isCollapse ? styles.collapsedText : '')}
                 title={nickname}
             >
                 {nickname}

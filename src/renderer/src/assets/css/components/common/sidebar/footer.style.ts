@@ -11,14 +11,26 @@ const slideIn = keyframes`
     }
 `
 
+const slideOut = keyframes`
+    0% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+`
+
 export default createStyles(({ cx, css, token }) => {
     const collapsedExit = cx(css`
-        display: none;
+        opacity: 0;
         position: absolute;
         padding-left: ${token.paddingXS}px;
         left: 100%;
         z-index: 1000;
-        box-shadow: 5px 5px 15px 0 ${token.colorBorder};
+        animation: ${slideOut} 0.1s ease;
+        transform: translateX(-100%);
     `)
 
     return {
@@ -31,8 +43,9 @@ export default createStyles(({ cx, css, token }) => {
             color: ${token.colorPrimary};
 
             &:hover .${collapsedExit} {
-                display: block;
+                opacity: 1;
                 animation: ${slideIn} 0.3s ease;
+                transform: unset;
             }
         `,
 
@@ -88,7 +101,8 @@ export default createStyles(({ cx, css, token }) => {
 
         collapsedExitContent: {
             padding: token.paddingXS,
-            borderRadius: token.borderRadiusLG
+            borderRadius: token.borderRadiusLG,
+            boxShadow: token.boxShadow
         },
 
         exitIcon: {
