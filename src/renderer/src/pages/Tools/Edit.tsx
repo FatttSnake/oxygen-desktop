@@ -459,6 +459,7 @@ const Edit = () => {
                                 extraLibs={editorExtraLibs}
                             />
                             <Playground.Output
+                                isDarkMode={isDarkMode}
                                 files={files}
                                 selectedFileName={selectedFileName}
                                 importMap={importMap!}

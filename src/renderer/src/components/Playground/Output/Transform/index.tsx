@@ -1,17 +1,17 @@
 import MonacoEditor from '@monaco-editor/react'
 import { Loader } from 'esbuild-wasm'
 import useStyles from '@/components/Playground/Output/Transform/index.style'
-import { IFile, ITheme } from '@/components/Playground/shared'
+import { IFile } from '@/components/Playground/shared'
 import { cssToJsFromFile, jsonToJsFromFile } from '@/components/Playground/files'
 import Compiler from '@/components/Playground/compiler'
 import { MonacoEditorConfig } from '@/components/Playground/CodeEditor/Editor/monacoConfig'
 
 interface OutputProps {
+    isDarkMode?: boolean
     file: IFile
-    theme?: ITheme
 }
 
-const Transform = ({ file, theme }: OutputProps) => {
+const Transform = ({ isDarkMode, file }: OutputProps) => {
     const { styles } = useStyles()
     const [compiledCode, setCompiledCode] = useState('')
     const [errorMsg, setErrorMsg] = useState('')
@@ -60,7 +60,7 @@ const Transform = ({ file, theme }: OutputProps) => {
     return (
         <div className={styles.root}>
             <MonacoEditor
-                theme={theme}
+                theme={isDarkMode ? 'vitesse-dark' : 'vitesse-light'}
                 language={'javascript'}
                 value={compiledCode}
                 options={{ ...MonacoEditorConfig, readOnly: true }}

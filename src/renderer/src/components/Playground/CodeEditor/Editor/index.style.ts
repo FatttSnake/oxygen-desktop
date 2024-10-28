@@ -13,27 +13,7 @@ const rotate = keyframes`
 export default createStyles(() => ({
     root: {
         position: 'relative',
-        height: 0,
-
-        '.monaco-editor-light': {
-            height: '100%',
-            overflow: 'hidden',
-            backgroundColor: 'var(--border)',
-            '.jsx-tag-angle-bracket': { color: '#800000' },
-            '.jsx-text': { color: '#000' },
-            '.jsx-tag-name': { color: '#800000' },
-            '.jsx-tag-attribute-key': { color: '#f00' }
-        },
-
-        '.monaco-editor-dark': {
-            height: '100%',
-            overflow: 'hidden',
-            backgroundColor: 'var(--border)',
-            '.jsx-tag-angle-bracket': { color: '#808080' },
-            '.jsx-text': { color: '#d4d4d4' },
-            '.jsx-tag-name': { color: '#569cd6' },
-            '.jsx-tag-attribute-key': { color: '#9cdcfe' }
-        }
+        height: 0
     },
 
     loading: {

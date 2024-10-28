@@ -1,7 +1,6 @@
 import { editor, IPosition, Selection } from 'monaco-editor'
 import ScrollType = editor.ScrollType
 import { Monaco } from '@monaco-editor/react'
-import { getWorker, MonacoJsxSyntaxHighlight } from 'monaco-jsx-syntax-highlight'
 import { createATA, TypeHelper } from '@/components/Playground/CodeEditor/Editor/ata'
 
 export const useEditor = () => {
@@ -26,18 +25,6 @@ export const useEditor = () => {
                 editor.revealPositionInCenter(position, ScrollType.Immediate)
             }
         }
-    }
-
-    const loadJsxSyntaxHighlight = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
-        const monacoJsxSyntaxHighlight = new MonacoJsxSyntaxHighlight(getWorker(), monaco)
-        const { highlighter, dispose } = monacoJsxSyntaxHighlight.highlighterBuilder({ editor })
-
-        editor.onDidChangeModelContent(() => {
-            highlighter()
-        })
-        highlighter()
-
-        return { highlighter, dispose }
     }
 
     const autoLoadExtraLib = async (
@@ -68,7 +55,6 @@ export const useEditor = () => {
 
     return {
         doOpenEditor,
-        loadJsxSyntaxHighlight,
         autoLoadExtraLib
     }
 }

@@ -20,6 +20,4 @@ export interface ITsconfig {
     compilerOptions: CompilerOptions
 }
 
-export type ITheme = 'light' | 'vs-dark'
-
 export type IEditorOptions = editor.IStandaloneEditorConstructionOptions

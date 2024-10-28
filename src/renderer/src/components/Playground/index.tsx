@@ -105,6 +105,7 @@ const Playground = ({
                 onSelectedFileChange={setSelectedFileName}
             />
             <Output
+                isDarkMode={isDarkMode}
                 files={files}
                 selectedFileName={selectedFileName}
                 importMap={importMap!}
