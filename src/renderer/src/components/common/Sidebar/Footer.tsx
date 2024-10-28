@@ -1,11 +1,12 @@
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/common/sidebar/footer.style'
-import { SidebarContext } from '@/components/common/Sidebar/index'
-import { notification } from '@/util/common'
+import { THEME_DARK, THEME_FOLLOW_SYSTEM, THEME_LIGHT } from '@/constants/common.constants'
+import { getThemeMode, notification, setThemeMode, ThemeMode } from '@/util/common'
 import { getRedirectUrl } from '@/util/route'
 import { getAvatar, getLoginStatus, getNickname, removeToken } from '@/util/auth'
 import { navigateToLogin, navigateToUser } from '@/util/navigation'
 import { r_auth_logout } from '@/services/auth'
+import { SidebarContext } from '@/components/common/Sidebar/index'
 
 const Footer = () => {
     const { styles, theme, cx } = useStyles()
@@ -77,6 +78,31 @@ const Footer = () => {
                     登录
                 </NavLink>
             </span>
+            {!getLoginStatus() && !isCollapse && (
+                <AntdSegmented<ThemeMode>
+                    options={[
+                        {
+                            icon: <Icon component={IconOxygenThemeSystem} />,
+                            title: '跟随系统',
+                            value: THEME_FOLLOW_SYSTEM
+                        },
+                        {
+                            label: <Icon component={IconOxygenThemeLight} />,
+                            title: '亮色',
+                            value: THEME_LIGHT
+                        },
+                        {
+                            label: <Icon component={IconOxygenThemeDark} />,
+                            title: '深色',
+                            value: THEME_DARK
+                        }
+                    ]}
+                    defaultValue={getThemeMode()}
+                    onChange={setThemeMode}
+                    size={'small'}
+                    block
+                />
+            )}
             <span
                 hidden={!getLoginStatus()}
                 className={cx(styles.text, isCollapse ? styles.collapsedText : '')}

@@ -35,18 +35,17 @@ interface IMatcher {
 
 const matchComponents: IMatcher[] = [
     {
-        pattern: /^Avatar/,
-        styleDir: 'avatar'
+        pattern: /^Anchor/,
+        styleDir: 'anchor'
     },
     {
         pattern: /^AutoComplete/,
         styleDir: 'auto-complete'
     },
     {
-        pattern: /^Anchor/,
-        styleDir: 'anchor'
+        pattern: /^Avatar/,
+        styleDir: 'avatar'
     },
-
     {
         pattern: /^Badge/,
         styleDir: 'badge'
@@ -60,12 +59,16 @@ const matchComponents: IMatcher[] = [
         styleDir: 'button'
     },
     {
-        pattern: /^Checkbox/,
-        styleDir: 'checkbox'
-    },
-    {
         pattern: /^Card/,
         styleDir: 'card'
+    },
+    {
+        pattern: /^CheckableTag/,
+        styleDir: 'tag'
+    },
+    {
+        pattern: /^Checkbox/,
+        styleDir: 'checkbox'
     },
     {
         pattern: /^Collapse/,
@@ -76,74 +79,28 @@ const matchComponents: IMatcher[] = [
         styleDir: 'descriptions'
     },
     {
-        pattern: /^RangePicker|^WeekPicker|^MonthPicker/,
-        styleDir: 'date-picker'
-    },
-    {
         pattern: /^Dropdown/,
         styleDir: 'dropdown'
     },
-
     {
         pattern: /^Form/,
         styleDir: 'form'
     },
     {
+        pattern: /^Image/,
+        styleDir: 'image'
+    },
+    {
         pattern: /^InputNumber/,
         styleDir: 'input-number'
-    },
-
-    {
-        pattern: /^Input|^Textarea/,
-        styleDir: 'input'
-    },
-    {
-        pattern: /^Statistic/,
-        styleDir: 'statistic'
-    },
-    {
-        pattern: /^CheckableTag/,
-        styleDir: 'tag'
-    },
-    {
-        pattern: /^TimeRangePicker/,
-        styleDir: 'time-picker'
     },
     {
         pattern: /^Layout/,
         styleDir: 'layout'
     },
     {
-        pattern: /^Menu|^SubMenu/,
-        styleDir: 'menu'
-    },
-
-    {
-        pattern: /^Table/,
-        styleDir: 'table'
-    },
-    {
-        pattern: /^TimePicker|^TimeRangePicker/,
-        styleDir: 'time-picker'
-    },
-    {
-        pattern: /^Radio/,
-        styleDir: 'radio'
-    },
-
-    {
-        pattern: /^Image/,
-        styleDir: 'image'
-    },
-
-    {
         pattern: /^List/,
         styleDir: 'list'
-    },
-
-    {
-        pattern: /^Tab/,
-        styleDir: 'tabs'
     },
     {
         pattern: /^Mentions/,
@@ -154,37 +111,72 @@ const matchComponents: IMatcher[] = [
         styleDir: 'qr-code'
     },
     {
-        pattern: /^Step/,
-        styleDir: 'steps'
+        pattern: /^Radio/,
+        styleDir: 'radio'
     },
-    {
-        pattern: /^Skeleton/,
-        styleDir: 'skeleton'
-    },
-
     {
         pattern: /^Select/,
         styleDir: 'select'
     },
     {
-        pattern: /^TreeSelect/,
-        styleDir: 'tree-select'
+        pattern: /^Skeleton/,
+        styleDir: 'skeleton'
     },
     {
-        pattern: /^Tree|^DirectoryTree/,
-        styleDir: 'tree'
+        pattern: /^Statistic/,
+        styleDir: 'statistic'
     },
     {
-        pattern: /^Typography/,
-        styleDir: 'typography'
+        pattern: /^Step/,
+        styleDir: 'steps'
+    },
+    {
+        pattern: /^Tab/,
+        styleDir: 'tabs'
+    },
+    {
+        pattern: /^Table/,
+        styleDir: 'table'
     },
     {
         pattern: /^Timeline/,
         styleDir: 'timeline'
     },
     {
+        pattern: /^TimeRangePicker/,
+        styleDir: 'time-picker'
+    },
+    {
+        pattern: /^Typography/,
+        styleDir: 'typography'
+    },
+    {
+        pattern: /^TreeSelect/,
+        styleDir: 'tree-select'
+    },
+    {
         pattern: /^Upload/,
         styleDir: 'upload'
+    },
+    {
+        pattern: /^Input|^Textarea/,
+        styleDir: 'input'
+    },
+    {
+        pattern: /^Menu|^SubMenu/,
+        styleDir: 'menu'
+    },
+    {
+        pattern: /^Tree|^DirectoryTree/,
+        styleDir: 'tree'
+    },
+    {
+        pattern: /^MonthPicker|^RangePicker|^WeekPicker/,
+        styleDir: 'date-picker'
+    },
+    {
+        pattern: /^TimePicker|^TimeRangePicker/,
+        styleDir: 'time-picker'
     }
 ]
 
@@ -257,12 +249,12 @@ const getSideEffects = (compName: string, options: AntDesignResolverOptions): Si
 
 const primitiveNames = [
     'Affix',
+    'Alert',
     'Anchor',
     'AnchorLink',
     'AutoComplete',
     'AutoCompleteOptGroup',
     'AutoCompleteOption',
-    'Alert',
     'Avatar',
     'AvatarGroup',
     'BackTop',
@@ -277,105 +269,106 @@ const primitiveNames = [
     'Card',
     'CardGrid',
     'CardMeta',
-    'Collapse',
-    'CollapsePanel',
     'Carousel',
     'Cascader',
+    'CheckableTag',
     'Checkbox',
     'CheckboxGroup',
     'Col',
+    'Collapse',
+    'CollapsePanel',
     'Comment',
     'ConfigProvider',
     'DatePicker',
-    'MonthPicker',
-    'WeekPicker',
-    'RangePicker',
-    'QuarterPicker',
     'Descriptions',
     'DescriptionsItem',
+    'DirectoryTree',
     'Divider',
+    'Drawer',
     'Dropdown',
     'DropdownButton',
-    'Drawer',
     'Empty',
     'FloatButton',
     'Form',
     'FormItem',
     'FormItemRest',
     'Grid',
-    'Input',
-    'InputGroup',
-    'InputPassword',
-    'InputSearch',
-    'Textarea',
     'Image',
     'ImagePreviewGroup',
+    'Input',
+    'InputGroup',
     'InputNumber',
+    'InputPassword',
+    'InputSearch',
     'Layout',
+    'LayoutContent',
+    'LayoutFooter',
     'LayoutHeader',
     'LayoutSider',
-    'LayoutFooter',
-    'LayoutContent',
     'List',
     'ListItem',
     'ListItemMeta',
+    'LocaleProvider',
+    'Mentions',
+    'MentionsOption',
     'Menu',
     'MenuDivider',
     'MenuItem',
     'MenuItemGroup',
-    'SubMenu',
-    'Mentions',
-    'MentionsOption',
     'Modal',
-    'Statistic',
-    'StatisticCountdown',
+    'MonthPicker',
     'PageHeader',
     'Pagination',
     'Popconfirm',
     'Popover',
     'Progress',
+    'QRCode',
+    'QuarterPicker',
     'Radio',
     'RadioButton',
     'RadioGroup',
+    'RangePicker',
     'Rate',
     'Result',
     'Row',
-    'QRCode',
+    'Segmented',
     'Select',
     'SelectOptGroup',
     'SelectOption',
     'Skeleton',
-    'SkeletonButton',
     'SkeletonAvatar',
-    'SkeletonInput',
+    'SkeletonButton',
     'SkeletonImage',
+    'SkeletonInput',
     'Slider',
     'Space',
     'Spin',
-    'Steps',
+    'Statistic',
+    'StatisticCountdown',
     'Step',
+    'Steps',
+    'SubMenu',
     'Switch',
     'Table',
     'TableColumn',
     'TableColumnGroup',
     'TableSummary',
-    'TableSummaryRow',
     'TableSummaryCell',
+    'TableSummaryRow',
+    'TabPane',
+    'Tabs',
+    'Tag',
+    'Textarea',
+    'Timeline',
+    'TimelineItem',
+    'TimePicker',
+    'TimeRangePicker',
+    'Tooltip',
     'Transfer',
     'Tree',
     'TreeNode',
-    'DirectoryTree',
     'TreeSelect',
     'TreeSelectNode',
-    'Tabs',
-    'TabPane',
-    'Tag',
-    'CheckableTag',
-    'TimePicker',
-    'TimeRangePicker',
-    'Timeline',
-    'TimelineItem',
-    'Tooltip',
     'Typography',
     'TypographyLink',
     'TypographyParagraph',
@@ -383,7 +376,7 @@ const primitiveNames = [
     'TypographyTitle',
     'Upload',
     'UploadDragger',
-    'LocaleProvider'
+    'WeekPicker'
 ]
 
 const prefix = 'Antd'

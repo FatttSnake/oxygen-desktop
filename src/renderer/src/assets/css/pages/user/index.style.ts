@@ -63,6 +63,7 @@ export default createStyles(({ token }) => ({
 
     header: {
         justifyContent: 'space-between',
+        alignItems: 'center',
 
         '> *': {
             flex: '0 0 auto'
@@ -70,7 +71,7 @@ export default createStyles(({ token }) => ({
     },
 
     title: {
-        fontSize: token.fontSizeXL,
+        fontSize: token.fontSizeHeading3,
         fontWeight: 'bolder'
     },
 
@@ -90,8 +91,9 @@ export default createStyles(({ token }) => ({
     },
 
     row: {
-        alignItems: 'center',
         justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: `0 ${token.paddingLG}px`,
 
         '> *': {
             flex: '0 0 auto'
@@ -99,7 +101,7 @@ export default createStyles(({ token }) => ({
     },
 
     label: {
-        fontSize: token.fontSize,
+        fontSize: token.fontSizeLG,
         fontWeight: 'bolder',
         flex: 1
     },

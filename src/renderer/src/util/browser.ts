@@ -48,6 +48,7 @@ export const removeCookie = (name: string) => {
 
 export const setLocalStorage = (name: string, value: string) => {
     localStorage.setItem(name, value)
+    window.dispatchEvent(new Event('localStorageChange'))
 }
 
 export const getLocalStorage = (name: string) => {

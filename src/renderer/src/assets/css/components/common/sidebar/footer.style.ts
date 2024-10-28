@@ -11,17 +11,6 @@ const slideIn = keyframes`
     }
 `
 
-const slideOut = keyframes`
-    0% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateX(-10px);
-        opacity: 0;
-    }
-`
-
 export default createStyles(({ cx, css, token }) => {
     const collapsedExit = cx(css`
         opacity: 0;
@@ -29,7 +18,6 @@ export default createStyles(({ cx, css, token }) => {
         padding-left: ${token.paddingXS}px;
         left: 100%;
         z-index: 1000;
-        animation: ${slideOut} 0.1s ease;
         transform: translateX(-100%);
     `)
 

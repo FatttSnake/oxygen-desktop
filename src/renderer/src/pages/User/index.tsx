@@ -1,11 +1,14 @@
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/pages/user/index.style'
 import {
+    THEME_DARK,
+    THEME_FOLLOW_SYSTEM,
+    THEME_LIGHT,
     DATABASE_UPDATE_SUCCESS,
     PERMISSION_ACCESS_DENIED,
     PERMISSION_LOGIN_USERNAME_PASSWORD_ERROR
 } from '@/constants/common.constants'
-import { message, notification, modal } from '@/util/common'
+import { message, notification, modal, getThemeMode, ThemeMode, setThemeMode } from '@/util/common'
 import { utcToLocalTime } from '@/util/datetime'
 import { getUserInfo, removeToken } from '@/util/auth'
 import { r_sys_user_info_change_password, r_sys_user_info_update } from '@/services/system'
@@ -553,6 +556,21 @@ const User = () => {
                     </FlexBox>
                     <div className={styles.divider} />
                     <FlexBox className={styles.list}>
+                        <FlexBox className={styles.row} direction={'horizontal'}>
+                            <div className={styles.label}>主题</div>
+                            <div className={styles.input}>
+                                <AntdSegmented<ThemeMode>
+                                    options={[
+                                        { label: '跟随系统', value: THEME_FOLLOW_SYSTEM },
+                                        { label: '亮色', value: THEME_LIGHT },
+                                        { label: '深色', value: THEME_DARK }
+                                    ]}
+                                    defaultValue={getThemeMode()}
+                                    onChange={setThemeMode}
+                                    block
+                                />
+                            </div>
+                        </FlexBox>
                         <FlexBox className={styles.row} direction={'horizontal'}>
                             <div className={styles.label}>上次登录 IP</div>
                             <div className={styles.input}>

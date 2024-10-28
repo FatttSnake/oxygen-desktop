@@ -1,7 +1,7 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/common/sidebar/index.style'
-import { getLocalStorage, setLocalStorage } from '@/util/browser'
+import { getSidebarCollapse, setSidebarCollapse } from '@/util/common'
 import Item from '@/components/common/Sidebar/Item'
 import ItemList from '@/components/common/Sidebar/ItemList'
 import Scroll from '@/components/common/Sidebar/Scroll'
@@ -20,12 +20,10 @@ interface SidebarProps extends PropsWithChildren {
 
 const Sidebar = (props: SidebarProps) => {
     const { styles, cx } = useStyles()
-    const [isCollapseSidebar, setIsCollapseSidebar] = useState(
-        getLocalStorage('COLLAPSE_SIDEBAR') === 'true'
-    )
+    const [isCollapseSidebar, setIsCollapseSidebar] = useState(getSidebarCollapse())
 
     const switchSidebar = () => {
-        setLocalStorage('COLLAPSE_SIDEBAR', !isCollapseSidebar ? 'true' : 'false')
+        setSidebarCollapse(!isCollapseSidebar)
         setIsCollapseSidebar(!isCollapseSidebar)
         props.onSidebarSwitch?.(isCollapseSidebar)
     }
