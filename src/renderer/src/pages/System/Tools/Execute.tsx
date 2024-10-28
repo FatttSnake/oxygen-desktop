@@ -1,4 +1,4 @@
-import styles from '@/assets/css/pages/system/tools/execute.module.less'
+import useStyles from '@/assets/css/pages/system/tools/execute.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { navigateToTools } from '@/util/navigation'
 import { r_sys_tool_get_one } from '@/services/system'
@@ -10,6 +10,7 @@ import { IImportMap } from '@/components/Playground/shared'
 import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '@/components/Playground/files'
 
 const Execute = () => {
+    const { styles } = useStyles()
     const navigate = useNavigate()
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState(false)

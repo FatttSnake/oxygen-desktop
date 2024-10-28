@@ -1,9 +1,8 @@
 import { DetailedHTMLProps, HTMLAttributes, MouseEvent } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/components/tools/local-card.module.less'
-import { COLOR_BACKGROUND, COLOR_MAIN } from '@/constants/common.constants'
-import { checkDesktop, omitText } from '@/util/common'
+import useStyles from '@/assets/css/components/tools/local-card.style'
+import { checkDesktop, omitTextByByte } from '@/util/common'
 import { getAndroidUrl, navigateToStore, navigateToView } from '@/util/navigation'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
@@ -44,6 +43,7 @@ const StoreCard = ({
     supportPlatform,
     ...props
 }: StoreCardProps) => {
+    const { styles, theme } = useStyles()
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
     const cardRef = useRef<HTMLDivElement>(null)
@@ -60,7 +60,7 @@ const StoreCard = ({
         if (platform === 'ANDROID') {
             void modal.confirm({
                 centered: true,
-                icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
+                icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
                 title: 'Android 端',
                 content: (
                     <FlexBox className={styles.androidQrcode}>
@@ -88,7 +88,7 @@ const StoreCard = ({
         e.stopPropagation()
         void modal.confirm({
             centered: true,
-            icon: <Icon style={{ color: COLOR_MAIN }} component={IconOxygenInfo} />,
+            icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
             title: 'Android 端',
             content: (
                 <FlexBox className={styles.androidQrcode}>
@@ -119,17 +119,16 @@ const StoreCard = ({
                     toolId,
                     authorUsername: author.username,
                     ver: 'local',
-                    platform: platform
+                    platform
                 }}
             >
                 <Card
-                    className={styles.root}
                     style={{ overflow: 'visible', ...style }}
                     ref={cardRef}
                     {...props}
                     onClick={handleCardOnClick}
                 >
-                    <FlexBox className={styles.localCard}>
+                    <FlexBox className={styles.root}>
                         <div className={styles.header}>
                             <div className={styles.version}>
                                 <AntdTag>
@@ -160,13 +159,14 @@ const StoreCard = ({
                             <img src={`data:image/svg+xml;base64,${icon}`} alt={'Icon'} />
                         </div>
                         <div className={styles.info}>
-                            <div className={styles.toolName}>{toolName}</div>
+                            <div className={styles.toolName} title={toolName}>
+                                {toolName}
+                            </div>
                             <div>{`ID: ${toolId}`}</div>
                             {toolDesc && (
-                                <div
-                                    className={styles.toolDesc}
-                                    title={toolDesc}
-                                >{`简介：${omitText(toolDesc, 18)}`}</div>
+                                <div className={styles.toolDesc} title={toolDesc}>
+                                    {omitTextByByte(toolDesc, 64)}
+                                </div>
                             )}
                         </div>
                         {showAuthor && (
@@ -180,7 +180,7 @@ const StoreCard = ({
                                                 alt={'Avatar'}
                                             />
                                         }
-                                        style={{ background: COLOR_BACKGROUND }}
+                                        style={{ background: theme.colorBgLayout }}
                                     />
                                 </div>
                                 <div className={styles.authorName}>{author.userInfo.nickname}</div>

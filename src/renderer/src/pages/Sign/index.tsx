@@ -1,4 +1,4 @@
-import styles from '@/assets/css/pages/sign/index.module.less'
+import useStyles from '@/assets/css/pages/sign/index.style'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import FitCenter from '@/components/common/FitCenter'
 import FlexBox from '@/components/common/FlexBox'
@@ -8,6 +8,7 @@ import Forget from '@/pages/Sign/Forget'
 import SignIn from '@/pages/Sign/SignIn'
 
 const Sign = () => {
+    const { styles, cx } = useStyles()
     const lastPage = useRef('none')
     const currentPage = useRef('none')
     const match = useMatches().reduce((_, second) => second)
@@ -46,12 +47,12 @@ const Sign = () => {
                 <FitCenter>
                     <FlexBox
                         direction={'horizontal'}
-                        className={`${styles.signBox}${isSwitch ? ` ${styles.switch}` : ''}`}
+                        className={cx(styles.signBox, isSwitch ? styles.switch : '')}
                     >
-                        <div className={`${styles.left}${!isSwitch ? ` ${styles.hidden}` : ''}`}>
+                        <div className={cx(styles.side, !isSwitch ? styles.hidden : '')}>
                             {leftComponent()}
                         </div>
-                        <div className={`${styles.right}${isSwitch ? ` ${styles.hidden}` : ''}`}>
+                        <div className={cx(styles.side, isSwitch ? styles.hidden : '')}>
                             {rightComponent()}
                         </div>
                         <FlexBox className={styles.cover}>

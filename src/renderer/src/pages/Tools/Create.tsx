@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/pages/tools/create.module.less'
+import useStyles from '@/assets/css/pages/tools/create.style'
 import {
     DATABASE_DUPLICATE_KEY,
     DATABASE_INSERT_SUCCESS,
@@ -22,6 +22,7 @@ import HideScrollbar from '@/components/common/HideScrollbar'
 import Playground from '@/components/Playground'
 
 const Create = () => {
+    const { styles } = useStyles()
     const navigate = useNavigate()
     const [form] = AntdForm.useForm<ToolCreateParam>()
     const formValues = AntdForm.useWatch([], form)
@@ -190,9 +191,9 @@ const Create = () => {
                     <Card className={styles.title}>
                         <FlexBox>配置</FlexBox>
                     </Card>
-                    <Card className={styles.config}>
+                    <Card>
                         <HideScrollbar>
-                            <div className={styles.configContent}>
+                            <div className={styles.config}>
                                 <AntdForm
                                     form={form}
                                     layout={'vertical'}

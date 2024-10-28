@@ -1,11 +1,12 @@
 import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/pages/system/tools/code.module.less'
+import useStyles from '@/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { navigateToExecute, navigateToRepository } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_sys_tool_get_one } from '@/services/system'
+import { AppContext } from '@/App'
 import { IFiles } from '@/components/Playground/shared'
 import { base64ToFiles } from '@/components/Playground/files'
 import Playground from '@/components/Playground'
@@ -13,6 +14,8 @@ import FitFullscreen from '@/components/common/FitFullscreen'
 import Card from '@/components/common/Card'
 
 const Code = () => {
+    const { styles } = useStyles()
+    const { isDarkMode } = useContext(AppContext)
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
     const { id } = useParams()
@@ -84,6 +87,7 @@ const Code = () => {
             <FitFullscreen className={styles.root}>
                 <Card className={styles.rootBox}>
                     <Playground.CodeEditor
+                        isDarkMode={isDarkMode}
                         readonly
                         files={files}
                         selectedFileName={selectedFileName}

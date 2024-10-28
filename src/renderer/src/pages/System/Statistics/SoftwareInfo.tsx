@@ -1,9 +1,11 @@
+import useStyles from '@/assets/css/pages/system/statistics/common.style'
 import { utcToLocalTime } from '@/util/datetime'
 import { r_sys_statistics_software } from '@/services/system'
 import FlexBox from '@/components/common/FlexBox'
 import StatisticsCard from '@/components/system/StatisticsCard'
 
 const SoftwareInfo = () => {
+    const { styles } = useStyles()
     const [softwareInfoData, setSoftwareInfoData] = useState<SoftwareInfoVo>()
 
     useEffect(() => {
@@ -23,8 +25,8 @@ const SoftwareInfo = () => {
             title={'软件信息'}
             loading={softwareInfoData === undefined}
         >
-            <FlexBox className={'card-content'} direction={'horizontal'}>
-                <FlexBox className={'key'}>
+            <FlexBox className={styles.content} direction={'horizontal'}>
+                <FlexBox className={styles.key}>
                     <div>操作系统</div>
                     <div>位数</div>
                     <div>Java</div>
@@ -35,7 +37,7 @@ const SoftwareInfo = () => {
                     <div>操作系统启动时间</div>
                     <div>后端服务器启动时间</div>
                 </FlexBox>
-                <FlexBox className={'value'}>
+                <FlexBox className={styles.value}>
                     <div title={softwareInfoData?.os}>{softwareInfoData?.os}</div>
                     <div title={softwareInfoData?.bitness.toString()}>
                         {softwareInfoData?.bitness}

@@ -1,11 +1,13 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import styles from '@/assets/css/components/common/sidebar.module.less'
+import useStyles from '@/assets/css/components/common/sidebar/separate'
 
 const Separate = ({
     className,
     ...props
 }: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
-    return <div className={`${styles.separate}${className ? ` ${className}` : ''}`} {...props} />
+    const { styles, cx } = useStyles()
+
+    return <div className={cx(styles.separate, className)} {...props} />
 }
 
 export default Separate

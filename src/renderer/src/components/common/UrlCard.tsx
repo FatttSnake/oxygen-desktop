@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
-import styles from '@/assets/css/components/common/url-card.module.less'
+import useStyles from '@/assets/css/components/common/url-card.style'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 
@@ -26,6 +26,7 @@ const UrlCard = ({
     children,
     ...props
 }: UrlCardProps) => {
+    const { styles } = useStyles()
     const navigate = useNavigate()
     const cardRef = useRef<HTMLDivElement>(null)
 
@@ -39,13 +40,12 @@ const UrlCard = ({
 
     return (
         <Card
-            className={styles.root}
             style={{ overflow: 'visible', ...style }}
             {...props}
             ref={cardRef}
             onClick={handleCardOnClick}
         >
-            <FlexBox className={styles.urlCard}>
+            <FlexBox className={styles.root}>
                 <Icon component={icon} className={styles.icon} />
                 <div className={styles.text}>{children}</div>
                 <div>{description}</div>

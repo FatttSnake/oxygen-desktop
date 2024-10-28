@@ -1,12 +1,14 @@
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/components/common/sidebar.module.less'
-import { COLOR_ERROR } from '@/constants/common.constants'
+import useStyles from '@/assets/css/components/common/sidebar/footer.style'
+import { SidebarContext } from '@/components/common/Sidebar/index'
 import { getRedirectUrl } from '@/util/route'
 import { getAvatar, getLoginStatus, getNickname, removeToken } from '@/util/auth'
 import { navigateToLogin, navigateToUser } from '@/util/navigation'
 import { r_auth_logout } from '@/services/auth'
 
 const Footer = () => {
+    const { styles, theme, cx } = useStyles()
+    const { isCollapse } = useContext(SidebarContext)
     const matches = useMatches()
     const lastMatch = matches.reduce((_, second) => second)
     const location = useLocation()
@@ -33,7 +35,7 @@ const Footer = () => {
             removeToken()
             notification.info({
                 message: '已退出登录',
-                icon: <Icon component={IconOxygenExit} style={{ color: COLOR_ERROR }} />
+                icon: <Icon component={IconOxygenExit} style={{ color: theme.colorErrorText }} />
             })
             setTimeout(() => {
                 window.location.reload()
@@ -58,7 +60,7 @@ const Footer = () => {
     return (
         <div className={styles.footer}>
             <span
-                className={styles.iconUser}
+                className={styles.icon}
                 onClick={handleClickAvatar}
                 title={getLoginStatus() ? '个人中心' : '登录'}
             >
@@ -74,17 +76,29 @@ const Footer = () => {
                     登录
                 </NavLink>
             </span>
-            <span hidden={!getLoginStatus()} className={styles.text} title={nickname}>
+            <span
+                hidden={!getLoginStatus()}
+                className={cx(styles.text, isCollapse ? styles.collapsedExit : '')}
+                title={nickname}
+            >
                 {nickname}
             </span>
             <div
                 hidden={!getLoginStatus()}
-                className={`${styles.submenuExit}${!getLoginStatus() ? ` ${styles.hide}` : ''}`}
+                className={cx(
+                    isCollapse ? styles.collapsedExit : '',
+                    !getLoginStatus() ? styles.hide : ''
+                )}
             >
-                <div className={styles.content}>
+                <div
+                    className={cx(
+                        styles.exitContent,
+                        isCollapse ? styles.collapsedExitContent : ''
+                    )}
+                >
                     <span
                         hidden={!getLoginStatus()}
-                        className={styles.iconExit}
+                        className={cx(styles.exitIcon, isCollapse ? styles.collapsedExitIcon : '')}
                         onClick={handleLogout}
                     >
                         <Icon

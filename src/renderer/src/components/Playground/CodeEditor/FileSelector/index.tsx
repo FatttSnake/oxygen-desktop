@@ -1,4 +1,4 @@
-import styles from '@/components/Playground/CodeEditor/FileSelector/index.module.less'
+import useStyles from '@/components/Playground/CodeEditor/FileSelector/index.style'
 import HideScrollbar, { HideScrollbarElement } from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
 import { IFiles } from '@/components/Playground/shared'
@@ -32,6 +32,7 @@ const FileSelector = ({
     onUpdateFileName,
     selectedFileName = ''
 }: FileSelectorProps) => {
+    const { styles } = useStyles()
     const hideScrollbarRef = useRef<HideScrollbarElement>(null)
     const [tabs, setTabs] = useState<string[]>([])
     const [isCreating, setIsCreating] = useState(false)

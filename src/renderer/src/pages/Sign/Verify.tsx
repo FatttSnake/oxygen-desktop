@@ -1,6 +1,5 @@
-import styles from '@/assets/css/pages/sign/verify.module.less'
+import useStyles from '@/assets/css/pages/sign/verify.style'
 import {
-    COLOR_BACKGROUND,
     PERMISSION_ACCOUNT_NEED_INIT,
     PERMISSION_NO_VERIFICATION_REQUIRED,
     PERMISSION_RESEND_SUCCESS,
@@ -16,6 +15,7 @@ import FitCenter from '@/components/common/FitCenter'
 import FlexBox from '@/components/common/FlexBox'
 
 const Verify = () => {
+    const { styles, theme } = useStyles()
     const { refreshRouter } = useContext(AppContext)
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
@@ -145,86 +145,82 @@ const Verify = () => {
     }
 
     return (
-        <>
-            <div className={styles.root}>
-                <FitCenter>
-                    <FlexBox>
-                        <div className={styles.title}>
-                            <div className={styles.primary}>验证账号</div>
-                            <div className={styles.secondary}>Verify account</div>
-                        </div>
-                        <AntdForm className={styles.form} onFinish={handleOnFinish}>
-                            <div hidden={needVerify}>
-                                账号已验证通过，无需验证，点击&nbsp;<a href={'/'}>回到首页</a>
-                            </div>
-                            <div hidden={!needVerify || !hasCode || !isValid}>
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        marginBottom: 20
-                                    }}
-                                >
-                                    <AntdTooltip title={'点击获取新头像'}>
-                                        <AntdAvatar
-                                            src={
-                                                <img
-                                                    src={`data:image/png;base64,${avatar}`}
-                                                    alt={'Avatar'}
-                                                />
-                                            }
-                                            size={100}
-                                            style={{
-                                                background: COLOR_BACKGROUND,
-                                                cursor: 'pointer'
-                                            }}
-                                            onClick={handleOnChangeAvatar}
+        <FitCenter>
+            <FlexBox>
+                <div className={styles.title}>
+                    <div className={styles.primary}>验证账号</div>
+                    <div className={styles.secondary}>Verify account</div>
+                </div>
+                <AntdForm className={styles.form} onFinish={handleOnFinish}>
+                    <div hidden={needVerify}>
+                        账号已验证通过，无需验证，点击&nbsp;<a href={'/'}>回到首页</a>
+                    </div>
+                    <div hidden={!needVerify || !hasCode || !isValid}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                marginBottom: 20
+                            }}
+                        >
+                            <AntdTooltip title={'点击获取新头像'}>
+                                <AntdAvatar
+                                    src={
+                                        <img
+                                            src={`data:image/png;base64,${avatar}`}
+                                            alt={'Avatar'}
                                         />
-                                    </AntdTooltip>
-                                </div>
-                                <AntdForm.Item hidden name={'avatar'}>
-                                    <AntdInput value={avatar} />
-                                </AntdForm.Item>
-                                <AntdForm.Item
-                                    name={'nickname'}
-                                    rules={[
-                                        { required: true, message: '请输入昵称' },
-                                        { whitespace: true, message: '昵称不能为空字符' },
-                                        { min: 3, message: '昵称至少为3个字符' }
-                                    ]}
-                                >
-                                    <AntdInput
-                                        disabled={isVerifying}
-                                        maxLength={20}
-                                        showCount
-                                        addonBefore={'昵称'}
-                                    />
-                                </AntdForm.Item>
-                                <AntdForm.Item>
-                                    <AntdButton
-                                        style={{ width: '100%' }}
-                                        type={'primary'}
-                                        htmlType={'submit'}
-                                        disabled={isVerifying}
-                                        loading={isVerifying}
-                                    >
-                                        确&ensp;&ensp;&ensp;&ensp;定
-                                    </AntdButton>
-                                </AntdForm.Item>
-                            </div>
-                            <div hidden={hasCode}>
-                                在继续使用之前，我们需要确定您的电子邮箱地址的有效性，请点击&nbsp;
-                                <a onClick={handleOnResend}>发送验证邮件</a>
-                            </div>
-                            <div hidden={!hasCode || isValid}>
-                                此链接有误或已失效，请点击&nbsp;
-                                <a onClick={handleOnResend}>重新发送验证邮件</a>
-                            </div>
-                        </AntdForm>
-                    </FlexBox>
-                </FitCenter>
-            </div>
-        </>
+                                    }
+                                    size={100}
+                                    style={{
+                                        background: theme.colorBgLayout,
+                                        cursor: 'pointer'
+                                    }}
+                                    onClick={handleOnChangeAvatar}
+                                />
+                            </AntdTooltip>
+                        </div>
+                        <AntdForm.Item hidden name={'avatar'}>
+                            <AntdInput value={avatar} />
+                        </AntdForm.Item>
+                        <AntdForm.Item
+                            name={'nickname'}
+                            rules={[
+                                { required: true, message: '请输入昵称' },
+                                { whitespace: true, message: '昵称不能为空字符' },
+                                { min: 3, message: '昵称至少为3个字符' }
+                            ]}
+                        >
+                            <AntdInput
+                                disabled={isVerifying}
+                                maxLength={20}
+                                showCount
+                                addonBefore={'昵称'}
+                            />
+                        </AntdForm.Item>
+                        <AntdForm.Item>
+                            <AntdButton
+                                style={{ width: '100%' }}
+                                type={'primary'}
+                                htmlType={'submit'}
+                                disabled={isVerifying}
+                                loading={isVerifying}
+                            >
+                                确&ensp;&ensp;&ensp;&ensp;定
+                            </AntdButton>
+                        </AntdForm.Item>
+                    </div>
+                    <div hidden={hasCode}>
+                        在继续使用之前，我们需要确定您的电子邮箱地址的有效性，请点击&nbsp;
+                        <a onClick={handleOnResend}>发送验证邮件</a>
+                    </div>
+                    <div hidden={!hasCode || isValid}>
+                        此链接有误或已失效，请点击&nbsp;
+                        <a onClick={handleOnResend}>重新发送验证邮件</a>
+                    </div>
+                </AntdForm>
+            </FlexBox>
+        </FitCenter>
     )
 }
 

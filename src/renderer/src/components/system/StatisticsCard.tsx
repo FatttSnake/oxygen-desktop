@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/components/system/statistics-card.module.less'
+import useStyles from '@/assets/css/components/system/statistics-card.style'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import LoadingMask from '@/components/common/LoadingMask'
@@ -13,9 +13,11 @@ interface StatisticsCardProps extends PropsWithChildren {
 }
 
 export const StatisticsCard = (props: StatisticsCardProps) => {
+    const { styles } = useStyles()
+
     return (
-        <Card className={styles.root} style={{ overflow: 'visible' }}>
-            <FlexBox className={styles.statisticsCard}>
+        <Card style={{ overflow: 'visible' }}>
+            <FlexBox className={styles.root}>
                 <FlexBox direction={'horizontal'} className={styles.head}>
                     <Icon component={props.icon} className={styles.icon} />
                     <div className={styles.title}>{props.title}</div>

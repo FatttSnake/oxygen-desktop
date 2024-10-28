@@ -1,4 +1,4 @@
-import styles from '@/assets/css/pages/user-framework.module.less'
+import useStyles from '@/assets/css/pages/user-framework.style'
 import user from '@/router/user'
 import { hasPathPermission } from '@/util/auth'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -6,9 +6,11 @@ import Sidebar from '@/components/common/Sidebar'
 import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
 
 const UserFramework = () => {
+    const { styles } = useStyles()
+
     return (
         <>
-            <FitFullscreen className={`${styles.root} flex-horizontal`}>
+            <FitFullscreen className={'flex-horizontal'}>
                 <div className={styles.leftPanel}>
                     <Sidebar
                         title={'个人中心'}

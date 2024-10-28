@@ -1,6 +1,6 @@
 import VanillaTilt from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/components/tools/load-more-card.module.less'
+import useStyles from '@/assets/css/components/tools/load-more-card.style'
 import FlexBox from '@/components/common/FlexBox'
 import Card from '@/components/common/Card'
 
@@ -9,6 +9,7 @@ interface LoadMoreCardProps {
 }
 
 const LoadMoreCard = ({ onClick }: LoadMoreCardProps) => {
+    const { styles } = useStyles()
     const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -23,13 +24,8 @@ const LoadMoreCard = ({ onClick }: LoadMoreCardProps) => {
     }, [])
 
     return (
-        <Card
-            className={styles.root}
-            style={{ overflow: 'visible' }}
-            ref={cardRef}
-            onClick={onClick}
-        >
-            <FlexBox className={styles.loadMoreCard}>
+        <Card ref={cardRef} onClick={onClick}>
+            <FlexBox className={styles.root}>
                 <div className={styles.icon}>
                     <Icon component={IconOxygenMore} />{' '}
                 </div>

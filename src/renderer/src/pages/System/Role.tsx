@@ -1,9 +1,7 @@
 import { ChangeEvent, Key, KeyboardEvent } from 'react'
 import Icon from '@ant-design/icons'
+import { useTheme } from 'antd-style'
 import {
-    COLOR_ERROR_SECONDARY,
-    COLOR_FONT_SECONDARY,
-    COLOR_PRODUCTION,
     DATABASE_DELETE_SUCCESS,
     DATABASE_DUPLICATE_KEY,
     DATABASE_INSERT_SUCCESS,
@@ -28,6 +26,7 @@ import FlexBox from '@/components/common/FlexBox'
 import Card from '@/components/common/Card'
 
 const Role = () => {
+    const theme = useTheme()
     const [modal, contextHolder] = AntdModal.useModal()
     const [form] = AntdForm.useForm<RoleAddEditParam>()
     const formValues = AntdForm.useWatch([], form)
@@ -101,14 +100,14 @@ const Role = () => {
                         <Permission operationCode={['system:role:modify:status']}>
                             {value ? (
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnChangStatusBtnClick(record.id, false)}
                                 >
                                     禁用
                                 </a>
                             ) : (
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnChangStatusBtnClick(record.id, true)}
                                 >
                                     启用
@@ -117,7 +116,7 @@ const Role = () => {
                         </Permission>
                         <Permission operationCode={['system:role:modify:one']}>
                             <a
-                                style={{ color: COLOR_PRODUCTION }}
+                                style={{ color: theme.colorPrimary }}
                                 onClick={handleOnEditBtnClick(record)}
                             >
                                 编辑
@@ -125,7 +124,7 @@ const Role = () => {
                         </Permission>
                         <Permission operationCode={['system:role:delete:one']}>
                             <a
-                                style={{ color: COLOR_PRODUCTION }}
+                                style={{ color: theme.colorPrimary }}
                                 onClick={handleOnDeleteBtnClick(record)}
                             >
                                 删除
@@ -533,7 +532,7 @@ const Role = () => {
                         <span
                             style={{
                                 fontSize: '0.9em',
-                                color: COLOR_FONT_SECONDARY
+                                color: theme.colorTextSecondary
                             }}
                         >
                             名称
@@ -542,7 +541,7 @@ const Role = () => {
                     suffix={
                         <>
                             {!isRegexLegal && (
-                                <span style={{ color: COLOR_ERROR_SECONDARY }}>非法表达式</span>
+                                <span style={{ color: theme.colorErrorText }}>非法表达式</span>
                             )}
                             <AntdCheckbox checked={isUseRegex} onChange={handleOnUseRegexChange}>
                                 <AntdTooltip title={'正则表达式'}>.*</AntdTooltip>

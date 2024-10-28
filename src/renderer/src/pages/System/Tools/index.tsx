@@ -1,5 +1,13 @@
 import { ChangeEvent, KeyboardEvent } from 'react'
 import Icon from '@ant-design/icons'
+import { useTheme } from 'antd-style'
+import {
+    DATABASE_DELETE_SUCCESS,
+    DATABASE_SELECT_SUCCESS,
+    DATABASE_UPDATE_SUCCESS,
+    TOOL_NOT_UNDER_REVIEW
+} from '@/constants/common.constants'
+import { navigateToCode } from '@/util/navigation'
 import {
     r_sys_tool_delete,
     r_sys_tool_get,
@@ -8,16 +16,6 @@ import {
     r_sys_tool_pass,
     r_sys_tool_reject
 } from '@/services/system'
-import {
-    COLOR_BACKGROUND,
-    COLOR_ERROR_SECONDARY,
-    COLOR_PRODUCTION,
-    DATABASE_DELETE_SUCCESS,
-    DATABASE_SELECT_SUCCESS,
-    DATABASE_UPDATE_SUCCESS,
-    TOOL_NOT_UNDER_REVIEW
-} from '@/constants/common.constants'
-import { navigateToCode } from '@/util/navigation'
 import FlexBox from '@/components/common/FlexBox'
 import Card from '@/components/common/Card'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -28,6 +26,7 @@ import { base64ToFiles, IMPORT_MAP_FILE_NAME, strToBase64 } from '@/components/P
 import Permission from '@/components/common/Permission'
 
 const Tools = () => {
+    const theme = useTheme()
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
     const [tableParams, setTableParams] = useState<TableParam>({
@@ -62,7 +61,7 @@ const Tools = () => {
                             alt={'Avatar'}
                         />
                     }
-                    style={{ background: COLOR_BACKGROUND }}
+                    style={{ background: theme.colorBgLayout }}
                 />
             ),
             width: '0',
@@ -134,7 +133,7 @@ const Tools = () => {
                 <>
                     <AntdSpace size={'middle'}>
                         <a
-                            style={{ color: COLOR_PRODUCTION }}
+                            style={{ color: theme.colorPrimary }}
                             onClick={handleOnViewBtnClick(record)}
                         >
                             查看
@@ -142,7 +141,7 @@ const Tools = () => {
                         <Permission operationCode={['system:tool:modify:tool']}>
                             {record.review === 'PROCESSING' && (
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnReviewBtnClick(record)}
                                 >
                                     审核
@@ -150,7 +149,7 @@ const Tools = () => {
                             )}
                             {record.review === 'PASS' && (
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnOffShelveBtnClick(record)}
                                 >
                                     下架
@@ -159,7 +158,7 @@ const Tools = () => {
                         </Permission>
                         <Permission operationCode={['system:tool:delete:tool']}>
                             <a
-                                style={{ color: COLOR_PRODUCTION }}
+                                style={{ color: theme.colorPrimary }}
                                 onClick={handleOnDeleteBtnClick(record)}
                             >
                                 删除
@@ -545,7 +544,7 @@ const Tools = () => {
                     suffix={
                         <>
                             {!isRegexLegal && (
-                                <span style={{ color: COLOR_ERROR_SECONDARY }}>非法表达式</span>
+                                <span style={{ color: theme.colorErrorText }}>非法表达式</span>
                             )}
                             <AntdCheckbox checked={isUseRegex} onChange={handleOnUseRegexChange}>
                                 <AntdTooltip title={'正则表达式'}>.*</AntdTooltip>

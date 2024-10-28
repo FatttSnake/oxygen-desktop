@@ -1,6 +1,7 @@
 import { ChangeEvent, KeyboardEvent } from 'react'
+import { useTheme } from 'antd-style'
 import dayjs from 'dayjs'
-import { COLOR_FONT_SECONDARY, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
+import { DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { dayjsToUtc, utcToLocalTime } from '@/util/datetime'
 import { r_sys_log_get } from '@/services/system'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -9,6 +10,7 @@ import HideScrollbar from '@/components/common/HideScrollbar'
 import FlexBox from '@/components/common/FlexBox'
 
 const Log = () => {
+    const theme = useTheme()
     const [logData, setLogData] = useState<SysLogGetVo[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [tableParams, setTableParams] = useState<TableParam>({
@@ -240,7 +242,7 @@ const Log = () => {
                         <span
                             style={{
                                 fontSize: '0.9em',
-                                color: COLOR_FONT_SECONDARY
+                                color: theme.colorTextSecondary
                             }}
                         >
                             请求 Url

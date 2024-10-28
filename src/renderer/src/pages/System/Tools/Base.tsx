@@ -1,7 +1,6 @@
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/pages/system/tools/base.module.less'
+import useStyles from '@/assets/css/pages/system/tools/base.style'
 import {
-    COLOR_PRODUCTION,
     DATABASE_DELETE_SUCCESS,
     DATABASE_DUPLICATE_KEY,
     DATABASE_INSERT_SUCCESS,
@@ -29,6 +28,7 @@ import {
     TS_CONFIG_FILE_NAME
 } from '@/components/Playground/files'
 import compiler from '@/components/Playground/compiler'
+import { AppContext } from '@/App'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import FlexBox from '@/components/common/FlexBox'
 import HideScrollbar from '@/components/common/HideScrollbar'
@@ -37,6 +37,8 @@ import Permission from '@/components/common/Permission'
 import Playground from '@/components/Playground'
 
 const Base = () => {
+    const { styles, theme } = useStyles()
+    const { isDarkMode } = useContext(AppContext)
     const blocker = useBlocker(
         ({ currentLocation, nextLocation }) =>
             currentLocation.pathname !== nextLocation.pathname && Object.keys(hasEdited).length > 0
@@ -162,7 +164,7 @@ const Base = () => {
                         <Permission operationCode={['system:tool:add:base']}>
                             {' '}
                             (
-                            <a style={{ color: COLOR_PRODUCTION }} onClick={handleOnAddBtnClick}>
+                            <a style={{ color: theme.colorPrimary }} onClick={handleOnAddBtnClick}>
                                 新增
                             </a>
                             )
@@ -178,7 +180,7 @@ const Base = () => {
                         {!Object.keys(hasEdited).length && (
                             <Permission operationCode={['system:tool:modify:base']}>
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnCompileBtnClick(record)}
                                 >
                                     {record.compiled ? '重新编译' : '编译'}
@@ -188,7 +190,7 @@ const Base = () => {
                         {hasEdited[record.id] && (
                             <Permission operationCode={['system:tool:modify:base']}>
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnSaveBtnClick(record)}
                                 >
                                     保存
@@ -198,7 +200,7 @@ const Base = () => {
                         {!Object.keys(hasEdited).length && (
                             <Permission operationCode={['system:tool:modify:base']}>
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnEditBtnClick(record)}
                                 >
                                     编辑
@@ -207,7 +209,7 @@ const Base = () => {
                         )}
                         <Permission operationCode={['system:tool:delete:base']}>
                             <a
-                                style={{ color: COLOR_PRODUCTION }}
+                                style={{ color: theme.colorPrimary }}
                                 onClick={handleOnDeleteBtnClick(record)}
                             >
                                 删除
@@ -739,7 +741,7 @@ const Base = () => {
                             <Permission operationCode={['system:tool:modify:base']}>
                                 {' '}
                                 (
-                                <a style={{ color: COLOR_PRODUCTION }} onClick={handleOnAddFile}>
+                                <a style={{ color: theme.colorPrimary }} onClick={handleOnAddFile}>
                                     新增
                                 </a>
                                 )
@@ -760,7 +762,7 @@ const Base = () => {
                             >
                                 <a
                                     onClick={handleOnEditFile(record.name)}
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                 >
                                     {hasPermission('system:tool:modify:base') ? '编辑' : '查看'}
                                 </a>
@@ -769,7 +771,7 @@ const Base = () => {
                                 <Permission operationCode={['system:tool:modify:base']}>
                                     <a
                                         onClick={handleOnRenameFile(record.name)}
-                                        style={{ color: COLOR_PRODUCTION }}
+                                        style={{ color: theme.colorPrimary }}
                                     >
                                         重命名
                                     </a>
@@ -779,7 +781,7 @@ const Base = () => {
                                 <Permission operationCode={['system:tool:delete:base']}>
                                     <a
                                         onClick={handleOnDeleteFile(record.name)}
-                                        style={{ color: COLOR_PRODUCTION }}
+                                        style={{ color: theme.colorPrimary }}
                                     >
                                         删除
                                     </a>
@@ -1077,9 +1079,9 @@ const Base = () => {
 
     return (
         <>
-            <FitFullscreen className={styles.root}>
+            <FitFullscreen>
                 <HideScrollbar>
-                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
+                    <FlexBox direction={'horizontal'} className={styles.root}>
                         <Card>
                             <AntdTable
                                 dataSource={baseData}
@@ -1097,6 +1099,7 @@ const Base = () => {
                         {editingFileName && (
                             <Card>
                                 <Playground.CodeEditor
+                                    isDarkMode={isDarkMode}
                                     files={editingFiles[editingBaseId]}
                                     selectedFileName={editingFileName}
                                     onSelectedFileChange={setEditingFileName}

@@ -1,8 +1,10 @@
 import { PropsWithChildren } from 'react'
-import styles from '@/assets/css/components/common/sidebar.module.less'
+import useStyles from '@/assets/css/components/common/sidebar/scroll.style'
 import HideScrollbar from '@/components/common/HideScrollbar'
 
 const Scroll = (props: PropsWithChildren) => {
+    const { styles } = useStyles()
+
     return (
         <div className={styles.scroll}>
             <HideScrollbar

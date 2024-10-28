@@ -54,6 +54,7 @@
     "@typescript/ata": "^0.9.7",
     "@vitejs/plugin-react": "^4.3.2",
     "antd": "^5.21.4",
+    "antd-style": "^3.7.0",
     "axios": "^1.7.4",
     "custom-protocol-check": "^1.4.0",
     "dayjs": "^1.11.13",

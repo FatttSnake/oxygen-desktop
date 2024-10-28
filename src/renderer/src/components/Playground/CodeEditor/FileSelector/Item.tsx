@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, KeyboardEvent, ChangeEvent, MouseEvent } from 'react'
-import styles from '@/components/Playground/CodeEditor/FileSelector/item.module.less'
+import useStyles from '@/components/Playground/CodeEditor/FileSelector/item.style'
 
 interface ItemProps {
     className?: string
@@ -30,6 +30,7 @@ const Item = ({
     onValidate,
     ...prop
 }: ItemProps) => {
+    const { styles, cx } = useStyles()
     const inputRef = useRef<HTMLInputElement>(null)
     const [fileName, setFileName] = useState(value)
     const [isCreating, setIsCreating] = useState(prop.creating)
@@ -110,7 +111,7 @@ const Item = ({
 
     return (
         <div
-            className={`${styles.root}${active ? ` ${styles.active}` : ''}${className ? ` ${className}` : ''}`}
+            className={cx(styles.root, active ? styles.active : '', className)}
             onClick={handleOnClick}
         >
             {isCreating ? (

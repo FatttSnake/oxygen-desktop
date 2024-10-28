@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/pages/tools/index.module.less'
+import useStyles from '@/assets/css/pages/tools/index.style'
 import {
     DATABASE_DELETE_SUCCESS,
     DATABASE_SELECT_SUCCESS,
@@ -169,6 +169,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
             icon={selectedTool.icon}
             toolName={selectedTool.name}
             toolId={selectedTool.toolId}
+            toolDesc={selectedTool.description}
             ver={selectedTool.ver}
             platform={selectedTool.platform}
             onOpen={handleOnOpenTool}
@@ -179,7 +180,6 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
             onDelete={handleOnDeleteTool}
         >
             <AntdCascader
-                className={'version-select'}
                 size={'small'}
                 allowClear={false}
                 value={[
@@ -202,6 +202,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
 }
 
 const Tools = () => {
+    const { styles } = useStyles()
     const navigate = useNavigate()
     const [modal, contextHolder] = AntdModal.useModal()
     const [isLoading, setIsLoading] = useState(false)
@@ -565,7 +566,10 @@ const Tools = () => {
                         </FlexBox>
                         {starToolData.length ? (
                             <>
-                                <FlexBox className={styles.favoriteDivider}>
+                                <FlexBox
+                                    direction={'horizontal'}
+                                    className={styles.favoriteDivider}
+                                >
                                     <div />
                                     <div className={styles.dividerText}>收藏</div>
                                     <div />

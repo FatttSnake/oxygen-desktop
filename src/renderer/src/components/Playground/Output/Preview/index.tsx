@@ -1,4 +1,4 @@
-import styles from '@/components/Playground/Output/Preview/index.module.less'
+import useStyles from '@/components/Playground/Output/Preview/index.style'
 import { IFiles, IImportMap } from '@/components/Playground/shared'
 import Compiler from '@/components/Playground/compiler'
 import Render from '@/components/Playground/Output/Preview/Render'
@@ -22,6 +22,7 @@ const Preview = ({
     postExpansionCode = '',
     mobileMode = false
 }: PreviewProps) => {
+    const { styles } = useStyles()
     const [errorMsg, setErrorMsg] = useState('')
     const [compiledCode, setCompiledCode] = useState('')
 

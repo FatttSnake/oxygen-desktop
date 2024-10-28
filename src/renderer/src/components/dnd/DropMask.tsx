@@ -1,7 +1,9 @@
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/components/dnd/drop-mask.module.less'
+import useStyles from '@/assets/css/components/dnd/drop-mask.style'
 
 const DropMask = () => {
+    const { styles } = useStyles()
+
     return (
         <div className={styles.root}>
             <div className={styles.dropMaskBorder}>

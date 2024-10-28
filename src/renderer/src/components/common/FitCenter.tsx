@@ -1,16 +1,20 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import styles from '@/assets/css/components/common/fit-center.module.less'
+import useStyles from '@/assets/css/components/common/fit-center.style'
 
 interface FitCenterProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     vertical?: boolean
 }
 
 const FitCenter = ({ className, vertical, ...props }: FitCenterProps) => {
+    const { styles, cx } = useStyles()
+
     return (
         <div
-            className={`${styles.fitCenter}${className ? ` ${className}` : ''}${
+            className={cx(
+                styles.fitCenter,
+                className,
                 vertical ? ' flex-vertical' : ' flex-horizontal'
-            }`}
+            )}
             {...props}
         />
     )

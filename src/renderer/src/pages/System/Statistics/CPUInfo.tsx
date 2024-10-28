@@ -1,5 +1,6 @@
 import * as echarts from 'echarts/core'
 import { BarSeriesOption } from 'echarts/charts'
+import useStyles from '@/assets/css/pages/system/statistics/common.style'
 import { r_sys_statistics_cpu } from '@/services/system'
 import FlexBox from '@/components/common/FlexBox'
 import {
@@ -10,6 +11,7 @@ import {
 import StatisticsCard from '@/components/system/StatisticsCard'
 
 const CPUInfo = () => {
+    const { styles } = useStyles()
     const keyDivRef = useRef<HTMLDivElement>(null)
     const percentDivRef = useRef<HTMLDivElement>(null)
     const cpuInfoDivRef = useRef<HTMLDivElement>(null)
@@ -167,10 +169,10 @@ const CPUInfo = () => {
                     </AntdSelect>
                 }
             >
-                <FlexBox className={'card-content'} direction={'horizontal'}>
-                    <FlexBox className={'key'} ref={keyDivRef} />
-                    <FlexBox className={'value-chart'} ref={cpuInfoDivRef} />
-                    <FlexBox className={'value-percent'} ref={percentDivRef} />
+                <FlexBox className={styles.content} direction={'horizontal'}>
+                    <FlexBox className={styles.key} ref={keyDivRef} />
+                    <FlexBox className={styles.chartValue} ref={cpuInfoDivRef} />
+                    <FlexBox className={styles.percentValue} ref={percentDivRef} />
                 </FlexBox>
             </StatisticsCard>
         </>

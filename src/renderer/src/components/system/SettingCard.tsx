@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/components/system/setting-card.module.less'
+import useStyles from '@/assets/css/components/system/setting-card.style'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import Permission from '@/components/common/Permission'
@@ -16,9 +16,11 @@ interface SettingsCardProps extends PropsWithChildren {
     onSave?: () => void
 }
 export const SettingsCard = (props: SettingsCardProps) => {
+    const { styles } = useStyles()
+
     return (
-        <Card className={styles.root}>
-            <FlexBox className={styles.settingsCard}>
+        <Card>
+            <FlexBox className={styles.root}>
                 <FlexBox direction={'horizontal'} className={styles.head}>
                     <Icon component={props.icon} className={styles.icon} />
                     <div className={styles.title}>{props.title}</div>

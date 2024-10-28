@@ -1,5 +1,6 @@
 import { CSSProperties, PropsWithChildren } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
+import useStyles from '@/assets/css/components/dnd/sortable.style'
 import { HandleContext, HandleContextInst } from '@/components/dnd/HandleContext'
 
 interface SortableProps extends PropsWithChildren {
@@ -9,6 +10,7 @@ interface SortableProps extends PropsWithChildren {
 }
 
 const Sortable = ({ id, data, isDelete, children }: SortableProps) => {
+    const { styles } = useStyles()
     const {
         attributes,
         isDragging,
@@ -43,7 +45,7 @@ const Sortable = ({ id, data, isDelete, children }: SortableProps) => {
             <div
                 ref={draggableRef}
                 style={style}
-                className={isDragging && isDelete ? 'delete' : undefined}
+                className={isDragging && isDelete ? styles.delete : undefined}
             >
                 {children}
             </div>

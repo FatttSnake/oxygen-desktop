@@ -1,4 +1,4 @@
-import styles from '@/assets/css/pages/system/index.module.less'
+import useStyles from '@/assets/css/pages/system/index.style'
 import HideScrollbar from '@/components/common/HideScrollbar'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import FlexBox from '@/components/common/FlexBox'
@@ -6,11 +6,13 @@ import Permission from '@/components/common/Permission'
 import UrlCard from '@/components/common/UrlCard'
 
 const System = () => {
+    const { styles } = useStyles()
+
     return (
         <>
-            <FitFullscreen className={styles.root}>
+            <FitFullscreen>
                 <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
-                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
+                    <FlexBox direction={'horizontal'} className={styles.root}>
                         <Permission path={'/system/statistics'}>
                             <UrlCard icon={IconOxygenAnalysis} url={'statistics'}>
                                 系统概况

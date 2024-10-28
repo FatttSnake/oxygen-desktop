@@ -1,6 +1,5 @@
 import { ChangeEvent } from 'react'
-import styles from '@/components/Playground/Output/Preview/render.module.less'
-import { COLOR_FONT_MAIN } from '@/constants/common.constants'
+import useStyles from '@/components/Playground/Output/Preview/render.style'
 import iframeRaw from '@/components/Playground/Output/Preview/iframe.html?raw'
 import HideScrollbar from '@/components/common/HideScrollbar'
 
@@ -41,6 +40,7 @@ const getIframeUrl = (iframeRaw: string) => {
 const iframeUrl = getIframeUrl(iframeRaw)
 
 const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) => {
+    const { styles, theme, cx } = useStyles()
     const iframeRef = useRef<HTMLIFrameElement>(null)
     const [isLoaded, setIsLoaded] = useState(false)
     const [selectedDevice, setSelectedDevice] = useState('Pixel 7')
@@ -164,7 +164,7 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
             iframeRef.current?.contentWindow?.postMessage(
                 {
                     type: 'SCALE',
-                    data: { zoom: zoom }
+                    data: { zoom }
                 } as IMessage,
                 '*'
             )
@@ -180,12 +180,18 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                 autoHideWaitingTime={1000}
             >
                 <div className={styles.mobileModeContent} style={{ zoom }}>
-                    <div className={`${styles.device}${isRotate ? ` ${styles.rotate}` : ''}`}>
+                    <div className={cx(styles.device, isRotate ? styles.rotate : '')}>
                         <div
-                            className={`${styles.deviceHeader}${isRotate ? ` ${styles.rotate}` : ''}`}
+                            className={cx(
+                                styles.deviceHeader,
+                                isRotate ? styles.rotatedDeviceHeader : ''
+                            )}
                         />
                         <div
-                            className={`${styles.deviceContent}${isRotate ? ` ${styles.rotate}` : ''}`}
+                            className={cx(
+                                styles.deviceContent,
+                                isRotate ? styles.rotatedDeviceContent : ''
+                            )}
                             style={{
                                 width: isRotate
                                     ? (devices.find((value) => value.name === selectedDevice)
@@ -210,14 +216,17 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                             />
                         </div>
                         <div
-                            className={`${styles.deviceFooter}${isRotate ? ` ${styles.rotate}` : ''}`}
+                            className={cx(
+                                styles.deviceFooter,
+                                isRotate ? styles.rotatedDeviceFooter : ''
+                            )}
                         />
                     </div>
                 </div>
             </HideScrollbar>
 
             <div className={styles.switchDevice}>
-                <IconOxygenMobile fill={COLOR_FONT_MAIN} />
+                <IconOxygenMobile fill={theme.colorText} />
                 <select value={selectedDevice} onChange={handleOnChangeDevice}>
                     {devices.map((value) => (
                         <option value={value.name}>{value.name}</option>
@@ -225,14 +234,14 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
                 </select>
                 <div title={'旋转屏幕'} onClick={handleOnRotateDevice}>
                     {isRotate ? (
-                        <IconOxygenRotateRight fill={COLOR_FONT_MAIN} />
+                        <IconOxygenRotateRight fill={theme.colorText} />
                     ) : (
-                        <IconOxygenRotateLeft fill={COLOR_FONT_MAIN} />
+                        <IconOxygenRotateLeft fill={theme.colorText} />
                     )}
                 </div>
             </div>
             <div className={styles.switchZoom}>
-                <IconOxygenZoom fill={COLOR_FONT_MAIN} />
+                <IconOxygenZoom fill={theme.colorText} />
                 <input
                     type={'range'}
                     min={0.5}

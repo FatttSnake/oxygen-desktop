@@ -1,4 +1,4 @@
-import styles from '@/assets/css/pages/tools/view.module.less'
+import useStyles from '@/assets/css/pages/tools/view.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
 import {
@@ -16,6 +16,7 @@ import Playground from '@/components/Playground'
 import Card from '@/components/common/Card'
 
 const View = () => {
+    const { styles } = useStyles()
     const navigate = useNavigate()
     const { username, toolId, ver } = useParams()
     const [searchParams] = useSearchParams({
@@ -137,7 +138,7 @@ const View = () => {
 
     return (
         <FitFullscreen className={styles.root}>
-            <Card className={styles.rootBox}>
+            <Card className={styles.content}>
                 <Playground.Output.Preview.Render
                     iframeKey={`${username}:${toolId}:${ver}`}
                     compiledCode={compiledCode}

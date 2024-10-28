@@ -1,7 +1,10 @@
 import { ReactNode, MouseEvent } from 'react'
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/components/common/sidebar.module.less'
-import Submenu from '@/components/common/Sidebar/Submenu'
+import useStyles from '@/assets/css/components/common/sidebar/item.style'
+import { SidebarContext } from '@/components/common/Sidebar/index'
+import Submenu, { SubmenuContext } from '@/components/common/Sidebar/Submenu'
+
+export const ItemContext = createContext({ isHover: false })
 
 type ItemProps = {
     icon?: IconComponent | string
@@ -13,6 +16,10 @@ type ItemProps = {
 }
 
 const Item = (props: ItemProps) => {
+    const { styles, cx } = useStyles()
+    const { isCollapse } = useContext(SidebarContext)
+    const { isInSubmenu } = useContext(SubmenuContext)
+    const [isHover, setIsHover] = useState(false)
     const [submenuTop, setSubmenuTop] = useState(Number.MAX_VALUE)
     const [submenuLeft, setSubmenuLeft] = useState(Number.MAX_VALUE)
 
@@ -34,34 +41,52 @@ const Item = (props: ItemProps) => {
     }
 
     return (
-        <li className={styles.item}>
-            <div className={styles.menuBt} onMouseEnter={showSubmenu}>
-                <NavLink
-                    end={props.end}
-                    to={props.path}
-                    className={({ isActive, isPending }) =>
-                        isPending ? 'pending' : isActive ? `${styles.active}` : ''
-                    }
-                >
-                    {props.icon && (
-                        <div className={styles.iconBox}>
-                            {typeof props.icon === 'string' ? (
-                                <img src={`data:image/svg+xml;base64,${props.icon}`} alt={'icon'} />
-                            ) : (
-                                <Icon component={props.icon} />
+        <ItemContext.Provider value={{ isHover }}>
+            <li
+                className={cx(styles.item, isInSubmenu ? styles.submenuItem : '')}
+                onMouseOver={() => setIsHover(true)}
+                onMouseLeave={() => setIsHover(false)}
+            >
+                <div className={cx(styles.menuBt, 'dnd-delete-mask')} onMouseEnter={showSubmenu}>
+                    <NavLink
+                        end={props.end}
+                        to={props.path}
+                        className={({ isActive, isPending }) =>
+                            isPending ? 'pending' : isActive ? `${styles.active}` : ''
+                        }
+                    >
+                        {props.icon && (
+                            <div className={styles.icon}>
+                                {typeof props.icon === 'string' ? (
+                                    <img
+                                        src={`data:image/svg+xml;base64,${props.icon}`}
+                                        alt={'icon'}
+                                    />
+                                ) : (
+                                    <Icon component={props.icon} />
+                                )}
+                            </div>
+                        )}
+                        <span
+                            className={cx(
+                                styles.text,
+                                isCollapse && !isInSubmenu ? styles.collapsedText : ''
                             )}
+                        >
+                            {props.text}
+                        </span>
+                        <div className={isCollapse ? styles.collapsedExtend : ''}>
+                            {props.extend}
                         </div>
-                    )}
-                    <span className={styles.text}>{props.text}</span>
-                    <div className={styles.extend}>{props.extend}</div>
-                </NavLink>
-            </div>
-            {props.children && (
-                <Submenu submenuTop={submenuTop} submenuLeft={submenuLeft}>
-                    {props.children}
-                </Submenu>
-            )}
-        </li>
+                    </NavLink>
+                </div>
+                {props.children && (
+                    <Submenu submenuTop={submenuTop} submenuLeft={submenuLeft}>
+                        {props.children}
+                    </Submenu>
+                )}
+            </li>
+        </ItemContext.Provider>
     )
 }
 

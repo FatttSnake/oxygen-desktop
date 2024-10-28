@@ -1,6 +1,6 @@
 import MonacoEditor from '@monaco-editor/react'
 import { Loader } from 'esbuild-wasm'
-import styles from '@/components/Playground/Output/Transform/index.module.less'
+import useStyles from '@/components/Playground/Output/Transform/index.style'
 import { IFile, ITheme } from '@/components/Playground/shared'
 import { cssToJsFromFile, jsonToJsFromFile } from '@/components/Playground/files'
 import Compiler from '@/components/Playground/compiler'
@@ -12,6 +12,7 @@ interface OutputProps {
 }
 
 const Transform = ({ file, theme }: OutputProps) => {
+    const { styles } = useStyles()
     const [compiledCode, setCompiledCode] = useState('')
     const [errorMsg, setErrorMsg] = useState('')
 

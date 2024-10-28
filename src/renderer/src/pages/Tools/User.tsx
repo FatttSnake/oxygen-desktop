@@ -1,10 +1,6 @@
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/pages/tools/user.module.less'
-import {
-    COLOR_BACKGROUND,
-    DATABASE_NO_RECORD_FOUND,
-    DATABASE_SELECT_SUCCESS
-} from '@/constants/common.constants'
+import useStyles from '@/assets/css/pages/tools/user.style'
+import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { navigateToRoot } from '@/util/navigation'
 import { r_sys_user_info_get_basic } from '@/services/system'
@@ -17,6 +13,7 @@ import StoreCard from '@/components/tools/StoreCard'
 import LoadMoreCard from '@/components/tools/LoadMoreCard'
 
 const User = () => {
+    const { styles, theme } = useStyles()
     const { username } = useParams()
     const navigate = useNavigate()
     const [isLoading, setIsLoading] = useState(false)
@@ -126,7 +123,7 @@ const User = () => {
                     autoHideWaitingTime={1000}
                     className={styles.root}
                 >
-                    <Card className={styles.rootBox}>
+                    <Card className={styles.content}>
                         <FlexBox className={styles.info} direction={'horizontal'}>
                             <div className={styles.avatarBox}>
                                 <AntdAvatar
@@ -138,7 +135,7 @@ const User = () => {
                                     }
                                     size={144}
                                     style={{
-                                        background: COLOR_BACKGROUND,
+                                        background: theme.colorBgLayout,
                                         cursor: 'pointer'
                                     }}
                                     className={styles.avatar}

@@ -1,9 +1,10 @@
-import styles from '@/assets/css/pages/tools/source.module.less'
+import useStyles from '@/assets/css/pages/tools/source.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { getLoginStatus } from '@/util/auth'
 import { navigateToRepository, navigateToSource } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_tool_detail } from '@/services/tool'
+import { AppContext } from '@/App'
 import { IFiles } from '@/components/Playground/shared'
 import { base64ToFiles } from '@/components/Playground/files'
 import Playground from '@/components/Playground'
@@ -11,6 +12,8 @@ import FitFullscreen from '@/components/common/FitFullscreen'
 import Card from '@/components/common/Card'
 
 const Source = () => {
+    const { styles } = useStyles()
+    const { isDarkMode } = useContext(AppContext)
     const navigate = useNavigate()
     const { username, toolId, ver } = useParams()
     const [searchParams] = useSearchParams({
@@ -85,8 +88,9 @@ const Source = () => {
 
     return (
         <FitFullscreen className={styles.root}>
-            <Card className={styles.rootBox}>
+            <Card className={styles.content}>
                 <Playground.CodeEditor
+                    isDarkMode={isDarkMode}
                     readonly
                     files={files}
                     selectedFileName={selectedFileName}

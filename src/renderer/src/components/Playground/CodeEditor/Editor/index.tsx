@@ -1,8 +1,8 @@
 import { editor, Selection } from 'monaco-editor'
 import MonacoEditor, { Monaco } from '@monaco-editor/react'
-import styles from '@/components/Playground/CodeEditor/Editor/index.module.less'
+import useStyles from '@/components/Playground/CodeEditor/Editor/index.style'
 import '@/components/Playground/CodeEditor/Editor/loader'
-import { IEditorOptions, IFiles, ITheme, ITsconfig } from '@/components/Playground/shared'
+import { IEditorOptions, IFiles, ITsconfig } from '@/components/Playground/shared'
 import { fileNameToLanguage, tsconfigJsonDiagnosticsOptions } from '@/components/Playground/files'
 import { useEditor, useTypesProgress } from '@/components/Playground/CodeEditor/Editor/hooks'
 import { MonacoEditorConfig } from '@/components/Playground/CodeEditor/Editor/monacoConfig'
@@ -13,28 +13,29 @@ export interface ExtraLib {
 }
 
 interface EditorProps {
+    isDarkMode?: boolean
     tsconfig?: ITsconfig
     files?: IFiles
     selectedFileName?: string
     readonly?: boolean
     onChange?: (code: string | undefined) => void
     options?: IEditorOptions
-    theme?: ITheme
     onJumpFile?: (fileName: string) => void
     extraLibs?: ExtraLib[]
 }
 
 const Editor = ({
+    isDarkMode,
     tsconfig,
     files = {},
     selectedFileName = '',
     readonly,
-    theme,
     onChange,
     options,
     onJumpFile,
     extraLibs = []
 }: EditorProps) => {
+    const { styles } = useStyles()
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
     const monacoRef = useRef<Monaco>()
     const { doOpenEditor, loadJsxSyntaxHighlight, autoLoadExtraLib } = useEditor()
@@ -114,9 +115,9 @@ const Editor = ({
         <>
             <div className={styles.root}>
                 <MonacoEditor
-                    theme={theme}
+                    theme={isDarkMode ? 'vs-dark' : 'light'}
                     path={file.name}
-                    className={`monaco-editor-${theme ?? 'light'}`}
+                    className={`monaco-editor-${isDarkMode ? 'dark' : 'light'}`}
                     language={file.language}
                     value={file.value}
                     onChange={onChange}
@@ -129,7 +130,7 @@ const Editor = ({
                         readOnly: readonly
                     }}
                 />
-                {total > 0 && !finished && <div className={styles.playgroundCodeEditorLoading} />}
+                {total > 0 && !finished && <div className={styles.loading} />}
             </div>
         </>
     )

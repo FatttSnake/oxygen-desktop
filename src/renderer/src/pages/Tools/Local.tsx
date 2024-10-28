@@ -1,5 +1,5 @@
 import { UIEvent } from 'react'
-import styles from '@/assets/css/pages/tools/local.module.less'
+import useStyles from '@/assets/css/pages/tools/local.style'
 import { checkDesktop } from '@/util/common'
 import { l_tool_get } from '@/services/tool'
 import FlexBox from '@/components/common/FlexBox'
@@ -8,6 +8,7 @@ import HideScrollbar from '@/components/common/HideScrollbar'
 import LocalCard from '@/components/tools/LocalCard'
 
 const Local = () => {
+    const { styles, cx } = useStyles()
     const scrollTopRef = useRef(0)
     const [isLoading, setIsLoading] = useState(false)
     const [toolData, setToolData] = useState<ToolVo[]>([])
@@ -65,13 +66,13 @@ const Local = () => {
 
     return (
         <>
-            <FitFullscreen className={styles.root}>
+            <FitFullscreen>
                 <HideScrollbar
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}
                     onScroll={handleOnScroll}
                 >
-                    <div className={`${styles.search}${isHideSearch ? ` ${styles.hide}` : ''}`}>
+                    <div className={cx(styles.search, isHideSearch ? styles.hide : '')}>
                         <AntdInput.Search
                             enterButton
                             allowClear
@@ -80,7 +81,7 @@ const Local = () => {
                             placeholder={'请输入工具名或关键字'}
                         />
                     </div>
-                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
+                    <FlexBox direction={'horizontal'} className={styles.root}>
                         {!toolData.length && <div className={styles.noTool}>未找到任何工具</div>}
                         {toolData
                             ?.reduce((previousValue: ToolVo[], currentValue) => {

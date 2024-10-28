@@ -1,5 +1,5 @@
 import { UIEvent } from 'react'
-import styles from '@/assets/css/pages/tools/store.module.less'
+import useStyles from '@/assets/css/pages/tools/store.style'
 import { DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
 import { checkDesktop } from '@/util/common'
 import { r_tool_store_get } from '@/services/tool'
@@ -10,6 +10,7 @@ import StoreCard from '@/components/tools/StoreCard'
 import LoadMoreCard from '@/components/tools/LoadMoreCard'
 
 const Store = () => {
+    const { styles, cx } = useStyles()
     const scrollTopRef = useRef(0)
     const [isLoading, setIsLoading] = useState(false)
     const [currentPage, setCurrentPage] = useState(0)
@@ -83,13 +84,13 @@ const Store = () => {
 
     return (
         <>
-            <FitFullscreen className={styles.root}>
+            <FitFullscreen>
                 <HideScrollbar
                     isShowVerticalScrollbar
                     autoHideWaitingTime={1000}
                     onScroll={handleOnScroll}
                 >
-                    <div className={`${styles.search}${isHideSearch ? ` ${styles.hide}` : ''}`}>
+                    <div className={cx(styles.search, isHideSearch ? styles.hide : '')}>
                         <AntdInput.Search
                             enterButton
                             allowClear
@@ -98,7 +99,7 @@ const Store = () => {
                             placeholder={'请输入工具名或关键字'}
                         />
                     </div>
-                    <FlexBox direction={'horizontal'} className={styles.rootContent}>
+                    <FlexBox direction={'horizontal'} className={styles.root}>
                         {!toolData.length && <div className={styles.noTool}>未找到任何工具</div>}
                         {toolData
                             ?.reduce((previousValue: ToolVo[], currentValue) => {

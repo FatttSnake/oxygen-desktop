@@ -1,9 +1,6 @@
 import Icon from '@ant-design/icons'
-import styles from '@/assets/css/pages/user/index.module.less'
+import useStyles from '@/assets/css/pages/user/index.style'
 import {
-    COLOR_BACKGROUND,
-    COLOR_ERROR,
-    COLOR_PRODUCTION,
     DATABASE_UPDATE_SUCCESS,
     PERMISSION_ACCESS_DENIED,
     PERMISSION_LOGIN_USERNAME_PASSWORD_ERROR
@@ -23,6 +20,7 @@ import FlexBox from '@/components/common/FlexBox'
 import HideScrollbar from '@/components/common/HideScrollbar'
 
 const User = () => {
+    const { styles, theme } = useStyles()
     const [modal, contextHolder] = AntdModal.useModal()
     const [form] = AntdForm.useForm<UserInfoUpdateParam>()
     const formValues = AntdForm.useWatch([], form)
@@ -103,7 +101,7 @@ const User = () => {
             title: (
                 <>
                     <Icon
-                        style={{ color: COLOR_PRODUCTION, marginRight: 10 }}
+                        style={{ color: theme.colorPrimary, marginRight: 10 }}
                         component={IconOxygenSetting}
                     />
                     修改密码
@@ -189,7 +187,7 @@ const User = () => {
                                             icon: (
                                                 <Icon
                                                     component={IconOxygenExit}
-                                                    style={{ color: COLOR_ERROR }}
+                                                    style={{ color: theme.colorErrorText }}
                                                 />
                                             )
                                         })
@@ -469,7 +467,7 @@ const User = () => {
                                         }
                                         size={144}
                                         style={{
-                                            background: COLOR_BACKGROUND,
+                                            background: theme.colorBgLayout,
                                             cursor: 'pointer'
                                         }}
                                         className={styles.avatar}
@@ -494,25 +492,23 @@ const User = () => {
                                 </a>
                             </FlexBox>
                         </FlexBox>
-                        <FlexBox className={styles.title}>
-                            <FlexBox direction={'horizontal'} className={styles.content}>
-                                <div className={styles.text}>档案管理</div>
-                                <FlexBox className={styles.operation} direction={'horizontal'}>
-                                    <AntdButton onClick={handleOnReset} loading={isLoading}>
-                                        重置
-                                    </AntdButton>
-                                    <AntdButton
-                                        onClick={handleOnSave}
-                                        type={'primary'}
-                                        disabled={isLoading || !isSubmittable}
-                                    >
-                                        保存
-                                    </AntdButton>
-                                </FlexBox>
+                        <FlexBox direction={'horizontal'} className={styles.header}>
+                            <div className={styles.title}>档案管理</div>
+                            <FlexBox className={styles.operation} direction={'horizontal'}>
+                                <AntdButton onClick={handleOnReset} loading={isLoading}>
+                                    重置
+                                </AntdButton>
+                                <AntdButton
+                                    onClick={handleOnSave}
+                                    type={'primary'}
+                                    disabled={isLoading || !isSubmittable}
+                                >
+                                    保存
+                                </AntdButton>
                             </FlexBox>
                         </FlexBox>
-                        <div className={styles.divide} />
-                        <FlexBox className={styles.profile}>
+                        <div className={styles.divider} />
+                        <FlexBox className={styles.list}>
                             <FlexBox className={styles.row} direction={'horizontal'}>
                                 <div className={styles.label}>昵称</div>
                                 <div className={styles.input}>
@@ -562,8 +558,8 @@ const User = () => {
                                 </div>
                             </FlexBox>
                         </FlexBox>
-                        <div className={styles.divide} />
-                        <FlexBox className={styles.security}>
+                        <div className={styles.divider} />
+                        <FlexBox className={styles.list}>
                             <FlexBox className={styles.row} direction={'horizontal'}>
                                 <div className={styles.label}>上次登录 IP</div>
                                 <div className={styles.input}>
@@ -605,7 +601,7 @@ const User = () => {
                                             disabled
                                             style={{
                                                 color: userWithPowerInfoVo?.twoFactor
-                                                    ? COLOR_PRODUCTION
+                                                    ? theme.colorPrimary
                                                     : undefined
                                             }}
                                             value={

@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import * as echarts from 'echarts/core'
+import useStyles from '@/assets/css/pages/system/statistics/common.style'
 import { getTimesBetweenTwoTimes } from '@/util/datetime'
 import { r_sys_statistics_active } from '@/services/system'
 import FlexBox from '@/components/common/FlexBox'
@@ -7,6 +8,7 @@ import { getTooltipTimeFormatter, lineEChartsBaseOption } from '@/pages/System/S
 import StatisticsCard from '@/components/system/StatisticsCard'
 
 const ActiveInfo = () => {
+    const { styles } = useStyles()
     const activeInfoDivRef = useRef<HTMLDivElement>(null)
     const activeInfoEChartsRef = useRef<echarts.EChartsType | null>(null)
     const [isLoading, setIsLoading] = useState(false)
@@ -180,8 +182,8 @@ const ActiveInfo = () => {
                 </>
             }
         >
-            <FlexBox className={'card-content'} direction={'horizontal'}>
-                <div className={'big-chart'} ref={activeInfoDivRef} />
+            <FlexBox className={styles.content} direction={'horizontal'}>
+                <div className={styles.bigChart} ref={activeInfoDivRef} />
             </FlexBox>
         </StatisticsCard>
     )

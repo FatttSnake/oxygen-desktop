@@ -1,7 +1,7 @@
 import { DndContext, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
-import styles from '@/assets/css/pages/tools-framework.module.less'
+import useStyles from '@/assets/css/pages/tools-framework.style'
 import { tools } from '@/router/tools'
 import { checkDesktop, getToolMenuItem, saveToolMenuItem } from '@/util/common'
 import { getViewPath } from '@/util/navigation'
@@ -15,6 +15,7 @@ import DropMask from '@/components/dnd/DropMask'
 import Droppable from '@/components/dnd/Droppable'
 
 const ToolsFramework = () => {
+    const { styles } = useStyles()
     const [isDelete, setIsDelete] = useState(false)
     const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
     const [activeItem, setActiveItem] = useState<ToolMenuItem | null>(null)
@@ -86,7 +87,7 @@ const ToolsFramework = () => {
 
     return (
         <>
-            <FitFullscreen className={`${styles.root} flex-horizontal`}>
+            <FitFullscreen className={'flex-horizontal'}>
                 <DndContext
                     onDragStart={handleOnDragStart}
                     onDragOver={handleOnDragOver}

@@ -1,6 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
-import styles from '@/assets/css/components/tools/repository-card.module.less'
+import useStyles from '@/assets/css/components/tools/repository-card.style'
+import { omitTextByByte } from '@/util/common'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import Draggable from '@/components/dnd/Draggable'
@@ -11,6 +12,7 @@ interface RepositoryCardProps
     icon: string
     toolName: string
     toolId: string
+    toolDesc?: string
     ver: string
     platform: Platform
     options?: TiltOptions
@@ -28,6 +30,7 @@ const RepositoryCard = ({
     icon,
     toolName,
     toolId,
+    toolDesc,
     ver,
     platform,
     options = {
@@ -46,6 +49,7 @@ const RepositoryCard = ({
     children,
     ...props
 }: RepositoryCardProps) => {
+    const { styles } = useStyles()
     const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -57,13 +61,8 @@ const RepositoryCard = ({
             id={`!:${toolId}:${ver}:${platform}`}
             data={{ icon, toolName, toolId, authorUsername: '!', ver, platform }}
         >
-            <Card
-                className={styles.root}
-                style={{ overflow: 'visible', ...style }}
-                ref={cardRef}
-                {...props}
-            >
-                <FlexBox className={styles.repositoryCard}>
+            <Card style={{ ...style }} ref={cardRef} {...props}>
+                <FlexBox className={styles.root}>
                     <div className={styles.header}>
                         {children}
                         <DragHandle />
@@ -72,8 +71,13 @@ const RepositoryCard = ({
                         <img src={`data:image/svg+xml;base64,${icon}`} alt={'Icon'} />
                     </div>
                     <div className={styles.info}>
-                        <div className={styles.toolName}>{toolName}</div>
+                        <div className={styles.toolName} title={toolName}>
+                            {toolName}
+                        </div>
                         <div>{`ID: ${toolId}`}</div>
+                        <div className={styles.toolDesc} title={toolDesc}>
+                            {toolDesc && omitTextByByte(toolDesc, 64)}
+                        </div>
                     </div>
                     <div className={styles.operation}>
                         {onOpen && (

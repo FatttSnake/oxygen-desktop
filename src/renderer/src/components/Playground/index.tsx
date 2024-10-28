@@ -1,4 +1,4 @@
-import styles from '@/components/Playground/index.module.less'
+import useStyles from '@/components/Playground/index.style'
 import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
 import {
     ENTRY_FILE_NAME,
@@ -11,6 +11,7 @@ import CodeEditor from '@/components/Playground/CodeEditor'
 import Output from '@/components/Playground/Output'
 
 interface PlaygroundProps {
+    isDarkMode?: boolean
     initFiles: IFiles
     initImportMapRaw: string
     initTsconfigRaw: string
@@ -18,11 +19,13 @@ interface PlaygroundProps {
 }
 
 const Playground = ({
+    isDarkMode,
     initFiles,
     initImportMapRaw,
     initTsconfigRaw,
     entryPoint = ENTRY_FILE_NAME
 }: PlaygroundProps) => {
+    const { styles } = useStyles()
     const [files, setFiles] = useState(initFiles)
     const [selectedFileName, setSelectedFileName] = useState(MAIN_FILE_NAME)
     const [importMapRaw, setImportMapRaw] = useState<string>(initImportMapRaw)
@@ -79,6 +82,7 @@ const Playground = ({
     return (
         <FlexBox className={styles.root} direction={'horizontal'}>
             <CodeEditor
+                isDarkMode={isDarkMode}
                 tsconfig={tsconfig}
                 files={{
                     ...files,

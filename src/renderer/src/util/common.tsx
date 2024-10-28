@@ -154,3 +154,42 @@ export const omitText = (text: string, length: number) => {
     }
     return `${text.substring(0, length)}...`
 }
+
+const getByteLength = (str: string) => {
+    let length = 0
+    for (let i = 0; i < str.length; i++) {
+        if (str.charCodeAt(i) > 255) {
+            length += 2
+        } else {
+            length++
+        }
+    }
+
+    return length
+}
+
+const substringByByte = (str: string, start: number, length: number) => {
+    let byteLength = 0
+    let result = ''
+
+    for (let i = 0; i < str.length; i++) {
+        const charCode = str.charCodeAt(i)
+        byteLength += charCode > 255 ? 2 : 1
+
+        if (byteLength > start + length) {
+            break
+        } else if (byteLength > start) {
+            result += str[i]
+        }
+    }
+
+    return result
+}
+
+export const omitTextByByte = (text: string, length: number) => {
+    console.log(getByteLength(text))
+    if (getByteLength(text) <= length) {
+        return text
+    }
+    return `${substringByByte(text, 0, length)}...`
+}

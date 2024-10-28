@@ -1,7 +1,7 @@
 import _ from 'lodash'
-import styles from '@/components/Playground/CodeEditor/index.module.less'
+import useStyles from '@/components/Playground/CodeEditor/index.style'
 import FlexBox from '@/components/common/FlexBox'
-import { IEditorOptions, IFiles, ITheme, ITsconfig } from '@/components/Playground/shared'
+import { IEditorOptions, IFiles, ITsconfig } from '@/components/Playground/shared'
 import {
     fileNameToLanguage,
     getFileNameList,
@@ -12,7 +12,7 @@ import FileSelector from '@/components/Playground/CodeEditor/FileSelector'
 import Editor, { ExtraLib } from '@/components/Playground/CodeEditor/Editor'
 
 interface CodeEditorProps {
-    theme?: ITheme
+    isDarkMode?: boolean
     showFileSelector?: boolean
     tsconfig?: ITsconfig
     files: IFiles
@@ -31,7 +31,7 @@ interface CodeEditorProps {
 }
 
 const CodeEditor = ({
-    theme,
+    isDarkMode,
     showFileSelector = true,
     tsconfig,
     files,
@@ -48,6 +48,7 @@ const CodeEditor = ({
     extraLibs,
     ...props
 }: CodeEditorProps) => {
+    const { styles } = useStyles()
     const filteredFilesName = getFileNameList(files).filter(
         (item) => ![IMPORT_MAP_FILE_NAME, TS_CONFIG_FILE_NAME].includes(item) && !files[item].hidden
     )
@@ -139,8 +140,8 @@ const CodeEditor = ({
                     />
                 )}
                 <Editor
+                    isDarkMode={isDarkMode}
                     tsconfig={tsconfig}
-                    theme={theme}
                     selectedFileName={
                         onSelectedFileChange ? propsSelectedFileName : selectedFileName
                     }

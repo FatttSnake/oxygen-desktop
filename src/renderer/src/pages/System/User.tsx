@@ -1,10 +1,8 @@
 import { ChangeEvent, Key, KeyboardEvent } from 'react'
 import Icon from '@ant-design/icons'
+import { useTheme } from 'antd-style'
 import dayjs from 'dayjs'
 import {
-    COLOR_BACKGROUND,
-    COLOR_ERROR_SECONDARY,
-    COLOR_PRODUCTION,
     DATABASE_DELETE_SUCCESS,
     DATABASE_DUPLICATE_KEY,
     DATABASE_INSERT_SUCCESS,
@@ -36,6 +34,7 @@ interface ChangePasswordFields extends UserUpdatePasswordParam {
 }
 
 const User = () => {
+    const theme = useTheme()
     const [modal, contextHolder] = AntdModal.useModal()
 
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -93,7 +92,7 @@ const User = () => {
                             alt={'Avatar'}
                         />
                     }
-                    style={{ background: COLOR_BACKGROUND }}
+                    style={{ background: theme.colorBgLayout }}
                 />
             ),
             width: '0',
@@ -197,7 +196,7 @@ const User = () => {
                     <AntdSpace size={'middle'}>
                         <Permission operationCode={['system:user:modify:password']}>
                             <a
-                                style={{ color: COLOR_PRODUCTION }}
+                                style={{ color: theme.colorPrimary }}
                                 onClick={handleOnChangePasswordBtnClick(record)}
                             >
                                 更改密码
@@ -205,7 +204,7 @@ const User = () => {
                         </Permission>
                         <Permission operationCode={['system:user:modify:one']}>
                             <a
-                                style={{ color: COLOR_PRODUCTION }}
+                                style={{ color: theme.colorPrimary }}
                                 onClick={handleOnEditBtnClick(record)}
                             >
                                 编辑
@@ -214,7 +213,7 @@ const User = () => {
                         <Permission operationCode={['system:user:delete:one']}>
                             {record.id !== '0' && (
                                 <a
-                                    style={{ color: COLOR_PRODUCTION }}
+                                    style={{ color: theme.colorPrimary }}
                                     onClick={handleOnDeleteBtnClick(record)}
                                 >
                                     删除
@@ -333,7 +332,7 @@ const User = () => {
                 title: (
                     <>
                         <Icon
-                            style={{ color: COLOR_PRODUCTION, marginRight: 10 }}
+                            style={{ color: theme.colorPrimary, marginRight: 10 }}
                             component={IconOxygenSetting}
                         />
                         修改用户 {value.username} 的密码
@@ -787,7 +786,7 @@ const User = () => {
                             />
                         }
                         size={100}
-                        style={{ background: COLOR_BACKGROUND, cursor: 'pointer' }}
+                        style={{ background: theme.colorBgLayout, cursor: 'pointer' }}
                         onClick={getAvatar}
                     />
                 </AntdTooltip>
@@ -942,7 +941,7 @@ const User = () => {
                     suffix={
                         <>
                             {!isRegexLegal && (
-                                <span style={{ color: COLOR_ERROR_SECONDARY }}>非法表达式</span>
+                                <span style={{ color: theme.colorErrorText }}>非法表达式</span>
                             )}
                             <AntdCheckbox checked={isUseRegex} onChange={handleOnUseRegexChange}>
                                 <AntdTooltip title={'正则表达式'}>.*</AntdTooltip>
