@@ -1,6 +1,6 @@
 import useStyles from '@/assets/css/pages/tools/view.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { message } from '@/util/common'
+import { checkDesktop, message } from '@/util/common'
 import { getLoginStatus } from '@/util/auth'
 import {
     navigateToInstall,
@@ -25,10 +25,21 @@ const View = () => {
     })
     const [isLoading, setIsLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
-    const [isAndroid, setIsAndroid] = useState(false)
+    const [isMobileMode, setIsMobileMode] = useState(false)
 
     const render = (toolVo: ToolVo) => {
-        setIsAndroid(toolVo.platform === 'ANDROID')
+        switch (toolVo.platform) {
+            case 'ANDROID':
+                setIsMobileMode(true)
+                break
+            case 'DESKTOP':
+                if (!checkDesktop()) {
+                    message.warning('此应用需要桌面端环境，请在桌面端打开').then(() => {
+                        navigateToRepository(navigate)
+                    })
+                    return
+                }
+        }
         if (username === '!') {
             try {
                 const baseDist = base64ToStr(toolVo.base.dist.data!)
@@ -145,7 +156,7 @@ const View = () => {
                 <Playground.Output.Preview.Render
                     iframeKey={`${username}:${toolId}:${ver}`}
                     compiledCode={compiledCode}
-                    mobileMode={isAndroid}
+                    mobileMode={isMobileMode}
                 />
             </Card>
         </FitFullscreen>

@@ -1,6 +1,6 @@
 import useStyles from '@/assets/css/pages/system/tools/execute.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { message } from '@/util/common'
+import { checkDesktop, message } from '@/util/common'
 import { navigateToTools } from '@/util/navigation'
 import { r_sys_tool_get_one } from '@/services/system'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -20,7 +20,18 @@ const Execute = () => {
 
     const render = (toolVo: ToolVo) => {
         try {
-            setIsMobileMode(toolVo.platform === 'ANDROID')
+            switch (toolVo.platform) {
+                case 'ANDROID':
+                    setIsMobileMode(true)
+                    break
+                case 'DESKTOP':
+                    if (!checkDesktop()) {
+                        message.warning('此应用需要桌面端环境，请在桌面端打开').then(() => {
+                            navigateToTools(navigate)
+                        })
+                        return
+                    }
+            }
 
             const baseDist = base64ToStr(toolVo.base.dist.data!)
             const files = base64ToFiles(toolVo.source.data!)
@@ -58,8 +69,9 @@ const Execute = () => {
                         render(response.data!)
                         break
                     case DATABASE_NO_RECORD_FOUND:
-                        void message.error('未找到指定工具')
-                        navigateToTools(navigate)
+                        message.error('未找到指定工具').then(() => {
+                            navigateToTools(navigate)
+                        })
                         break
                     default:
                         void message.error('获取工具信息失败，请稍后重试')
