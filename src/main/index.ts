@@ -4,6 +4,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../build/icon.ico?asset'
 import path from 'node:path'
 import url from 'node:url'
+import fs from 'fs'
 
 let mainWindow: BrowserWindow
 
@@ -105,8 +106,19 @@ void app.whenReady().then(() => {
     protocol.handle('local', (request) => {
         const { host } = new URL(request.url)
         if (host === 'oxygen.fatweb.top') {
-            const filePath = request.url.slice('local://oxygen.fatweb.top/'.length)
-            return net.fetch(url.pathToFileURL(filePath).toString())
+            let filePath = request.url.slice('local://oxygen.fatweb.top/'.length)
+            if (fs.existsSync(filePath)) {
+                return net.fetch(url.pathToFileURL(filePath).toString())
+            }
+
+            filePath = join(join(__dirname, '../renderer'), filePath)
+            if (fs.existsSync(filePath)) {
+                return net.fetch(url.pathToFileURL(filePath).toString())
+            }
+
+            return net.fetch(
+                url.pathToFileURL(join(__dirname, '../renderer/index.html')).toString()
+            )
         } else {
             const filePath = request.url.slice('local://'.length)
             return net.fetch(url.pathToFileURL(filePath).toString())
