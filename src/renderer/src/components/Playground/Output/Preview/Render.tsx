@@ -58,15 +58,16 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
     }
 
     useEffect(() => {
-        if (isLoaded) {
-            iframeRef.current?.contentWindow?.postMessage(
-                {
-                    type: 'UPDATE',
-                    data: { compiledCode }
-                } as IMessage,
-                '*'
-            )
+        if (!isLoaded) {
+            return
         }
+        iframeRef.current?.contentWindow?.postMessage(
+            {
+                type: 'UPDATE',
+                data: { compiledCode }
+            } as IMessage,
+            '*'
+        )
     }, [isLoaded, compiledCode])
 
     return mobileMode ? (

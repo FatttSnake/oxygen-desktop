@@ -38,7 +38,7 @@ const Simulation = ({ data }: NodeProps<SimulationNode>) => {
                     ref={data.iframeRef}
                     src={data.iframeUrl}
                     onLoad={() => data.setIsLoaded(true)}
-                    sandbox="allow-downloads allow-forms allow-modals allow-scripts"
+                    sandbox={'allow-downloads allow-forms allow-modals allow-scripts'}
                     allow={'clipboard-read; clipboard-write'}
                 />
             </div>
