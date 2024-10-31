@@ -16,9 +16,12 @@ const Execute = () => {
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
+    const [isMobileMode, setIsMobileMode] = useState(false)
 
     const render = (toolVo: ToolVo) => {
         try {
+            setIsMobileMode(toolVo.platform === 'ANDROID')
+
             const baseDist = base64ToStr(toolVo.base.dist.data!)
             const files = base64ToFiles(toolVo.source.data!)
             const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
@@ -75,7 +78,11 @@ const Execute = () => {
     return (
         <FitFullscreen className={styles.root}>
             <Card className={styles.rootBox}>
-                <Playground.Output.Preview.Render iframeKey={`${id}`} compiledCode={compiledCode} />
+                <Playground.Output.Preview.Render
+                    iframeKey={`${id}`}
+                    compiledCode={compiledCode}
+                    mobileMode={isMobileMode}
+                />
             </Card>
         </FitFullscreen>
     )
