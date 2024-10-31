@@ -262,7 +262,9 @@ const SignIn = () => {
                     <FlexBox direction={'horizontal'} className={styles.addition}>
                         <a
                             onClick={() => {
-                                navigateToRoot(navigate)
+                                setTimeout(() => {
+                                    navigateToRoot(navigate)
+                                })
                             }}
                         >
                             返回主页
