@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Preview</title>
-  <!-- es-module-shims -->
 </head>
 <body>
 <script>
@@ -35,10 +34,6 @@
       };
       document.body.appendChild(script);
       URL.revokeObjectURL(oldSrc);
-    }
-
-    if (data?.type === "SCALE") {
-      document.getElementById("root").style.zoom = data.data.zoom;
     }
   });
 </script>

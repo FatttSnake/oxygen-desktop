@@ -1,7 +1,11 @@
-import { ChangeEvent } from 'react'
+import Icon from '@ant-design/icons'
+import { Background, Controls, MiniMap, Node, Panel, ReactFlow } from '@xyflow/react'
+import '@xyflow/react/dist/style.css'
+import { AppContext } from '@/App'
 import useStyles from '@/components/Playground/Output/Preview/render.style'
 import iframeRaw from '@/components/Playground/Output/Preview/iframe.html?raw'
-import HideScrollbar from '@/components/common/HideScrollbar'
+import devices, { DeviceName } from '@/components/Playground/Output/Preview/devices'
+import Simulation, { SimulationData } from '@/components/Playground/Output/Preview/Simulation'
 
 interface RenderProps {
     iframeKey: string
@@ -10,7 +14,7 @@ interface RenderProps {
 }
 
 interface IMessage {
-    type: 'LOADED' | 'ERROR' | 'UPDATE' | 'DONE' | 'SCALE'
+    type: 'LOADED' | 'ERROR' | 'UPDATE' | 'DONE'
     msg: string
     data: {
         compiledCode?: string
@@ -18,130 +22,36 @@ interface IMessage {
     }
 }
 
-interface IDevice {
-    name: string
-    width: number
-    height: number
-}
-
 const getIframeUrl = (iframeRaw: string) => {
-    const shimsUrl = '//unpkg.com/es-module-shims/dist/es-module-shims.js'
-    // 判断浏览器是否支持esm ，不支持esm就引入es-module-shims
-    const newIframeRaw =
-        typeof import.meta === 'undefined'
-            ? iframeRaw.replace(
-                  '<!-- es-module-shims -->',
-                  `<script async src="${shimsUrl}"></script>`
-              )
-            : iframeRaw
-    return URL.createObjectURL(new Blob([newIframeRaw], { type: 'text/html' }))
+    return URL.createObjectURL(new Blob([iframeRaw], { type: 'text/html' }))
 }
 
 const iframeUrl = getIframeUrl(iframeRaw)
 
 const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) => {
-    const { styles, theme, cx } = useStyles()
+    const { styles, theme } = useStyles()
+    const { isDarkMode } = useContext(AppContext)
     const iframeRef = useRef<HTMLIFrameElement>(null)
     const [isLoaded, setIsLoaded] = useState(false)
-    const [selectedDevice, setSelectedDevice] = useState('Pixel 7')
-    const [zoom, setZoom] = useState(1)
+    const [selectedDevice, setSelectedDevice] = useState<DeviceName>('Pixel 7')
     const [isRotate, setIsRotate] = useState(false)
 
-    const devices: IDevice[] = [
+    const nodes: Node<SimulationData>[] = [
         {
-            name: 'iPhone SE',
-            width: 375,
-            height: 667
-        },
-        {
-            name: 'iPhone XR',
-            width: 414,
-            height: 896
-        },
-        {
-            name: 'iPhone 12 Pro',
-            width: 390,
-            height: 844
-        },
-        {
-            name: 'iPhone 14 Pro Max',
-            width: 430,
-            height: 932
-        },
-        {
-            name: 'Pixel 7',
-            width: 412,
-            height: 915
-        },
-        {
-            name: 'Samsung Galaxy S8+',
-            width: 360,
-            height: 740
-        },
-        {
-            name: 'Samsung Galaxy S20 Ultra',
-            width: 412,
-            height: 915
-        },
-        {
-            name: 'iPad Mini',
-            width: 768,
-            height: 1024
-        },
-        {
-            name: 'iPad Air',
-            width: 820,
-            height: 1180
-        },
-        {
-            name: 'iPad Pro',
-            width: 1024,
-            height: 1366
-        },
-        {
-            name: 'Surface Pro 7',
-            width: 912,
-            height: 1368
-        },
-        {
-            name: 'Surface Duo',
-            width: 540,
-            height: 720
-        },
-        {
-            name: 'Galaxy Fold',
-            width: 280,
-            height: 653
-        },
-        {
-            name: 'Asus Zenbook Fold',
-            width: 853,
-            height: 1280
-        },
-        {
-            name: 'Samsung Galaxy A51/71',
-            width: 412,
-            height: 914
-        },
-        {
-            name: 'Nest Hub',
-            width: 1024,
-            height: 600
-        },
-        {
-            name: 'Nest Hub Max',
-            width: 1280,
-            height: 800
+            id: 'device',
+            type: 'simulation',
+            position: { x: 0, y: 0 },
+            data: {
+                deviceWidth: devices[selectedDevice].width,
+                deviceHeight: devices[selectedDevice].height,
+                isRotate,
+                iframeKey,
+                iframeRef,
+                iframeUrl,
+                setIsLoaded
+            }
         }
     ]
-
-    const handleOnChangeDevice = (e: ChangeEvent<HTMLSelectElement>) => {
-        setSelectedDevice(e.target.value)
-    }
-
-    const handleOnChangeZoom = (e: ChangeEvent<HTMLInputElement>) => {
-        setZoom(Number(e.target.value))
-    }
 
     const handleOnRotateDevice = () => {
         setIsRotate(!isRotate)
@@ -159,98 +69,44 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
         }
     }, [isLoaded, compiledCode])
 
-    useEffect(() => {
-        if (isLoaded) {
-            iframeRef.current?.contentWindow?.postMessage(
-                {
-                    type: 'SCALE',
-                    data: { zoom }
-                } as IMessage,
-                '*'
-            )
-        }
-    }, [isLoaded, zoom])
-
     return mobileMode ? (
         <>
-            <HideScrollbar
-                className={styles.mobileModeRoot}
-                isShowVerticalScrollbar
-                isShowHorizontalScrollbar
-                autoHideWaitingTime={1000}
+            <ReactFlow
+                colorMode={isDarkMode ? 'dark' : 'light'}
+                nodeTypes={{ simulation: Simulation }}
+                nodes={nodes}
+                proOptions={{ hideAttribution: true }}
+                fitView
             >
-                <div className={styles.mobileModeContent} style={{ zoom }}>
-                    <div className={cx(styles.device, isRotate ? styles.rotate : '')}>
-                        <div
-                            className={cx(
-                                styles.deviceHeader,
-                                isRotate ? styles.rotatedDeviceHeader : ''
-                            )}
+                <Background bgColor={theme.colorBgLayout} />
+                <MiniMap bgColor={theme.colorBgMask} zoomStep={1} pannable zoomable />
+                <Controls />
+                <Panel>
+                    <AntdSpace>
+                        <AntdSelect
+                            size={'small'}
+                            options={Object.values(devices).map((item) => ({
+                                label: item.name,
+                                value: item.name
+                            }))}
+                            value={selectedDevice}
+                            onChange={setSelectedDevice}
                         />
-                        <div
-                            className={cx(
-                                styles.deviceContent,
-                                isRotate ? styles.rotatedDeviceContent : ''
-                            )}
-                            style={{
-                                width: isRotate
-                                    ? (devices.find((value) => value.name === selectedDevice)
-                                          ?.height ?? 915)
-                                    : (devices.find((value) => value.name === selectedDevice)
-                                          ?.width ?? 412),
-                                height: isRotate
-                                    ? (devices.find((value) => value.name === selectedDevice)
-                                          ?.width ?? 412)
-                                    : (devices.find((value) => value.name === selectedDevice)
-                                          ?.height ?? 915)
-                            }}
-                        >
-                            <iframe
-                                className={styles.renderRoot}
-                                key={iframeKey}
-                                ref={iframeRef}
-                                src={iframeUrl}
-                                onLoad={() => setIsLoaded(true)}
-                                sandbox="allow-downloads allow-forms allow-modals allow-scripts"
-                                allow={'clipboard-read; clipboard-write'}
-                            />
-                        </div>
-                        <div
-                            className={cx(
-                                styles.deviceFooter,
-                                isRotate ? styles.rotatedDeviceFooter : ''
-                            )}
+                        <AntdButton
+                            size={'small'}
+                            title={'旋转屏幕'}
+                            onClick={handleOnRotateDevice}
+                            icon={
+                                <Icon
+                                    component={
+                                        isRotate ? IconOxygenRotateRight : IconOxygenRotateLeft
+                                    }
+                                />
+                            }
                         />
-                    </div>
-                </div>
-            </HideScrollbar>
-
-            <div className={styles.switchDevice}>
-                <IconOxygenMobile fill={theme.colorText} />
-                <select value={selectedDevice} onChange={handleOnChangeDevice}>
-                    {devices.map((value) => (
-                        <option value={value.name}>{value.name}</option>
-                    ))}
-                </select>
-                <div title={'旋转屏幕'} onClick={handleOnRotateDevice}>
-                    {isRotate ? (
-                        <IconOxygenRotateRight fill={theme.colorText} />
-                    ) : (
-                        <IconOxygenRotateLeft fill={theme.colorText} />
-                    )}
-                </div>
-            </div>
-            <div className={styles.switchZoom}>
-                <IconOxygenZoom fill={theme.colorText} />
-                <input
-                    type={'range'}
-                    min={0.5}
-                    max={2}
-                    step={0.1}
-                    value={zoom}
-                    onChange={handleOnChangeZoom}
-                />
-            </div>
+                    </AntdSpace>
+                </Panel>
+            </ReactFlow>
         </>
     ) : (
         <iframe
