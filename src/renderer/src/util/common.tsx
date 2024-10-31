@@ -215,7 +215,6 @@ const substringByByte = (str: string, start: number, length: number) => {
 }
 
 export const omitTextByByte = (text: string, length: number) => {
-    console.log(getByteLength(text))
     if (getByteLength(text) <= length) {
         return text
     }
