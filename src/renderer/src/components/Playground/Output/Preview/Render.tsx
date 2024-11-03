@@ -99,7 +99,7 @@ const Render = ({
                 }
             }
         ])
-    }, [])
+    }, [selectedDevice, isRotate, iframeKey, iframeRef, iframeUrl, setIsLoaded])
 
     return mobileMode ? (
         <>
