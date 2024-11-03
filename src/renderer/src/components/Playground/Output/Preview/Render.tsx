@@ -45,23 +45,7 @@ const Render = ({
     const [isLoaded, setIsLoaded] = useState(false)
     const [selectedDevice, setSelectedDevice] = useState<DeviceName>('Pixel 7')
     const [isRotate, setIsRotate] = useState(false)
-
-    const nodes: Node<SimulationData>[] = [
-        {
-            id: 'device',
-            type: 'simulation',
-            position: { x: 0, y: 0 },
-            data: {
-                deviceWidth: devices[selectedDevice].width,
-                deviceHeight: devices[selectedDevice].height,
-                isRotate,
-                iframeKey,
-                iframeRef,
-                iframeUrl,
-                setIsLoaded
-            }
-        }
-    ]
+    const [nodes, setNodes] = useState<Node<SimulationData>[]>([])
 
     const handleOnRotateDevice = () => {
         setIsRotate(!isRotate)
@@ -97,6 +81,25 @@ const Render = ({
         }
         loadGlobalVariables()
     }, [isLoaded, globalJsVariables, globalCssVariables])
+
+    useEffect(() => {
+        setNodes([
+            {
+                id: 'device',
+                type: 'simulation',
+                position: { x: 0, y: 0 },
+                data: {
+                    deviceWidth: devices[selectedDevice].width,
+                    deviceHeight: devices[selectedDevice].height,
+                    isRotate,
+                    iframeKey,
+                    iframeRef,
+                    iframeUrl,
+                    setIsLoaded
+                }
+            }
+        ])
+    }, [])
 
     return mobileMode ? (
         <>
