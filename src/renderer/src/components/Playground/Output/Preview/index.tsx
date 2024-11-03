@@ -11,6 +11,8 @@ interface PreviewProps {
     preExpansionCode?: string
     postExpansionCode?: string
     mobileMode?: boolean
+    globalJsVariables?: Record<string, unknown>
+    globalCssVariables?: string
 }
 
 const Preview = ({
@@ -20,7 +22,9 @@ const Preview = ({
     entryPoint,
     preExpansionCode = '',
     postExpansionCode = '',
-    mobileMode = false
+    mobileMode = false,
+    globalJsVariables,
+    globalCssVariables
 }: PreviewProps) => {
     const { styles } = useStyles()
     const [errorMsg, setErrorMsg] = useState('')
@@ -44,7 +48,13 @@ const Preview = ({
 
     return (
         <div className={styles.root}>
-            <Render iframeKey={iframeKey} compiledCode={compiledCode} mobileMode={mobileMode} />
+            <Render
+                iframeKey={iframeKey}
+                compiledCode={compiledCode}
+                mobileMode={mobileMode}
+                globalJsVariables={globalJsVariables}
+                globalCssVariables={globalCssVariables}
+            />
             {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
         </div>
     )

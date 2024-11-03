@@ -5,7 +5,7 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS
 } from '@/constants/common.constants'
-import { message } from '@/util/common'
+import { generateThemeCssVariables, message, removeUselessAttributes } from '@/util/common'
 import { navigateToEdit } from '@/util/navigation'
 import {
     r_tool_category_get,
@@ -13,6 +13,7 @@ import {
     r_tool_template_get,
     r_tool_template_get_one
 } from '@/services/tool'
+import { AppContext } from '@/App'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'
 import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '@/components/Playground/files'
@@ -23,7 +24,8 @@ import HideScrollbar from '@/components/common/HideScrollbar'
 import Playground from '@/components/Playground'
 
 const Create = () => {
-    const { styles } = useStyles()
+    const { styles, theme } = useStyles()
+    const { isDarkMode } = useContext(AppContext)
     const navigate = useNavigate()
     const [form] = AntdForm.useForm<ToolCreateParam>()
     const formValues = AntdForm.useWatch([], form)
@@ -380,6 +382,10 @@ const Create = () => {
                                 iframeKey={previewTemplate}
                                 compiledCode={compiledCode}
                                 mobileMode={formValues.platform === 'ANDROID'}
+                                globalJsVariables={{
+                                    OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
+                                }}
+                                globalCssVariables={generateThemeCssVariables(theme).styles}
                             />
                         ) : (
                             <span className={styles.noPreview}>暂无预览</span>

@@ -1,8 +1,14 @@
 import useStyles from '@/assets/css/pages/system/tools/execute.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { checkDesktop, message } from '@/util/common'
+import {
+    checkDesktop,
+    generateThemeCssVariables,
+    message,
+    removeUselessAttributes
+} from '@/util/common'
 import { navigateToTools } from '@/util/navigation'
 import { r_sys_tool_get_one } from '@/services/system'
+import { AppContext } from '@/App'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import Card from '@/components/common/Card'
 import Playground from '@/components/Playground'
@@ -11,7 +17,8 @@ import { IImportMap } from '@/components/Playground/shared'
 import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '@/components/Playground/files'
 
 const Execute = () => {
-    const { styles } = useStyles()
+    const { styles, theme } = useStyles()
+    const { isDarkMode } = useContext(AppContext)
     const navigate = useNavigate()
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState(false)
@@ -94,6 +101,10 @@ const Execute = () => {
                     iframeKey={`${id}`}
                     compiledCode={compiledCode}
                     mobileMode={isMobileMode}
+                    globalJsVariables={{
+                        OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
+                    }}
+                    globalCssVariables={generateThemeCssVariables(theme).styles}
                 />
             </Card>
         </FitFullscreen>

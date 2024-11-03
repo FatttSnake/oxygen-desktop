@@ -1,6 +1,6 @@
 import useStyles from '@/assets/css/pages/tools/source.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { addExtraCssVariable, message } from '@/util/common'
+import { addExtraCssVariables, message } from '@/util/common'
 import { getLoginStatus } from '@/util/auth'
 import { navigateToRepository, navigateToSource } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
@@ -98,7 +98,7 @@ const Source = () => {
                     selectedFileName={selectedFileName}
                     onSelectedFileChange={setSelectedFileName}
                     extraLibs={editorExtraLibs}
-                    onEditorDidMount={(_, monaco) => addExtraCssVariable(monaco)}
+                    onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
                 />
             </Card>
         </FitFullscreen>

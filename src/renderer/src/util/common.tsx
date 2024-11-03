@@ -4,7 +4,7 @@ import { Monaco } from '@monaco-editor/react'
 import { MessageInstance } from 'antd/es/message/interface'
 import { HookAPI } from 'antd/es/modal/useModal'
 import { NotificationInstance } from 'antd/es/notification/interface'
-import { Theme, css } from 'antd-style'
+import { css, AntdToken, Theme } from 'antd-style'
 import { floor } from 'lodash'
 import {
     STORAGE_COLLAPSE_SIDEBAR_KEY,
@@ -300,8 +300,6 @@ const cssVariables: string[] = [
     'zIndexBase',
     'zIndexPopupBase',
     'opacityImage',
-    'wireframe',
-    'motion',
     'colorLinkHover',
     'colorText',
     'colorTextSecondary',
@@ -485,7 +483,7 @@ const cssVariables: string[] = [
     'screenXXLMin'
 ]
 
-export const generateThemeCssVariable = (theme: Omit<Theme, 'prefixCls'>) => {
+export const generateThemeCssVariables = (theme: AntdToken) => {
     const cssContent = cssVariables
         .map((variable) => `--${variable}: ${theme[variable]};`)
         .join('\n')
@@ -497,7 +495,7 @@ export const generateThemeCssVariable = (theme: Omit<Theme, 'prefixCls'>) => {
     `
 }
 
-export const addExtraCssVariable = (monaco: Monaco) => {
+export const addExtraCssVariables = (monaco: Monaco) => {
     monaco.languages.registerCompletionItemProvider('css', {
         provideCompletionItems: (
             model: editor.ITextModel,
@@ -534,4 +532,26 @@ export const addExtraCssVariable = (monaco: Monaco) => {
             }
         }
     })
+}
+
+export const removeUselessAttributes = (theme: Omit<Theme, 'prefixCls'>) => {
+    const {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        Tree,
+        appearance,
+        browserPrefers,
+        isDarkMode,
+        setAppearance,
+        setThemeMode,
+        stylish,
+        themeMode,
+        wireframe,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        _tokenKey,
+        ...result
+    } = theme
+
+    return result
 }

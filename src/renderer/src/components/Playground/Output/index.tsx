@@ -13,6 +13,8 @@ interface OutputProps {
     preExpansionCode?: string
     postExpansionCode?: string
     mobileMode?: boolean
+    globalJsVariables?: Record<string, unknown>
+    globalCssVariables?: string
 }
 
 const Output = ({
@@ -23,7 +25,9 @@ const Output = ({
     entryPoint,
     preExpansionCode,
     postExpansionCode,
-    mobileMode = false
+    mobileMode = false,
+    globalJsVariables,
+    globalCssVariables
 }: OutputProps) => {
     const [selectedTab, setSelectedTab] = useState('Preview')
 
@@ -47,6 +51,8 @@ const Output = ({
                     preExpansionCode={preExpansionCode}
                     postExpansionCode={postExpansionCode}
                     mobileMode={mobileMode}
+                    globalJsVariables={globalJsVariables}
+                    globalCssVariables={globalCssVariables}
                 />
             )}
             {selectedTab === 'Transform' && (

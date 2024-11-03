@@ -8,7 +8,12 @@ import {
     TOOL_HAS_BEEN_PUBLISHED,
     TOOL_UNDER_REVIEW
 } from '@/constants/common.constants'
-import { addExtraCssVariable, message } from '@/util/common'
+import {
+    addExtraCssVariables,
+    generateThemeCssVariables,
+    message,
+    removeUselessAttributes
+} from '@/util/common'
 import { navigateToRepository } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_tool_category_get, r_tool_detail, r_tool_update } from '@/services/tool'
@@ -28,7 +33,7 @@ import LoadingMask from '@/components/common/LoadingMask'
 import Card from '@/components/common/Card'
 
 const Edit = () => {
-    const { styles } = useStyles()
+    const { styles, theme } = useStyles()
     const { isDarkMode } = useContext(AppContext)
     const blocker = useBlocker(
         ({ currentLocation, nextLocation }) =>
@@ -457,7 +462,7 @@ const Edit = () => {
                                 onChangeFileContent={handleOnChangeFileContent}
                                 onSelectedFileChange={setSelectedFileName}
                                 extraLibs={editorExtraLibs}
-                                onEditorDidMount={(_, monaco) => addExtraCssVariable(monaco)}
+                                onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
                             />
                             <Playground.Output
                                 isDarkMode={isDarkMode}
@@ -467,6 +472,10 @@ const Edit = () => {
                                 entryPoint={entryPoint}
                                 postExpansionCode={baseDist}
                                 mobileMode={toolData?.platform === 'ANDROID'}
+                                globalJsVariables={{
+                                    OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
+                                }}
+                                globalCssVariables={generateThemeCssVariables(theme).styles}
                             />
                         </LoadingMask>
                         {isShowDraggableMask && <div className={styles.draggableMask} />}

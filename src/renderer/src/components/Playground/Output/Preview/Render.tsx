@@ -2,7 +2,6 @@ import Icon from '@ant-design/icons'
 import { Background, Controls, MiniMap, Node, Panel, ReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { AppContext } from '@/App'
-import { generateThemeCssVariable } from '@/util/common'
 import useStyles from '@/components/Playground/Output/Preview/render.style'
 import iframeRaw from '@/components/Playground/Output/Preview/iframe.html?raw'
 import devices, { DeviceName } from '@/components/Playground/Output/Preview/devices'
@@ -12,15 +11,18 @@ interface RenderProps {
     iframeKey: string
     compiledCode: string
     mobileMode?: boolean
+    globalJsVariables?: Record<string, unknown>
+    globalCssVariables?: string
 }
 
 interface IMessage {
-    type: 'LOADED' | 'ERROR' | 'UPDATE' | 'DONE' | 'THEME'
+    type: 'LOADED' | 'ERROR' | 'UPDATE' | 'DONE' | 'GLOBAL_VARIABLES'
     msg: string
     data: {
         compiledCode?: string
         zoom?: number
-        themeSrc?: string
+        globalJsVariables?: Record<string, unknown>
+        globalCssVariables?: string
     }
 }
 
@@ -30,7 +32,13 @@ const getIframeUrl = (iframeRaw: string) => {
 
 const iframeUrl = getIframeUrl(iframeRaw)
 
-const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) => {
+const Render = ({
+    iframeKey,
+    compiledCode,
+    mobileMode = false,
+    globalJsVariables,
+    globalCssVariables
+}: RenderProps) => {
     const { styles, theme } = useStyles()
     const { isDarkMode } = useContext(AppContext)
     const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -59,11 +67,11 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
         setIsRotate(!isRotate)
     }
 
-    const loadTheme = () => {
+    const loadGlobalVariables = () => {
         iframeRef.current?.contentWindow?.postMessage(
             {
-                type: 'THEME',
-                data: { themeSrc: generateThemeCssVariable(theme).styles }
+                type: 'GLOBAL_VARIABLES',
+                data: { globalJsVariables, globalCssVariables }
             } as IMessage,
             '*'
         )
@@ -80,15 +88,15 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
             } as IMessage,
             '*'
         )
-        loadTheme()
+        loadGlobalVariables()
     }, [isLoaded, compiledCode])
 
     useEffect(() => {
         if (!isLoaded) {
             return
         }
-        loadTheme()
-    }, [isLoaded, isDarkMode])
+        loadGlobalVariables()
+    }, [isLoaded, globalJsVariables, globalCssVariables])
 
     return mobileMode ? (
         <>
