@@ -2,7 +2,7 @@ import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { message, modal, checkDesktop } from '@/util/common'
+import { message, modal, checkDesktop, addExtraCssVariable } from '@/util/common'
 import { navigateToExecute, navigateToRepository } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_sys_tool_get_one } from '@/services/system'
@@ -93,6 +93,7 @@ const Code = () => {
                         selectedFileName={selectedFileName}
                         onSelectedFileChange={setSelectedFileName}
                         extraLibs={editorExtraLibs}
+                        onEditorDidMount={(_, monaco) => addExtraCssVariable(monaco)}
                     />
                 </Card>
 

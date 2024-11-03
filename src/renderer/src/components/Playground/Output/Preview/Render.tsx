@@ -2,6 +2,7 @@ import Icon from '@ant-design/icons'
 import { Background, Controls, MiniMap, Node, Panel, ReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { AppContext } from '@/App'
+import { generateThemeCssVariable } from '@/util/common'
 import useStyles from '@/components/Playground/Output/Preview/render.style'
 import iframeRaw from '@/components/Playground/Output/Preview/iframe.html?raw'
 import devices, { DeviceName } from '@/components/Playground/Output/Preview/devices'
@@ -14,11 +15,12 @@ interface RenderProps {
 }
 
 interface IMessage {
-    type: 'LOADED' | 'ERROR' | 'UPDATE' | 'DONE'
+    type: 'LOADED' | 'ERROR' | 'UPDATE' | 'DONE' | 'THEME'
     msg: string
     data: {
         compiledCode?: string
         zoom?: number
+        themeSrc?: string
     }
 }
 
@@ -57,6 +59,16 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
         setIsRotate(!isRotate)
     }
 
+    const loadTheme = () => {
+        iframeRef.current?.contentWindow?.postMessage(
+            {
+                type: 'THEME',
+                data: { themeSrc: generateThemeCssVariable(theme).styles }
+            } as IMessage,
+            '*'
+        )
+    }
+
     useEffect(() => {
         if (!isLoaded) {
             return
@@ -68,7 +80,15 @@ const Render = ({ iframeKey, compiledCode, mobileMode = false }: RenderProps) =>
             } as IMessage,
             '*'
         )
+        loadTheme()
     }, [isLoaded, compiledCode])
+
+    useEffect(() => {
+        if (!isLoaded) {
+            return
+        }
+        loadTheme()
+    }, [isLoaded, isDarkMode])
 
     return mobileMode ? (
         <>

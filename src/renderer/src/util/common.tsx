@@ -1,4 +1,10 @@
 import { createRoot } from 'react-dom/client'
+import { editor, languages, Position } from 'monaco-editor'
+import { Monaco } from '@monaco-editor/react'
+import { MessageInstance } from 'antd/es/message/interface'
+import { HookAPI } from 'antd/es/modal/useModal'
+import { NotificationInstance } from 'antd/es/notification/interface'
+import { Theme, css } from 'antd-style'
 import { floor } from 'lodash'
 import {
     STORAGE_COLLAPSE_SIDEBAR_KEY,
@@ -10,9 +16,6 @@ import {
 } from '@/constants/common.constants'
 import { getLocalStorage, setLocalStorage } from '@/util/browser'
 import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
-import { MessageInstance } from 'antd/es/message/interface'
-import { NotificationInstance } from 'antd/es/notification/interface'
-import { HookAPI } from 'antd/es/modal/useModal'
 
 export type ThemeMode = typeof THEME_FOLLOW_SYSTEM | typeof THEME_LIGHT | typeof THEME_DARK
 
@@ -240,4 +243,295 @@ export const getThemeMode = (): ThemeMode => {
 
 export const setThemeMode = (themeMode: ThemeMode) => {
     setLocalStorage(STORAGE_THEME_MODE_KEY, themeMode)
+}
+
+const cssColors = [
+    'blue',
+    'purple',
+    'cyan',
+    'green',
+    'magenta',
+    'pink',
+    'red',
+    'orange',
+    'yellow',
+    'volcano',
+    'geekblue',
+    'gold',
+    'lime'
+].reduce((prev: string[], current) => {
+    let temp: string[] = []
+    for (let i = 1; i <= 10; i++) {
+        temp = [...temp, `${current}${i}`]
+    }
+    return [...prev, current, ...temp]
+}, [])
+
+const cssVariables: string[] = [
+    ...cssColors,
+    'colorPrimary',
+    'colorSuccess',
+    'colorWarning',
+    'colorError',
+    'colorInfo',
+    'colorLink',
+    'colorTextBase',
+    'colorBgBase',
+    'fontFamily',
+    'fontFamilyCode',
+    'fontSize',
+    'lineWidth',
+    'lineType',
+    'motionUnit',
+    'motionBase',
+    'motionEaseOutCirc',
+    'motionEaseInOutCirc',
+    'motionEaseOut',
+    'motionEaseInOut',
+    'motionEaseOutBack',
+    'motionEaseInBack',
+    'motionEaseInQuint',
+    'motionEaseOutQuint',
+    'borderRadius',
+    'sizeUnit',
+    'sizeStep',
+    'sizePopupArrow',
+    'controlHeight',
+    'zIndexBase',
+    'zIndexPopupBase',
+    'opacityImage',
+    'wireframe',
+    'motion',
+    'colorLinkHover',
+    'colorText',
+    'colorTextSecondary',
+    'colorTextTertiary',
+    'colorTextQuaternary',
+    'colorFill',
+    'colorFillSecondary',
+    'colorFillTertiary',
+    'colorFillQuaternary',
+    'colorBgSolid',
+    'colorBgSolidHover',
+    'colorBgSolidActive',
+    'colorBgLayout',
+    'colorBgContainer',
+    'colorBgElevated',
+    'colorBgSpotlight',
+    'colorBgBlur',
+    'colorBorder',
+    'colorBorderSecondary',
+    'colorPrimaryBg',
+    'colorPrimaryBgHover',
+    'colorPrimaryBorder',
+    'colorPrimaryBorderHover',
+    'colorPrimaryHover',
+    'colorPrimaryActive',
+    'colorPrimaryTextHover',
+    'colorPrimaryText',
+    'colorPrimaryTextActive',
+    'colorSuccessBg',
+    'colorSuccessBgHover',
+    'colorSuccessBorder',
+    'colorSuccessBorderHover',
+    'colorSuccessHover',
+    'colorSuccessActive',
+    'colorSuccessTextHover',
+    'colorSuccessText',
+    'colorSuccessTextActive',
+    'colorErrorBg',
+    'colorErrorBgHover',
+    'colorErrorBgFilledHover',
+    'colorErrorBgActive',
+    'colorErrorBorder',
+    'colorErrorBorderHover',
+    'colorErrorHover',
+    'colorErrorActive',
+    'colorErrorTextHover',
+    'colorErrorText',
+    'colorErrorTextActive',
+    'colorWarningBg',
+    'colorWarningBgHover',
+    'colorWarningBorder',
+    'colorWarningBorderHover',
+    'colorWarningHover',
+    'colorWarningActive',
+    'colorWarningTextHover',
+    'colorWarningText',
+    'colorWarningTextActive',
+    'colorInfoBg',
+    'colorInfoBgHover',
+    'colorInfoBorder',
+    'colorInfoBorderHover',
+    'colorInfoHover',
+    'colorInfoActive',
+    'colorInfoTextHover',
+    'colorInfoText',
+    'colorInfoTextActive',
+    'colorLinkActive',
+    'colorBgMask',
+    'colorWhite',
+    'fontSizeSM',
+    'fontSizeLG',
+    'fontSizeXL',
+    'fontSizeHeading1',
+    'fontSizeHeading2',
+    'fontSizeHeading3',
+    'fontSizeHeading4',
+    'fontSizeHeading5',
+    'lineHeight',
+    'lineHeightLG',
+    'lineHeightSM',
+    'lineHeightHeading1',
+    'lineHeightHeading2',
+    'lineHeightHeading3',
+    'lineHeightHeading4',
+    'lineHeightHeading5',
+    'sizeXXL',
+    'sizeXL',
+    'sizeLG',
+    'sizeMD',
+    'sizeMS',
+    'size',
+    'sizeSM',
+    'sizeXS',
+    'sizeXXS',
+    'controlHeightSM',
+    'controlHeightXS',
+    'controlHeightLG',
+    'motionDurationFast',
+    'motionDurationMid',
+    'motionDurationSlow',
+    'lineWidthBold',
+    'borderRadiusXS',
+    'borderRadiusSM',
+    'borderRadiusLG',
+    'borderRadiusOuter',
+    'colorFillContent',
+    'colorFillContentHover',
+    'colorFillAlter',
+    'colorBgContainerDisabled',
+    'colorBorderBg',
+    'colorSplit',
+    'colorTextPlaceholder',
+    'colorTextDisabled',
+    'colorTextHeading',
+    'colorTextLabel',
+    'colorTextDescription',
+    'colorTextLightSolid',
+    'colorHighlight',
+    'colorBgTextHover',
+    'colorBgTextActive',
+    'colorIcon',
+    'colorIconHover',
+    'colorErrorOutline',
+    'colorWarningOutline',
+    'fontSizeIcon',
+    'lineWidthFocus',
+    'controlOutlineWidth',
+    'controlInteractiveSize',
+    'controlItemBgHover',
+    'controlItemBgActive',
+    'controlItemBgActiveHover',
+    'controlItemBgActiveDisabled',
+    'controlOutline',
+    'fontWeightStrong',
+    'opacityLoading',
+    'linkDecoration',
+    'linkHoverDecoration',
+    'linkFocusDecoration',
+    'controlPaddingHorizontal',
+    'controlPaddingHorizontalSM',
+    'paddingXXS',
+    'paddingXS',
+    'paddingSM',
+    'padding',
+    'paddingMD',
+    'paddingLG',
+    'paddingXL',
+    'paddingContentHorizontalLG',
+    'paddingContentVerticalLG',
+    'paddingContentHorizontal',
+    'paddingContentVertical',
+    'paddingContentHorizontalSM',
+    'paddingContentVerticalSM',
+    'marginXXS',
+    'marginXS',
+    'marginSM',
+    'margin',
+    'marginMD',
+    'marginLG',
+    'marginXL',
+    'marginXXL',
+    'boxShadow',
+    'boxShadowSecondary',
+    'boxShadowTertiary',
+    'screenXS',
+    'screenXSMin',
+    'screenXSMax',
+    'screenSM',
+    'screenSMMin',
+    'screenSMMax',
+    'screenMD',
+    'screenMDMin',
+    'screenMDMax',
+    'screenLG',
+    'screenLGMin',
+    'screenLGMax',
+    'screenXL',
+    'screenXLMin',
+    'screenXLMax',
+    'screenXXL',
+    'screenXXLMin'
+]
+
+export const generateThemeCssVariable = (theme: Omit<Theme, 'prefixCls'>) => {
+    const cssContent = cssVariables
+        .map((variable) => `--${variable}: ${theme[variable]};`)
+        .join('\n')
+
+    return css`
+        :root {
+            ${cssContent}
+        }
+    `
+}
+
+export const addExtraCssVariable = (monaco: Monaco) => {
+    monaco.languages.registerCompletionItemProvider('css', {
+        provideCompletionItems: (
+            model: editor.ITextModel,
+            position: Position
+        ): languages.ProviderResult<languages.CompletionList> => {
+            const textUntilPosition = model.getValueInRange({
+                startLineNumber: 1,
+                startColumn: 1,
+                endLineNumber: position.lineNumber,
+                endColumn: position.column
+            })
+            if (!textUntilPosition.match(/var\(([^)]*)$/)) {
+                return { suggestions: [] }
+            }
+
+            const word = model.getWordUntilPosition(position)
+            const range = new monaco.Range(
+                position.lineNumber,
+                word.startColumn,
+                position.lineNumber,
+                word.endColumn
+            )
+
+            return {
+                suggestions: cssVariables.map(
+                    (variable): languages.CompletionItem => ({
+                        label: `--${variable}`,
+                        kind: monaco.languages.CompletionItemKind.Variable,
+                        insertText: `--${variable}`,
+                        range,
+                        detail: 'Oxygen Theme Variable'
+                    })
+                )
+            }
+        }
+    })
 }

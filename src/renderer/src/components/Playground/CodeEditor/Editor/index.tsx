@@ -24,6 +24,7 @@ interface EditorProps {
     options?: IEditorOptions
     onJumpFile?: (fileName: string) => void
     extraLibs?: ExtraLib[]
+    onEditorDidMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void
 }
 
 const Editor = ({
@@ -35,7 +36,8 @@ const Editor = ({
     onChange,
     options,
     onJumpFile,
-    extraLibs = []
+    extraLibs = [],
+    onEditorDidMount
 }: EditorProps) => {
     const { styles } = useStyles()
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
@@ -95,6 +97,8 @@ const Editor = ({
         extraLibs.forEach((item) =>
             monaco.languages.typescript.typescriptDefaults.addExtraLib(item.content, item.path)
         )
+
+        onEditorDidMount?.(editor, monaco)
 
         void autoLoadExtraLib(editor, monaco, file.value, onWatch)
     }

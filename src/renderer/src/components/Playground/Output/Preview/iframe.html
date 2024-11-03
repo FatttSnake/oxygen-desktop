@@ -4,13 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Preview</title>
+  <style id="theme-variable"></style>
 </head>
 <body>
 <script>
   window.addEventListener("message", ({ data }) => {
     if (data?.type === "UPDATE") {
       // Record old styles that need to be removed
-      const appStyleElement = document.querySelectorAll("style:not(style[id$=\"_oxygen_base_style.css\"])") || [];
+      const appStyleElement = document.querySelectorAll("style:not(:is(style[id$=\"_oxygen_base_style.css\"], style[id=\"theme-variable\"]))") || [];
 
       // Remove old app
       const appSrcElement = document.querySelector("#appSrc");
@@ -34,6 +35,10 @@
       };
       document.body.appendChild(script);
       URL.revokeObjectURL(oldSrc);
+    }
+
+    if (data?.type === "THEME") {
+      document.querySelector("#theme-variable").textContent = data.data.themeSrc;
     }
   });
 </script>

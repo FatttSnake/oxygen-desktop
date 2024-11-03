@@ -8,7 +8,7 @@ import {
     TOOL_HAS_BEEN_PUBLISHED,
     TOOL_UNDER_REVIEW
 } from '@/constants/common.constants'
-import { message } from '@/util/common'
+import { addExtraCssVariable, message } from '@/util/common'
 import { navigateToRepository } from '@/util/navigation'
 import editorExtraLibs from '@/util/editorExtraLibs'
 import { r_tool_category_get, r_tool_detail, r_tool_update } from '@/services/tool'
@@ -457,6 +457,7 @@ const Edit = () => {
                                 onChangeFileContent={handleOnChangeFileContent}
                                 onSelectedFileChange={setSelectedFileName}
                                 extraLibs={editorExtraLibs}
+                                onEditorDidMount={(_, monaco) => addExtraCssVariable(monaco)}
                             />
                             <Playground.Output
                                 isDarkMode={isDarkMode}

@@ -1,3 +1,5 @@
+import { Monaco } from '@monaco-editor/react'
+import { editor } from 'monaco-editor'
 import _ from 'lodash'
 import useStyles from '@/components/Playground/CodeEditor/index.style'
 import FlexBox from '@/components/common/FlexBox'
@@ -22,6 +24,7 @@ interface CodeEditorProps {
     selectedFileName?: string
     options?: IEditorOptions
     extraLibs?: ExtraLib[]
+    onEditorDidMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void
     onSelectedFileChange?: (fileName: string) => void
     onAddFile?: (fileName: string, files: IFiles) => void
     onRemoveFile?: (fileName: string, files: IFiles) => void
@@ -46,6 +49,7 @@ const CodeEditor = ({
     onChangeFileContent,
     onError,
     extraLibs,
+    onEditorDidMount,
     ...props
 }: CodeEditorProps) => {
     const { styles } = useStyles()
@@ -157,6 +161,7 @@ const CodeEditor = ({
                     onChange={handleOnChangeFileContent}
                     onJumpFile={handleOnChangeSelectedFile}
                     extraLibs={extraLibs}
+                    onEditorDidMount={onEditorDidMount}
                 />
                 {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
             </FlexBox>

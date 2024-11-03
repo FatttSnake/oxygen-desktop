@@ -7,7 +7,7 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '@/constants/common.constants'
-import { message, modal } from '@/util/common'
+import { addExtraCssVariable, message, modal } from '@/util/common'
 import { utcToLocalTime } from '@/util/datetime'
 import { hasPermission } from '@/util/auth'
 import editorExtraLibs from '@/util/editorExtraLibs'
@@ -1056,6 +1056,7 @@ const Template = () => {
                                         !hasPermission('system:tool:modify:template')
                                     }
                                     extraLibs={editorExtraLibs}
+                                    onEditorDidMount={(_, monaco) => addExtraCssVariable(monaco)}
                                 />
                                 <div
                                     className={styles.closeEditorBtn}

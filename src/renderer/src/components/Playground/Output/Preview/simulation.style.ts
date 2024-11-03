@@ -2,7 +2,7 @@ import { createStyles } from 'antd-style'
 
 export default createStyles(({ token }) => ({
     renderRoot: {
-        border: 'none',
+        border: `1px solid ${token.colorBorder}`,
         height: '100%',
         width: '100%',
         flex: 1
