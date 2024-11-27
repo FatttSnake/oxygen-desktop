@@ -7,7 +7,7 @@ interface Window {
 }
 
 /**
- * Oxygen Theme Variable
+ * Oxygen Theme Variables
  */
 declare const OxygenTheme: Theme
 
