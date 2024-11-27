@@ -426,17 +426,17 @@ const Template = () => {
         if (templateDetailLoading[record.id] || hasEdited[record.id]) {
             return
         }
-        setTemplateDetailLoading({ ...templateDetailLoading, [record.id]: true })
+        setTemplateDetailLoading((prevState) => ({ ...prevState, [record.id]: true }))
 
         void r_sys_tool_template_get_one(record.id)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
                     case DATABASE_SELECT_SUCCESS:
-                        setTemplateDetailData({
-                            ...templateDetailData,
+                        setTemplateDetailData((prevState) => ({
+                            ...prevState,
                             [record.id]: response.data!
-                        })
+                        }))
                         setTemplateData(
                             templateData.map((value) =>
                                 value.id === response.data!.id
@@ -453,7 +453,7 @@ const Template = () => {
                 }
             })
             .finally(() => {
-                setTemplateDetailLoading({ ...templateDetailLoading, [record.id]: false })
+                setTemplateDetailLoading((prevState) => ({ ...prevState, [record.id]: false }))
             })
     }
 
@@ -521,10 +521,10 @@ const Template = () => {
                             return new Promise<void>((resolve) => {
                                 const newFileName = addFileForm.getFieldValue('fileName') as string
 
-                                setTemplateDetailLoading({
-                                    ...templateDetailLoading,
+                                setTemplateDetailLoading((prevState) => ({
+                                    ...prevState,
                                     [record.id]: true
-                                })
+                                }))
 
                                 sourceFiles = {
                                     ...sourceFiles,
@@ -556,10 +556,10 @@ const Template = () => {
                                         }
                                     })
                                     .finally(() => {
-                                        setTemplateDetailLoading({
-                                            ...templateDetailLoading,
+                                        setTemplateDetailLoading((prevState) => ({
+                                            ...prevState,
                                             [record.id]: false
-                                        })
+                                        }))
                                     })
                             })
                         },
@@ -651,7 +651,7 @@ const Template = () => {
                     setTsconfig(undefined)
                 }
                 if (!hasEdited[record.id]) {
-                    setEditingFiles({ ...editingFiles, [record.id]: sourceFiles! })
+                    setEditingFiles((prevState) => ({ ...prevState, [record.id]: sourceFiles! }))
                 }
                 setEditingTemplateId(record.id)
                 setEditingFileName(fileName)
@@ -755,10 +755,10 @@ const Template = () => {
                                             }
                                         })
                                         .finally(() => {
-                                            setTemplateDetailLoading({
-                                                ...templateDetailLoading,
+                                            setTemplateDetailLoading((prevState) => ({
+                                                ...prevState,
                                                 [record.id]: false
-                                            })
+                                            }))
                                         })
                                     resolve()
                                 })
@@ -785,10 +785,10 @@ const Template = () => {
                     .then(
                         (confirmed) => {
                             if (confirmed) {
-                                setTemplateDetailLoading({
-                                    ...templateDetailLoading,
+                                setTemplateDetailLoading((prevState) => ({
+                                    ...prevState,
                                     [record.id]: true
-                                })
+                                }))
 
                                 delete sourceFiles![fileName]
 
@@ -816,10 +816,10 @@ const Template = () => {
                                         }
                                     })
                                     .finally(() => {
-                                        setTemplateDetailLoading({
-                                            ...templateDetailLoading,
+                                        setTemplateDetailLoading((prevState) => ({
+                                            ...prevState,
                                             [record.id]: false
-                                        })
+                                        }))
                                     })
                             }
                         },
@@ -845,9 +845,9 @@ const Template = () => {
         if (!hasPermission('system:tool:modify:template')) {
             return
         }
-        setEditingFiles({ ...editingFiles, [editingTemplateId]: files })
+        setEditingFiles((prevState) => ({ ...prevState, [editingTemplateId]: files }))
         if (!hasEdited[editingTemplateId]) {
-            setHasEdited({ ...hasEdited, [editingTemplateId]: true })
+            setHasEdited((prevState) => ({ ...prevState, [editingTemplateId]: true }))
         }
     }
 

@@ -577,7 +577,7 @@ const Base = () => {
         if (baseDetailLoading[record.id] || hasEdited[record.id]) {
             return
         }
-        setBaseDetailLoading({ ...baseDetailLoading, [record.id]: true })
+        setBaseDetailLoading((prevState) => ({ ...prevState, [record.id]: true }))
 
         void r_sys_tool_base_get_one(record.id)
             .then((res) => {
@@ -602,7 +602,7 @@ const Base = () => {
                 }
             })
             .finally(() => {
-                setBaseDetailLoading({ ...baseDetailLoading, [record.id]: false })
+                setBaseDetailLoading((prevState) => ({ ...prevState, [record.id]: false }))
             })
     }
 
@@ -672,7 +672,10 @@ const Base = () => {
                             return new Promise<void>((resolve) => {
                                 const newFileName = addFileForm.getFieldValue('fileName') as string
 
-                                setBaseDetailLoading({ ...baseDetailLoading, [record.id]: true })
+                                setBaseDetailLoading((prevState) => ({
+                                    ...prevState,
+                                    [record.id]: true
+                                }))
 
                                 sourceFiles = {
                                     ...sourceFiles,
@@ -704,10 +707,10 @@ const Base = () => {
                                         }
                                     })
                                     .finally(() => {
-                                        setBaseDetailLoading({
-                                            ...baseDetailLoading,
+                                        setBaseDetailLoading((prevState) => ({
+                                            ...prevState,
                                             [record.id]: false
-                                        })
+                                        }))
                                     })
                             })
                         },
@@ -799,7 +802,7 @@ const Base = () => {
                     setTsconfig(undefined)
                 }
                 if (!hasEdited[record.id]) {
-                    setEditingFiles({ ...editingFiles, [record.id]: sourceFiles! })
+                    setEditingFiles((prevState) => ({ ...prevState, [record.id]: sourceFiles! }))
                 }
                 setEditingBaseId(record.id)
                 setEditingFileName(fileName)
@@ -904,10 +907,10 @@ const Base = () => {
                                             }
                                         })
                                         .finally(() => {
-                                            setBaseDetailLoading({
-                                                ...baseDetailLoading,
+                                            setBaseDetailLoading((prevState) => ({
+                                                ...prevState,
                                                 [record.id]: false
-                                            })
+                                            }))
                                         })
                                     resolve()
                                 })
@@ -934,7 +937,10 @@ const Base = () => {
                     .then(
                         (confirmed) => {
                             if (confirmed) {
-                                setBaseDetailLoading({ ...baseDetailLoading, [record.id]: true })
+                                setBaseDetailLoading((prevState) => ({
+                                    ...prevState,
+                                    [record.id]: true
+                                }))
 
                                 delete sourceFiles![fileName]
 
@@ -962,10 +968,10 @@ const Base = () => {
                                         }
                                     })
                                     .finally(() => {
-                                        setBaseDetailLoading({
-                                            ...baseDetailLoading,
+                                        setBaseDetailLoading((prevState) => ({
+                                            ...prevState,
                                             [record.id]: false
-                                        })
+                                        }))
                                     })
                             }
                         },
@@ -991,9 +997,9 @@ const Base = () => {
         if (!hasPermission('system:tool:modify:base')) {
             return
         }
-        setEditingFiles({ ...editingFiles, [editingBaseId]: files })
+        setEditingFiles((prevState) => ({ ...prevState, [editingBaseId]: files }))
         if (!hasEdited[editingBaseId]) {
-            setHasEdited({ ...hasEdited, [editingBaseId]: true })
+            setHasEdited((prevState) => ({ ...prevState, [editingBaseId]: true }))
         }
     }
 
