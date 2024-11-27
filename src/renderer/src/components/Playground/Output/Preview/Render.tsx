@@ -65,6 +65,7 @@ const Render = ({
         if (!isLoaded) {
             return
         }
+        loadGlobalVariables()
         iframeRef.current?.contentWindow?.postMessage(
             {
                 type: 'UPDATE',
@@ -72,7 +73,6 @@ const Render = ({
             } as IMessage,
             '*'
         )
-        loadGlobalVariables()
     }, [isLoaded, compiledCode])
 
     useEffect(() => {
