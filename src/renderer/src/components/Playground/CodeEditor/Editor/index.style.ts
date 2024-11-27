@@ -28,6 +28,7 @@ export default createStyles(() => ({
         borderRight: '2px #ddd solid',
         borderBottom: '2px #ddd solid',
         borderLeft: '2px #ddd solid',
-        animation: `${rotate} .6s linear infinite`
+        animation: `${rotate} .6s linear infinite`,
+        zIndex: 100
     }
 }))
