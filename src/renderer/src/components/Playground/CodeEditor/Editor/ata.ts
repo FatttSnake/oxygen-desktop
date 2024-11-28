@@ -1,3 +1,4 @@
+import typescript from 'typescript'
 import { ATABootstrapConfig, setupTypeAcquisition } from '@typescript/ata'
 
 type DelegateListener = Required<{
@@ -32,10 +33,6 @@ export interface TypeHelper {
 }
 
 export const createATA = async (): Promise<TypeHelper> => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    const ts = await import('https://esm.sh/typescript@5.6.3')
-
     const maxConcurrentRequests = 50
     let activeRequests = 0
     const requestQueue: Array<() => void> = []
@@ -62,7 +59,7 @@ export const createATA = async (): Promise<TypeHelper> => {
 
     const ata = setupTypeAcquisition({
         projectName: 'monaco-ts',
-        typescript: ts,
+        typescript,
         logger: console,
         fetcher: async (
             input: RequestInfo | URL,
