@@ -1,7 +1,7 @@
-import { ComponentType, ForwardRefExoticComponent, Key, SVGProps } from 'react'
+import { ComponentType, ForwardRefExoticComponent, SVGProps } from 'react'
 import { CustomIconComponentProps } from '@ant-design/icons/es/components/Icon'
 import { GetProp, TablePaginationConfig, UploadProps } from 'antd/lib'
-import { ColumnsType, FilterValue, SorterResult, SortOrder } from 'antd/es/table/interface'
+import { ColumnsType, FilterValue, SafeKey, SorterResult, SortOrder } from 'antd/es/table/interface'
 import { CheckboxChangeEvent } from 'antd/es/checkbox'
 import type { DataNode } from 'antd/es/tree'
 
@@ -18,7 +18,7 @@ declare global {
     type _SortOrder = SortOrder
     type _CheckboxChangeEvent = CheckboxChangeEvent
     interface _DataNode extends DataNode {
-        value: Key
+        value: SafeKey
         fullTitle?: string
         parentId?: number
         children?: _DataNode[]
