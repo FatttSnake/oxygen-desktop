@@ -64,7 +64,10 @@ export const createATA = async (): Promise<TypeHelper> => {
         projectName: 'monaco-ts',
         typescript: ts,
         logger: console,
-        fetcher: (input, init) => {
+        fetcher: async (
+            input: RequestInfo | URL,
+            init: RequestInit | undefined
+        ): Promise<Response> => {
             try {
                 return fetchWithQueue(input, init)
             } catch (error) {
