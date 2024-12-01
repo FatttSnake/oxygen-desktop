@@ -1,6 +1,6 @@
 import { createGlobalStyle } from 'antd-style'
 
-export default createGlobalStyle(() => ({
+export default createGlobalStyle(({ theme }) => ({
     '*': { margin: 0, padding: 0, boxSizing: 'border-box' },
     html: { scrollBehavior: 'smooth' },
     'em, i': { fontStyle: 'normal' },
@@ -16,7 +16,7 @@ export default createGlobalStyle(() => ({
     },
     body: {
         WebkitFontSmoothing: 'antialiased',
-        backgroundColor: '#fff',
+        backgroundColor: theme.colorBgLayout,
         font: '12px/1.5 Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\\5B8B\\4F53", sans-serif',
         color: '#666'
     },

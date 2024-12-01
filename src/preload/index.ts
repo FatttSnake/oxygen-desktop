@@ -3,6 +3,8 @@ import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
 const api = {
+    updateTitleBar: (color: string, symbolColor: string) =>
+        ipcRenderer.send('window:titleBarOverlay:color', color, symbolColor),
     installTool: (newTools: Record<string, Record<Platform, ToolVo>>) =>
         ipcRenderer.invoke('store:installTool', newTools),
     getInstalledTool: () => ipcRenderer.invoke('store:getInstalledTool')
@@ -19,11 +21,4 @@ if (process.contextIsolated) {
     } catch (error) {
         console.error(error)
     }
-} else {
-    // @ts-expect-error (define in dts)
-    window.electronAPI = electronAPI
-    // @ts-expect-error (define in dts)
-    window.api = api
-    // @ts-expect-error (define in dts)
-    window.Notification = Notification
 }

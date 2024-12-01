@@ -68,6 +68,10 @@ const createWindow = () => {
     mainWindow = new BrowserWindow({
         width: 900,
         height: 670,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: {
+            height: 30
+        },
         show: false,
         autoHideMenuBar: true,
         icon,
@@ -77,9 +81,13 @@ const createWindow = () => {
             nodeIntegrationInSubFrames: true
         }
     })
+    mainWindow.removeMenu()
 
     mainWindow.on('ready-to-show', () => {
         mainWindow.show()
+        if (is.dev) {
+            mainWindow.webContents.openDevTools()
+        }
     })
 
     mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -136,8 +144,11 @@ void app.whenReady().then(() => {
     })
 
     // IPC test
-    ipcMain.on('ping', () => console.log('pong'))
-
+    ipcMain.on('window:titleBarOverlay:color', (_, color: string, symbolColor: string) => {
+        if (['win32', 'linux'].includes(process.platform)) {
+            mainWindow.setTitleBarOverlay({ color, symbolColor, height: 30 })
+        }
+    })
     createWindow()
 
     app.on('activate', function () {

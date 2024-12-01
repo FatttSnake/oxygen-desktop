@@ -11,6 +11,7 @@ import {
 import { getRouter } from '@/router'
 import { getThemeMode, init } from '@/util/common'
 import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
+import WindowFrame from '@/WindowFrame'
 
 export const AppContext = createContext({
     refreshRouter: () => {},
@@ -67,6 +68,7 @@ const App = () => {
                     colorLinkHover: COLOR_PRODUCTION
                 },
                 components: {
+                    Message: { paddingXS: 38 },
                     Tree: {
                         colorBgContainer: 'transparent'
                     }
@@ -84,9 +86,11 @@ const App = () => {
                     isDarkMode: getIsDark()
                 }}
             >
-                <Suspense fallback={<FullscreenLoadingMask />}>
-                    <RouterProvider router={routerState} />
-                </Suspense>
+                <WindowFrame>
+                    <Suspense fallback={<FullscreenLoadingMask />}>
+                        <RouterProvider router={routerState} />
+                    </Suspense>
+                </WindowFrame>
             </AppContext.Provider>
             {messageHolder}
             {notificationHolder}

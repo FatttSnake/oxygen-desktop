@@ -7,6 +7,7 @@ declare global {
     class _Notification extends Notification {}
 
     interface API {
+        updateTitleBar: (color: string, symbolColor: string) => void
         installTool: (
             newTools: Record<string, Record<Platform, ToolVo>>
         ) => Promise<Record<string, Record<Platform, ToolVo>>>
