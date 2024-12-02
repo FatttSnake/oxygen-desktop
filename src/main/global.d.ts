@@ -14,7 +14,14 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 
+interface WindowBounds {
+    width: number
+    height: number
+}
+
 interface StoreSchema {
+    windowBounds: WindowBounds
+    maximize: boolean
     installedTools: Record<string, Record<Platform, ToolVo>>
 }
 

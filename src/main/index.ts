@@ -5,6 +5,7 @@ import icon from '../../build/icon.ico?asset'
 import path from 'node:path'
 import url from 'node:url'
 import fs from 'fs'
+import { getMaximize, getWindowBounds, saveMaximize, saveWindowBounds } from './dataStore/main'
 
 let mainWindow: BrowserWindow
 
@@ -64,10 +65,13 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 const createWindow = () => {
+    const { width, height } = getWindowBounds()
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 900,
-        height: 670,
+        minWidth: 600,
+        minHeight: 400,
+        width,
+        height,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
             height: 30
@@ -81,6 +85,9 @@ const createWindow = () => {
             nodeIntegrationInSubFrames: true
         }
     })
+    if (getMaximize()) {
+        mainWindow.maximize()
+    }
     mainWindow.removeMenu()
 
     mainWindow.on('ready-to-show', () => {
@@ -89,6 +96,13 @@ const createWindow = () => {
             mainWindow.webContents.openDevTools()
         }
     })
+
+    mainWindow.on('resized', () => {
+        const { width, height } = mainWindow.getBounds()
+        saveWindowBounds({ width, height })
+    })
+    mainWindow.on('maximize', () => saveMaximize(true))
+    mainWindow.on('unmaximize', () => saveMaximize(false))
 
     mainWindow.webContents.setWindowOpenHandler((details) => {
         void shell.openExternal(details.url)
