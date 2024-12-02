@@ -7,7 +7,7 @@ export default createGlobalStyle(({ theme }) => ({
     li: { listStyle: 'none' },
     img: { border: 0, verticalAlign: 'middle' },
     button: { cursor: 'pointer' },
-    a: { color: '#666', textDecoration: 'none', whiteSpace: 'nowrap' },
+    a: { color: theme.colorText, textDecoration: 'none', whiteSpace: 'nowrap' },
     'button, input': {
         fontFamily:
             'Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\\5B8B\\4F53", sans-serif',
@@ -18,7 +18,7 @@ export default createGlobalStyle(({ theme }) => ({
         WebkitFontSmoothing: 'antialiased',
         backgroundColor: theme.colorBgLayout,
         font: '12px/1.5 Microsoft YaHei, Heiti SC, tahoma, arial, Hiragino Sans GB, "\\5B8B\\4F53", sans-serif',
-        color: '#666'
+        color: theme.colorText
     },
     '.hide, .none': { display: 'none' },
     '.clearfix:after': {
