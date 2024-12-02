@@ -32,6 +32,8 @@ export default createStyles(({ token }) => ({
 
     windowContent: {
         flex: 1,
-        height: 0
+        height: 0,
+        width: '100%',
+        overflow: 'hidden'
     }
 }))
