@@ -1,7 +1,7 @@
 import { UIEvent } from 'react'
 import useStyles from '@/assets/css/pages/tools/local.style'
 import { message, checkDesktop, modal } from '@/util/common'
-import { l_tool_get } from '@/services/tool'
+import { n_tool_get, n_tool_uninstall } from '@/services/native'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
@@ -41,8 +41,7 @@ const Local = () => {
                         return
                     }
                     void message.loading({ content: '卸载工具中', key: 'LOADING', duration: 0 })
-                    window.api
-                        .uninstallTool(`${username}:${toolId}`)
+                    n_tool_uninstall(`${username}:${toolId}`)
                         .then(() => {
                             getTool('')
                         })
@@ -61,7 +60,7 @@ const Local = () => {
         setIsLoading(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
-        void l_tool_get()
+        void n_tool_get()
             .then((data) => {
                 const list: ToolVo[] = []
                 Object.values(data).forEach((value) =>

@@ -1,8 +1,7 @@
 import { contextBridge, Notification, ipcRenderer } from 'electron'
-import { electronAPI } from '@electron-toolkit/preload'
 
 // Custom APIs for renderer
-const api = {
+const baseApi = {
     updateTitleBar: (color: string, symbolColor: string) =>
         ipcRenderer.send('window:titleBarOverlay:color', color, symbolColor),
     getInstalledTool: () => ipcRenderer.invoke('store:getInstalledTool'),
@@ -16,8 +15,12 @@ const api = {
 // just add to the DOM global.
 if (process.contextIsolated) {
     try {
-        contextBridge.exposeInMainWorld('electronAPI', electronAPI)
-        contextBridge.exposeInMainWorld('api', api)
+        contextBridge.exposeInMainWorld('electronAPI', {
+            onOpenUrl: (callback: (url: string) => void) => {
+                ipcRenderer.on('open-url', (_, url: string) => callback(url))
+            }
+        })
+        contextBridge.exposeInMainWorld('baseApi', baseApi)
         contextBridge.exposeInMainWorld('Notification', Notification)
     } catch (error) {
         console.error(error)

@@ -13,7 +13,8 @@ import {
     navigateToRoot,
     navigateToView
 } from '@/util/navigation'
-import { l_tool_detail, r_tool_detail } from '@/services/tool'
+import { r_tool_detail } from '@/services/tool'
+import { n_tool_detail } from '@/services/native'
 import { AppContext } from '@/App'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'
@@ -90,7 +91,7 @@ const View = () => {
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
         if (searchParams.get('source') === 'local') {
-            void l_tool_detail(username!, toolId!, searchParams.get('platform') as Platform)
+            void n_tool_detail(username!, toolId!, searchParams.get('platform') as Platform)
                 .then((tool) => {
                     if (!tool) {
                         void message.error('未找到指定工具')

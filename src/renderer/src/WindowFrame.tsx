@@ -5,7 +5,7 @@ const WindowFrame = ({ children }: PropsWithChildren) => {
     const { styles, theme } = useStyles()
 
     useEffect(() => {
-        window.api.updateTitleBar(theme.colorBgContainer, theme.colorText)
+        window.baseApi.updateTitleBar(theme.colorBgContainer, theme.colorText)
     }, [theme])
 
     return (

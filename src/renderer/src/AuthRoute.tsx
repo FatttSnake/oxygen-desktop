@@ -14,7 +14,7 @@ const AuthRoute = () => {
     const isVerify = getVerifyStatus_async()
 
     useEffect(() => {
-        window.electronAPI.ipcRenderer.on('open-url', (_, url: string) => {
+        window.electronAPI.onOpenUrl((url) => {
             navigate(url)
         })
     }, [])

@@ -80,9 +80,7 @@ const createWindow = () => {
         autoHideMenuBar: true,
         icon,
         webPreferences: {
-            preload: join(__dirname, '../preload/index.js'),
-            sandbox: false,
-            nodeIntegrationInSubFrames: true
+            preload: join(__dirname, '../preload/index.js')
         }
     })
     if (getMaximize()) {

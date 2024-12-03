@@ -1,12 +1,13 @@
-import { ElectronAPI } from '@electron-toolkit/preload'
 import { Notification } from 'electron'
 
 declare global {
-    type _ElectronAPI = ElectronAPI
+    interface ElectronAPI {
+        onOpenUrl: (callback: (url: string) => void) => void
+    }
 
     class _Notification extends Notification {}
 
-    interface API {
+    interface BaseAPI {
         updateTitleBar: (color: string, symbolColor: string) => void
         getInstalledTool: () => Promise<Record<string, Record<Platform, ToolVo>>>
         installTool: (

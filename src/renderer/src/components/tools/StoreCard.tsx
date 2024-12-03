@@ -13,13 +13,8 @@ import {
     navigateToStore,
     navigateToView
 } from '@/util/navigation'
-import {
-    l_tool_get,
-    l_tool_install,
-    r_tool_add_favorite,
-    r_tool_detail,
-    r_tool_remove_favorite
-} from '@/services/tool'
+import { r_tool_add_favorite, r_tool_detail, r_tool_remove_favorite } from '@/services/tool'
+import { n_tool_get, n_tool_install } from '@/services/native'
 import Card from '@/components/common/Card'
 import FlexBox from '@/components/common/FlexBox'
 import DragHandle from '@/components/dnd/DragHandle'
@@ -189,7 +184,7 @@ const StoreCard = ({
                         return
                     }
                     if (flags.every((item) => item)) {
-                        void l_tool_install({ [`${author.username}:${toolId}`]: newTools }).then(
+                        void n_tool_install({ [`${author.username}:${toolId}`]: newTools }).then(
                             () => {
                                 void message.success(isAvailableUpdate ? '更新成功' : '安装成功')
                                 setIsInstalled(true)
@@ -256,7 +251,7 @@ const StoreCard = ({
     }
 
     useEffect(() => {
-        void l_tool_get().then((value) => {
+        void n_tool_get().then((value) => {
             const tools = value[`${author.username}:${toolId}`]
             if (!tools) {
                 setIsInstalled(false)
