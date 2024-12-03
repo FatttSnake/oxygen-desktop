@@ -6,9 +6,11 @@ import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
 import LocalCard from '@/components/tools/LocalCard'
+import { ToolsFrameworkContext } from '@/pages/ToolsFramework'
 
 const Local = () => {
     const { styles, cx } = useStyles()
+    const { removeToolMenuItem } = useContext(ToolsFrameworkContext)
     const scrollTopRef = useRef(0)
     const [isLoading, setIsLoading] = useState(false)
     const [toolData, setToolData] = useState<ToolVo[]>([])
@@ -41,8 +43,9 @@ const Local = () => {
                         return
                     }
                     void message.loading({ content: '卸载工具中', key: 'LOADING', duration: 0 })
-                    n_tool_uninstall(`${username}:${toolId}`)
+                    n_tool_uninstall(username, toolId)
                         .then(() => {
+                            removeToolMenuItem(username, toolId)
                             getTool('')
                         })
                         .finally(() => {

@@ -14,6 +14,12 @@ import DraggableOverlay from '@/components/dnd/DraggableOverlay'
 import DropMask from '@/components/dnd/DropMask'
 import Droppable from '@/components/dnd/Droppable'
 
+export const ToolsFrameworkContext = createContext<{
+    removeToolMenuItem: (username: string, toolId: string) => void
+}>({
+    removeToolMenuItem: () => {}
+})
+
 const ToolsFramework = () => {
     const { styles } = useStyles()
     const [isDelete, setIsDelete] = useState(false)
@@ -86,7 +92,20 @@ const ToolsFramework = () => {
     }, [toolMenuItem])
 
     return (
-        <>
+        <ToolsFrameworkContext.Provider
+            value={{
+                removeToolMenuItem: (username, toolId) => {
+                    setToolMenuItem(
+                        toolMenuItem.filter(
+                            (item) =>
+                                item.authorUsername !== username ||
+                                item.toolId !== toolId ||
+                                item.ver !== 'local'
+                        )
+                    )
+                }
+            }}
+        >
             <FitFullscreen className={'flex-horizontal'}>
                 <DndContext
                     onDragStart={handleOnDragStart}
@@ -199,7 +218,7 @@ const ToolsFramework = () => {
                     </div>
                 </DndContext>
             </FitFullscreen>
-        </>
+        </ToolsFrameworkContext.Provider>
     )
 }
 
