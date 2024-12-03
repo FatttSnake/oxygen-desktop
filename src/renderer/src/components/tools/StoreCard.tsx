@@ -184,13 +184,11 @@ const StoreCard = ({
                         return
                     }
                     if (flags.every((item) => item)) {
-                        void n_tool_install({ [`${author.username}:${toolId}`]: newTools }).then(
-                            () => {
-                                void message.success(isAvailableUpdate ? '更新成功' : '安装成功')
-                                setIsInstalled(true)
-                                setIsAvailableUpdate(false)
-                            }
-                        )
+                        void n_tool_install(author.username, toolId, newTools).then(() => {
+                            void message.success(isAvailableUpdate ? '更新成功' : '安装成功')
+                            setIsInstalled(true)
+                            setIsAvailableUpdate(false)
+                        })
                     } else {
                         void message.error(
                             isAvailableUpdate ? '更新失败，请稍后重试' : '安装失败，请稍后重试'
@@ -251,8 +249,7 @@ const StoreCard = ({
     }
 
     useEffect(() => {
-        void n_tool_get().then((value) => {
-            const tools = value[`${author.username}:${toolId}`]
+        void n_tool_get(author.username, toolId).then((tools) => {
             if (!tools) {
                 setIsInstalled(false)
                 return

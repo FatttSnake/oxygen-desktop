@@ -1,7 +1,7 @@
 import { UIEvent } from 'react'
 import useStyles from '@/assets/css/pages/tools/local.style'
 import { message, checkDesktop, modal } from '@/util/common'
-import { n_tool_get, n_tool_uninstall } from '@/services/native'
+import { n_tool_list, n_tool_uninstall } from '@/services/native'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'
 import HideScrollbar from '@/components/common/HideScrollbar'
@@ -63,12 +63,10 @@ const Local = () => {
         setIsLoading(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
-        void n_tool_get()
+        void n_tool_list()
             .then((data) => {
                 const list: ToolVo[] = []
-                Object.values(data).forEach((value) =>
-                    Object.values(value).forEach((item) => list.push(item))
-                )
+                data.forEach((value) => Object.values(value).forEach((item) => list.push(item)))
                 setToolData(
                     list.filter(
                         ({ name, keywords }) =>

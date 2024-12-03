@@ -3,11 +3,7 @@ import { contextBridge, Notification, ipcRenderer } from 'electron'
 // Custom APIs for renderer
 const baseApi = {
     updateTitleBar: (color: string, symbolColor: string) =>
-        ipcRenderer.send('window:titleBarOverlay:color', color, symbolColor),
-    getInstalledTool: () => ipcRenderer.invoke('store:getInstalledTool'),
-    installTool: (newTools: Record<string, Record<Platform, ToolVo>>) =>
-        ipcRenderer.invoke('store:installTool', newTools),
-    uninstallTool: (key: string) => ipcRenderer.invoke('store:uninstallTool', key)
+        ipcRenderer.send('window:titleBarOverlay:color', color, symbolColor)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
