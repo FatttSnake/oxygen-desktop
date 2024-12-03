@@ -53,6 +53,8 @@ export const l_tool_get = () => window.api.getInstalledTool()
 export const l_tool_install = (tools: Record<string, Record<Platform, ToolVo>>) =>
     window.api.installTool(tools)
 
+export const l_tool_uninstall = (key: string) => window.api.uninstallTool(key)
+
 export const l_tool_detail = async (
     username: string,
     toolId: string,

@@ -603,40 +603,37 @@ const Tools = () => {
                                                 ? desktopTool || webTool
                                                 : webTool || desktopTool) || androidTool
 
-                                            return (
-                                                <StoreCard
-                                                    key={firstTool!.id}
-                                                    icon={firstTool!.icon}
-                                                    toolName={firstTool!.name}
-                                                    toolId={firstTool!.toolId}
-                                                    toolDesc={firstTool!.description}
-                                                    author={firstTool!.author}
-                                                    ver={firstTool!.ver}
-                                                    platform={firstTool!.platform}
-                                                    supportPlatform={tools.map(
-                                                        (value) => value.platform
-                                                    )}
-                                                    vers={tools.reduce(
-                                                        (previousValue, currentValue) => ({
-                                                            ...previousValue,
-                                                            [currentValue.platform]:
-                                                                currentValue.ver
-                                                        }),
-                                                        {} as Record<Platform, string>
-                                                    )}
-                                                    favorite={firstTool!.favorite}
-                                                />
-                                            )
-                                        })}
-                                    {hasNextStarPage && (
-                                        <LoadMoreCard onClick={handleOnLoadMoreStar} />
-                                    )}
-                                </FlexBox>
-                            </>
-                        ) : undefined}
-                    </FlexBox>
-                </HideScrollbar>
-            </FitFullscreen>
+                                        return (
+                                            <StoreCard
+                                                key={firstTool!.id}
+                                                icon={firstTool!.icon}
+                                                toolName={firstTool!.name}
+                                                toolId={firstTool!.toolId}
+                                                toolDesc={firstTool!.description}
+                                                author={firstTool!.author}
+                                                ver={firstTool!.ver}
+                                                platform={firstTool!.platform}
+                                                supportPlatform={tools.map(
+                                                    (value) => value.platform
+                                                )}
+                                                vers={tools.reduce(
+                                                    (previousValue, currentValue) => ({
+                                                        ...previousValue,
+                                                        [currentValue.platform]: currentValue.ver
+                                                    }),
+                                                    {} as Record<Platform, string>
+                                                )}
+                                                favorite={firstTool!.favorite}
+                                            />
+                                        )
+                                    })}
+                                {hasNextStarPage && <LoadMoreCard onClick={handleOnLoadMoreStar} />}
+                            </FlexBox>
+                        </>
+                    ) : undefined}
+                </FlexBox>
+            </HideScrollbar>
+        </FitFullscreen>
     )
 }
 

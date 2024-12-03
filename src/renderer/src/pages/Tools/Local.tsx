@@ -1,6 +1,6 @@
 import { UIEvent } from 'react'
 import useStyles from '@/assets/css/pages/tools/local.style'
-import { message, checkDesktop } from '@/util/common'
+import { message, checkDesktop, modal } from '@/util/common'
 import { l_tool_get } from '@/services/tool'
 import FlexBox from '@/components/common/FlexBox'
 import FitFullscreen from '@/components/common/FitFullscreen'
@@ -25,6 +25,33 @@ const Local = () => {
             setIsHideSearch(true)
         }
         scrollTopRef.current = event.currentTarget.scrollTop
+    }
+
+    const handleOnUninstall = (username: string, toolId: string) => {
+        modal
+            .confirm({
+                centered: true,
+                maskClosable: true,
+                title: '确定删除',
+                content: `确定删除由 ${username} 开发的工具 ${toolId} 吗？`
+            })
+            .then(
+                (confirmed) => {
+                    if (!confirmed) {
+                        return
+                    }
+                    void message.loading({ content: '卸载工具中', key: 'LOADING', duration: 0 })
+                    window.api
+                        .uninstallTool(`${username}:${toolId}`)
+                        .then(() => {
+                            getTool('')
+                        })
+                        .finally(() => {
+                            message.destroy('LOADING')
+                        })
+                },
+                () => {}
+            )
     }
 
     const getTool = (searchValue: string) => {
@@ -125,6 +152,7 @@ const Local = () => {
                                         ver={firstTool!.ver}
                                         platform={firstTool!.platform}
                                         supportPlatform={tools.map((value) => value.platform)}
+                                        onUninstall={handleOnUninstall}
                                     />
                                 )
                             })}

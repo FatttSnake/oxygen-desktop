@@ -5,9 +5,10 @@ import { electronAPI } from '@electron-toolkit/preload'
 const api = {
     updateTitleBar: (color: string, symbolColor: string) =>
         ipcRenderer.send('window:titleBarOverlay:color', color, symbolColor),
+    getInstalledTool: () => ipcRenderer.invoke('store:getInstalledTool'),
     installTool: (newTools: Record<string, Record<Platform, ToolVo>>) =>
         ipcRenderer.invoke('store:installTool', newTools),
-    getInstalledTool: () => ipcRenderer.invoke('store:getInstalledTool')
+    uninstallTool: (key: string) => ipcRenderer.invoke('store:uninstallTool', key)
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

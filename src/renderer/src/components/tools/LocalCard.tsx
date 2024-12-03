@@ -20,6 +20,7 @@ interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement
     ver: string
     platform: Platform
     supportPlatform: Platform[]
+    onUninstall?: (username: string, toolId: string) => void
 }
 
 const StoreCard = ({
@@ -41,6 +42,7 @@ const StoreCard = ({
     ver,
     platform,
     supportPlatform,
+    onUninstall,
     ...props
 }: StoreCardProps) => {
     const { styles, theme } = useStyles()
@@ -82,6 +84,11 @@ const StoreCard = ({
     const handleOnClickAuthor = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
         navigateToStore(navigate, author.username)
+    }
+
+    const handleOnUninstallBtnClick = (e: MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        onUninstall?.(author.username, toolId)
     }
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -136,6 +143,12 @@ const StoreCard = ({
                                 </AntdTag>
                             </div>
                             <div className={styles.operation}>
+                                <AntdTooltip title={'卸载'}>
+                                    <Icon
+                                        component={IconOxygenDelete}
+                                        onClick={handleOnUninstallBtnClick}
+                                    />
+                                </AntdTooltip>
                                 {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
                                     <AntdTooltip title={'Android 端'}>
                                         <Icon

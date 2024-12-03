@@ -8,10 +8,10 @@ declare global {
 
     interface API {
         updateTitleBar: (color: string, symbolColor: string) => void
+        getInstalledTool: () => Promise<Record<string, Record<Platform, ToolVo>>>
         installTool: (
             newTools: Record<string, Record<Platform, ToolVo>>
         ) => Promise<Record<string, Record<Platform, ToolVo>>>
-
-        getInstalledTool: () => Promise<Record<string, Record<Platform, ToolVo>>>
+        uninstallTool: (key: string) => Promise<Record<string, Record<Platform, ToolVo>>>
     }
 }
