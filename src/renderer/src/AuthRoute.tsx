@@ -14,7 +14,7 @@ const AuthRoute = () => {
     const isVerify = getVerifyStatus_async()
 
     useEffect(() => {
-        window.electronAPI.onOpenUrl((url) => {
+        oxygenApi.onOpenUrl((url) => {
             navigate(url)
         })
     }, [])

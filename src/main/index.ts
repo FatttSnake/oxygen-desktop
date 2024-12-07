@@ -1,13 +1,20 @@
-import { app, shell, BrowserWindow, ipcMain, protocol, net } from 'electron'
 import { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../build/icon.ico?asset'
+import fs from 'fs'
 import path from 'node:path'
 import url from 'node:url'
-import fs from 'fs'
-import { getMaximize, getWindowBounds, saveMaximize, saveWindowBounds } from './dataStore/main'
+import { app, BaseWindow, WebContentsView, protocol, net } from 'electron'
+import { electronApp } from '@electron-toolkit/utils'
+import icon from '../../build/icon.ico?asset'
+import { getWindowBounds } from './dataStore/main'
+import { processIpc } from './processIpc'
+import { processApp } from './processApp'
+import { processMainWindow } from './processMainWindow'
+import { initMainView } from './mainView'
+import { initToolView } from './toolView'
 
-let mainWindow: BrowserWindow
+let mainWindow: BaseWindow
+let mainView: WebContentsView
+let toolView: WebContentsView
 
 // Application singleton execution
 if (!app.requestSingleInstanceLock()) {
@@ -35,7 +42,7 @@ const handleArgv = (argv: string[]) => {
 const handleUrl = (url: string) => {
     const { hostname, pathname } = new URL(url)
     if (hostname === 'openurl' && mainWindow) {
-        mainWindow.webContents.send('open-url', pathname)
+        mainView.webContents.send('mainView:url:open', pathname)
         mainWindow.show()
     }
 }
@@ -67,7 +74,7 @@ protocol.registerSchemesAsPrivileged([
 const createWindow = () => {
     const { width, height } = getWindowBounds()
     // Create the browser window.
-    mainWindow = new BrowserWindow({
+    mainWindow = new BaseWindow({
         minWidth: 600,
         minHeight: 400,
         width,
@@ -78,45 +85,24 @@ const createWindow = () => {
         },
         show: false,
         autoHideMenuBar: true,
-        icon,
+        icon
+    })
+
+    mainView = new WebContentsView({
         webPreferences: {
-            preload: join(__dirname, '../preload/index.js')
-        }
-    })
-    if (getMaximize()) {
-        mainWindow.maximize()
-    }
-    mainWindow.removeMenu()
-
-    mainWindow.on('ready-to-show', () => {
-        mainWindow.show()
-        if (is.dev) {
-            mainWindow.webContents.openDevTools()
+            preload: join(__dirname, '../preload/main.js')
         }
     })
 
-    mainWindow.on('resized', () => {
-        const { width, height } = mainWindow.getBounds()
-        saveWindowBounds({ width, height })
-    })
-    mainWindow.on('maximize', () => saveMaximize(true))
-    mainWindow.on('unmaximize', () => saveMaximize(false))
-
-    mainWindow.webContents.setWindowOpenHandler((details) => {
-        void shell.openExternal(details.url)
-        return { action: 'deny' }
+    toolView = new WebContentsView({
+        webPreferences: {
+            preload: join(__dirname, '../preload/tool.js')
+        }
     })
 
-    // HMR for renderer base on electron-vite cli.
-    // Load the remote URL for development or the local html file for production.
-    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        void mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    } else {
-        // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-        void mainWindow.loadURL(
-            `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
-        )
-    }
+    initMainView(mainWindow, mainView)
+    initToolView(mainWindow, toolView)
+    processMainWindow(mainWindow, mainView, toolView)
 }
 
 // This method will be called when Electron has finished
@@ -147,27 +133,10 @@ void app.whenReady().then(() => {
 
     // Set app user model id for windows
     electronApp.setAppUserModelId('top.fatweb')
-
-    // Default open or close DevTools by F12 in development
-    // and ignore CommandOrControl + R in production.
-    // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
-    app.on('browser-window-created', (_, window) => {
-        optimizer.watchWindowShortcuts(window)
-    })
-
-    // IPC test
-    ipcMain.on('window:titleBarOverlay:color', (_, color: string, symbolColor: string) => {
-        if (['win32', 'linux'].includes(process.platform)) {
-            mainWindow.setTitleBarOverlay({ color, symbolColor, height: 30 })
-        }
-    })
     createWindow()
 
-    app.on('activate', function () {
-        // On macOS, it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
+    processIpc(mainWindow, mainView, toolView)
+    processApp(createWindow)
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

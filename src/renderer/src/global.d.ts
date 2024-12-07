@@ -18,12 +18,6 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 
-interface Window {
-    electronAPI: ElectronAPI
-    Notification: typeof _Notification
-    baseApi: BaseAPI
-}
-
 interface RouteJsonObject {
     path: string
     absolutePath: string

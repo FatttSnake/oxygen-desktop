@@ -13,6 +13,11 @@ export default defineConfig({
         plugins: [externalizeDepsPlugin({ exclude: ['electron-store'] })]
     },
     preload: {
+        build: {
+            lib: {
+                entry: ['src/preload/main.ts', 'src/preload/tool.ts']
+            }
+        },
         plugins: [externalizeDepsPlugin()]
     },
     renderer: {

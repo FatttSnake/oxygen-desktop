@@ -10,13 +10,14 @@ declare global {
         windowControlsOverlay?: WindowControlsOverlay
     }
 
-    interface ElectronAPI {
-        onOpenUrl: (callback: (url: string) => void) => void
-    }
-
-    class _Notification extends Notification {}
-
-    interface BaseAPI {
+    interface OxygenAPI {
         updateTitleBar: (color: string, symbolColor: string) => void
+        onOpenUrl: (callback: (url: string) => void) => void
+        changeToolViewVisible: (visible: boolean) => void
+        changeToolViewBounds: (x: number, y: number, width: number, height: number) => void
     }
+
+    class Notify extends Notification {}
+
+    declare const oxygenApi: OxygenAPI
 }

@@ -8,7 +8,7 @@ const WindowFrame = ({ children }: PropsWithChildren) => {
     const [title, setTitle] = useState<string>(document.title)
 
     useEffect(() => {
-        window.baseApi.updateTitleBar(theme.colorBgContainer, theme.colorText)
+        oxygenApi.updateTitleBar(theme.colorBgContainer, theme.colorText)
     }, [theme])
 
     useEffect(() => {

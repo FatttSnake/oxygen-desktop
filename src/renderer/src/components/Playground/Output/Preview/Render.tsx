@@ -101,6 +101,29 @@ const Render = ({
         ])
     }, [selectedDevice, isRotate, iframeKey, iframeRef, iframeUrl, setIsLoaded])
 
+    useEffect(() => {
+        if (!iframeRef.current) {
+            return
+        }
+        oxygenApi.changeToolViewVisible(true)
+        const resizeObserver = new ResizeObserver(
+            ([
+                {
+                    contentRect: { width, height }
+                }
+            ]) => {
+                const { x, y } = iframeRef.current!.getBoundingClientRect()
+                oxygenApi.changeToolViewBounds(x, y, width, height)
+            }
+        )
+        resizeObserver.observe(iframeRef.current)
+
+        return () => {
+            oxygenApi.changeToolViewVisible(false)
+            resizeObserver.disconnect()
+        }
+    }, [])
+
     return mobileMode ? (
         <>
             <ReactFlow
@@ -142,6 +165,7 @@ const Render = ({
         </>
     ) : (
         <iframe
+            id={'abc'}
             className={styles.renderRoot}
             key={iframeKey}
             ref={iframeRef}
