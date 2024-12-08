@@ -6,7 +6,9 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/renderer/src/*"]
+      "!/*": ["./src/renderer/common/*"],
+      "#/*": ["./src/renderer/frame/*"],
+      "@/*": ["./src/renderer/main/*"]
     },
 
     /* Bundler mode */
@@ -27,11 +29,7 @@
   },
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
-    "src/renderer/src/env.d.ts",
-    "src/renderer/src/**/*",
-    "src/renderer/src/**/*.tsx",
-    "src/preload/*.d.ts",
-    "src/renderer/auto-imports.d.ts"
+    "src/renderer/**/*",
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

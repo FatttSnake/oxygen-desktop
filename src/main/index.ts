@@ -11,8 +11,10 @@ import { processApp } from './processApp'
 import { processMainWindow } from './processMainWindow'
 import { initMainView } from './mainView'
 import { initToolView } from './toolView'
+import { initFrameView } from './frameView'
 
 let mainWindow: BaseWindow
+let frameView: WebContentsView
 let mainView: WebContentsView
 let toolView: WebContentsView
 
@@ -88,6 +90,12 @@ const createWindow = () => {
         icon
     })
 
+    frameView = new WebContentsView({
+        webPreferences: {
+            preload: join(__dirname, '../preload/frame.js')
+        }
+    })
+
     mainView = new WebContentsView({
         webPreferences: {
             preload: join(__dirname, '../preload/main.js')
@@ -100,9 +108,10 @@ const createWindow = () => {
         }
     })
 
+    initFrameView(mainWindow, frameView)
     initMainView(mainWindow, mainView)
     initToolView(mainWindow, toolView)
-    processMainWindow(mainWindow, mainView, toolView)
+    processMainWindow(mainWindow, frameView, mainView, toolView)
 }
 
 // This method will be called when Electron has finished

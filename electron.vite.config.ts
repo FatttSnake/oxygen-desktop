@@ -15,7 +15,7 @@ export default defineConfig({
     preload: {
         build: {
             lib: {
-                entry: ['src/preload/main.ts', 'src/preload/tool.ts']
+                entry: ['src/preload/frame.ts', 'src/preload/main.ts', 'src/preload/tool.ts']
             }
         },
         plugins: [externalizeDepsPlugin()]
@@ -79,7 +79,7 @@ export default defineConfig({
                 jsx: 'react',
                 autoInstall: true,
                 customCollections: {
-                    oxygen: FileSystemIconLoader('src/renderer/src/assets/svg', (svg) =>
+                    oxygen: FileSystemIconLoader('src/renderer/common/assets/svg', (svg) =>
                         svg.replace(/^svg /, '<svg fill="currentColor"')
                     )
                 }
@@ -87,7 +87,9 @@ export default defineConfig({
         ],
         resolve: {
             alias: {
-                '@': fileURLToPath(new URL('./src/renderer/src', import.meta.url))
+                '!': fileURLToPath(new URL('./src/renderer/common', import.meta.url)),
+                '#': fileURLToPath(new URL('./src/renderer/frame', import.meta.url)),
+                '@': fileURLToPath(new URL('./src/renderer/main', import.meta.url))
             }
         }
     }

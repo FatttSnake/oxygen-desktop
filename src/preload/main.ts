@@ -4,8 +4,6 @@ import { contextBridge, Notification, ipcRenderer } from 'electron'
 const oxygenApi = {
     platform: process.platform,
     renderer: 'main',
-    updateTitleBar: (color: string, symbolColor: string) =>
-        ipcRenderer.send('window:titleBarOverlay:setColor', color, symbolColor),
 
     onOpenUrl: (callback: (url: string) => void) =>
         ipcRenderer.on('mainView:url:open', (_, url: string) => callback(url)),
