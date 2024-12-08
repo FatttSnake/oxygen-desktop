@@ -105,7 +105,7 @@ const Render = ({
         if (!iframeRef.current) {
             return
         }
-        oxygenApi.changeToolViewVisible(true)
+        oxygenApi.setToolViewVisible(true)
         const resizeObserver = new ResizeObserver(
             ([
                 {
@@ -113,13 +113,13 @@ const Render = ({
                 }
             ]) => {
                 const { x, y } = iframeRef.current!.getBoundingClientRect()
-                oxygenApi.changeToolViewBounds(x, y, width, height)
+                oxygenApi.setToolViewBounds(x, y, width, height)
             }
         )
         resizeObserver.observe(iframeRef.current)
 
         return () => {
-            oxygenApi.changeToolViewVisible(false)
+            oxygenApi.setToolViewVisible(false)
             resizeObserver.disconnect()
         }
     }, [])

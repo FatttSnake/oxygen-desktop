@@ -10,11 +10,15 @@ declare global {
         windowControlsOverlay?: WindowControlsOverlay
     }
 
+    type Renderer = 'main' | 'tool' | 'mask'
+
     interface OxygenAPI {
+        platform: NodeJS.Platform
+        renderer: Renderer
         updateTitleBar: (color: string, symbolColor: string) => void
         onOpenUrl: (callback: (url: string) => void) => void
-        changeToolViewVisible: (visible: boolean) => void
-        changeToolViewBounds: (x: number, y: number, width: number, height: number) => void
+        setToolViewVisible: (visible: boolean) => void
+        setToolViewBounds: (x: number, y: number, width: number, height: number) => void
     }
 
     class Notify extends Notification {}

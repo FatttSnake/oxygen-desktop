@@ -11,15 +11,13 @@ export const processIpc = (
         }
     })
 
-    ipcMain.on('toolView:visible:set', (_, visible: boolean) => {
-        toolView.setVisible(visible)
-    })
-    ipcMain.on('toolView:bounds:set', (_, x: number, y: number, width: number, height: number) => {
+    ipcMain.on('toolView:visible:set', (_, visible: boolean) => toolView.setVisible(visible))
+    ipcMain.on('toolView:bounds:set', (_, x: number, y: number, width: number, height: number) =>
         toolView.setBounds({
             x,
             y,
             width,
             height
         })
-    })
+    )
 }

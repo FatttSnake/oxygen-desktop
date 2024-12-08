@@ -2,15 +2,16 @@ import { contextBridge, Notification, ipcRenderer } from 'electron'
 
 // Custom APIs for renderer
 const oxygenApi = {
+    platform: process.platform,
+    renderer: 'main',
     updateTitleBar: (color: string, symbolColor: string) =>
         ipcRenderer.send('window:titleBarOverlay:setColor', color, symbolColor),
 
-    onOpenUrl: (callback: (url: string) => void) => {
-        ipcRenderer.on('mainView:url:open', (_, url: string) => callback(url))
-    },
+    onOpenUrl: (callback: (url: string) => void) =>
+        ipcRenderer.on('mainView:url:open', (_, url: string) => callback(url)),
 
-    changeToolViewVisible: (visible: boolean) => ipcRenderer.send('toolView:visible:set', visible),
-    changeToolViewBounds: (x: number, y: number, width: number, height: number) =>
+    setToolViewVisible: (visible: boolean) => ipcRenderer.send('toolView:visible:set', visible),
+    setToolViewBounds: (x: number, y: number, width: number, height: number) =>
         ipcRenderer.send('toolView:bounds:set', x, y, width, height)
 }
 
