@@ -1,11 +1,11 @@
 import Icon from '@ant-design/icons'
-import { message, modal } from '@/util/common'
-import { hasPermission } from '@/util/auth'
+import { message, modal } from '!/util/common'
+import { hasPermission } from '!/util/auth'
 import {
     r_sys_settings_mail_get,
     r_sys_settings_mail_send,
     r_sys_settings_mail_update
-} from '@/services/system'
+} from '!/services/system'
 import SettingsCard from '@/components/system/SettingCard'
 
 const Mail = () => {

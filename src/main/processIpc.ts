@@ -7,7 +7,7 @@ export const processIpc = (
 ) => {
     ipcMain.on('window:titleBarOverlay:setColor', (_, color: string, symbolColor: string) => {
         if (['win32', 'linux'].includes(process.platform)) {
-            mainWindow.setTitleBarOverlay({ color, symbolColor, height: 30 })
+            mainWindow.setTitleBarOverlay({ color, symbolColor, height: 35 })
         }
     })
 

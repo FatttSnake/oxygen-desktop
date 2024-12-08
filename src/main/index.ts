@@ -83,7 +83,7 @@ const createWindow = () => {
         height,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
-            height: 30
+            height: 35
         },
         show: false,
         autoHideMenuBar: true,

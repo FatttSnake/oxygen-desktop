@@ -1,8 +1,8 @@
 import _ from 'lodash'
+import { getAuthRoute, mapJsonToRoute, setTitle } from '!/util/route'
 import system from '@/router/system'
 import user from '@/router/user'
 import tools from '@/router/tools'
-import { getAuthRoute, mapJsonToRoute, setTitle } from '@/util/route'
 
 const lazySignPage = lazy(() => import('@/pages/Sign'))
 
@@ -40,7 +40,7 @@ const root: RouteJsonObject[] = [
                 path: 'loading',
                 absolutePath: '/loading',
                 id: 'loading',
-                component: lazy(() => import('@/components/common/FullscreenLoadingMask'))
+                component: lazy(() => import('!/components/FullscreenLoadingMask.tsx'))
             },
             {
                 path: 'user',

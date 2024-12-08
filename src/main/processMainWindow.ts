@@ -22,13 +22,13 @@ export const processMainWindow = (
             x: 0,
             y: 0,
             width,
-            height: 31
+            height: 36
         })
         mainView.setBounds({
             x: 0,
-            y: 31,
+            y: 36,
             width,
-            height: height - 31
+            height: height - 36
         })
     })
 

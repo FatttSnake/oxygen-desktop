@@ -7,21 +7,21 @@ import {
     DATABASE_UPDATE_SUCCESS,
     PERMISSION_ACCESS_DENIED,
     PERMISSION_LOGIN_USERNAME_PASSWORD_ERROR
-} from '@/constants/common.constants'
-import { message, notification, modal, getThemeMode, ThemeMode, setThemeMode } from '@/util/common'
-import { utcToLocalTime } from '@/util/datetime'
-import { getUserInfo, removeToken } from '@/util/auth'
-import { r_sys_user_info_change_password, r_sys_user_info_update } from '@/services/system'
+} from '!/constants/common.constants'
+import { message, notification, modal, getThemeMode, ThemeMode, setThemeMode } from '!/util/common'
+import { utcToLocalTime } from '!/util/datetime'
+import { getUserInfo, removeToken } from '!/util/auth'
+import { r_sys_user_info_change_password, r_sys_user_info_update } from '!/services/system'
 import {
     r_auth_two_factor_create,
     r_auth_two_factor_remove,
     r_auth_two_factor_validate
-} from '@/services/auth'
-import { r_api_avatar_random_base64 } from '@/services/api/avatar'
-import FitFullscreen from '@/components/common/FitFullscreen'
-import Card from '@/components/common/Card'
-import FlexBox from '@/components/common/FlexBox'
-import HideScrollbar from '@/components/common/HideScrollbar'
+} from '!/services/auth'
+import { r_api_avatar_random_base64 } from '!/services/api/avatar'
+import FitFullscreen from '!/components/FitFullscreen'
+import Card from '!/components/Card'
+import FlexBox from '!/components/FlexBox'
+import HideScrollbar from '!/components/HideScrollbar'
 
 const User = () => {
     const { styles, theme } = useStyles()

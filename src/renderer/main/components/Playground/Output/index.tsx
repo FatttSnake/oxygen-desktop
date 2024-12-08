@@ -1,4 +1,4 @@
-import FlexBox from '@/components/common/FlexBox'
+import FlexBox from '!/components/FlexBox'
 import { IFiles, IImportMap } from '@/components/Playground/shared'
 import Playground from '@/components/Playground'
 import Transform from '@/components/Playground/Output/Transform'

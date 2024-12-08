@@ -10,21 +10,21 @@ import {
     PERMISSION_USER_DISABLE,
     PERMISSION_USERNAME_NOT_FOUND,
     SYSTEM_INVALID_CAPTCHA_CODE
-} from '@/constants/common.constants'
-import { message, notification, modal } from '@/util/common'
-import { getUserInfo, setToken } from '@/util/auth'
-import { utcToLocalTime } from '@/util/datetime'
+} from '!/constants/common.constants'
+import { message, notification, modal } from '!/util/common'
+import { getUserInfo, setToken } from '!/util/auth'
+import { utcToLocalTime } from '!/util/datetime'
 import {
     navigateToForget,
     navigateToRedirect,
     navigateToRegister,
     navigateToRoot
-} from '@/util/navigation'
-import { r_auth_login } from '@/services/auth'
+} from '!/util/navigation'
+import { r_auth_login } from '!/services/auth'
 import { CommonContext } from '!/CommonFramework'
+import FitCenter from '!/components/FitCenter'
+import FlexBox from '!/components/FlexBox'
 import { AppContext } from '@/App'
-import FitCenter from '@/components/common/FitCenter'
-import FlexBox from '@/components/common/FlexBox'
 
 const SignIn = () => {
     const { styles } = useStyles()

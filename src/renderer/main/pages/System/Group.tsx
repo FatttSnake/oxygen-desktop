@@ -7,10 +7,10 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
-} from '@/constants/common.constants'
-import { message, modal } from '@/util/common'
-import { hasPermission } from '@/util/auth'
-import { utcToLocalTime } from '@/util/datetime'
+} from '!/constants/common.constants'
+import { message, modal } from '!/util/common'
+import { hasPermission } from '!/util/auth'
+import { utcToLocalTime } from '!/util/datetime'
 import {
     r_sys_group_add,
     r_sys_group_change_status,
@@ -19,12 +19,12 @@ import {
     r_sys_group_get,
     r_sys_group_update,
     r_sys_role_get_list
-} from '@/services/system'
-import Permission from '@/components/common/Permission'
-import FitFullscreen from '@/components/common/FitFullscreen'
-import HideScrollbar from '@/components/common/HideScrollbar'
-import FlexBox from '@/components/common/FlexBox'
-import Card from '@/components/common/Card'
+} from '!/services/system'
+import Permission from '!/components/Permission'
+import FitFullscreen from '!/components/FitFullscreen'
+import HideScrollbar from '!/components/HideScrollbar'
+import FlexBox from '!/components/FlexBox'
+import Card from '!/components/Card'
 
 const Group = () => {
     const theme = useTheme()

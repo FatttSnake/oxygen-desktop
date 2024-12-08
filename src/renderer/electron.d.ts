@@ -17,8 +17,6 @@ declare global {
         renderer: Renderer
         updateTitleBar: (color: string, symbolColor: string) => void
         onOpenUrl: (callback: (url: string) => void) => void
-        setToolViewVisible: (visible: boolean) => void
-        setToolViewBounds: (x: number, y: number, width: number, height: number) => void
     }
 
     class Notify extends Notification {}

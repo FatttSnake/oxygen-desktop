@@ -1,4 +1,4 @@
-import { hasPathPermission, hasPermission } from '@/util/auth'
+import { hasPathPermission, hasPermission } from '!/util/auth'
 
 export const getRedirectUrl = (path: string, redirectUrl: string): string => {
     return `${path}?redirect=${encodeURIComponent(redirectUrl)}`

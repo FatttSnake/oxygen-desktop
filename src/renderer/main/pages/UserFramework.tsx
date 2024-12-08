@@ -1,9 +1,9 @@
 import useStyles from '@/assets/css/pages/user-framework.style'
 import user from '@/router/user'
-import { hasPathPermission } from '@/util/auth'
-import FitFullscreen from '@/components/common/FitFullscreen'
-import Sidebar from '@/components/common/Sidebar'
-import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
+import { hasPathPermission } from '!/util/auth'
+import FitFullscreen from '!/components/FitFullscreen'
+import Sidebar from '!/components/Sidebar'
+import FullscreenLoadingMask from '!/components/FullscreenLoadingMask'
 
 const UserFramework = () => {
     const { styles } = useStyles()

@@ -1,15 +1,15 @@
 import { PropsWithChildren } from 'react'
 import { theme } from 'antd'
 import zh_CN from 'antd/locale/zh_CN'
+import BaseStyles from '!/assets/css/base.style'
+import CommonStyles from '!/assets/css/common.style'
 import {
     COLOR_PRODUCTION,
     THEME_DARK,
     THEME_FOLLOW_SYSTEM,
     THEME_LIGHT
-} from '@/constants/common.constants'
-import { getThemeMode } from '@/util/common'
-import BaseStyles from '@/assets/css/base.style'
-import CommonStyles from '@/assets/css/common.style'
+} from '!/constants/common.constants'
+import { getThemeMode } from '!/util/common'
 
 export const CommonContext = createContext({
     isDarkMode: false
@@ -59,7 +59,6 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
                     colorLinkHover: COLOR_PRODUCTION
                 },
                 components: {
-                    Message: { paddingXS: 38 },
                     Tree: {
                         colorBgContainer: 'transparent'
                     }

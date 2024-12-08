@@ -7,17 +7,22 @@ import {
     DATABASE_UPDATE_SUCCESS,
     TOOL_HAS_BEEN_PUBLISHED,
     TOOL_UNDER_REVIEW
-} from '@/constants/common.constants'
+} from '!/constants/common.constants'
 import {
     addExtraCssVariables,
     generateThemeCssVariables,
     message,
     removeUselessAttributes
-} from '@/util/common'
-import { navigateToRepository } from '@/util/navigation'
-import editorExtraLibs from '@/util/editorExtraLibs'
-import { r_tool_category_get, r_tool_detail, r_tool_update } from '@/services/tool'
+} from '!/util/common'
+import { navigateToRepository } from '!/util/navigation'
+import editorExtraLibs from '!/util/editorExtraLibs'
+import { r_tool_category_get, r_tool_detail, r_tool_update } from '!/services/tool'
 import { CommonContext } from '!/CommonFramework'
+import FitFullscreen from '!/components/FitFullscreen'
+import FlexBox from '!/components/FlexBox'
+import LoadingMask from '!/components/LoadingMask'
+import Card from '!/components/Card'
+import Playground from '@/components/Playground'
 import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
 import {
     base64ToFiles,
@@ -26,11 +31,6 @@ import {
     IMPORT_MAP_FILE_NAME,
     TS_CONFIG_FILE_NAME
 } from '@/components/Playground/files'
-import Playground from '@/components/Playground'
-import FitFullscreen from '@/components/common/FitFullscreen'
-import FlexBox from '@/components/common/FlexBox'
-import LoadingMask from '@/components/common/LoadingMask'
-import Card from '@/components/common/Card'
 
 const Edit = () => {
     const { styles, theme } = useStyles()

@@ -8,13 +8,13 @@ import {
     PERMISSION_RETRIEVE_SUCCESS,
     PERMISSION_USER_NOT_FOUND,
     SYSTEM_INVALID_CAPTCHA_CODE
-} from '@/constants/common.constants'
-import { message } from '@/util/common'
-import { navigateToLogin } from '@/util/navigation'
-import { r_auth_forget, r_auth_retrieve } from '@/services/auth'
+} from '!/constants/common.constants'
+import { message } from '!/util/common'
+import { navigateToLogin } from '!/util/navigation'
+import { r_auth_forget, r_auth_retrieve } from '!/services/auth'
 import { CommonContext } from '!/CommonFramework'
-import FitCenter from '@/components/common/FitCenter'
-import FlexBox from '@/components/common/FlexBox'
+import FitCenter from '!/components/FitCenter'
+import FlexBox from '!/components/FlexBox'
 
 const Forget = () => {
     const { styles } = useStyles()

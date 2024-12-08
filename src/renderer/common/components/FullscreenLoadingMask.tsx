@@ -1,6 +1,6 @@
 import Icon from '@ant-design/icons'
-import useStyles from '@/assets/css/components/common/fullscreen-loading-mask.style'
-import FitFullscreen from '@/components/common/FitFullscreen'
+import useStyles from '!/assets/css/cpmponents/fullscreen-loading-mask.style'
+import FitFullscreen from '!/components/FitFullscreen'
 
 const FullscreenLoadingMask = () => {
     const { styles, theme } = useStyles()

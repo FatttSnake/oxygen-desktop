@@ -3,20 +3,20 @@ import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/tools/store-card.style'
-import { DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
-import { message, modal, checkDesktop, omitTextByByte } from '@/util/common'
-import { getLoginStatus, getUserId } from '@/util/auth'
+import { DATABASE_SELECT_SUCCESS } from '!/constants/common.constants'
+import { message, modal, checkDesktop, omitTextByByte } from '!/util/common'
+import { getLoginStatus, getUserId } from '!/util/auth'
 import {
     getAndroidUrl,
     navigateToLogin,
     navigateToSource,
     navigateToStore,
     navigateToView
-} from '@/util/navigation'
-import { r_tool_add_favorite, r_tool_detail, r_tool_remove_favorite } from '@/services/tool'
-import { n_tool_get, n_tool_install } from '@/services/native'
-import Card from '@/components/common/Card'
-import FlexBox from '@/components/common/FlexBox'
+} from '!/util/navigation'
+import { r_tool_add_favorite, r_tool_detail, r_tool_remove_favorite } from '!/services/tool'
+import { n_tool_get, n_tool_install } from '!/services/native'
+import Card from '!/components/Card'
+import FlexBox from '!/components/FlexBox'
 import DragHandle from '@/components/dnd/DragHandle'
 import Draggable from '@/components/dnd/Draggable'
 

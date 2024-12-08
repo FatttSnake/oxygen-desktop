@@ -1,13 +1,13 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import useStyles from '@/assets/css/components/common/sidebar/index.style'
-import { getSidebarCollapse, setSidebarCollapse } from '@/util/common'
-import Item from '@/components/common/Sidebar/Item'
-import ItemList from '@/components/common/Sidebar/ItemList'
-import Scroll from '@/components/common/Sidebar/Scroll'
-import Separate from '@/components/common/Sidebar/Separate'
-import Submenu from '@/components/common/Sidebar/Submenu'
-import Footer from '@/components/common/Sidebar/Footer'
+import useStyles from '!/assets/css/cpmponents/sidebar/index.style'
+import { getSidebarCollapse, setSidebarCollapse } from '!/util/common'
+import Item from '!/components/Sidebar/Item'
+import ItemList from '!/components/Sidebar/ItemList'
+import Scroll from '!/components/Sidebar/Scroll'
+import Separate from '!/components/Sidebar/Separate'
+import Submenu from '!/components/Sidebar/Submenu'
+import Footer from '!/components/Sidebar/Footer'
 
 export const SidebarContext = createContext({ isCollapse: false })
 

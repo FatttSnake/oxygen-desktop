@@ -1,4 +1,4 @@
-import { getAuthRoute } from '@/util/route'
+import { getAuthRoute } from '!/util/route'
 
 const system: RouteJsonObject[] = [
     {

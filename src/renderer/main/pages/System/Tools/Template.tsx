@@ -6,11 +6,11 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
-} from '@/constants/common.constants'
-import { addExtraCssVariables, message, modal } from '@/util/common'
-import { utcToLocalTime } from '@/util/datetime'
-import { hasPermission } from '@/util/auth'
-import editorExtraLibs from '@/util/editorExtraLibs'
+} from '!/constants/common.constants'
+import { addExtraCssVariables, message, modal } from '!/util/common'
+import { utcToLocalTime } from '!/util/datetime'
+import { hasPermission } from '!/util/auth'
+import editorExtraLibs from '!/util/editorExtraLibs'
 import {
     r_sys_tool_template_update,
     r_sys_tool_template_delete,
@@ -18,7 +18,14 @@ import {
     r_sys_tool_template_get,
     r_sys_tool_template_get_one,
     r_sys_tool_base_get_list
-} from '@/services/system'
+} from '!/services/system'
+import { CommonContext } from '!/CommonFramework'
+import FitFullscreen from '!/components/FitFullscreen'
+import FlexBox from '!/components/FlexBox'
+import HideScrollbar from '!/components/HideScrollbar'
+import Card from '!/components/Card'
+import Permission from '!/components/Permission'
+import Playground from '@/components/Playground'
 import { IFile, IFiles, ITsconfig } from '@/components/Playground/shared'
 import {
     base64ToFiles,
@@ -27,13 +34,6 @@ import {
     getFilesSize,
     TS_CONFIG_FILE_NAME
 } from '@/components/Playground/files'
-import { CommonContext } from '!/CommonFramework'
-import FitFullscreen from '@/components/common/FitFullscreen'
-import FlexBox from '@/components/common/FlexBox'
-import HideScrollbar from '@/components/common/HideScrollbar'
-import Card from '@/components/common/Card'
-import Permission from '@/components/common/Permission'
-import Playground from '@/components/Playground'
 
 const Template = () => {
     const { styles, theme } = useStyles()

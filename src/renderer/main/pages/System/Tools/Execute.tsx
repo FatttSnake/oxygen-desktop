@@ -1,16 +1,16 @@
 import useStyles from '@/assets/css/pages/system/tools/execute.style'
-import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '@/constants/common.constants'
+import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '!/constants/common.constants'
 import {
     checkDesktop,
     generateThemeCssVariables,
     message,
     removeUselessAttributes
-} from '@/util/common'
-import { navigateToTools } from '@/util/navigation'
-import { r_sys_tool_get_one } from '@/services/system'
+} from '!/util/common'
+import { navigateToTools } from '!/util/navigation'
+import { r_sys_tool_get_one } from '!/services/system'
 import { CommonContext } from '!/CommonFramework'
-import FitFullscreen from '@/components/common/FitFullscreen'
-import Card from '@/components/common/Card'
+import FitFullscreen from '!/components/FitFullscreen'
+import Card from '!/components/Card'
 import Playground from '@/components/Playground'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'

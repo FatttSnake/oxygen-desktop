@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import useStyles from '@/assets/css/components/common/fit-fullscreen.style'
+import useStyles from '!/assets/css/cpmponents/fit-fullscreen.style'
 
 interface FitFullscreenProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {

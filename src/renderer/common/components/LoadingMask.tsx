@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import useStyles from '@/assets/css/components/common/loading-mask.style'
+import useStyles from '!/assets/css/cpmponents/loading-mask.style'
 
 interface LoadingMaskProps extends PropsWithChildren {
     hidden?: boolean

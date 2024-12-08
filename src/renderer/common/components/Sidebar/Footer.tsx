@@ -1,12 +1,12 @@
 import Icon from '@ant-design/icons'
-import useStyles from '@/assets/css/components/common/sidebar/footer.style'
-import { THEME_DARK, THEME_FOLLOW_SYSTEM, THEME_LIGHT } from '@/constants/common.constants'
-import { getThemeMode, notification, setThemeMode, ThemeMode } from '@/util/common'
-import { getRedirectUrl } from '@/util/route'
-import { getAvatar, getLoginStatus, getNickname, removeToken } from '@/util/auth'
-import { navigateToLogin, navigateToUser } from '@/util/navigation'
-import { r_auth_logout } from '@/services/auth'
-import { SidebarContext } from '@/components/common/Sidebar/index'
+import useStyles from '!/assets/css/cpmponents/sidebar/footer.style'
+import { THEME_DARK, THEME_FOLLOW_SYSTEM, THEME_LIGHT } from '!/constants/common.constants'
+import { getThemeMode, notification, setThemeMode, ThemeMode } from '!/util/common'
+import { getRedirectUrl } from '!/util/route'
+import { getAvatar, getLoginStatus, getNickname, removeToken } from '!/util/auth'
+import { navigateToLogin, navigateToUser } from '!/util/navigation'
+import { r_auth_logout } from '!/services/auth'
+import { SidebarContext } from '!/components/Sidebar'
 
 const Footer = () => {
     const { styles, theme, cx } = useStyles()

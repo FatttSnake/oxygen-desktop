@@ -13,9 +13,9 @@ import {
     THEME_DARK,
     THEME_FOLLOW_SYSTEM,
     THEME_LIGHT
-} from '@/constants/common.constants'
-import { getLocalStorage, setLocalStorage } from '@/util/browser'
-import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
+} from '!/constants/common.constants'
+import { getLocalStorage, setLocalStorage } from '!/util/browser'
+import FullscreenLoadingMask from '!/components/FullscreenLoadingMask'
 
 export type ThemeMode = typeof THEME_FOLLOW_SYSTEM | typeof THEME_LIGHT | typeof THEME_DARK
 

@@ -1,4 +1,4 @@
-import request from '@/services'
+import request from '!/services'
 import {
     URL_TOOL,
     URL_TOOL_CATEGORY,
@@ -6,7 +6,7 @@ import {
     URL_TOOL_FAVORITE,
     URL_TOOL_STORE,
     URL_TOOL_TEMPLATE
-} from '@/constants/urls.constants'
+} from '!/constants/urls.constants'
 
 export const r_tool_template_get = (param: { platform: string }) =>
     request.get<ToolTemplateVo[]>(URL_TOOL_TEMPLATE, param)

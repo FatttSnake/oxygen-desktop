@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import useStyles from '@/assets/css/components/common/card.style'
+import useStyles from '!/assets/css/cpmponents/card.style'
 
 type CardProps = DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>
 

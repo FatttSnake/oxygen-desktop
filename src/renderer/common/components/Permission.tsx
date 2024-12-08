@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import { hasPathPermission, hasPermission } from '@/util/auth'
+import { hasPathPermission, hasPermission } from '!/util/auth'
 
 interface PermissionProps extends PropsWithChildren {
     operationCode?: string[]

@@ -1,8 +1,8 @@
 import VanillaTilt from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/tools/load-more-card.style'
-import FlexBox from '@/components/common/FlexBox'
-import Card from '@/components/common/Card'
+import FlexBox from '!/components/FlexBox'
+import Card from '!/components/Card'
 
 interface LoadMoreCardProps {
     onClick: () => void

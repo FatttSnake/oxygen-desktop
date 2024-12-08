@@ -1,7 +1,7 @@
-import { getRouter } from '@/router'
-import { init } from '@/util/common'
+import { init } from '!/util/common'
 import CommonFramework from '!/CommonFramework'
-import FullscreenLoadingMask from '@/components/common/FullscreenLoadingMask'
+import FullscreenLoadingMask from '!/components/FullscreenLoadingMask'
+import { getRouter } from '@/router'
 
 export const AppContext = createContext({
     refreshRouter: () => {}

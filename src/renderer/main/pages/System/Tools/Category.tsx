@@ -5,19 +5,19 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
-} from '@/constants/common.constants'
-import { message, modal } from '@/util/common'
-import { utcToLocalTime } from '@/util/datetime'
+} from '!/constants/common.constants'
+import { message, modal } from '!/util/common'
+import { utcToLocalTime } from '!/util/datetime'
 import {
     r_sys_tool_category_add,
     r_sys_tool_category_delete,
     r_sys_tool_category_get,
     r_sys_tool_category_update
-} from '@/services/system'
-import Card from '@/components/common/Card'
-import Permission from '@/components/common/Permission'
-import FitFullscreen from '@/components/common/FitFullscreen'
-import HideScrollbar from '@/components/common/HideScrollbar'
+} from '!/services/system'
+import Card from '!/components/Card'
+import Permission from '!/components/Permission'
+import FitFullscreen from '!/components/FitFullscreen'
+import HideScrollbar from '!/components/HideScrollbar'
 
 const Category = () => {
     const theme = useTheme()

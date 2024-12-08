@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import useStyles from '#/assets/css/window-frame.style'
+import useStyles from '#/assets/css/title-bar.style'
 
 const TitleBar = () => {
     const { styles, theme } = useStyles()

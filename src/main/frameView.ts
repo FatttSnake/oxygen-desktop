@@ -9,7 +9,7 @@ export const initFrameView = (_: BaseWindow, frameView: WebContentsView) => {
         x: 0,
         y: 0,
         width,
-        height: 31
+        height: 36
     })
 
     frameView.webContents.setWindowOpenHandler((details) => {

@@ -1,9 +1,9 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import useStyles from '@/assets/css/components/tools/repository-card.style'
-import { omitTextByByte } from '@/util/common'
-import Card from '@/components/common/Card'
-import FlexBox from '@/components/common/FlexBox'
+import { omitTextByByte } from '!/util/common'
+import Card from '!/components/Card'
+import FlexBox from '!/components/FlexBox'
 import Draggable from '@/components/dnd/Draggable'
 import DragHandle from '@/components/dnd/DragHandle'
 

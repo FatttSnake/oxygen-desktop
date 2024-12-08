@@ -6,11 +6,7 @@ const oxygenApi = {
     renderer: 'main',
 
     onOpenUrl: (callback: (url: string) => void) =>
-        ipcRenderer.on('mainView:url:open', (_, url: string) => callback(url)),
-
-    setToolViewVisible: (visible: boolean) => ipcRenderer.send('toolView:visible:set', visible),
-    setToolViewBounds: (x: number, y: number, width: number, height: number) =>
-        ipcRenderer.send('toolView:bounds:set', x, y, width, height)
+        ipcRenderer.on('mainView:url:open', (_, url: string) => callback(url))
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to
