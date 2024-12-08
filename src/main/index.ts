@@ -12,9 +12,15 @@ import { processMainWindow } from './processMainWindow'
 import { initMainView } from './mainView'
 import { initToolView } from './toolView'
 import { initFrameView } from './frameView'
+import { initMenuView } from './menuView'
+
+global.sharedObject = {
+    menuWidth: 0
+}
 
 let mainWindow: BaseWindow
 let frameView: WebContentsView
+let menuView: WebContentsView
 let mainView: WebContentsView
 let toolView: WebContentsView
 
@@ -96,6 +102,12 @@ const createWindow = () => {
         }
     })
 
+    menuView = new WebContentsView({
+        webPreferences: {
+            preload: join(__dirname, '../preload/menu.js')
+        }
+    })
+
     mainView = new WebContentsView({
         webPreferences: {
             preload: join(__dirname, '../preload/main.js')
@@ -109,9 +121,10 @@ const createWindow = () => {
     })
 
     initFrameView(mainWindow, frameView)
+    initMenuView(mainWindow, menuView)
     initMainView(mainWindow, mainView)
     initToolView(mainWindow, toolView)
-    processMainWindow(mainWindow, frameView, mainView, toolView)
+    processMainWindow(mainWindow, frameView, menuView, mainView, toolView)
 }
 
 // This method will be called when Electron has finished
@@ -144,7 +157,7 @@ void app.whenReady().then(() => {
     electronApp.setAppUserModelId('top.fatweb')
     createWindow()
 
-    processIpc(mainWindow, mainView, toolView)
+    processIpc(mainWindow, frameView, menuView, mainView, toolView)
     processApp(createWindow)
 })
 

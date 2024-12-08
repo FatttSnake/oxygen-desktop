@@ -15,7 +15,12 @@ export default defineConfig({
     preload: {
         build: {
             lib: {
-                entry: ['src/preload/frame.ts', 'src/preload/main.ts', 'src/preload/tool.ts']
+                entry: [
+                    'src/preload/frame.ts',
+                    'src/preload/menu.ts',
+                    'src/preload/main.ts',
+                    'src/preload/tool.ts'
+                ]
             }
         },
         plugins: [externalizeDepsPlugin()]
@@ -89,6 +94,7 @@ export default defineConfig({
             alias: {
                 '!': fileURLToPath(new URL('./src/renderer/common', import.meta.url)),
                 '#': fileURLToPath(new URL('./src/renderer/frame', import.meta.url)),
+                '%': fileURLToPath(new URL('./src/renderer/menu', import.meta.url)),
                 '@': fileURLToPath(new URL('./src/renderer/main', import.meta.url))
             }
         }

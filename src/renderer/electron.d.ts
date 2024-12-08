@@ -10,12 +10,13 @@ declare global {
         windowControlsOverlay?: WindowControlsOverlay
     }
 
-    type Renderer = 'frame' | 'main' | 'tool'
+    type Renderer = 'frame' | 'menu' | 'main' | 'tool'
 
     interface OxygenAPI {
         platform: NodeJS.Platform
         renderer: Renderer
         updateTitleBar: (color: string, symbolColor: string) => void
+        updateMenuWidth: (width: number) => void
         onOpenUrl: (callback: (url: string) => void) => void
     }
 

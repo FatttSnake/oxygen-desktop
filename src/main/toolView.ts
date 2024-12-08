@@ -9,7 +9,7 @@ export const initToolView = (_: BaseWindow, toolView: WebContentsView) => {
 
     toolView.webContents.on('did-finish-load', () => {
         if (is.dev) {
-            toolView.webContents.openDevTools()
+            // toolView.webContents.openDevTools()
         }
     })
 

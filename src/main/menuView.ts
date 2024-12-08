@@ -3,34 +3,33 @@ import { BaseWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { getWindowBounds } from './dataStore/main'
 
-export const initMainView = (mainWindow: BaseWindow, mainView: WebContentsView) => {
+export const initMenuView = (_: BaseWindow, menuView: WebContentsView) => {
     const { width, height } = getWindowBounds()
-    mainView.setBounds({
+    menuView.setBounds({
         x: 0,
         y: 36,
-        width,
+        width: width,
         height: height - 36
     })
 
-    mainView.webContents.setWindowOpenHandler((details) => {
+    menuView.webContents.setWindowOpenHandler((details) => {
         void shell.openExternal(details.url)
         return { action: 'deny' }
     })
 
-    mainView.webContents.on('did-finish-load', () => {
-        mainWindow.show()
+    menuView.webContents.on('did-finish-load', () => {
         if (is.dev) {
-            mainView.webContents.openDevTools()
+            menuView.webContents.openDevTools()
         }
     })
 
     // HMR for renderer base on electron-vite cli.
     // Load the remote URL for development or the local html file for production.
     if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-        void mainView.webContents.loadURL(process.env['ELECTRON_RENDERER_URL'])
+        void menuView.webContents.loadURL(process.env['ELECTRON_RENDERER_URL'])
     } else {
         // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-        void mainView.webContents.loadURL(
+        void menuView.webContents.loadURL(
             `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
         )
     }

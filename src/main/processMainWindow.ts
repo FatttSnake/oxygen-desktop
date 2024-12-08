@@ -4,10 +4,12 @@ import { BaseWindow, WebContentsView } from 'electron'
 export const processMainWindow = (
     mainWindow: BaseWindow,
     frameView: WebContentsView,
+    menuView: WebContentsView,
     mainView: WebContentsView,
     toolView: WebContentsView
 ) => {
     mainWindow.contentView.addChildView(frameView)
+    mainWindow.contentView.addChildView(menuView)
     mainWindow.contentView.addChildView(mainView)
     mainWindow.contentView.addChildView(toolView)
 
@@ -18,16 +20,23 @@ export const processMainWindow = (
 
     mainWindow.on('resize', () => {
         const { width, height } = mainWindow.getBounds()
+        const menuWidth = global.sharedObject.menuWidth
         frameView.setBounds({
             x: 0,
             y: 0,
             width,
             height: 36
         })
-        mainView.setBounds({
+        menuView.setBounds({
             x: 0,
             y: 36,
-            width,
+            width: width,
+            height: height - 36
+        })
+        mainView.setBounds({
+            x: menuWidth,
+            y: 36,
+            width: width - menuWidth,
             height: height - 36
         })
     })

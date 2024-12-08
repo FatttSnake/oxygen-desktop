@@ -8,6 +8,7 @@
     "paths": {
       "!/*": ["./src/renderer/common/*"],
       "#/*": ["./src/renderer/frame/*"],
+      "%/*": ["./src/renderer/menu/*"],
       "@/*": ["./src/renderer/main/*"]
     },
 

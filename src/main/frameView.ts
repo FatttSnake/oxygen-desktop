@@ -1,7 +1,7 @@
-import { getWindowBounds } from './dataStore/main'
+import { join } from 'path'
 import { BaseWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import { join } from 'path'
+import { getWindowBounds } from './dataStore/main'
 
 export const initFrameView = (_: BaseWindow, frameView: WebContentsView) => {
     const { width } = getWindowBounds()
@@ -19,7 +19,7 @@ export const initFrameView = (_: BaseWindow, frameView: WebContentsView) => {
 
     frameView.webContents.on('did-finish-load', () => {
         if (is.dev) {
-            frameView.webContents.openDevTools()
+            // frameView.webContents.openDevTools()
         }
     })
 

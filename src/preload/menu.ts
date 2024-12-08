@@ -2,10 +2,9 @@ import { contextBridge, ipcRenderer, Notification } from 'electron'
 
 const oxygenApi = {
     platform: process.platform,
-    renderer: 'frame',
+    renderer: 'menu',
 
-    updateTitleBar: (color: string, symbolColor: string) =>
-        ipcRenderer.send('window:titleBarOverlay:setColor', color, symbolColor)
+    updateMenuWidth: (width: number) => ipcRenderer.send('menuView:width:update', width)
 }
 
 if (process.contextIsolated) {
