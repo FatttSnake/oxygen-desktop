@@ -29,7 +29,8 @@ export default createStyles(({ token }) => {
             position: 'fixed',
             paddingLeft: token.paddingXS,
             zIndex: 10000,
-            animation: `${slideOut} 0.1s ease forwards`
+            animation: `${slideOut} 0.1s ease forwards`,
+            boxShadow: token.boxShadow
         },
 
         hoveredSubmenu: {
