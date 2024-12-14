@@ -1,10 +1,10 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/system/setting-card.style'
-import Card from '!/components/Card'
-import FlexBox from '!/components/FlexBox'
-import Permission from '!/components/Permission'
-import LoadingMask from '!/components/LoadingMask'
+import Card from '$/components/Card'
+import FlexBox from '$/components/FlexBox'
+import Permission from '$/components/Permission'
+import LoadingMask from '$/components/LoadingMask'
 
 interface SettingsCardProps extends PropsWithChildren {
     icon: IconComponent

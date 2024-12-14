@@ -1,11 +1,11 @@
 import { PropsWithChildren, ReactNode } from 'react'
-import useStyles from '!/assets/css/cpmponents/sidebar/index.style'
-import { getSidebarCollapse } from '!/util/common'
-import Item from '!/components/Sidebar/Item'
-import ItemList from '!/components/Sidebar/ItemList'
-import Scroll from '!/components/Sidebar/Scroll'
-import Separate from '!/components/Sidebar/Separate'
-import Submenu from '!/components/Sidebar/Submenu'
+import useStyles from '$/assets/css/cpmponents/sidebar/index.style'
+import { getSidebarCollapse } from '$/util/common'
+import Item from '$/components/Sidebar/Item'
+import ItemList from '$/components/Sidebar/ItemList'
+import Scroll from '$/components/Sidebar/Scroll'
+import Separate from '$/components/Sidebar/Separate'
+import Submenu from '$/components/Sidebar/Submenu'
 
 export const SidebarContext = createContext({ isCollapse: false })
 

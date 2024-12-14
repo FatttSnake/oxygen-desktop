@@ -3,11 +3,11 @@ import {
     STORAGE_TOKEN_KEY,
     STORAGE_USER_INFO_KEY,
     DATABASE_SELECT_SUCCESS
-} from '!/constants/common.constants'
-import { floorNumber, randomColor, randomFloat, randomInt } from '!/util/common'
-import { getLocalStorage, removeLocalStorage, setLocalStorage } from '!/util/browser'
-import { getFullTitle } from '!/util/route'
-import { r_sys_user_info_get } from '!/services/system'
+} from '$/constants/common.constants'
+import { floorNumber, randomColor, randomFloat, randomInt } from '$/util/common'
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from '$/util/browser'
+import { getFullTitle } from '$/util/route'
+import { r_sys_user_info_get } from '$/services/system'
 
 let captcha: Captcha
 

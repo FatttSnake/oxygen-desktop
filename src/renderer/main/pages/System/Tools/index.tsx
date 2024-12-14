@@ -6,9 +6,9 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS,
     TOOL_NOT_UNDER_REVIEW
-} from '!/constants/common.constants'
-import { message, modal } from '!/util/common'
-import { navigateToCode } from '!/util/navigation'
+} from '$/constants/common.constants'
+import { message, modal } from '$/util/common'
+import { navigateToCode } from '$/util/navigation'
 import {
     r_sys_tool_delete,
     r_sys_tool_get,
@@ -16,12 +16,12 @@ import {
     r_sys_tool_off_shelve,
     r_sys_tool_pass,
     r_sys_tool_reject
-} from '!/services/system'
-import FlexBox from '!/components/FlexBox'
-import Card from '!/components/Card'
-import FitFullscreen from '!/components/FitFullscreen'
-import HideScrollbar from '!/components/HideScrollbar'
-import Permission from '!/components/Permission'
+} from '$/services/system'
+import FlexBox from '$/components/FlexBox'
+import Card from '$/components/Card'
+import FitFullscreen from '$/components/FitFullscreen'
+import HideScrollbar from '$/components/HideScrollbar'
+import Permission from '$/components/Permission'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'
 import { base64ToFiles, IMPORT_MAP_FILE_NAME, strToBase64 } from '@/components/Playground/files'

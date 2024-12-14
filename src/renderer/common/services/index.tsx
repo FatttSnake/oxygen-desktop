@@ -7,10 +7,10 @@ import {
     PERMISSION_TOKEN_RENEW_SUCCESS,
     PERMISSION_UNAUTHORIZED,
     SYSTEM_REQUEST_TOO_FREQUENT
-} from '!/constants/common.constants'
-import { message } from '!/util/common'
-import { getRedirectUrl } from '!/util/route'
-import { getToken, setToken, removeToken } from '!/util/auth'
+} from '$/constants/common.constants'
+import { message } from '$/util/common'
+import { getRedirectUrl } from '$/util/route'
+import { getToken, setToken, removeToken } from '$/util/auth'
 
 const service: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_URL,

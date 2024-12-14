@@ -7,10 +7,10 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
-} from '!/constants/common.constants'
-import { message, modal } from '!/util/common'
-import { utcToLocalTime } from '!/util/datetime'
-import { hasPermission, powerListToPowerTree } from '!/util/auth'
+} from '$/constants/common.constants'
+import { message, modal } from '$/util/common'
+import { utcToLocalTime } from '$/util/datetime'
+import { hasPermission, powerListToPowerTree } from '$/util/auth'
 import {
     r_sys_role_add,
     r_sys_role_change_status,
@@ -19,12 +19,12 @@ import {
     r_sys_role_update,
     r_sys_role_delete,
     r_sys_role_delete_list
-} from '!/services/system'
-import Permission from '!/components/Permission'
-import FitFullscreen from '!/components/FitFullscreen'
-import HideScrollbar from '!/components/HideScrollbar'
-import FlexBox from '!/components/FlexBox'
-import Card from '!/components/Card'
+} from '$/services/system'
+import Permission from '$/components/Permission'
+import FitFullscreen from '$/components/FitFullscreen'
+import HideScrollbar from '$/components/HideScrollbar'
+import FlexBox from '$/components/FlexBox'
+import Card from '$/components/Card'
 
 const Role = () => {
     const theme = useTheme()

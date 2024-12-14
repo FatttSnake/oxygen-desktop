@@ -1,4 +1,4 @@
-import CommonFramework from '!/CommonFramework'
+import CommonFramework from '$/CommonFramework'
 import TitleBar from '#/TitleBar'
 
 const App = () => {

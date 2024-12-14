@@ -5,14 +5,14 @@ import {
     PERMISSION_RESEND_SUCCESS,
     PERMISSION_VERIFY_SUCCESS,
     SYSTEM_MATCH_SENSITIVE_WORD
-} from '!/constants/common.constants'
-import { message } from '!/util/common'
-import { getLoginStatus, getUserInfo, requestUserInfo } from '!/util/auth'
-import { navigateToLogin, navigateToRedirect, navigateToRepository } from '!/util/navigation'
-import { r_auth_resend, r_auth_verify } from '!/services/auth'
-import { r_api_avatar_random_base64 } from '!/services/api/avatar'
-import FitCenter from '!/components/FitCenter'
-import FlexBox from '!/components/FlexBox'
+} from '$/constants/common.constants'
+import { message } from '$/util/common'
+import { getLoginStatus, getUserInfo, requestUserInfo } from '$/util/auth'
+import { navigateToLogin, navigateToRedirect, navigateToRepository } from '$/util/navigation'
+import { r_auth_resend, r_auth_verify } from '$/services/auth'
+import { r_api_avatar_random_base64 } from '$/services/api/avatar'
+import FitCenter from '$/components/FitCenter'
+import FlexBox from '$/components/FlexBox'
 import { AppContext } from '@/App'
 
 const Verify = () => {

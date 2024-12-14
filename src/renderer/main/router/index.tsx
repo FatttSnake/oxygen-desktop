@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { getAuthRoute, mapJsonToRoute, setTitle } from '!/util/route'
+import { getAuthRoute, mapJsonToRoute, setTitle } from '$/util/route'
 import system from '@/router/system'
 import user from '@/router/user'
 import tools from '@/router/tools'
@@ -40,7 +40,7 @@ const root: RouteJsonObject[] = [
                 path: 'loading',
                 absolutePath: '/loading',
                 id: 'loading',
-                component: lazy(() => import('!/components/FullscreenLoadingMask'))
+                component: lazy(() => import('$/components/FullscreenLoadingMask'))
             },
             {
                 path: 'user',

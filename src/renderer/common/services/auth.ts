@@ -7,8 +7,8 @@ import {
     URL_RETRIEVE,
     URL_TWO_FACTOR,
     URL_VERIFY
-} from '!/constants/urls.constants'
-import request from '!/services'
+} from '$/constants/urls.constants'
+import request from '$/services'
 
 export const r_auth_register = (param: RegisterParam) => request.post<TokenVo>(URL_REGISTER, param)
 

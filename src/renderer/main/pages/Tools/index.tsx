@@ -11,10 +11,10 @@ import {
     TOOL_NOT_UNDER_REVIEW,
     TOOL_SUBMIT_SUCCESS,
     TOOL_UNDER_REVIEW
-} from '!/constants/common.constants'
-import { message, modal, checkDesktop } from '!/util/common'
-import { getLoginStatus } from '!/util/auth'
-import { navigateToEdit, navigateToSource, navigateToView } from '!/util/navigation'
+} from '$/constants/common.constants'
+import { message, modal, checkDesktop } from '$/util/common'
+import { getLoginStatus } from '$/util/auth'
+import { navigateToEdit, navigateToSource, navigateToView } from '$/util/navigation'
 import {
     r_tool_cancel,
     r_tool_delete,
@@ -22,11 +22,11 @@ import {
     r_tool_get_favorite,
     r_tool_submit,
     r_tool_upgrade
-} from '!/services/tool'
-import FitFullscreen from '!/components/FitFullscreen'
-import HideScrollbar from '!/components/HideScrollbar'
-import FlexBox from '!/components/FlexBox'
-import UrlCard from '!/components/UrlCard'
+} from '$/services/tool'
+import FitFullscreen from '$/components/FitFullscreen'
+import HideScrollbar from '$/components/HideScrollbar'
+import FlexBox from '$/components/FlexBox'
+import UrlCard from '$/components/UrlCard'
 import RepositoryCard from '@/components/tools/RepositoryCard'
 import LoadMoreCard from '@/components/tools/LoadMoreCard'
 import StoreCard from '@/components/tools/StoreCard'

@@ -1,6 +1,6 @@
-import { init } from '!/util/common'
-import CommonFramework from '!/CommonFramework'
-import FullscreenLoadingMask from '!/components/FullscreenLoadingMask'
+import { init } from '$/util/common'
+import CommonFramework from '$/CommonFramework'
+import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 import { getRouter } from '@/router'
 
 export const AppContext = createContext({

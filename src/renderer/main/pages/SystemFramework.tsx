@@ -1,8 +1,8 @@
 import useStyles from '@/assets/css/pages/system-framework.style'
 import { getSystemRouteJson } from '@/router/system'
-import FitFullscreen from '!/components/FitFullscreen'
-import Sidebar from '!/components/Sidebar'
-import FullscreenLoadingMask from '!/components/FullscreenLoadingMask'
+import FitFullscreen from '$/components/FitFullscreen'
+import Sidebar from '$/components/Sidebar'
+import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 
 const SystemFramework = () => {
     const { styles } = useStyles()

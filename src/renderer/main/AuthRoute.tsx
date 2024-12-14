@@ -1,6 +1,6 @@
-import { PRODUCTION_NAME } from '!/constants/common.constants'
-import { getRedirectUrl } from '!/util/route'
-import { getLoginStatus, getVerifyStatus_async } from '!/util/auth'
+import { PRODUCTION_NAME } from '$/constants/common.constants'
+import { getRedirectUrl } from '$/util/route'
+import { getLoginStatus, getVerifyStatus_async } from '$/util/auth'
 
 const AuthRoute = () => {
     const navigate = useNavigate()

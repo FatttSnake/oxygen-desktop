@@ -4,20 +4,20 @@ import {
     DATABASE_DUPLICATE_KEY,
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS
-} from '!/constants/common.constants'
-import { generateThemeCssVariables, message, removeUselessAttributes } from '!/util/common'
-import { navigateToEdit } from '!/util/navigation'
+} from '$/constants/common.constants'
+import { generateThemeCssVariables, message, removeUselessAttributes } from '$/util/common'
+import { navigateToEdit } from '$/util/navigation'
 import {
     r_tool_category_get,
     r_tool_create,
     r_tool_template_get,
     r_tool_template_get_one
-} from '!/services/tool'
-import { CommonContext } from '!/CommonFramework'
-import FlexBox from '!/components/FlexBox'
-import Card from '!/components/Card'
-import FitFullscreen from '!/components/FitFullscreen'
-import HideScrollbar from '!/components/HideScrollbar'
+} from '$/services/tool'
+import { CommonContext } from '$/CommonFramework'
+import FlexBox from '$/components/FlexBox'
+import Card from '$/components/Card'
+import FitFullscreen from '$/components/FitFullscreen'
+import HideScrollbar from '$/components/HideScrollbar'
 import Playground from '@/components/Playground'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'

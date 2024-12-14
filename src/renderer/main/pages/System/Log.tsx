@@ -1,14 +1,14 @@
 import { ChangeEvent, KeyboardEvent } from 'react'
 import { useTheme } from 'antd-style'
 import dayjs from 'dayjs'
-import { DATABASE_SELECT_SUCCESS } from '!/constants/common.constants'
-import { message } from '!/util/common'
-import { dayjsToUtc, utcToLocalTime } from '!/util/datetime'
-import { r_sys_log_get } from '!/services/system'
-import FitFullscreen from '!/components/FitFullscreen'
-import Card from '!/components/Card'
-import HideScrollbar from '!/components/HideScrollbar'
-import FlexBox from '!/components/FlexBox'
+import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
+import { message } from '$/util/common'
+import { dayjsToUtc, utcToLocalTime } from '$/util/datetime'
+import { r_sys_log_get } from '$/services/system'
+import FitFullscreen from '$/components/FitFullscreen'
+import Card from '$/components/Card'
+import HideScrollbar from '$/components/HideScrollbar'
+import FlexBox from '$/components/FlexBox'
 
 const Log = () => {
     const theme = useTheme()

@@ -2,7 +2,7 @@ import { Monaco } from '@monaco-editor/react'
 import { editor } from 'monaco-editor'
 import _ from 'lodash'
 import useStyles from '@/components/Playground/CodeEditor/index.style'
-import FlexBox from '!/components/FlexBox'
+import FlexBox from '$/components/FlexBox'
 import { IEditorOptions, IFiles, ITsconfig } from '@/components/Playground/shared'
 import {
     fileNameToLanguage,

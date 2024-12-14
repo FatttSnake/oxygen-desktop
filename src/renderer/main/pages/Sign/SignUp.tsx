@@ -7,14 +7,14 @@ import {
     PERMISSION_REGISTER_SUCCESS,
     SYSTEM_INVALID_CAPTCHA_CODE,
     SYSTEM_MATCH_SENSITIVE_WORD
-} from '!/constants/common.constants'
-import { message } from '!/util/common'
-import { getLoginStatus, setToken } from '!/util/auth'
-import { navigateToLogin } from '!/util/navigation'
-import { r_auth_register, r_auth_resend } from '!/services/auth'
-import { CommonContext } from '!/CommonFramework'
-import FitCenter from '!/components/FitCenter'
-import FlexBox from '!/components/FlexBox'
+} from '$/constants/common.constants'
+import { message } from '$/util/common'
+import { getLoginStatus, setToken } from '$/util/auth'
+import { navigateToLogin } from '$/util/navigation'
+import { r_auth_register, r_auth_resend } from '$/services/auth'
+import { CommonContext } from '$/CommonFramework'
+import FitCenter from '$/components/FitCenter'
+import FlexBox from '$/components/FlexBox'
 
 const SignUp = () => {
     const { styles } = useStyles()

@@ -15,7 +15,7 @@ import { BarChart, BarSeriesOption, LineChart, LineSeriesOption } from 'echarts/
 import { SVGRenderer } from 'echarts/renderers'
 import { UniversalTransition } from 'echarts/features'
 import { CallbackDataParams } from 'echarts/types/dist/shared'
-import { utcToLocalTime } from '!/util/datetime'
+import { utcToLocalTime } from '$/util/datetime'
 
 echarts.use([
     TooltipComponent,

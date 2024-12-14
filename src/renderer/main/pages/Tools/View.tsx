@@ -1,23 +1,23 @@
 import useStyles from '@/assets/css/pages/tools/view.style'
-import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '!/constants/common.constants'
+import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import {
     checkDesktop,
     generateThemeCssVariables,
     message,
     removeUselessAttributes
-} from '!/util/common'
-import { getLoginStatus } from '!/util/auth'
+} from '$/util/common'
+import { getLoginStatus } from '$/util/auth'
 import {
     navigateToInstall,
     navigateToRepository,
     navigateToRoot,
     navigateToView
-} from '!/util/navigation'
-import { r_tool_detail } from '!/services/tool'
-import { n_tool_detail } from '!/services/native'
-import { CommonContext } from '!/CommonFramework'
-import FitFullscreen from '!/components/FitFullscreen'
-import Card from '!/components/Card'
+} from '$/util/navigation'
+import { r_tool_detail } from '$/services/tool'
+import { n_tool_detail } from '$/services/native'
+import { CommonContext } from '$/CommonFramework'
+import FitFullscreen from '$/components/FitFullscreen'
+import Card from '$/components/Card'
 import Playground from '@/components/Playground'
 import compiler from '@/components/Playground/compiler'
 import { IImportMap } from '@/components/Playground/shared'

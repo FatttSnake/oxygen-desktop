@@ -1,9 +1,9 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/system/statistics-card.style'
-import Card from '!/components/Card'
-import FlexBox from '!/components/FlexBox'
-import LoadingMask from '!/components/LoadingMask'
+import Card from '$/components/Card'
+import FlexBox from '$/components/FlexBox'
+import LoadingMask from '$/components/LoadingMask'
 
 interface StatisticsCardProps extends PropsWithChildren {
     icon: IconComponent

@@ -1,4 +1,4 @@
-import CommonFramework from '!/CommonFramework'
+import CommonFramework from '$/CommonFramework'
 import MenuFramework from '%/MenuFramework'
 import Tool from '%/menus/Tool'
 

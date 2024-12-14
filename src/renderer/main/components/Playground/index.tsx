@@ -6,7 +6,7 @@ import {
     MAIN_FILE_NAME,
     TS_CONFIG_FILE_NAME
 } from '@/components/Playground/files'
-import FlexBox from '!/components/FlexBox'
+import FlexBox from '$/components/FlexBox'
 import CodeEditor from '@/components/Playground/CodeEditor'
 import Output from '@/components/Playground/Output'
 

@@ -1,7 +1,7 @@
 import Icon from '@ant-design/icons'
 import { Background, Controls, MiniMap, Node, Panel, ReactFlow } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { CommonContext } from '!/CommonFramework'
+import { CommonContext } from '$/CommonFramework'
 import useStyles from '@/components/Playground/Output/Preview/render.style'
 import iframeRaw from '@/components/Playground/Output/Preview/iframe.html?raw'
 import devices, { DeviceName } from '@/components/Playground/Output/Preview/devices'

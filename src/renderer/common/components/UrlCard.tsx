@@ -1,9 +1,9 @@
 import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
-import useStyles from '!/assets/css/cpmponents/url-card.style'
-import Card from '!/components/Card'
-import FlexBox from '!/components/FlexBox'
+import useStyles from '$/assets/css/cpmponents/url-card.style'
+import Card from '$/components/Card'
+import FlexBox from '$/components/FlexBox'
 
 interface UrlCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: IconComponent

@@ -8,10 +8,10 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
-} from '!/constants/common.constants'
-import { message, modal } from '!/util/common'
-import { hasPermission } from '!/util/auth'
-import { utcToLocalTime, isPastTime, localTimeToUtc, dayjsToUtc, getNowUtc } from '!/util/datetime'
+} from '$/constants/common.constants'
+import { message, modal } from '$/util/common'
+import { hasPermission } from '$/util/auth'
+import { utcToLocalTime, isPastTime, localTimeToUtc, dayjsToUtc, getNowUtc } from '$/util/datetime'
 import {
     r_sys_group_get_list,
     r_sys_role_get_list,
@@ -21,13 +21,13 @@ import {
     r_sys_user_delete_list,
     r_sys_user_get,
     r_sys_user_update
-} from '!/services/system'
-import Permission from '!/components/Permission'
-import { r_api_avatar_random_base64 } from '!/services/api/avatar'
-import FitFullscreen from '!/components/FitFullscreen'
-import HideScrollbar from '!/components/HideScrollbar'
-import FlexBox from '!/components/FlexBox'
-import Card from '!/components/Card'
+} from '$/services/system'
+import Permission from '$/components/Permission'
+import { r_api_avatar_random_base64 } from '$/services/api/avatar'
+import FitFullscreen from '$/components/FitFullscreen'
+import HideScrollbar from '$/components/HideScrollbar'
+import FlexBox from '$/components/FlexBox'
+import Card from '$/components/Card'
 
 interface ChangePasswordFields extends UserUpdatePasswordParam {
     passwordConfirm: string

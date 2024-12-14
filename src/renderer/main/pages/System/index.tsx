@@ -1,9 +1,9 @@
 import useStyles from '@/assets/css/pages/system/index.style'
-import HideScrollbar from '!/components/HideScrollbar'
-import FitFullscreen from '!/components/FitFullscreen'
-import FlexBox from '!/components/FlexBox'
-import Permission from '!/components/Permission'
-import UrlCard from '!/components/UrlCard'
+import HideScrollbar from '$/components/HideScrollbar'
+import FitFullscreen from '$/components/FitFullscreen'
+import FlexBox from '$/components/FlexBox'
+import Permission from '$/components/Permission'
+import UrlCard from '$/components/UrlCard'
 
 const System = () => {
     const { styles } = useStyles()

@@ -1,6 +1,6 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import useStyles from '%/assets/css/components/sidebar/index.style'
-import { getSidebarCollapse } from '!/util/common'
+import { getSidebarCollapse } from '$/util/common'
 import Scroll from '%/components/Sidebar/Scroll'
 import Item from '%/components/Sidebar/Item'
 

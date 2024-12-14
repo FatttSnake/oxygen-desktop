@@ -1,9 +1,9 @@
 import * as echarts from 'echarts/core'
 import { BarSeriesOption } from 'echarts/charts'
 import useStyles from '@/assets/css/pages/system/statistics/common.style'
-import { formatByteSize } from '!/util/common'
-import { r_sys_statistics_storage } from '!/services/system'
-import FlexBox from '!/components/FlexBox'
+import { formatByteSize } from '$/util/common'
+import { r_sys_statistics_storage } from '$/services/system'
+import FlexBox from '$/components/FlexBox'
 import {
     barDefaultSeriesOption,
     barEChartsBaseOption,

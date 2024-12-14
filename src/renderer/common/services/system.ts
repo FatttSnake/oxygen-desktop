@@ -23,8 +23,8 @@ import {
     URL_SYS_TOOL,
     URL_SYS_SETTINGS_TWO_FACTOR,
     URL_SYS_TOOL_BASE_LIST
-} from '!/constants/urls.constants'
-import request from '!/services'
+} from '$/constants/urls.constants'
+import request from '$/services'
 
 export const r_sys_user_info_get = () => request.get<UserWithPowerInfoVo>(URL_SYS_USER_INFO)
 

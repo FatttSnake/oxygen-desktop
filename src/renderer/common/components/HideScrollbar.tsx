@@ -6,7 +6,7 @@ import {
     HTMLAttributes,
     UIEvent
 } from 'react'
-import useStyles from '!/assets/css/cpmponents/hide-scrollbar.style'
+import useStyles from '$/assets/css/cpmponents/hide-scrollbar.style'
 
 interface HideScrollbarProps
     extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
