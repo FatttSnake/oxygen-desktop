@@ -40,7 +40,7 @@ const root: RouteJsonObject[] = [
                 path: 'loading',
                 absolutePath: '/loading',
                 id: 'loading',
-                component: lazy(() => import('!/components/FullscreenLoadingMask.tsx'))
+                component: lazy(() => import('!/components/FullscreenLoadingMask'))
             },
             {
                 path: 'user',

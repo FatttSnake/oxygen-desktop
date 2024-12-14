@@ -45,7 +45,8 @@ export default createStyles(({ cx, css, token }) => {
             height: '100%',
             userSelect: 'none',
             transition: 'all .3s',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            borderRight: `1px solid ${token.colorBorder}`
         },
 
         title,
@@ -66,7 +67,7 @@ export default createStyles(({ cx, css, token }) => {
         },
 
         collapse: cx(css`
-            width: ${token.sizeXL * 2}px !important;
+            width: ${token.sizeXL * 2 + 1}px !important;
 
             .${title} {
                 .${titleIcon} {
