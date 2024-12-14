@@ -1,14 +1,12 @@
 import CommonFramework from '!/CommonFramework'
-import { getRouter } from '%/router'
 import MenuFramework from '%/MenuFramework'
+import Tool from '%/menus/Tool'
 
 const App = () => {
-    const [routerState] = useState(getRouter)
-
     return (
         <CommonFramework>
             <MenuFramework>
-                <RouterProvider router={routerState} />
+                <Tool />
             </MenuFramework>
         </CommonFramework>
     )

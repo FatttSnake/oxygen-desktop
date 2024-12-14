@@ -1,169 +1,26 @@
-import { DndContext, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
-import type { DragEndEvent } from '@dnd-kit/core/dist/types'
-import { arrayMove, SortableContext } from '@dnd-kit/sortable'
-import useStyles from '%/assets/css/menus/tool.style'
-import { checkDesktop, getToolMenuItem } from '!/util/common'
-import { getViewPath } from '!/util/navigation'
-import Sidebar from '!/components/Sidebar'
-import Droppable from '@/components/dnd/Droppable'
-import Sortable from '@/components/dnd/Sortable'
-import DragHandle from '@/components/dnd/DragHandle'
-import DraggableOverlay from '@/components/dnd/DraggableOverlay'
-import DropMask from '@/components/dnd/DropMask'
+import { getToolMenuItem } from '!/util/common'
+import Sidebar from '%/components/Sidebar'
 
 const Tool = () => {
-    const { styles } = useStyles()
-    const [isDelete, setIsDelete] = useState(false)
-    const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
-    const [activeItem, setActiveItem] = useState<ToolMenuItem | null>(null)
-    const [isShowDropMask, setIsShowDropMask] = useState(false)
+    const [toolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
 
-    const handleOnDragStart = ({ active }: DragStartEvent) => {
-        setActiveItem(active.data.current as ToolMenuItem)
-        if (!active.data.current?.sortable) {
-            setIsShowDropMask(true)
+    const handleOnClick = (path: string) => {
+        return () => {
+            console.log(path)
         }
-    }
-
-    const handleOnDragOver = ({ over }: DragOverEvent) => {
-        setIsDelete(over === null)
-    }
-
-    const handleOnDragEnd = ({ active, over }: DragEndEvent) => {
-        if (over && active.id !== over?.id) {
-            const activeIndex = toolMenuItem.findIndex(
-                ({ authorUsername, toolId, ver, platform }) =>
-                    `${authorUsername}:${toolId}:${ver}:${platform}` === active.id
-            )
-            const overIndex = toolMenuItem.findIndex(
-                ({ authorUsername, toolId, ver, platform }) =>
-                    `${authorUsername}:${toolId}:${ver}:${platform}` === over.id
-            )
-            setToolMenuItem(arrayMove(toolMenuItem, activeIndex, overIndex))
-        }
-
-        if (!over) {
-            setToolMenuItem(
-                toolMenuItem.filter(
-                    ({ authorUsername, toolId, ver, platform }) =>
-                        `${authorUsername}:${toolId}:${ver}:${platform}` !== active?.id
-                )
-            )
-        }
-
-        if (!active.data.current?.sortable && over) {
-            const newItem = active.data.current as ToolMenuItem
-            if (
-                toolMenuItem.findIndex(
-                    ({ authorUsername, toolId, ver }) =>
-                        authorUsername === newItem.authorUsername &&
-                        toolId === newItem.toolId &&
-                        ver === newItem.ver
-                ) === -1
-            ) {
-                if (!checkDesktop() && newItem.platform === 'DESKTOP') {
-                    void message.warning('暂不支持添加桌面端应用')
-                    setToolMenuItem(toolMenuItem)
-                } else {
-                    setToolMenuItem([...toolMenuItem, newItem])
-                }
-            }
-        }
-
-        setActiveItem(null)
-        setIsShowDropMask(false)
-    }
-
-    const handleOnDragCancel = () => {
-        setActiveItem(null)
     }
 
     return (
-        <DndContext
-            onDragStart={handleOnDragStart}
-            onDragOver={handleOnDragOver}
-            onDragEnd={handleOnDragEnd}
-            onDragCancel={handleOnDragCancel}
-        >
-            <Sidebar title={'氧工具'}>
-                <Sidebar.ItemList>
-                    <Sidebar.Item end path={'/store'} icon={IconOxygenStore} text={'工具商店'} />
-                    <Sidebar.Item
-                        end
-                        path={'/repository'}
-                        icon={IconOxygenHome}
-                        text={'个人仓库'}
-                    />
-                    <Sidebar.Item
-                        end
-                        path={'/install'}
-                        icon={IconOxygenInstalled}
-                        text={'本地安装'}
-                    />
-                </Sidebar.ItemList>
-                <Sidebar.Separate />
-                <Droppable id={'menu'} className={styles.menuDroppable}>
-                    <Sidebar.Scroll>
-                        <Sidebar.ItemList>
-                            <SortableContext
-                                items={toolMenuItem.map(
-                                    ({ authorUsername, toolId, ver, platform }) =>
-                                        `${authorUsername}:${toolId}:${ver}:${platform}`
-                                )}
-                            >
-                                {toolMenuItem.map(
-                                    ({ icon, toolName, toolId, authorUsername, ver, platform }) => (
-                                        <Sortable
-                                            id={`${authorUsername}:${toolId}:${ver}:${platform}`}
-                                            data={{
-                                                icon,
-                                                toolName,
-                                                toolId,
-                                                authorUsername,
-                                                ver,
-                                                platform
-                                            }}
-                                            isDelete={isDelete}
-                                        >
-                                            <Sidebar.Item
-                                                path={getViewPath(
-                                                    authorUsername,
-                                                    toolId,
-                                                    platform,
-                                                    ver === 'local' ? '' : ver,
-                                                    ver === 'local'
-                                                )}
-                                                icon={icon}
-                                                text={toolName}
-                                                key={`${authorUsername}:${toolId}:${ver}:${platform}`}
-                                                extend={<DragHandle padding={10} />}
-                                            />
-                                        </Sortable>
-                                    )
-                                )}
-                            </SortableContext>
-                            <DraggableOverlay>
-                                {activeItem && (
-                                    <Sidebar.Item
-                                        path={getViewPath(
-                                            activeItem.authorUsername,
-                                            activeItem.toolId,
-                                            import.meta.env.VITE_PLATFORM,
-                                            activeItem.ver
-                                        )}
-                                        icon={activeItem.icon}
-                                        text={activeItem.toolName}
-                                        key={`${activeItem.authorUsername}:${activeItem.toolId}:${activeItem.ver}`}
-                                        extend={<DragHandle padding={10} />}
-                                    />
-                                )}
-                            </DraggableOverlay>
-                        </Sidebar.ItemList>
-                    </Sidebar.Scroll>
-                    {isShowDropMask && <DropMask />}
-                </Droppable>
-            </Sidebar>
-        </DndContext>
+        <Sidebar>
+            {toolMenuItem.map((menuItem: ToolMenuItem) => (
+                <Sidebar.Item
+                    icon={menuItem.icon}
+                    onClick={handleOnClick(`${menuItem.authorUsername}:${menuItem.toolId}`)}
+                >
+                    {menuItem.toolName}
+                </Sidebar.Item>
+            ))}
+        </Sidebar>
     )
 }
 
