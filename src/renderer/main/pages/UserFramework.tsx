@@ -13,7 +13,6 @@ const UserFramework = () => {
             <FitFullscreen className={'flex-horizontal'}>
                 <div className={styles.leftPanel}>
                     <Sidebar
-                        title={'个人中心'}
                         bottomFixed={
                             <Sidebar.ItemList>
                                 {hasPathPermission('/system') && (

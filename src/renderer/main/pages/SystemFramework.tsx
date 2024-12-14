@@ -10,7 +10,7 @@ const SystemFramework = () => {
     return (
         <FitFullscreen className={'flex-horizontal'}>
             <div className={styles.leftPanel}>
-                <Sidebar title={'系统配置'}>
+                <Sidebar>
                     <Sidebar.Scroll>
                         <Sidebar.ItemList>
                             {getSystemRouteJson().map((route) => {

@@ -114,7 +114,7 @@ const ToolsFramework = () => {
                     onDragCancel={handleOnDragCancel}
                 >
                     <div className={styles.leftPanel}>
-                        <Sidebar title={'氧工具'}>
+                        <Sidebar>
                             <Sidebar.ItemList>
                                 <Sidebar.Item
                                     end

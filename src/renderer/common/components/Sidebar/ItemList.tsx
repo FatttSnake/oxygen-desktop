@@ -1,7 +1,10 @@
 import { PropsWithChildren } from 'react'
+import useStyles from '!/assets/css/cpmponents/sidebar/item-list.style'
 
 const ItemList = (props: PropsWithChildren) => {
-    return <ul>{props.children}</ul>
+    const { styles } = useStyles()
+
+    return <ul className={styles.root}>{props.children}</ul>
 }
 
 export default ItemList

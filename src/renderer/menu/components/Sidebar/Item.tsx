@@ -1,6 +1,6 @@
 import { ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import useStyle from '%/assets/css/components/sidebar/item.style'
+import useStyles from '%/assets/css/components/sidebar/item.style'
 import { SidebarContext } from '%/components/Sidebar'
 
 interface ItemProps {
@@ -11,7 +11,7 @@ interface ItemProps {
 }
 
 const Item = ({ icon, children, isActive, onClick }: ItemProps) => {
-    const { styles, cx } = useStyle()
+    const { styles, cx } = useStyles()
     const { isCollapse } = useContext(SidebarContext)
 
     return (
