@@ -1,15 +1,15 @@
 import { join } from 'path'
-import { BaseWindow, shell, WebContentsView } from 'electron'
+import { BrowserWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { getWindowBounds } from './dataStore/main'
 
-export const initMainView = (mainWindow: BaseWindow, mainView: WebContentsView) => {
+export const initMainView = (mainWindow: BrowserWindow, mainView: WebContentsView) => {
     const { width, height } = getWindowBounds()
     mainView.setBounds({
         x: 0,
-        y: 36,
+        y: 41,
         width,
-        height: height - 36
+        height: height - 41
     })
 
     mainView.webContents.setWindowOpenHandler((details) => {

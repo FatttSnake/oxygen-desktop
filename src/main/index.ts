@@ -2,7 +2,7 @@ import { join } from 'path'
 import fs from 'fs'
 import path from 'node:path'
 import url from 'node:url'
-import { app, BaseWindow, WebContentsView, protocol, net } from 'electron'
+import { app, BrowserWindow, WebContentsView, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
 import icon from '../../build/icon.ico?asset'
 import { getWindowBounds } from './dataStore/main'
@@ -18,8 +18,7 @@ global.sharedObject = {
     menuWidth: 0
 }
 
-let mainWindow: BaseWindow
-let frameView: WebContentsView
+let mainWindow: BrowserWindow
 let menuView: WebContentsView
 let mainView: WebContentsView
 let toolView: WebContentsView
@@ -82,21 +81,18 @@ protocol.registerSchemesAsPrivileged([
 const createWindow = () => {
     const { width, height } = getWindowBounds()
     // Create the browser window.
-    mainWindow = new BaseWindow({
+    mainWindow = new BrowserWindow({
         minWidth: 600,
         minHeight: 400,
         width,
         height,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
-            height: 35
+            height: 40
         },
         show: false,
         autoHideMenuBar: true,
-        icon
-    })
-
-    frameView = new WebContentsView({
+        icon,
         webPreferences: {
             preload: join(__dirname, '../preload/frame.js')
         }
@@ -120,11 +116,11 @@ const createWindow = () => {
         }
     })
 
-    initFrameView(mainWindow, frameView)
+    initFrameView(mainWindow)
     initMenuView(mainWindow, menuView)
     initMainView(mainWindow, mainView)
     initToolView(mainWindow, toolView)
-    processMainWindow(mainWindow, frameView, menuView, mainView, toolView)
+    processMainWindow(mainWindow, menuView, mainView, toolView)
 }
 
 // This method will be called when Electron has finished
@@ -157,7 +153,7 @@ void app.whenReady().then(() => {
     electronApp.setAppUserModelId('top.fatweb')
     createWindow()
 
-    processIpc(mainWindow, frameView, menuView, mainView, toolView)
+    processIpc(mainWindow, menuView, mainView, toolView)
     processApp(createWindow)
 })
 

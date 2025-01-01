@@ -1,36 +1,45 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
+import TabList from '#/components/TabList'
 
 const TitleBar = () => {
-    const { styles, theme } = useStyles()
+    const { styles, cx } = useStyles()
     const { x } = navigator.windowControlsOverlay!.getTitlebarAreaRect()
-    const [title, setTitle] = useState<string>(document.title)
+    const [isCollapse, setIsCollapse] = useState(false)
 
-    useEffect(() => {
-        oxygenApi.updateTitleBar(theme.colorBgContainer, theme.colorText)
-    }, [theme])
-
-    useEffect(() => {
-        const titleChangeObserver = new MutationObserver(() => {
-            setTitle(document.title)
-        })
-        const titleNode = document.querySelector('title')
-        titleNode && titleChangeObserver.observe(titleNode, { childList: true })
-
-        return () => {
-            titleChangeObserver.disconnect()
-        }
-    }, [])
+    const handleOnClickExpand = () => {
+        setIsCollapse(!isCollapse)
+    }
 
     return (
         <div className={styles.root}>
-            <div className={styles.titleContent}>
-                <div className={styles.titleBarLeft}>
+            <div className={styles.titleBarLeft} />
+            <div className={styles.titleBarCenter}>
+                <div className={styles.operation}>
                     {x === 0 && <Icon component={IconOxygenLogo} />}
+                    <AntdButton size={'small'} onClick={handleOnClickExpand}>
+                        <Icon
+                            component={IconOxygenExpand}
+                            className={cx(
+                                styles.expandIcon,
+                                isCollapse ? styles.collapse : undefined
+                            )}
+                        />
+                    </AntdButton>
                 </div>
-                <div className={styles.titleBarCenter}>{title}</div>
-                <div className={styles.titleBarRight}></div>
+                <div className={styles.tabs}>
+                    <TabList
+                        pinTabs={[{ title: 'PinTab' }]}
+                        tabs={[
+                            { title: 'tab1' },
+                            { title: 'tab2' },
+                            { title: 'tab3' },
+                            { title: 'tab4' }
+                        ]}
+                    />
+                </div>
             </div>
+            <div className={styles.titleBarRight} />
         </div>
     )
 }

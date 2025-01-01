@@ -1,15 +1,14 @@
-import { BaseWindow, ipcMain, WebContentsView } from 'electron'
+import { BrowserWindow, ipcMain, WebContentsView } from 'electron'
 
 export const processIpc = (
-    mainWindow: BaseWindow,
-    _frameView: WebContentsView,
+    mainWindow: BrowserWindow,
     menuView: WebContentsView,
     mainView: WebContentsView,
     _toolView: WebContentsView
 ) => {
     ipcMain.on('window:titleBarOverlay:setColor', (_, color: string, symbolColor: string) => {
         if (['win32', 'linux'].includes(process.platform)) {
-            mainWindow.setTitleBarOverlay({ color, symbolColor, height: 35 })
+            mainWindow.setTitleBarOverlay({ color, symbolColor, height: 40 })
         }
     })
 
@@ -18,15 +17,15 @@ export const processIpc = (
         const { width, height } = mainWindow.getBounds()
         menuView.setBounds({
             x: 0,
-            y: 36,
+            y: 41,
             width: width,
-            height: height - 36
+            height: height - 41
         })
         mainView.setBounds({
             x: menuWidth,
-            y: 36,
+            y: 41,
             width: width - menuWidth,
-            height: height - 36
+            height: height - 41
         })
     })
 }

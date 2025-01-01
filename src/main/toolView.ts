@@ -1,7 +1,7 @@
-import { BaseWindow, shell, WebContentsView } from 'electron'
+import { BrowserWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 
-export const initToolView = (_: BaseWindow, toolView: WebContentsView) => {
+export const initToolView = (_: BrowserWindow, toolView: WebContentsView) => {
     toolView.webContents.setWindowOpenHandler((details) => {
         void shell.openExternal(details.url)
         return { action: 'deny' }

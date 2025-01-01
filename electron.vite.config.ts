@@ -94,6 +94,7 @@ export default defineConfig({
             alias: {
                 $: fileURLToPath(new URL('./src/renderer/common', import.meta.url)),
                 '#': fileURLToPath(new URL('./src/renderer/frame', import.meta.url)),
+                '-': fileURLToPath(new URL('./src/renderer/independentFrame', import.meta.url)),
                 '%': fileURLToPath(new URL('./src/renderer/menu', import.meta.url)),
                 '@': fileURLToPath(new URL('./src/renderer/main', import.meta.url))
             }

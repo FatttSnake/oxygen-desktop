@@ -1,15 +1,15 @@
 import { join } from 'path'
-import { BaseWindow, shell, WebContentsView } from 'electron'
+import { BrowserWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { getWindowBounds } from './dataStore/main'
 
-export const initMenuView = (_: BaseWindow, menuView: WebContentsView) => {
+export const initMenuView = (_: BrowserWindow, menuView: WebContentsView) => {
     const { width, height } = getWindowBounds()
     menuView.setBounds({
         x: 0,
-        y: 36,
+        y: 41,
         width: width,
-        height: height - 36
+        height: height - 41
     })
 
     menuView.webContents.setWindowOpenHandler((details) => {
@@ -19,7 +19,7 @@ export const initMenuView = (_: BaseWindow, menuView: WebContentsView) => {
 
     menuView.webContents.on('did-finish-load', () => {
         if (is.dev) {
-            menuView.webContents.openDevTools()
+            // menuView.webContents.openDevTools()
         }
     })
 
