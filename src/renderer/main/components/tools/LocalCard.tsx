@@ -6,8 +6,8 @@ import { checkDesktop, omitTextByByte } from '$/util/common'
 import { getAndroidUrl, navigateToStore, navigateToView } from '$/util/navigation'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
-import DragHandle from '@/components/dnd/DragHandle'
-import Draggable from '@/components/dnd/Draggable'
+import DragHandle from '$/components/dnd/DragHandle'
+import Draggable from '$/components/dnd/Draggable'
 
 interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: string

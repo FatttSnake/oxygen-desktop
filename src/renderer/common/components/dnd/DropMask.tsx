@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import useStyles from '@/assets/css/components/dnd/drop-mask.style'
+import useStyles from '$/assets/css/components/dnd/drop-mask.style'
 
 const DropMask = () => {
     const { styles } = useStyles()

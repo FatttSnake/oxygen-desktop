@@ -1,25 +1,21 @@
 import { CSSProperties, PropsWithChildren } from 'react'
-import { useSortable } from '@dnd-kit/sortable'
-import useStyles from '@/assets/css/components/dnd/sortable.style'
-import { HandleContext, HandleContextInst } from '@/components/dnd/HandleContext'
+import { useDraggable } from '@dnd-kit/core'
+import { HandleContext, HandleContextInst } from '$/components/dnd/HandleContext'
 
-interface SortableProps extends PropsWithChildren {
+interface DraggableProps extends PropsWithChildren {
     id: string
     data: ToolMenuItem
-    isDelete?: boolean
 }
 
-const Sortable = ({ id, data, isDelete, children }: SortableProps) => {
-    const { styles } = useStyles()
+const Draggable = ({ id, data, children }: DraggableProps) => {
     const {
         attributes,
         isDragging,
         listeners,
         setNodeRef: draggableRef,
         setActivatorNodeRef,
-        transform,
-        transition
-    } = useSortable({
+        transform
+    } = useDraggable({
         id,
         data
     })
@@ -33,24 +29,19 @@ const Sortable = ({ id, data, isDelete, children }: SortableProps) => {
     )
     const style: CSSProperties | undefined = transform
         ? {
-              opacity: isDragging ? 0.4 : undefined,
+              opacity: isDragging ? 0 : undefined,
               transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-              zIndex: 10000,
-              transition
+              zIndex: 10000
           }
         : undefined
 
     return (
         <HandleContextInst.Provider value={context}>
-            <div
-                ref={draggableRef}
-                style={style}
-                className={isDragging && isDelete ? styles.delete : undefined}
-            >
+            <div ref={draggableRef} style={style}>
                 {children}
             </div>
         </HandleContextInst.Provider>
     )
 }
 
-export default Sortable
+export default Draggable

@@ -8,11 +8,11 @@ import { getViewPath } from '$/util/navigation'
 import FitFullscreen from '$/components/FitFullscreen'
 import Sidebar from '$/components/Sidebar'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
-import Sortable from '@/components/dnd/Sortable'
-import DragHandle from '@/components/dnd/DragHandle'
-import DraggableOverlay from '@/components/dnd/DraggableOverlay'
-import DropMask from '@/components/dnd/DropMask'
-import Droppable from '@/components/dnd/Droppable'
+import Sortable from '$/components/dnd/Sortable'
+import DragHandle from '$/components/dnd/DragHandle'
+import DraggableOverlay from '$/components/dnd/DraggableOverlay'
+import DropMask from '$/components/dnd/DropMask'
+import Droppable from '$/components/dnd/Droppable'
 
 export const ToolsFrameworkContext = createContext<{
     removeToolMenuItem: (username: string, toolId: string) => void

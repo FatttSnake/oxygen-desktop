@@ -17,8 +17,8 @@ import { r_tool_add_favorite, r_tool_detail, r_tool_remove_favorite } from '$/se
 import { n_tool_get, n_tool_install } from '$/services/native'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
-import DragHandle from '@/components/dnd/DragHandle'
-import Draggable from '@/components/dnd/Draggable'
+import DragHandle from '$/components/dnd/DragHandle'
+import Draggable from '$/components/dnd/Draggable'
 
 interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: string
