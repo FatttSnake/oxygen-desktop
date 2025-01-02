@@ -1,8 +1,8 @@
 import { ReactNode } from 'react'
 import useStyles from '#/assets/css/components/tab-list.style'
 import HideScrollbar from '$/components/HideScrollbar'
-import TabItem from '#/components/TabItem.tsx'
-import TabSeparate from '#/components/TabSeparate.tsx'
+import TabItem from '#/components/TabItem'
+import TabSeparate from '#/components/TabSeparate'
 
 interface Tab {
     icon?: IconComponent | string

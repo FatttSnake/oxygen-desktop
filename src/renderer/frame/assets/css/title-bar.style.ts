@@ -49,9 +49,29 @@ export default createStyles(({ token }) => ({
     },
 
     tabs: {
+        position: 'relative',
         flex: 1,
         height: '100%',
-        width: 0
+        width: 0,
+
+        '::before, ::after': {
+            position: 'absolute',
+            content: '""',
+            top: 0,
+            height: '100%',
+            width: token.sizeSM,
+            zIndex: token.zIndexPopupBase * 2
+        },
+
+        '::before': {
+            left: 0,
+            background: `linear-gradient(to right, ${token.colorBgContainer}ff, ${token.colorBgContainer}00)`
+        },
+
+        '::after': {
+            right: 0,
+            background: `linear-gradient(to left, ${token.colorBgContainer}ff, ${token.colorBgContainer}00)`
+        }
     },
 
     titleBarRight: {
