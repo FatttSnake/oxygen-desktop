@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import useStyles from '$/assets/css/cpmponents/sidebar/submenu.style'
+import useStyles from '$/assets/css/components/sidebar/submenu.style'
 import { ItemContext } from '$/components/Sidebar/Item'
 
 export const SubmenuContext = createContext({ isInSubmenu: false })

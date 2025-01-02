@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
-import useStyles from '$/assets/css/cpmponents/url-card.style'
+import useStyles from '$/assets/css/components/url-card.style'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 

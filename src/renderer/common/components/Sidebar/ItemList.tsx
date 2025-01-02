@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import useStyles from '$/assets/css/cpmponents/sidebar/item-list.style'
+import useStyles from '$/assets/css/components/sidebar/item-list.style'
 
 const ItemList = (props: PropsWithChildren) => {
     const { styles } = useStyles()

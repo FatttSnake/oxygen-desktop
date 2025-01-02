@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import useStyles from '$/assets/css/cpmponents/fit-center.style'
+import useStyles from '$/assets/css/components/fit-center.style'
 
 interface FitCenterProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     vertical?: boolean

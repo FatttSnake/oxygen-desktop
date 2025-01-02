@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import useStyles from '$/assets/css/cpmponents/sidebar/separate'
+import useStyles from '$/assets/css/components/sidebar/separate.style'
 
 const Separate = ({
     className,

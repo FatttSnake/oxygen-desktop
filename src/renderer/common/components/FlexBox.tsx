@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
-import useStyles from '$/assets/css/cpmponents/flex-box.style'
+import useStyles from '$/assets/css/components/flex-box.style'
 
 interface FlexBoxProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     direction?: 'horizontal' | 'vertical'
