@@ -47,7 +47,7 @@ const Item = (props: ItemProps) => {
                 onMouseOver={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
             >
-                <div className={cx(styles.menuBt, 'dnd-delete-mask')} onMouseEnter={showSubmenu}>
+                <div className={styles.menuBt} onMouseEnter={showSubmenu}>
                     <NavLink
                         end={props.end}
                         to={props.path}

@@ -12,6 +12,7 @@ export default createStyles(({ cx, css, token }) => {
         border-radius: 3px;
         opacity: 0;
         transition: 0.2s;
+        cursor: pointer;
 
         :hover {
             background-color: ${token.colorBgTextHover};
@@ -82,6 +83,10 @@ export default createStyles(({ cx, css, token }) => {
 
             '+ div': {
                 opacity: 0
+            },
+
+            [`.${close}`]: {
+                opacity: 1
             }
         },
 

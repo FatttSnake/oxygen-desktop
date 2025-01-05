@@ -60,6 +60,7 @@ const RepositoryCard = ({
         <Draggable
             id={`!:${toolId}:${ver}:${platform}`}
             data={{ icon, toolName, toolId, authorUsername: '!', ver, platform }}
+            hasDragHandle
         >
             <Card style={{ ...style }} ref={cardRef} {...props}>
                 <FlexBox className={styles.root}>

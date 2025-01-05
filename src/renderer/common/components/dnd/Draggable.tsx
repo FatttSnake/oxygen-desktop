@@ -5,9 +5,10 @@ import { HandleContext, HandleContextInst } from '$/components/dnd/HandleContext
 interface DraggableProps extends PropsWithChildren {
     id: string
     data: ToolMenuItem
+    hasDragHandle?: boolean
 }
 
-const Draggable = ({ id, data, children }: DraggableProps) => {
+const Draggable = ({ id, data, hasDragHandle, children }: DraggableProps) => {
     const {
         attributes,
         isDragging,
@@ -35,12 +36,16 @@ const Draggable = ({ id, data, children }: DraggableProps) => {
           }
         : undefined
 
-    return (
+    return hasDragHandle ? (
         <HandleContextInst.Provider value={context}>
             <div ref={draggableRef} style={style}>
                 {children}
             </div>
         </HandleContextInst.Provider>
+    ) : (
+        <div ref={draggableRef} style={style} {...attributes} {...listeners}>
+            {children}
+        </div>
     )
 }
 

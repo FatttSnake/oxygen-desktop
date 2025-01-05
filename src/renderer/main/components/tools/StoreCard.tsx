@@ -282,6 +282,7 @@ const StoreCard = ({
                 ver: '',
                 platform
             }}
+            hasDragHandle
         >
             <Card
                 style={{ overflow: 'visible', ...style }}

@@ -1,16 +1,18 @@
 import { CSSProperties, PropsWithChildren } from 'react'
+import { cx } from 'antd-style'
+import { Data } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
-import useStyles from '$/assets/css/components/dnd/sortable.style'
 import { HandleContext, HandleContextInst } from '$/components/dnd/HandleContext'
 
 interface SortableProps extends PropsWithChildren {
     id: string
-    data: ToolMenuItem
-    isDelete?: boolean
+    data?: Data
+    isOver?: boolean
+    className?: string
+    hasDragHandle?: boolean
 }
 
-const Sortable = ({ id, data, isDelete, children }: SortableProps) => {
-    const { styles } = useStyles()
+const Sortable = ({ id, data, isOver, className, hasDragHandle, children }: SortableProps) => {
     const {
         attributes,
         isDragging,
@@ -40,16 +42,26 @@ const Sortable = ({ id, data, isDelete, children }: SortableProps) => {
           }
         : undefined
 
-    return (
+    return hasDragHandle ? (
         <HandleContextInst.Provider value={context}>
             <div
                 ref={draggableRef}
                 style={style}
-                className={isDragging && isDelete ? styles.delete : undefined}
+                className={cx(className, isOver ? 'dnd-over-mask' : undefined)}
             >
                 {children}
             </div>
         </HandleContextInst.Provider>
+    ) : (
+        <div
+            ref={draggableRef}
+            style={style}
+            className={cx(className, isOver ? 'dnd-over-mask' : undefined)}
+            {...attributes}
+            {...listeners}
+        >
+            {children}
+        </div>
     )
 }
 

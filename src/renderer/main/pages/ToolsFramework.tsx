@@ -1,4 +1,12 @@
-import { DndContext, DragOverEvent, DragStartEvent } from '@dnd-kit/core'
+import {
+    DndContext,
+    DragOverEvent,
+    DragStartEvent,
+    MouseSensor,
+    TouchSensor,
+    useSensor,
+    useSensors
+} from '@dnd-kit/core'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
 import useStyles from '@/assets/css/pages/tools-framework.style'
@@ -22,10 +30,11 @@ export const ToolsFrameworkContext = createContext<{
 
 const ToolsFramework = () => {
     const { styles } = useStyles()
-    const [isDelete, setIsDelete] = useState(false)
+    const [deleteItem, setDeleteItem] = useState<string>()
     const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
-    const [activeItem, setActiveItem] = useState<ToolMenuItem | null>(null)
+    const [activeItem, setActiveItem] = useState<ToolMenuItem>()
     const [isShowDropMask, setIsShowDropMask] = useState(false)
+    const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor))
 
     const handleOnDragStart = ({ active }: DragStartEvent) => {
         setActiveItem(active.data.current as ToolMenuItem)
@@ -34,8 +43,8 @@ const ToolsFramework = () => {
         }
     }
 
-    const handleOnDragOver = ({ over }: DragOverEvent) => {
-        setIsDelete(over === null)
+    const handleOnDragOver = ({ active, over }: DragOverEvent) => {
+        setDeleteItem(over === null ? (active.id as string) : undefined)
     }
 
     const handleOnDragEnd = ({ active, over }: DragEndEvent) => {
@@ -79,12 +88,14 @@ const ToolsFramework = () => {
             }
         }
 
-        setActiveItem(null)
+        setActiveItem(undefined)
+        setDeleteItem(undefined)
         setIsShowDropMask(false)
     }
 
     const handleOnDragCancel = () => {
-        setActiveItem(null)
+        setActiveItem(undefined)
+        setDeleteItem(undefined)
     }
 
     useEffect(() => {
@@ -108,6 +119,7 @@ const ToolsFramework = () => {
         >
             <FitFullscreen className={'flex-horizontal'}>
                 <DndContext
+                    sensors={sensors}
                     onDragStart={handleOnDragStart}
                     onDragOver={handleOnDragOver}
                     onDragEnd={handleOnDragEnd}
@@ -164,7 +176,10 @@ const ToolsFramework = () => {
                                                             ver,
                                                             platform
                                                         }}
-                                                        isDelete={isDelete}
+                                                        isOver={
+                                                            deleteItem ===
+                                                            `${authorUsername}:${toolId}:${ver}:${platform}`
+                                                        }
                                                     >
                                                         <Sidebar.Item
                                                             path={getViewPath(

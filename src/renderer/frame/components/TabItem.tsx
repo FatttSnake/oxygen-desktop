@@ -6,10 +6,11 @@ interface TabItemProps extends PropsWithChildren {
     icon?: IconComponent | string
     pin?: boolean
     active?: boolean
+    onClick?: () => void
     onClose?: () => void
 }
 
-const TabItem = ({ icon, pin, active, children, onClose }: TabItemProps) => {
+const TabItem = ({ icon, pin, active, children, onClick, onClose }: TabItemProps) => {
     const { styles, cx } = useStyles()
 
     return (
@@ -19,6 +20,7 @@ const TabItem = ({ icon, pin, active, children, onClose }: TabItemProps) => {
                 active ? styles.active : undefined,
                 active ? 'active' : undefined
             )}
+            onClick={onClick}
         >
             <div className={styles.icon}>
                 {icon ? (
@@ -34,8 +36,8 @@ const TabItem = ({ icon, pin, active, children, onClose }: TabItemProps) => {
             <span className={styles.title}>{children}</span>
 
             {!pin && (
-                <div className={styles.close}>
-                    <Icon component={IconOxygenClose} onClick={onClose} />
+                <div className={styles.close} onClick={onClose}>
+                    <Icon component={IconOxygenClose} />
                 </div>
             )}
         </div>
