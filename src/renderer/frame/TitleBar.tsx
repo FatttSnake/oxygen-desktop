@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
+import { randomInt } from '$/util/common'
 import TabList, { Tab } from '#/components/TabList'
 
 const TitleBar = () => {
@@ -8,33 +9,36 @@ const TitleBar = () => {
     const [isCollapse, setIsCollapse] = useState(false)
     const [activeTab, setActiveTab] = useState<string>()
 
-    const [tabs, setTabs] = useState<Tab[]>([
-        { key: 'PinTab', title: 'PinTab', pin: true },
-        { key: 'Tab1', title: 'tab1' },
-        { key: 'Tab2', title: 'tab2' },
-        { key: 'Tab3', title: 'tab3' },
-        { key: 'Tab4', title: 'tab4' }
-    ])
+    const [tabs, setTabs] = useState<Tab[]>([])
 
     const handleOnClickExpand = () => {
         setIsCollapse(!isCollapse)
+        oxygenApi.createNewTab(randomInt(0, 10).toString())
     }
 
-    const handleOnActiveTabChange = (tab: Tab) => {
-        setActiveTab(tab.key)
+    const handleOnActiveTabChange = (tab?: Tab) => {
+        tab && oxygenApi.switchTab(tab.key)
+        tab && setActiveTab(tab.key)
     }
 
     const handleOnTabClose = (tab: Tab) => {
-        setTabs((prev) => prev.filter((item) => item.key !== tab.key))
+        oxygenApi.closeTab(tab.key)
     }
 
     const handleOnTabsChange = (tabs: Tab[]) => {
         setTabs(tabs)
+        oxygenApi.updateTabs(tabs)
     }
 
     const handleOnIndependentTab = (tab: Tab) => {
-        setTabs((prev) => prev.filter((item) => item.key !== tab.key))
+        oxygenApi.independentTab(tab.key)
     }
+
+    useEffect(() => {
+        oxygenApi.listTabs().then((tabs) => setTabs(tabs))
+        oxygenApi.onUpdateTab((tabs) => setTabs(tabs))
+        oxygenApi.onSwitchTab((key) => setActiveTab(key))
+    }, [])
 
     return (
         <div className={styles.root}>

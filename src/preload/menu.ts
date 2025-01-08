@@ -1,10 +1,18 @@
 import { contextBridge, ipcRenderer, Notification } from 'electron'
 
+const IpcEvents = {
+    menuView: {
+        width: {
+            update: 'menuView:width:update'
+        }
+    }
+}
+
 const oxygenApi = {
     platform: process.platform,
     renderer: 'menu',
 
-    updateMenuWidth: (width: number) => ipcRenderer.send('menuView:width:update', width)
+    updateMenuWidth: (width: number) => ipcRenderer.send(IpcEvents.menuView.width.update, width)
 }
 
 if (process.contextIsolated) {

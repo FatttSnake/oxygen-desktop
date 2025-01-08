@@ -5,23 +5,24 @@ import url from 'node:url'
 import { app, BrowserWindow, WebContentsView, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
 import icon from '../../build/icon.ico?asset'
+import { IpcEvents } from './constants'
 import { getWindowBounds } from './dataStore/main'
-import { processIpc } from './processIpc'
 import { processApp } from './processApp'
+import { processIpcEvents } from './ipcUtils'
 import { processMainWindow } from './processMainWindow'
-import { initMainView } from './mainView'
-import { initToolView } from './toolView'
 import { initFrameView } from './frameView'
+import { initMainView } from './mainView'
 import { initMenuView } from './menuView'
 
 global.sharedObject = {
-    menuWidth: 0
+    menuWidth: 0,
+    mainWindowViews: [],
+    independentWindows: {}
 }
 
 let mainWindow: BrowserWindow
 let menuView: WebContentsView
 let mainView: WebContentsView
-let toolView: WebContentsView
 
 // Application singleton execution
 if (!app.requestSingleInstanceLock()) {
@@ -49,7 +50,7 @@ const handleArgv = (argv: string[]) => {
 const handleUrl = (url: string) => {
     const { hostname, pathname } = new URL(url)
     if (hostname === 'openurl' && mainWindow) {
-        mainView.webContents.send('mainView:url:open', pathname)
+        mainView.webContents.send(IpcEvents.mainView.url.open, pathname)
         mainWindow.show()
     }
 }
@@ -110,17 +111,11 @@ const createWindow = () => {
         }
     })
 
-    toolView = new WebContentsView({
-        webPreferences: {
-            preload: join(__dirname, '../preload/tool.js')
-        }
-    })
-
     initFrameView(mainWindow)
     initMenuView(mainWindow, menuView)
     initMainView(mainWindow, mainView)
-    initToolView(mainWindow, toolView)
-    processMainWindow(mainWindow, menuView, mainView, toolView)
+    processIpcEvents(mainWindow, menuView)
+    processMainWindow(mainWindow, menuView)
 }
 
 // This method will be called when Electron has finished
@@ -153,7 +148,6 @@ void app.whenReady().then(() => {
     electronApp.setAppUserModelId('top.fatweb')
     createWindow()
 
-    processIpc(mainWindow, menuView, mainView, toolView)
     processApp(createWindow)
 })
 

@@ -94,7 +94,9 @@ export default createStyles(({ cx, css, token }) => {
             fontSize: token.fontSizeIcon
         },
 
-        title: {},
+        title: {
+            whiteSpace: 'nowrap'
+        },
 
         close
     }

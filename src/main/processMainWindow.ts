@@ -1,16 +1,7 @@
-import { getMaximize, saveMaximize, saveWindowBounds } from './dataStore/main'
 import { BrowserWindow, WebContentsView } from 'electron'
+import { getMaximize, saveMaximize, saveWindowBounds } from './dataStore/main'
 
-export const processMainWindow = (
-    mainWindow: BrowserWindow,
-    menuView: WebContentsView,
-    mainView: WebContentsView,
-    toolView: WebContentsView
-) => {
-    mainWindow.contentView.addChildView(menuView)
-    mainWindow.contentView.addChildView(mainView)
-    mainWindow.contentView.addChildView(toolView)
-
+export const processMainWindow = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
     if (getMaximize()) {
         mainWindow.maximize()
     }
@@ -22,14 +13,16 @@ export const processMainWindow = (
         menuView.setBounds({
             x: 0,
             y: 41,
-            width: width,
+            width,
             height: height - 41
         })
-        mainView.setBounds({
-            x: menuWidth,
-            y: 41,
-            width: width - menuWidth,
-            height: height - 41
+        ;(global.sharedObject as SharedObject).mainWindowViews.forEach(({ view, pin }) => {
+            view.setBounds({
+                x: pin ? 0 : menuWidth,
+                y: 41,
+                width: pin ? width : width - menuWidth,
+                height: height - 41
+            })
         })
     })
 

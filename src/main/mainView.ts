@@ -2,6 +2,7 @@ import { join } from 'path'
 import { BrowserWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { getWindowBounds } from './dataStore/main'
+import { addTab } from './common'
 
 export const initMainView = (mainWindow: BrowserWindow, mainView: WebContentsView) => {
     const { width, height } = getWindowBounds()
@@ -34,4 +35,8 @@ export const initMainView = (mainWindow: BrowserWindow, mainView: WebContentsVie
             `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
         )
     }
+
+    addTab(mainWindow, mainView, 'mainView', 'Oxygen Toolbox', true)
+
+    mainWindow.contentView.addChildView(mainView)
 }

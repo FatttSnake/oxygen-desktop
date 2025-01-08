@@ -3,7 +3,7 @@ import { BrowserWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { getWindowBounds } from './dataStore/main'
 
-export const initMenuView = (_: BrowserWindow, menuView: WebContentsView) => {
+export const initMenuView = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
     const { width, height } = getWindowBounds()
     menuView.setBounds({
         x: 0,
@@ -33,4 +33,6 @@ export const initMenuView = (_: BrowserWindow, menuView: WebContentsView) => {
             `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
         )
     }
+
+    mainWindow.contentView.addChildView(menuView)
 }

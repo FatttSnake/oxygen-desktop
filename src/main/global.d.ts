@@ -1,3 +1,5 @@
+/// <reference types="./electron" />
+
 type Platform = 'WEB' | 'DESKTOP' | 'ANDROID'
 
 interface ImportMetaEnv {
@@ -12,6 +14,25 @@ interface ImportMetaEnv {
 
 interface ImportMeta {
     readonly env: ImportMetaEnv
+}
+
+interface SharedObject {
+    menuWidth: number
+    mainWindowViews: {
+        key: string
+        view: _WebContentsView
+        icon?: string
+        title: string
+        pin?: boolean
+    }[]
+    independentWindows: Record<string, _BrowserWindow>
+}
+
+interface Tab {
+    key: string
+    icon?: string
+    title: string
+    pin?: boolean
 }
 
 interface WindowBounds {

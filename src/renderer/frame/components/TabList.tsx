@@ -28,7 +28,7 @@ export interface Tab {
 interface TabListProps {
     tabs: Tab[]
     activeTab?: string
-    onActiveTabChange?: (tab: Tab) => void
+    onActiveTabChange?: (tab?: Tab) => void
     onTabClose?: (tab: Tab) => void
     onTabsChange?: (tabs: Tab[]) => void
     onIndependentTab?: (tab: Tab) => void
@@ -75,7 +75,6 @@ const TabList = ({
         }
 
         if (!over) {
-            onTabsChange?.(tabs.filter((tab) => tab.key !== active.id))
             onIndependentTab?.(active.data.current as Tab)
         }
 
@@ -131,6 +130,7 @@ const TabList = ({
                                 .map((tab) => (
                                     <>
                                         <Sortable
+                                            key={tab.key}
                                             id={tab.key}
                                             data={tab}
                                             isOver={independentItem === tab.key}
@@ -149,7 +149,7 @@ const TabList = ({
                                                 {tab.title}
                                             </TabItem>
                                         </Sortable>
-                                        <TabSeparate />
+                                        <TabSeparate key={`${tab.key}-`} />
                                     </>
                                 ))}
                         </SortableContext>
