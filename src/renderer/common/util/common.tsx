@@ -555,3 +555,12 @@ export const removeUselessAttributes = (theme: Omit<Theme, 'prefixCls'>) => {
 
     return result
 }
+
+export const setPageFavicon = (url?: string) => {
+    const pageIcon: HTMLLinkElement | null = document.querySelector("link[rel*='icon']")
+    pageIcon && (pageIcon.href = url ?? '/logo.svg')
+}
+
+export const setPageTitle = (title: string) => {
+    document.title = title
+}

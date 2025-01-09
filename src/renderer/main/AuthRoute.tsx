@@ -1,4 +1,5 @@
 import { PRODUCTION_NAME } from '$/constants/common.constants'
+import { setPageTitle } from '$/util/common'
 import { getRedirectUrl } from '$/util/route'
 import { getLoginStatus, getVerifyStatus_async } from '$/util/auth'
 
@@ -20,9 +21,11 @@ const AuthRoute = () => {
     }, [])
 
     return useMemo(() => {
-        document.title = `${handle?.titlePrefix ?? ''}${
-            handle?.title ? handle?.title : PRODUCTION_NAME
-        }${handle?.titlePostfix ?? ''}`
+        setPageTitle(
+            `${handle?.titlePrefix ?? ''}${
+                handle?.title ? handle?.title : PRODUCTION_NAME
+            }${handle?.titlePostfix ?? ''}`
+        )
 
         if (matches.some(({ handle }) => (handle as RouteHandle)?.auth)) {
             if (!isLogin) {

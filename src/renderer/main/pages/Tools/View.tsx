@@ -4,7 +4,9 @@ import {
     checkDesktop,
     generateThemeCssVariables,
     message,
-    removeUselessAttributes
+    removeUselessAttributes,
+    setPageFavicon,
+    setPageTitle
 } from '$/util/common'
 import { getLoginStatus } from '$/util/auth'
 import {
@@ -36,6 +38,8 @@ const View = () => {
     const [isMobileMode, setIsMobileMode] = useState(false)
 
     const render = (toolVo: ToolVo) => {
+        setPageFavicon(`data:image/svg+xml;base64,${toolVo.icon}`)
+        setPageTitle(toolVo.name)
         switch (toolVo.platform) {
             case 'ANDROID':
                 setIsMobileMode(true)
@@ -156,6 +160,10 @@ const View = () => {
             return
         }
         getTool()
+
+        return () => {
+            setPageFavicon()
+        }
     }, [username, toolId, ver, searchParams])
 
     return (
