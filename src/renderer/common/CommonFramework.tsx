@@ -9,7 +9,7 @@ import {
     THEME_FOLLOW_SYSTEM,
     THEME_LIGHT
 } from '$/constants/common.constants'
-import { getThemeMode } from '$/util/common'
+import { getThemeMode, setPageFavicon } from '$/util/common'
 
 export const CommonContext = createContext({
     isDarkMode: false
@@ -31,6 +31,8 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
     }
 
     useEffect(() => {
+        setPageFavicon()
+
         const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)')
         setIsSystemDarkMode(darkThemeMq.matches)
         const darkThemeMqChangeListener = (ev: MediaQueryListEvent) => {

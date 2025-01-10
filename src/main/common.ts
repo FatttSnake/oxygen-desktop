@@ -5,9 +5,10 @@ const handleUpdateTabs = (mainWindow: BrowserWindow) => {
     mainWindow.webContents.send(
         IpcEvents.window.tab.update,
         (global.sharedObject as SharedObject).mainWindowViews.map(
-            ({ key, title, pin }) =>
+            ({ key, icon, title, pin }) =>
                 ({
                     key,
+                    icon,
                     title,
                     pin
                 }) as Tab
@@ -22,6 +23,25 @@ export const addTab = (
     title: string = '',
     pin = false
 ): Tab => {
+    view.webContents.on('page-title-updated', (_, title) => {
+        ;(global.sharedObject as SharedObject).mainWindowViews.forEach((item) => {
+            if (item.key === viewId) {
+                item.title = title
+                handleUpdateTabs(mainWindow)
+            }
+        })
+    })
+    view.webContents.on('page-favicon-updated', (_, [icon]) => {
+        if (icon.endsWith('favicon.ico')) {
+            return
+        }
+        ;(global.sharedObject as SharedObject).mainWindowViews.forEach((item) => {
+            if (item.key === viewId) {
+                item.icon = icon
+                handleUpdateTabs(mainWindow)
+            }
+        })
+    })
     ;(global.sharedObject as SharedObject).mainWindowViews.push({
         key: viewId,
         view,
@@ -43,9 +63,13 @@ export const updateTab = (mainWindow: BrowserWindow, tabs: Tab[]) => {
     handleUpdateTabs(mainWindow)
 }
 
-export const switchTab = (mainWindow: BrowserWindow, key: string) => {
-    ;(global.sharedObject as SharedObject).mainWindowViews.forEach((item) =>
+export const switchTab = (mainWindow: BrowserWindow, menuView: WebContentsView, key: string) => {
+    ;(global.sharedObject as SharedObject).mainWindowViews.forEach((item) => {
         item.view.setVisible(item.key === key)
+    })
+    menuView.setVisible(
+        (global.sharedObject as SharedObject).mainWindowViews.find((item) => item.key === key)
+            ?.pin != true
     )
     mainWindow.webContents.send(IpcEvents.window.tab.switch, key)
 }

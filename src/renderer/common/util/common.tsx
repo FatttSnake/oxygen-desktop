@@ -14,6 +14,7 @@ import {
     THEME_FOLLOW_SYSTEM,
     THEME_LIGHT
 } from '$/constants/common.constants'
+import logo from '$/assets/logo.svg?url'
 import { getLocalStorage, setLocalStorage } from '$/util/browser'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 
@@ -558,7 +559,7 @@ export const removeUselessAttributes = (theme: Omit<Theme, 'prefixCls'>) => {
 
 export const setPageFavicon = (url?: string) => {
     const pageIcon: HTMLLinkElement | null = document.querySelector("link[rel*='icon']")
-    pageIcon && (pageIcon.href = url ?? '/logo.svg')
+    pageIcon && (pageIcon.href = url ?? logo)
 }
 
 export const setPageTitle = (title: string) => {

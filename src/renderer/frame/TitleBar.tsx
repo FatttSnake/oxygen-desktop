@@ -36,7 +36,9 @@ const TitleBar = () => {
 
     useEffect(() => {
         oxygenApi.listTabs().then((tabs) => setTabs(tabs))
-        oxygenApi.onUpdateTab((tabs) => setTabs(tabs))
+        oxygenApi.onUpdateTab((tabs) => {
+            setTabs(tabs)
+        })
         oxygenApi.onSwitchTab((key) => setActiveTab(key))
     }, [])
 

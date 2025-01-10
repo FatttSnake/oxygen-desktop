@@ -91,7 +91,11 @@ export default createStyles(({ cx, css, token }) => {
         },
 
         icon: {
-            fontSize: token.fontSizeIcon
+            fontSize: token.fontSizeIcon,
+
+            img: {
+                width: token.size
+            }
         },
 
         title: {

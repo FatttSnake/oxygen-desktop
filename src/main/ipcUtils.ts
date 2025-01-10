@@ -83,7 +83,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         processBoundsUpdate(mainWindow, newView)
         addTab(mainWindow, newView, viewId, viewId)
         mainWindow.contentView.addChildView(newView)
-        switchTab(mainWindow, viewId)
+        switchTab(mainWindow, menuView, viewId)
     })
 
     ipcMain.handle(IpcEvents.window.tab.list, () =>
@@ -102,7 +102,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
     })
 
     ipcMain.on(IpcEvents.window.tab.switch, (_, key: string) => {
-        switchTab(mainWindow, key)
+        switchTab(mainWindow, menuView, key)
     })
 
     ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => {

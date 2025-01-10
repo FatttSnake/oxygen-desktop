@@ -20,7 +20,7 @@ import TabSeparate from '#/components/TabSeparate'
 
 export interface Tab {
     key: string
-    icon?: IconComponent | string
+    icon?: string
     title: ReactNode
     pin?: boolean
 }
@@ -109,7 +109,7 @@ const TabList = ({
                         ?.map((tab) => (
                             <>
                                 <TabItem
-                                    icon={IconOxygenLogo}
+                                    icon={tab.icon}
                                     active={tab.key === activeTab}
                                     onClick={() => {
                                         onActiveTabChange?.(tab)
