@@ -1,11 +1,10 @@
 import { join } from 'path'
 import { BrowserWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import { getWindowBounds } from './dataStore/main'
 import { addTab } from './common'
 
 export const initMainView = (mainWindow: BrowserWindow, mainView: WebContentsView) => {
-    const { width, height } = getWindowBounds()
+    const { width, height } = mainWindow.getContentBounds()
     mainView.setBounds({
         x: 0,
         y: 41,

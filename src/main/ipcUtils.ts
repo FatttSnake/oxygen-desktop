@@ -3,12 +3,11 @@ import { randomUUID } from 'node:crypto'
 import { BrowserWindow, ipcMain, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { IpcEvents } from './constants'
-import { getWindowBounds } from './dataStore/main'
 import { addTab, removeTab, switchTab, updateTab } from './common'
 
 export const processBoundsUpdate = (mainWindow: BrowserWindow, view: WebContentsView) => {
     ipcMain.on(IpcEvents.menuView.width.update, (_, menuWidth: number) => {
-        const { width, height } = mainWindow.getBounds()
+        const { width, height } = mainWindow.getContentBounds()
         view.setBounds({
             x: menuWidth,
             y: 41,
@@ -30,7 +29,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
 
     ipcMain.on(IpcEvents.menuView.width.update, (_, menuWidth: number) => {
         global.sharedObject.menuWidth = menuWidth
-        const { width, height } = mainWindow.getBounds()
+        const { width, height } = mainWindow.getContentBounds()
         menuView.setBounds({
             x: 0,
             y: 41,
@@ -48,7 +47,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
             }
         })
 
-        const { width, height } = getWindowBounds()
+        const { width, height } = mainWindow.getContentBounds()
         newView.setBounds({
             x: global.sharedObject.menuWidth,
             y: 41,

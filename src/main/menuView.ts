@@ -1,10 +1,9 @@
 import { join } from 'path'
 import { BrowserWindow, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import { getWindowBounds } from './dataStore/main'
 
 export const initMenuView = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
-    const { width, height } = getWindowBounds()
+    const { width, height } = mainWindow.getContentBounds()
     menuView.setBounds({
         x: 0,
         y: 41,

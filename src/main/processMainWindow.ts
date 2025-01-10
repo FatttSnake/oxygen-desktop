@@ -8,7 +8,7 @@ export const processMainWindow = (mainWindow: BrowserWindow, menuView: WebConten
     mainWindow.removeMenu()
 
     mainWindow.on('resize', () => {
-        const { width, height } = mainWindow.getBounds()
+        const { width, height } = mainWindow.getContentBounds()
         const menuWidth = global.sharedObject.menuWidth
         menuView.setBounds({
             x: 0,

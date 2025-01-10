@@ -111,11 +111,11 @@ const createWindow = () => {
         }
     })
 
+    processMainWindow(mainWindow, menuView)
     initFrameView(mainWindow)
     initMenuView(mainWindow, menuView)
     initMainView(mainWindow, mainView)
     processIpcEvents(mainWindow, menuView)
-    processMainWindow(mainWindow, menuView)
 }
 
 // This method will be called when Electron has finished
