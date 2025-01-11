@@ -7,8 +7,7 @@ export default createStyles(({ token }) => ({
         height: '100%',
         userSelect: 'none',
         transition: 'all .3s',
-        whiteSpace: 'nowrap',
-        borderRight: `1px solid ${token.colorBorder}`
+        whiteSpace: 'nowrap'
     },
 
     content: {

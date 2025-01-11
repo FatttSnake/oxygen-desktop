@@ -2,10 +2,13 @@ import { contextBridge, ipcRenderer, Notification } from 'electron'
 
 const IpcEvents = {
     window: {
+        theme: {
+            get: 'window:theme:get',
+            update: 'window:theme:update'
+        },
         titleBarOverlay: {
             setColor: 'window:titleBarOverlay:setColor'
         },
-
         tab: {
             create: 'window:tab:create',
             list: 'window:tab:list',
@@ -15,7 +18,6 @@ const IpcEvents = {
             independent: 'window:tab:independent'
         }
     },
-
     sidebar: {
         collapse: {
             get: 'sidebar:collapse:get',
@@ -29,11 +31,18 @@ const oxygenApi = {
     renderer: 'frame',
 
     window: {
+        theme: {
+            get: (): Promise<WindowTheme> => ipcRenderer.invoke(IpcEvents.window.theme.get),
+            onUpdate: (callback: (theme: WindowTheme) => void) =>
+                ipcRenderer.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) =>
+                    callback(theme)
+                ),
+            update: (theme: WindowTheme) => ipcRenderer.send(IpcEvents.window.theme.update, theme)
+        },
         titleBarOverlay: {
             setColor: (color: string, symbolColor: string) =>
                 ipcRenderer.send(IpcEvents.window.titleBarOverlay.setColor, color, symbolColor)
         },
-
         tab: {
             create: (url: string) => ipcRenderer.send(IpcEvents.window.tab.create, url),
             list: (): Promise<Tab[]> => ipcRenderer.invoke(IpcEvents.window.tab.list),
@@ -47,7 +56,6 @@ const oxygenApi = {
             independent: (key: string) => ipcRenderer.send(IpcEvents.window.tab.independent, key)
         }
     },
-
     sidebar: {
         collapse: {
             get: (): Promise<boolean> => ipcRenderer.invoke(IpcEvents.sidebar.collapse.get),

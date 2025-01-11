@@ -24,7 +24,7 @@ const TabItem = ({ icon, persistent, active, children, onClick, onClose }: TabIt
         >
             <div className={styles.icon}>
                 {icon ? (
-                    <img src={icon} alt={'icon'} />
+                    <div className={'img'} style={{ maskImage: `url(${icon})` }} />
                 ) : (
                     <Icon component={IconOxygenLoading} spin />
                 )}

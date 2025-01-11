@@ -6,18 +6,10 @@ import { HookAPI } from 'antd/es/modal/useModal'
 import { NotificationInstance } from 'antd/es/notification/interface'
 import { css, AntdToken, Theme } from 'antd-style'
 import { floor } from 'lodash'
-import {
-    STORAGE_THEME_MODE_KEY,
-    STORAGE_TOOL_MENU_ITEM_KEY,
-    THEME_DARK,
-    THEME_FOLLOW_SYSTEM,
-    THEME_LIGHT
-} from '$/constants/common.constants'
+import { STORAGE_TOOL_MENU_ITEM_KEY } from '$/constants/common.constants'
 import logo from '$/assets/logo.svg?url'
 import { getLocalStorage, setLocalStorage } from '$/util/browser'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
-
-export type ThemeMode = typeof THEME_FOLLOW_SYSTEM | typeof THEME_LIGHT | typeof THEME_DARK
 
 let message: MessageInstance
 let notification: NotificationInstance
@@ -222,21 +214,6 @@ export const omitTextByByte = (text: string, length: number) => {
         return text
     }
     return `${substringByByte(text, 0, length)}...`
-}
-
-export const getThemeMode = (): ThemeMode => {
-    switch (getLocalStorage(STORAGE_THEME_MODE_KEY)) {
-        case THEME_FOLLOW_SYSTEM:
-        case THEME_LIGHT:
-        case THEME_DARK:
-            return getLocalStorage(STORAGE_THEME_MODE_KEY) as ThemeMode
-        default:
-            return THEME_FOLLOW_SYSTEM
-    }
-}
-
-export const setThemeMode = (themeMode: ThemeMode) => {
-    setLocalStorage(STORAGE_THEME_MODE_KEY, themeMode)
 }
 
 const cssColors = [
@@ -557,4 +534,25 @@ export const setPageFavicon = (url?: string) => {
 
 export const setPageTitle = (title: string) => {
     document.title = title
+}
+
+export const rgbaBlackToHex = (rgba: string) => {
+    const match = rgba.match(/rgba?\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/)
+    if (!match) {
+        return '#000000'
+    }
+    let r = parseInt(match[1])
+    let a = parseFloat(match[4])
+
+    if (r !== 255 && r !== 0) {
+        return '#000000'
+    }
+    if (r == 255) {
+        r = 0
+        a = 1 - a
+    }
+
+    const gray = Math.round((1 - a) * 255 + a * r)
+    const hex = (gray << 16) | (gray << 8) | gray
+    return `#${hex.toString(16).padStart(6, '0')}`
 }

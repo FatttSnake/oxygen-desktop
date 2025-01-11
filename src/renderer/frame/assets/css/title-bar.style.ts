@@ -4,9 +4,8 @@ export default createStyles(({ token }) => ({
     root: {
         display: 'flex',
         width: '100vw',
-        height: 41,
+        height: 40,
         backgroundColor: token.colorBgContainer,
-        borderBottom: `1px solid ${token.colorBorder}`,
         overflow: 'hidden',
         userSelect: 'none',
         '-webkit-user-select': 'none',

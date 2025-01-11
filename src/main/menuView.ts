@@ -6,9 +6,9 @@ export const initMenuView = (mainWindow: BrowserWindow, menuView: WebContentsVie
     const { width, height } = mainWindow.getContentBounds()
     menuView.setBounds({
         x: 0,
-        y: 41,
+        y: 40,
         width: width,
-        height: height - 41
+        height: height - 40
     })
 
     menuView.webContents.setWindowOpenHandler((details) => {

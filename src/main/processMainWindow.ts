@@ -13,16 +13,16 @@ export const processMainWindow = (mainWindow: BrowserWindow, menuView: WebConten
         const menuWidth = getGlobalObject().menuWidth
         menuView.setBounds({
             x: 0,
-            y: 41,
+            y: 40,
             width,
-            height: height - 41
+            height: height - 40
         })
         getGlobalObject().mainWindowViews.forEach(({ view, pin }) => {
             view.setBounds({
                 x: pin ? 0 : menuWidth,
-                y: 41,
+                y: 40,
                 width: pin ? width : width - menuWidth,
-                height: height - 41
+                height: height - 40
             })
         })
     })

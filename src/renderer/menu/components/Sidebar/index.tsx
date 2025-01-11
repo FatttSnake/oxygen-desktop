@@ -12,9 +12,10 @@ interface SidebarProps extends PropsWithChildren {
 
 const Sidebar = (props: SidebarProps) => {
     const { styles, cx } = useStyles()
-    const [isCollapse, setIsCollapse] = useState(oxygenApi.sidebar.collapse.get())
+    const [isCollapse, setIsCollapse] = useState(false)
 
     useEffect(() => {
+        oxygenApi.sidebar.collapse.get().then((value) => setIsCollapse(value))
         oxygenApi.sidebar.collapse.onUpdate((value) => {
             setIsCollapse(value)
         })

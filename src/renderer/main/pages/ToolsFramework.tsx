@@ -29,7 +29,7 @@ export const ToolsFrameworkContext = createContext<{
 })
 
 const ToolsFramework = () => {
-    const { styles } = useStyles()
+    const { styles, cx } = useStyles()
     const [deleteItem, setDeleteItem] = useState<string>()
     const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
     const [activeItem, setActiveItem] = useState<ToolMenuItem>()
@@ -117,7 +117,7 @@ const ToolsFramework = () => {
                 }
             }}
         >
-            <FitFullscreen className={'flex-horizontal'}>
+            <FitFullscreen className={cx(styles.root, 'flex-horizontal')}>
                 <DndContext
                     sensors={sensors}
                     onDragStart={handleOnDragStart}

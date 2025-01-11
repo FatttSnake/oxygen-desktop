@@ -1,5 +1,9 @@
 export const IpcEvents = {
     window: {
+        theme: {
+            get: 'window:theme:get',
+            update: 'window:theme:update'
+        },
         titleBarOverlay: {
             setColor: 'window:titleBarOverlay:setColor'
         },
@@ -12,20 +16,17 @@ export const IpcEvents = {
             independent: 'window:tab:independent'
         }
     },
-
     sidebar: {
         collapse: {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
         }
     },
-
     menuView: {
         width: {
             update: 'menuView:width:update'
         }
     },
-
     mainView: {
         url: {
             open: 'mainView:url:open'

@@ -1,6 +1,10 @@
 import { createStyles } from 'antd-style'
 
 export default createStyles(({ token }) => ({
+    root: {
+        backgroundColor: token.colorBgContainer
+    },
+
     leftPanel: {
         backgroundColor: token.colorBgContainer
     },
@@ -16,6 +20,8 @@ export default createStyles(({ token }) => ({
     rightPanel: {
         flex: 1,
         width: 0,
-        backgroundColor: token.colorBgLayout
+        backgroundColor: token.colorBgLayout,
+        borderRadius: token.borderRadiusLG,
+        overflow: 'hidden'
     }
 }))

@@ -9,6 +9,6 @@ export default createStyles(({ token }) => ({
         width: '100%',
         height: '100%',
         zIndex: 100,
-        backgroundColor: token.colorBgContainer
+        backgroundColor: token.colorBgLayout
     }
 }))

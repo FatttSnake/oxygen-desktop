@@ -11,14 +11,25 @@ export const processBoundsUpdate = (mainWindow: BrowserWindow, view: WebContents
         const { width, height } = mainWindow.getContentBounds()
         view.setBounds({
             x: menuWidth,
-            y: 41,
+            y: 40,
             width: width - menuWidth,
-            height: height - 41
+            height: height - 40
         })
     })
 }
 
 export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
+    ipcMain.handle(IpcEvents.window.theme.get, () => settings.window.getTheme())
+
+    ipcMain.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) => {
+        settings.window.saveTheme(theme)
+        mainWindow.webContents.send(IpcEvents.window.theme.update, theme)
+        menuView.webContents.send(IpcEvents.window.theme.update, theme)
+        getGlobalObject().mainWindowViews.forEach((item) => {
+            item.view.webContents.send(IpcEvents.window.theme.update, theme)
+        })
+    })
+
     ipcMain.on(
         IpcEvents.window.titleBarOverlay.setColor,
         (_, color: string, symbolColor: string) => {
@@ -45,9 +56,9 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         const { width, height } = mainWindow.getContentBounds()
         menuView.setBounds({
             x: 0,
-            y: 41,
+            y: 40,
             width: width,
-            height: height - 41
+            height: height - 40
         })
     })
 
@@ -63,9 +74,9 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         const { width, height } = mainWindow.getContentBounds()
         newView.setBounds({
             x: getGlobalObject().menuWidth,
-            y: 41,
+            y: 40,
             width: width - getGlobalObject().menuWidth,
-            height: height - 41
+            height: height - 40
         })
         newView.setVisible(false)
 

@@ -3,9 +3,9 @@ import useStyles from '#/assets/css/title-bar.style'
 import TabList, { Tab } from '#/components/TabList'
 
 const TitleBar = () => {
-    const { styles, cx } = useStyles()
+    const { styles, cx, theme } = useStyles()
     const { x } = navigator.windowControlsOverlay!.getTitlebarAreaRect()
-    const [isCollapse, setIsCollapse] = useState(oxygenApi.sidebar.collapse.get())
+    const [isCollapse, setIsCollapse] = useState(false)
     const [activeTab, setActiveTab] = useState<string>()
 
     const [tabs, setTabs] = useState<Tab[]>([])
@@ -35,12 +35,17 @@ const TitleBar = () => {
     }
 
     useEffect(() => {
+        oxygenApi.window.titleBarOverlay.setColor(theme.colorBgContainer, theme.colorText)
+    }, [theme])
+
+    useEffect(() => {
+        oxygenApi.sidebar.collapse.get().then((value) => setIsCollapse(value))
         oxygenApi.window.tab.list().then((tabs) => setTabs(tabs))
         oxygenApi.window.tab.onUpdate((tabs) => {
             setTabs(tabs)
         })
         oxygenApi.window.tab.onSwitch((key) => setActiveTab(key))
-        oxygenApi.window.tab.create('')
+        // oxygenApi.window.tab.create('')
     }, [])
 
     return (

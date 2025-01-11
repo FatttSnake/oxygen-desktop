@@ -7,9 +7,9 @@ export const initMainView = (mainWindow: BrowserWindow, mainView: WebContentsVie
     const { width, height } = mainWindow.getContentBounds()
     mainView.setBounds({
         x: 0,
-        y: 41,
+        y: 40,
         width,
-        height: height - 41
+        height: height - 40
     })
 
     mainView.webContents.setWindowOpenHandler((details) => {

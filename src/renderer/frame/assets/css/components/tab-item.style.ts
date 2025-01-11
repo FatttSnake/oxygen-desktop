@@ -1,4 +1,5 @@
 import { createStyles } from 'antd-style'
+import { rgbaBlackToHex } from '$/util/common.tsx'
 
 export default createStyles(({ cx, css, token }) => {
     const close = cx(css`
@@ -56,11 +57,11 @@ export default createStyles(({ cx, css, token }) => {
             },
 
             ':hover': css`
-                background-color: #2c2c2c;
+                background-color: ${rgbaBlackToHex(token.colorBgTextHover)};
 
                 ::before,
                 ::after {
-                    box-shadow: 0 0 0 3px #2c2c2c;
+                    box-shadow: 0 0 0 3px ${rgbaBlackToHex(token.colorBgTextHover)};
                 }
 
                 + div {
@@ -74,11 +75,11 @@ export default createStyles(({ cx, css, token }) => {
         },
 
         active: {
-            backgroundColor: '#3b3b3b !important',
+            backgroundColor: `${token.colorBgLayout} !important`,
             zIndex: token.zIndexPopupBase,
 
             '::before, ::after': {
-                boxShadow: '0 0 0 3px #3b3b3b !important'
+                boxShadow: `0 0 0 3px ${token.colorBgLayout} !important`
             },
 
             '+ div': {
@@ -93,8 +94,13 @@ export default createStyles(({ cx, css, token }) => {
         icon: {
             fontSize: token.fontSizeIcon,
 
-            img: {
-                width: token.size
+            '.img': {
+                width: token.size,
+                height: token.size,
+                backgroundColor: token.colorText,
+                maskSize: 'contain',
+                maskRepeat: 'no-repeat',
+                maskPosition: 'center'
             }
         },
 

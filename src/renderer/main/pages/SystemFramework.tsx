@@ -5,10 +5,10 @@ import Sidebar from '$/components/Sidebar'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 
 const SystemFramework = () => {
-    const { styles } = useStyles()
+    const { styles, cx } = useStyles()
 
     return (
-        <FitFullscreen className={'flex-horizontal'}>
+        <FitFullscreen className={cx(styles.root, 'flex-horizontal')}>
             <div className={styles.leftPanel}>
                 <Sidebar>
                     <Sidebar.Scroll>

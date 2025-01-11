@@ -7,7 +7,7 @@ export default createStyles(({ token }) => ({
         height: 16,
         marginTop: token.paddingXS,
         marginLeft: -1,
-        backgroundColor: '#666',
+        backgroundColor: token.colorBorder,
 
         ':has(+ :hover)': {
             opacity: 0

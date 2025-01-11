@@ -17,6 +17,11 @@ declare global {
         platform: NodeJS.Platform
         renderer: Renderer
         window: {
+            theme: {
+                get: () => Promise<WindowTheme>
+                onUpdate: (callback: (theme: WindowTheme) => void) => void
+                update: (theme: WindowTheme) => void
+            }
             titleBarOverlay: {
                 setColor: (color: string, symbolColor: string) => void
             }
@@ -34,7 +39,7 @@ declare global {
 
         sidebar: {
             collapse: {
-                get: () => boolean
+                get: () => Promise<boolean>
                 update: (value: boolean) => void
                 onUpdate: (callback: (value: boolean) => void) => void
             }

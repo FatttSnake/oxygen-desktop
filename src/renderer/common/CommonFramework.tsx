@@ -3,29 +3,24 @@ import { theme } from 'antd'
 import zh_CN from 'antd/locale/zh_CN'
 import BaseStyles from '$/assets/css/base.style'
 import CommonStyles from '$/assets/css/common.style'
-import {
-    COLOR_PRODUCTION,
-    THEME_DARK,
-    THEME_FOLLOW_SYSTEM,
-    THEME_LIGHT
-} from '$/constants/common.constants'
-import { getThemeMode, setPageFavicon } from '$/util/common'
+import { COLOR_PRODUCTION } from '$/constants/common.constants'
+import { setPageFavicon } from '$/util/common'
 
 export const CommonContext = createContext({
     isDarkMode: false
 })
 
 const CommonFramework = ({ children }: PropsWithChildren) => {
-    const [themeMode, setThemeMode] = useState(getThemeMode())
+    const [themeMode, setThemeMode] = useState<WindowTheme>('FOLLOW_SYSTEM')
     const [isSystemDarkMode, setIsSystemDarkMode] = useState(false)
 
     const getIsDark = () => {
         switch (themeMode) {
-            case THEME_FOLLOW_SYSTEM:
+            case 'FOLLOW_SYSTEM':
                 return isSystemDarkMode
-            case THEME_LIGHT:
+            case 'LIGHT':
                 return false
-            case THEME_DARK:
+            case 'DARK':
                 return true
         }
     }
@@ -40,14 +35,11 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
         }
         darkThemeMq.addEventListener('change', darkThemeMqChangeListener)
 
-        const themeModeChangeListener = () => {
-            setThemeMode(getThemeMode())
-        }
-        window.addEventListener('localStorageChange', themeModeChangeListener)
+        oxygenApi.window.theme.get().then((theme) => setThemeMode(theme))
+        oxygenApi.window.theme.onUpdate((theme) => setThemeMode(theme))
 
         return () => {
             darkThemeMq.removeEventListener('change', darkThemeMqChangeListener)
-            window.removeEventListener('localStorageChange', themeModeChangeListener)
         }
     })
 

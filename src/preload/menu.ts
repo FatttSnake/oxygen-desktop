@@ -1,6 +1,12 @@
 import { contextBridge, ipcRenderer, Notification } from 'electron'
 
 const IpcEvents = {
+    window: {
+        theme: {
+            get: 'window:theme:get',
+            update: 'window:theme:update'
+        }
+    },
     sidebar: {
         collapse: {
             get: 'sidebar:collapse:get',
@@ -18,6 +24,15 @@ const oxygenApi = {
     platform: process.platform,
     renderer: 'menu',
 
+    window: {
+        theme: {
+            get: (): Promise<WindowTheme> => ipcRenderer.invoke(IpcEvents.window.theme.get),
+            onUpdate: (callback: (theme: WindowTheme) => void) =>
+                ipcRenderer.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) =>
+                    callback(theme)
+                )
+        }
+    },
     sidebar: {
         collapse: {
             get: (): Promise<boolean> => ipcRenderer.invoke(IpcEvents.sidebar.collapse.get),
@@ -27,7 +42,6 @@ const oxygenApi = {
                 )
         }
     },
-
     menuView: {
         width: {
             update: (width: number) => ipcRenderer.send(IpcEvents.menuView.width.update, width)

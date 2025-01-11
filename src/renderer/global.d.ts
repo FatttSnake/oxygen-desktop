@@ -18,6 +18,8 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 
+type WindowTheme = 'FOLLOW_SYSTEM' | 'LIGHT' | 'DARK'
+
 interface RouteJsonObject {
     path: string
     absolutePath: string
