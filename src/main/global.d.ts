@@ -40,10 +40,24 @@ interface WindowBounds {
     height: number
 }
 
+type WindowTheme = 'FOLLOW_SYSTEM' | 'LIGHT' | 'DARK'
+
+interface SideBarMenuItem {
+    authorUsername: string
+    icon: string
+    platform: Platform
+    toolId: string
+    toolName: string
+    version: string
+}
+
 interface StoreSchema {
-    windowBounds: WindowBounds
-    maximize: boolean
-    installedTools: Record<string, Record<Platform, ToolVo>>
+    window_bounds: WindowBounds
+    window_isMaximize: boolean
+    window_theme: WindowTheme
+    sidebar_isCollapsed: boolean
+    sidebar_menuItems: SideBarMenuItem[]
+    tool_installed: Record<string, Record<Platform, ToolVo>>
 }
 
 interface ToolVo {

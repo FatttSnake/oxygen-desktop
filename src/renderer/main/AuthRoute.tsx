@@ -15,7 +15,7 @@ const AuthRoute = () => {
     const isVerify = getVerifyStatus_async()
 
     useEffect(() => {
-        oxygenApi.onOpenUrl((url) => {
+        oxygenApi.mainView.url.onOpen((url) => {
             navigate(url)
         })
     }, [])

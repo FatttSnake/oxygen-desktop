@@ -13,6 +13,13 @@ export const IpcEvents = {
         }
     },
 
+    sidebar: {
+        collapse: {
+            get: 'sidebar:collapse:get',
+            update: 'sidebar:collapse:update'
+        }
+    },
+
     menuView: {
         width: {
             update: 'menuView:width:update'

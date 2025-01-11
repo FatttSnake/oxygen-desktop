@@ -7,7 +7,6 @@ import { NotificationInstance } from 'antd/es/notification/interface'
 import { css, AntdToken, Theme } from 'antd-style'
 import { floor } from 'lodash'
 import {
-    STORAGE_COLLAPSE_SIDEBAR_KEY,
     STORAGE_THEME_MODE_KEY,
     STORAGE_TOOL_MENU_ITEM_KEY,
     THEME_DARK,
@@ -223,12 +222,6 @@ export const omitTextByByte = (text: string, length: number) => {
         return text
     }
     return `${substringByByte(text, 0, length)}...`
-}
-
-export const getSidebarCollapse = () => getLocalStorage(STORAGE_COLLAPSE_SIDEBAR_KEY) === 'true'
-
-export const setSidebarCollapse = (isCollapse: boolean) => {
-    setLocalStorage(STORAGE_COLLAPSE_SIDEBAR_KEY, isCollapse ? 'true' : 'false')
 }
 
 export const getThemeMode = (): ThemeMode => {

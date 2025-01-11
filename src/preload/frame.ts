@@ -14,6 +14,13 @@ const IpcEvents = {
             close: 'window:tab:close',
             independent: 'window:tab:independent'
         }
+    },
+
+    sidebar: {
+        collapse: {
+            get: 'sidebar:collapse:get',
+            update: 'sidebar:collapse:update'
+        }
     }
 }
 
@@ -21,26 +28,32 @@ const oxygenApi = {
     platform: process.platform,
     renderer: 'frame',
 
-    updateTitleBar: (color: string, symbolColor: string) =>
-        ipcRenderer.send(IpcEvents.window.titleBarOverlay.setColor, color, symbolColor),
+    window: {
+        titleBarOverlay: {
+            setColor: (color: string, symbolColor: string) =>
+                ipcRenderer.send(IpcEvents.window.titleBarOverlay.setColor, color, symbolColor)
+        },
 
-    createNewTab: (url: string) => ipcRenderer.send(IpcEvents.window.tab.create, url),
+        tab: {
+            create: (url: string) => ipcRenderer.send(IpcEvents.window.tab.create, url),
+            list: (): Promise<Tab[]> => ipcRenderer.invoke(IpcEvents.window.tab.list),
+            onUpdate: (callback: (tabs: Tab[]) => void) =>
+                ipcRenderer.on(IpcEvents.window.tab.update, (_, tabs: Tab[]) => callback(tabs)),
+            update: (tabs: Tab[]) => ipcRenderer.send(IpcEvents.window.tab.update, tabs),
+            onSwitch: (callback: (key: string) => void) =>
+                ipcRenderer.on(IpcEvents.window.tab.switch, (_, key: string) => callback(key)),
+            switch: (key: string) => ipcRenderer.send(IpcEvents.window.tab.switch, key),
+            close: (key: string) => ipcRenderer.send(IpcEvents.window.tab.close, key),
+            independent: (key: string) => ipcRenderer.send(IpcEvents.window.tab.independent, key)
+        }
+    },
 
-    listTabs: (): Promise<Tab[]> => ipcRenderer.invoke(IpcEvents.window.tab.list),
-
-    onUpdateTab: (callback: (tabs: Tab[]) => void) =>
-        ipcRenderer.on(IpcEvents.window.tab.update, (_, tabs: Tab[]) => callback(tabs)),
-
-    updateTabs: (tabs: Tab[]) => ipcRenderer.send(IpcEvents.window.tab.update, tabs),
-
-    onSwitchTab: (callback: (key: string) => void) =>
-        ipcRenderer.on(IpcEvents.window.tab.switch, (_, key: string) => callback(key)),
-
-    switchTab: (key: string) => ipcRenderer.send(IpcEvents.window.tab.switch, key),
-
-    closeTab: (key: string) => ipcRenderer.send(IpcEvents.window.tab.close, key),
-
-    independentTab: (key: string) => ipcRenderer.send(IpcEvents.window.tab.independent, key)
+    sidebar: {
+        collapse: {
+            get: (): Promise<boolean> => ipcRenderer.invoke(IpcEvents.sidebar.collapse.get),
+            update: (value: boolean) => ipcRenderer.send(IpcEvents.sidebar.collapse.update, value)
+        }
+    }
 }
 
 if (process.contextIsolated) {

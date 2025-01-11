@@ -1,18 +1,7 @@
-import Store, { Schema } from 'electron-store'
+import window from './window'
+import sidebar from './sidebar'
 
-const schema: Schema<StoreSchema> = {
-    windowBounds: {
-        default: {
-            width: 1200,
-            height: 800
-        }
-    },
-    maximize: {
-        default: false
-    },
-    installedTools: {
-        default: []
-    }
+export const settings = {
+    window,
+    sidebar
 }
-
-export default new Store<StoreSchema>({ schema })

@@ -1,6 +1,5 @@
 import { PropsWithChildren, ReactNode } from 'react'
 import useStyles from '%/assets/css/components/sidebar/index.style'
-import { getSidebarCollapse } from '$/util/common'
 import Scroll from '%/components/Sidebar/Scroll'
 import Item from '%/components/Sidebar/Item'
 
@@ -13,12 +12,18 @@ interface SidebarProps extends PropsWithChildren {
 
 const Sidebar = (props: SidebarProps) => {
     const { styles, cx } = useStyles()
-    const [isCollapseSidebar] = useState(getSidebarCollapse())
+    const [isCollapse, setIsCollapse] = useState(oxygenApi.sidebar.collapse.get())
+
+    useEffect(() => {
+        oxygenApi.sidebar.collapse.onUpdate((value) => {
+            setIsCollapse(value)
+        })
+    }, [])
 
     return (
-        <SidebarContext.Provider value={{ isCollapse: isCollapseSidebar }}>
+        <SidebarContext.Provider value={{ isCollapse }}>
             <div
-                className={cx(styles.sidebar, isCollapseSidebar ? styles.collapse : '')}
+                className={cx(styles.sidebar, isCollapse ? styles.collapse : '')}
                 style={{ width: props.width ?? 'clamp(180px, 20vw, 240px)' }}
             >
                 <div className={styles.content}>

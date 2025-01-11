@@ -16,17 +16,41 @@ declare global {
     interface OxygenAPI {
         platform: NodeJS.Platform
         renderer: Renderer
-        updateTitleBar: (color: string, symbolColor: string) => void
-        updateMenuWidth: (width: number) => void
-        onOpenUrl: (callback: (url: string) => void) => void
-        createNewTab: (url: string) => void
-        listTabs: () => Promise<Tab[]>
-        onUpdateTab: (callback: (tabs: Tab[]) => void) => void
-        updateTabs: (tabs: Tab[]) => void
-        onSwitchTab: (callback: (key: string) => void) => void
-        switchTab: (key: string) => void
-        closeTab: (key: string) => void
-        independentTab: (key: string) => void
+        window: {
+            titleBarOverlay: {
+                setColor: (color: string, symbolColor: string) => void
+            }
+            tab: {
+                create: (url: string) => void
+                list: () => Promise<Tab[]>
+                onUpdate: (callback: (tabs: Tab[]) => void) => void
+                update: (tabs: Tab[]) => void
+                onSwitch: (callback: (key: string) => void) => void
+                switch: (key: string) => void
+                close: (key: string) => void
+                independent: (key: string) => void
+            }
+        }
+
+        sidebar: {
+            collapse: {
+                get: () => boolean
+                update: (value: boolean) => void
+                onUpdate: (callback: (value: boolean) => void) => void
+            }
+        }
+
+        menuView: {
+            width: {
+                update: (width: number) => void
+            }
+        }
+
+        mainView: {
+            url: {
+                onOpen: (callback: (url: string) => void) => void
+            }
+        }
     }
 
     class Notify extends Notification {}

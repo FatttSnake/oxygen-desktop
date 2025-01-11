@@ -10,14 +10,14 @@ const MenuFramework = ({ children }: PropsWithChildren) => {
             return
         }
 
-        oxygenApi.updateMenuWidth(rootRef.current.clientWidth)
+        oxygenApi.menuView.width.update(rootRef.current.clientWidth)
         const resizeObserver = new ResizeObserver(
             ([
                 {
                     contentRect: { width }
                 }
             ]) => {
-                oxygenApi.updateMenuWidth(width)
+                oxygenApi.menuView.width.update(width)
             }
         )
         resizeObserver.observe(rootRef.current)

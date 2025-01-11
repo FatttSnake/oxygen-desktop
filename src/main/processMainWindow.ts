@@ -1,22 +1,23 @@
 import { BrowserWindow, WebContentsView } from 'electron'
-import { getMaximize, saveMaximize, saveWindowBounds } from './dataStore/main'
+import { settings } from './dataStore'
+import { getGlobalObject } from './common'
 
 export const processMainWindow = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
-    if (getMaximize()) {
+    if (settings.window.getIsMaximize()) {
         mainWindow.maximize()
     }
     mainWindow.removeMenu()
 
     mainWindow.on('resize', () => {
         const { width, height } = mainWindow.getContentBounds()
-        const menuWidth = global.sharedObject.menuWidth
+        const menuWidth = getGlobalObject().menuWidth
         menuView.setBounds({
             x: 0,
             y: 41,
             width,
             height: height - 41
         })
-        ;(global.sharedObject as SharedObject).mainWindowViews.forEach(({ view, pin }) => {
+        getGlobalObject().mainWindowViews.forEach(({ view, pin }) => {
             view.setBounds({
                 x: pin ? 0 : menuWidth,
                 y: 41,
@@ -28,8 +29,8 @@ export const processMainWindow = (mainWindow: BrowserWindow, menuView: WebConten
 
     mainWindow.on('resized', () => {
         const { width, height } = mainWindow.getBounds()
-        saveWindowBounds({ width, height })
+        settings.window.saveBounds({ width, height })
     })
-    mainWindow.on('maximize', () => saveMaximize(true))
-    mainWindow.on('unmaximize', () => saveMaximize(false))
+    mainWindow.on('maximize', () => settings.window.saveIsMaximize(true))
+    mainWindow.on('unmaximize', () => settings.window.saveIsMaximize(false))
 }

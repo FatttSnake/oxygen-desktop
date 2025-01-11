@@ -6,7 +6,7 @@ import { app, BrowserWindow, WebContentsView, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
 import icon from '../../build/icon.ico?asset'
 import { IpcEvents } from './constants'
-import { getWindowBounds } from './dataStore/main'
+import { settings } from './dataStore'
 import { processApp } from './processApp'
 import { processIpcEvents } from './ipcUtils'
 import { processMainWindow } from './processMainWindow'
@@ -80,7 +80,7 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 const createWindow = () => {
-    const { width, height } = getWindowBounds()
+    const { width, height } = settings.window.getBounds()
     // Create the browser window.
     mainWindow = new BrowserWindow({
         minWidth: 600,

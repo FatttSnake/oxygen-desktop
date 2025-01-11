@@ -7,7 +7,7 @@ const TitleBar = () => {
     const [title, setTitle] = useState<string>(document.title)
 
     useEffect(() => {
-        oxygenApi.updateTitleBar(theme.colorBgContainer, theme.colorText)
+        oxygenApi.window.titleBarOverlay.setColor(theme.colorBgContainer, theme.colorText)
     }, [theme])
 
     useEffect(() => {

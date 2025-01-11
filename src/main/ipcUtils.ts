@@ -3,7 +3,8 @@ import { randomUUID } from 'node:crypto'
 import { BrowserWindow, ipcMain, shell, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { IpcEvents } from './constants'
-import { addTab, removeTab, switchTab, updateTab } from './common'
+import { settings } from './dataStore'
+import { addTab, getGlobalObject, removeTab, switchTab, updateTab } from './common'
 
 export const processBoundsUpdate = (mainWindow: BrowserWindow, view: WebContentsView) => {
     ipcMain.on(IpcEvents.menuView.width.update, (_, menuWidth: number) => {
@@ -27,8 +28,20 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         }
     )
 
+    ipcMain.handle(IpcEvents.sidebar.collapse.get, () => settings.sidebar.getIsCollapsed())
+
+    ipcMain.on(IpcEvents.sidebar.collapse.update, (_, value: boolean) => {
+        settings.sidebar.saveIsCollapsed(value)
+        menuView.webContents.send(IpcEvents.sidebar.collapse.update, value)
+        getGlobalObject().mainWindowViews.forEach((item) => {
+            if (item.pin) {
+                item.view.webContents.send(IpcEvents.sidebar.collapse.update, value)
+            }
+        })
+    })
+
     ipcMain.on(IpcEvents.menuView.width.update, (_, menuWidth: number) => {
-        global.sharedObject.menuWidth = menuWidth
+        getGlobalObject().menuWidth = menuWidth
         const { width, height } = mainWindow.getContentBounds()
         menuView.setBounds({
             x: 0,
@@ -49,9 +62,9 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
 
         const { width, height } = mainWindow.getContentBounds()
         newView.setBounds({
-            x: global.sharedObject.menuWidth,
+            x: getGlobalObject().menuWidth,
             y: 41,
-            width: width - global.sharedObject.menuWidth,
+            width: width - getGlobalObject().menuWidth,
             height: height - 41
         })
         newView.setVisible(false)
@@ -86,7 +99,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
     })
 
     ipcMain.handle(IpcEvents.window.tab.list, () =>
-        (global.sharedObject as SharedObject).mainWindowViews.map(
+        getGlobalObject().mainWindowViews.map(
             ({ key, title, pin }) =>
                 ({
                     key,

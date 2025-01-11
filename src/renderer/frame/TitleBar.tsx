@@ -1,45 +1,46 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
-import { randomInt } from '$/util/common'
 import TabList, { Tab } from '#/components/TabList'
 
 const TitleBar = () => {
     const { styles, cx } = useStyles()
     const { x } = navigator.windowControlsOverlay!.getTitlebarAreaRect()
-    const [isCollapse, setIsCollapse] = useState(false)
+    const [isCollapse, setIsCollapse] = useState(oxygenApi.sidebar.collapse.get())
     const [activeTab, setActiveTab] = useState<string>()
 
     const [tabs, setTabs] = useState<Tab[]>([])
 
     const handleOnClickExpand = () => {
+        oxygenApi.sidebar.collapse.update(!isCollapse)
         setIsCollapse(!isCollapse)
-        oxygenApi.createNewTab(randomInt(0, 10).toString())
     }
 
     const handleOnActiveTabChange = (tab?: Tab) => {
-        tab && oxygenApi.switchTab(tab.key)
+        tab && oxygenApi.window.tab.switch(tab.key)
         tab && setActiveTab(tab.key)
     }
 
     const handleOnTabClose = (tab: Tab) => {
-        oxygenApi.closeTab(tab.key)
+        oxygenApi.window.tab.close(tab.key)
     }
 
     const handleOnTabsChange = (tabs: Tab[]) => {
         setTabs(tabs)
-        oxygenApi.updateTabs(tabs)
+        oxygenApi.window.tab.update(tabs)
     }
 
     const handleOnIndependentTab = (tab: Tab) => {
-        oxygenApi.independentTab(tab.key)
+        oxygenApi.window.tab.independent(tab.key)
+        oxygenApi.window.tab.create('')
     }
 
     useEffect(() => {
-        oxygenApi.listTabs().then((tabs) => setTabs(tabs))
-        oxygenApi.onUpdateTab((tabs) => {
+        oxygenApi.window.tab.list().then((tabs) => setTabs(tabs))
+        oxygenApi.window.tab.onUpdate((tabs) => {
             setTabs(tabs)
         })
-        oxygenApi.onSwitchTab((key) => setActiveTab(key))
+        oxygenApi.window.tab.onSwitch((key) => setActiveTab(key))
+        oxygenApi.window.tab.create('')
     }, [])
 
     return (
