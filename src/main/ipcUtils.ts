@@ -6,18 +6,6 @@ import { IpcEvents } from './constants'
 import { settings } from './dataStore'
 import { addTab, getGlobalObject, removeTab, switchTab, updateTab } from './common'
 
-export const processBoundsUpdate = (mainWindow: BrowserWindow, view: WebContentsView) => {
-    ipcMain.on(IpcEvents.menuView.width.update, (_, menuWidth: number) => {
-        const { width, height } = mainWindow.getContentBounds()
-        view.setBounds({
-            x: menuWidth,
-            y: 40,
-            width: width - menuWidth,
-            height: height - 40
-        })
-    })
-}
-
 export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
     ipcMain.handle(IpcEvents.window.theme.get, () => settings.window.getTheme())
 
@@ -71,6 +59,17 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
             width: width,
             height: height - 40
         })
+        getGlobalObject().mainWindowViews.forEach(({ key, view }) => {
+            if (['mainView'].includes(key)) {
+                return
+            }
+            view.setBounds({
+                x: menuWidth,
+                y: 40,
+                width: width - menuWidth,
+                height: height - 40
+            })
+        })
     })
 
     ipcMain.on(IpcEvents.window.tab.create, (_, url: string) => {
@@ -115,7 +114,6 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
             )
         }
 
-        processBoundsUpdate(mainWindow, newView)
         addTab(mainWindow, newView, viewId, viewId)
         mainWindow.contentView.addChildView(newView)
         switchTab(mainWindow, menuView, viewId)
