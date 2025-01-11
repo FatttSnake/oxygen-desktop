@@ -8,7 +8,8 @@ export const addTab = (
     view: WebContentsView,
     viewId: string,
     title: string = '',
-    pin = false
+    pin = false,
+    persistent = false
 ): Tab => {
     view.webContents.on('page-title-updated', (_, title) => {
         getGlobalObject().mainWindowViews.forEach((item) => {
@@ -33,10 +34,11 @@ export const addTab = (
         key: viewId,
         view,
         title,
-        pin
+        pin,
+        persistent
     })
     handleUpdateTabs(mainWindow)
-    return { key: viewId, title, pin }
+    return { key: viewId, title, pin, persistent }
 }
 
 export const updateTab = (mainWindow: BrowserWindow, tabs: Tab[]) => {
@@ -71,12 +73,13 @@ const handleUpdateTabs = (mainWindow: BrowserWindow) => {
     mainWindow.webContents.send(
         IpcEvents.window.tab.update,
         getGlobalObject().mainWindowViews.map(
-            ({ key, icon, title, pin }) =>
+            ({ key, icon, title, pin, persistent }) =>
                 ({
                     key,
                     icon,
                     title,
-                    pin
+                    pin,
+                    persistent
                 }) as Tab
         )
     )

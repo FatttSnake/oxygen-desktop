@@ -18,9 +18,6 @@ const schema: Schema<StoreSchema> = {
     },
     sidebar_menuItems: {
         default: []
-    },
-    tool_installed: {
-        default: {}
     }
 }
 

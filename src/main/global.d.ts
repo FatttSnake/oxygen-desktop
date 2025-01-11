@@ -24,6 +24,7 @@ interface SharedObject {
         icon?: string
         title: string
         pin?: boolean
+        persistent?: boolean
     }[]
     independentWindows: Record<string, _BrowserWindow>
 }
@@ -33,6 +34,7 @@ interface Tab {
     icon?: string
     title: string
     pin?: boolean
+    persistent?: boolean
 }
 
 interface WindowBounds {
@@ -57,7 +59,6 @@ interface StoreSchema {
     window_theme: WindowTheme
     sidebar_isCollapsed: boolean
     sidebar_menuItems: SideBarMenuItem[]
-    tool_installed: Record<string, Record<Platform, ToolVo>>
 }
 
 interface ToolVo {

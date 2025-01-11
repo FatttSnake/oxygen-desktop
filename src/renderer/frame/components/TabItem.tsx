@@ -4,13 +4,13 @@ import useStyles from '#/assets/css/components/tab-item.style'
 
 interface TabItemProps extends PropsWithChildren {
     icon?: string
-    pin?: boolean
+    persistent?: boolean
     active?: boolean
     onClick?: () => void
     onClose?: () => void
 }
 
-const TabItem = ({ icon, pin, active, children, onClick, onClose }: TabItemProps) => {
+const TabItem = ({ icon, persistent, active, children, onClick, onClose }: TabItemProps) => {
     const { styles, cx } = useStyles()
 
     return (
@@ -31,7 +31,7 @@ const TabItem = ({ icon, pin, active, children, onClick, onClose }: TabItemProps
             </div>
             <span className={styles.title}>{children}</span>
 
-            {!pin && (
+            {!persistent && (
                 <div className={styles.close} onClick={onClose}>
                     <Icon component={IconOxygenClose} />
                 </div>

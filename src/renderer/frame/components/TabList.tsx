@@ -23,6 +23,7 @@ export interface Tab {
     icon?: string
     title: ReactNode
     pin?: boolean
+    persistent?: boolean
 }
 
 interface TabListProps {
@@ -110,11 +111,14 @@ const TabList = ({
                             <>
                                 <TabItem
                                     icon={tab.icon}
+                                    persistent={tab.persistent}
                                     active={tab.key === activeTab}
                                     onClick={() => {
                                         onActiveTabChange?.(tab)
                                     }}
-                                    pin
+                                    onClose={() => {
+                                        onTabClose?.(tab)
+                                    }}
                                 >
                                     {tab.title}
                                 </TabItem>
@@ -138,6 +142,7 @@ const TabList = ({
                                         >
                                             <TabItem
                                                 icon={tab.icon}
+                                                persistent={tab.persistent}
                                                 active={tab.key === activeTab}
                                                 onClick={() => {
                                                     onActiveTabChange?.(tab)
