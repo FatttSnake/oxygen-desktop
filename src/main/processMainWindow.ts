@@ -1,10 +1,20 @@
-import { BrowserWindow, WebContentsView } from 'electron'
+import { BrowserWindow, nativeTheme, WebContentsView } from 'electron'
 import { settings } from './dataStore'
 import { getGlobalObject } from './common'
 
 export const processMainWindow = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
     if (settings.window.getIsMaximize()) {
         mainWindow.maximize()
+    }
+    switch (settings.window.getTheme()) {
+        case 'FOLLOW_SYSTEM':
+            nativeTheme.themeSource = 'system'
+            break
+        case 'LIGHT':
+            nativeTheme.themeSource = 'light'
+            break
+        case 'DARK':
+            nativeTheme.themeSource = 'dark'
     }
     mainWindow.removeMenu()
 

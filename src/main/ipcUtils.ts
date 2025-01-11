@@ -1,6 +1,6 @@
 import { join } from 'path'
 import { randomUUID } from 'node:crypto'
-import { BrowserWindow, ipcMain, shell, WebContentsView } from 'electron'
+import { BrowserWindow, ipcMain, shell, WebContentsView, nativeTheme } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { IpcEvents } from './constants'
 import { settings } from './dataStore'
@@ -28,6 +28,17 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         getGlobalObject().mainWindowViews.forEach((item) => {
             item.view.webContents.send(IpcEvents.window.theme.update, theme)
         })
+
+        switch (theme) {
+            case 'FOLLOW_SYSTEM':
+                nativeTheme.themeSource = 'system'
+                break
+            case 'LIGHT':
+                nativeTheme.themeSource = 'light'
+                break
+            case 'DARK':
+                nativeTheme.themeSource = 'dark'
+        }
     })
 
     ipcMain.on(
@@ -79,6 +90,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
             height: height - 40
         })
         newView.setVisible(false)
+        newView.setBackgroundColor('rgba(0, 0, 0, 0)')
 
         newView.webContents.setWindowOpenHandler((details) => {
             void shell.openExternal(details.url)
