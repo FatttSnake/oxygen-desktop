@@ -36,21 +36,16 @@ declare global {
                 independent: (key: string) => void
             }
         }
-
         sidebar: {
+            width: {
+                update: (width: number) => void
+            }
             collapse: {
                 get: () => Promise<boolean>
                 update: (value: boolean) => void
                 onUpdate: (callback: (value: boolean) => void) => void
             }
         }
-
-        menuView: {
-            width: {
-                update: (width: number) => void
-            }
-        }
-
         mainView: {
             url: {
                 onOpen: (callback: (url: string) => void) => void

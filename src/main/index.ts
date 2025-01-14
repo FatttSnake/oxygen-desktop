@@ -12,7 +12,6 @@ import { processIpcEvents } from './ipcUtils'
 import { processMainWindow } from './processMainWindow'
 import { initFrameView } from './frameView'
 import { initMainView } from './mainView'
-import { initMenuView } from './menuView'
 
 global.sharedObject = {
     menuWidth: 0,
@@ -21,7 +20,6 @@ global.sharedObject = {
 }
 
 let mainWindow: BrowserWindow
-let menuView: WebContentsView
 let mainView: WebContentsView
 
 // Application singleton execution
@@ -99,23 +97,16 @@ const createWindow = () => {
         }
     })
 
-    menuView = new WebContentsView({
-        webPreferences: {
-            preload: join(__dirname, '../preload/menu.js')
-        }
-    })
-
     mainView = new WebContentsView({
         webPreferences: {
             preload: join(__dirname, '../preload/main.js')
         }
     })
 
-    processMainWindow(mainWindow, menuView)
+    processMainWindow(mainWindow)
     initFrameView(mainWindow)
-    initMenuView(mainWindow, menuView)
     initMainView(mainWindow, mainView)
-    processIpcEvents(mainWindow, menuView)
+    processIpcEvents(mainWindow)
 }
 
 // This method will be called when Electron has finished

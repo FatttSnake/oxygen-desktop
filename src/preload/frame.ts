@@ -19,6 +19,9 @@ const IpcEvents = {
         }
     },
     sidebar: {
+        width: {
+            update: 'sidebar:width:update'
+        },
         collapse: {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
@@ -59,8 +62,15 @@ const oxygenApi = {
         }
     },
     sidebar: {
+        width: {
+            update: (width: number) => ipcRenderer.send(IpcEvents.sidebar.width.update, width)
+        },
         collapse: {
             get: (): Promise<boolean> => ipcRenderer.invoke(IpcEvents.sidebar.collapse.get),
+            onUpdate: (callback: (value: boolean) => void) =>
+                ipcRenderer.on(IpcEvents.sidebar.collapse.update, (_, value: boolean) =>
+                    callback(value)
+                ),
             update: (value: boolean) => ipcRenderer.send(IpcEvents.sidebar.collapse.update, value)
         }
     }

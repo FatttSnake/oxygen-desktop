@@ -17,14 +17,12 @@ export const IpcEvents = {
         }
     },
     sidebar: {
+        width: {
+            update: 'sidebar:width:update'
+        },
         collapse: {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
-        }
-    },
-    menuView: {
-        width: {
-            update: 'menuView:width:update'
         }
     },
     mainView: {

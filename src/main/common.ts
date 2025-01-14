@@ -50,11 +50,7 @@ export const updateTab = (mainWindow: BrowserWindow, tabs: Tab[]) => {
     handleUpdateTabs(mainWindow)
 }
 
-export const switchTab = (
-    mainWindow: BrowserWindow,
-    menuView: WebContentsView,
-    key: string
-): boolean => {
+export const switchTab = (mainWindow: BrowserWindow, key: string): boolean => {
     if (!getGlobalObject().mainWindowViews.find((item) => item.key === key)) {
         return false
     }
@@ -62,9 +58,6 @@ export const switchTab = (
     getGlobalObject().mainWindowViews.forEach((item) => {
         item.view.setVisible(item.key === key)
     })
-    menuView.setVisible(
-        getGlobalObject().mainWindowViews.find((item) => item.key === key)?.pin != true
-    )
     mainWindow.webContents.send(IpcEvents.window.tab.switch, key)
     return true
 }

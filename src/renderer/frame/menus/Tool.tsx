@@ -1,7 +1,7 @@
 import { getToolMenuItem } from '$/util/common'
-import Sidebar from '%/components/Sidebar'
+import Sidebar from '#/components/Sidebar'
 
-const Tool = () => {
+const ToolMenu = () => {
     const [toolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
 
     const handleOnClick = (path: string) => {
@@ -24,4 +24,4 @@ const Tool = () => {
     )
 }
 
-export default Tool
+export default ToolMenu

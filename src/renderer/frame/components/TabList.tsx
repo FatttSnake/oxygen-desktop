@@ -162,7 +162,6 @@ const TabList = ({
                             {activeItem && (
                                 <>
                                     <TabItem>{activeItem.title}</TabItem>
-                                    <TabSeparate />
                                 </>
                             )}
                         </DraggableOverlay>

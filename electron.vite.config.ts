@@ -15,12 +15,7 @@ export default defineConfig({
     preload: {
         build: {
             lib: {
-                entry: [
-                    'src/preload/frame.ts',
-                    'src/preload/menu.ts',
-                    'src/preload/main.ts',
-                    'src/preload/tool.ts'
-                ]
+                entry: ['src/preload/frame.ts', 'src/preload/main.ts', 'src/preload/tool.ts']
             }
         },
         plugins: [externalizeDepsPlugin()]

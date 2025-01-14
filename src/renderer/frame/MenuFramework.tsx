@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import useStyles from '%/assets/css/menu-framework.style'
+import useStyles from '#/assets/css/menu-framework.style'
 
 const MenuFramework = ({ children }: PropsWithChildren) => {
     const { styles } = useStyles()
@@ -10,14 +10,14 @@ const MenuFramework = ({ children }: PropsWithChildren) => {
             return
         }
 
-        oxygenApi.menuView.width.update(rootRef.current.clientWidth)
+        oxygenApi.sidebar.width.update(rootRef.current.clientWidth)
         const resizeObserver = new ResizeObserver(
             ([
                 {
                     contentRect: { width }
                 }
             ]) => {
-                oxygenApi.menuView.width.update(width)
+                oxygenApi.sidebar.width.update(width)
             }
         )
         resizeObserver.observe(rootRef.current)

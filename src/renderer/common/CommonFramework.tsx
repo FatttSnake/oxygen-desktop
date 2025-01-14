@@ -41,7 +41,7 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
         return () => {
             darkThemeMq.removeEventListener('change', darkThemeMqChangeListener)
         }
-    })
+    }, [])
 
     return (
         <AntdConfigProvider

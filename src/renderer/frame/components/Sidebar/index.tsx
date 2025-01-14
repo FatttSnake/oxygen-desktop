@@ -1,7 +1,7 @@
 import { PropsWithChildren, ReactNode } from 'react'
-import useStyles from '%/assets/css/components/sidebar/index.style'
-import Scroll from '%/components/Sidebar/Scroll'
-import Item from '%/components/Sidebar/Item'
+import useStyles from '#/assets/css/components/sidebar/index.style'
+import Scroll from '#/components/Sidebar/Scroll'
+import Item from '#/components/Sidebar/Item'
 
 export const SidebarContext = createContext({ isCollapse: false })
 

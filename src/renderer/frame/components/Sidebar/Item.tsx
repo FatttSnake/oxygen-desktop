@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 import Icon from '@ant-design/icons'
-import useStyles from '%/assets/css/components/sidebar/item.style'
-import { SidebarContext } from '%/components/Sidebar'
+import useStyles from '#/assets/css/components/sidebar/item.style'
+import { SidebarContext } from '#/components/Sidebar/index'
 
 interface ItemProps {
     icon: IconComponent | string

@@ -6,13 +6,12 @@ import { IpcEvents } from './constants'
 import { settings } from './dataStore'
 import { addTab, getGlobalObject, removeTab, switchTab, updateTab } from './common'
 
-export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContentsView) => {
+export const processIpcEvents = (mainWindow: BrowserWindow) => {
     ipcMain.handle(IpcEvents.window.theme.get, () => settings.window.getTheme())
 
     ipcMain.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) => {
         settings.window.saveTheme(theme)
         mainWindow.webContents.send(IpcEvents.window.theme.update, theme)
-        menuView.webContents.send(IpcEvents.window.theme.update, theme)
         getGlobalObject().mainWindowViews.forEach((item) => {
             item.view.webContents.send(IpcEvents.window.theme.update, theme)
         })
@@ -42,7 +41,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
 
     ipcMain.on(IpcEvents.sidebar.collapse.update, (_, value: boolean) => {
         settings.sidebar.saveIsCollapsed(value)
-        menuView.webContents.send(IpcEvents.sidebar.collapse.update, value)
+        mainWindow.webContents.send(IpcEvents.sidebar.collapse.update, value)
         getGlobalObject().mainWindowViews.forEach((item) => {
             if (item.pin) {
                 item.view.webContents.send(IpcEvents.sidebar.collapse.update, value)
@@ -50,15 +49,9 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         })
     })
 
-    ipcMain.on(IpcEvents.menuView.width.update, (_, menuWidth: number) => {
+    ipcMain.on(IpcEvents.sidebar.width.update, (_, menuWidth: number) => {
         getGlobalObject().menuWidth = menuWidth
         const { width, height } = mainWindow.getContentBounds()
-        menuView.setBounds({
-            x: 0,
-            y: 40,
-            width: width,
-            height: height - 40
-        })
         getGlobalObject().mainWindowViews.forEach(({ view, pin }) => {
             if (pin) {
                 return
@@ -136,7 +129,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
 
             addTab(mainWindow, newView, viewId, type, viewId)
             mainWindow.contentView.addChildView(newView)
-            switchTab(mainWindow, menuView, viewId)
+            switchTab(mainWindow, viewId)
         }
     )
 
@@ -159,7 +152,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
     })
 
     ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => {
-        return switchTab(mainWindow, menuView, key)
+        return switchTab(mainWindow, key)
     })
 
     ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => {

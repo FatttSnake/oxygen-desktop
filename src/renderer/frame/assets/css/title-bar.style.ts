@@ -5,6 +5,7 @@ export default createStyles(({ token }) => ({
         display: 'flex',
         width: '100vw',
         height: 40,
+        minHeight: 40,
         backgroundColor: token.colorBgContainer,
         overflow: 'hidden',
         userSelect: 'none',
