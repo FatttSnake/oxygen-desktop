@@ -16,25 +16,25 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 
-interface SharedObject {
-    menuWidth: number
-    mainWindowViews: {
-        key: string
-        view: _WebContentsView
-        icon?: string
-        title: string
-        pin?: boolean
-        persistent?: boolean
-    }[]
-    independentWindows: Record<string, _BrowserWindow>
-}
+type TabType = 'main' | 'settings' | 'tool'
 
 interface Tab {
     key: string
+    type: TabType
     icon?: string
     title: string
     pin?: boolean
     persistent?: boolean
+}
+
+interface ViewInfo extends Tab {
+    view: _WebContentsView
+}
+
+interface SharedObject {
+    menuWidth: number
+    mainWindowViews: ViewInfo[]
+    independentWindows: Record<string, _BrowserWindow>
 }
 
 interface WindowBounds {

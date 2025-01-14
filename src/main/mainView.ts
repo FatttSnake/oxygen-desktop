@@ -35,7 +35,7 @@ export const initMainView = (mainWindow: BrowserWindow, mainView: WebContentsVie
         )
     }
 
-    addTab(mainWindow, mainView, 'mainView', 'Oxygen Toolbox', true, true)
+    addTab(mainWindow, mainView, 'mainView', 'main', 'Oxygen Toolbox', true, true)
 
     mainWindow.contentView.addChildView(mainView)
 }

@@ -7,6 +7,7 @@ export const addTab = (
     mainWindow: BrowserWindow,
     view: WebContentsView,
     viewId: string,
+    type: TabType,
     title: string = '',
     pin = false,
     persistent = false
@@ -32,13 +33,14 @@ export const addTab = (
     })
     getGlobalObject().mainWindowViews.push({
         key: viewId,
+        type,
         view,
         title,
         pin,
         persistent
     })
     handleUpdateTabs(mainWindow)
-    return { key: viewId, title, pin, persistent }
+    return { key: viewId, type, title, pin, persistent }
 }
 
 export const updateTab = (mainWindow: BrowserWindow, tabs: Tab[]) => {
@@ -48,7 +50,15 @@ export const updateTab = (mainWindow: BrowserWindow, tabs: Tab[]) => {
     handleUpdateTabs(mainWindow)
 }
 
-export const switchTab = (mainWindow: BrowserWindow, menuView: WebContentsView, key: string) => {
+export const switchTab = (
+    mainWindow: BrowserWindow,
+    menuView: WebContentsView,
+    key: string
+): boolean => {
+    if (!getGlobalObject().mainWindowViews.find((item) => item.key === key)) {
+        return false
+    }
+
     getGlobalObject().mainWindowViews.forEach((item) => {
         item.view.setVisible(item.key === key)
     })
@@ -56,6 +66,7 @@ export const switchTab = (mainWindow: BrowserWindow, menuView: WebContentsView, 
         getGlobalObject().mainWindowViews.find((item) => item.key === key)?.pin != true
     )
     mainWindow.webContents.send(IpcEvents.window.tab.switch, key)
+    return true
 }
 
 export const removeTab = (mainWindow: BrowserWindow, key: string) => {
@@ -73,9 +84,10 @@ const handleUpdateTabs = (mainWindow: BrowserWindow) => {
     mainWindow.webContents.send(
         IpcEvents.window.tab.update,
         getGlobalObject().mainWindowViews.map(
-            ({ key, icon, title, pin, persistent }) =>
+            ({ key, type, icon, title, pin, persistent }) =>
                 ({
                     key,
+                    type,
                     icon,
                     title,
                     pin,

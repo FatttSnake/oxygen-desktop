@@ -59,8 +59,8 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
             width: width,
             height: height - 40
         })
-        getGlobalObject().mainWindowViews.forEach(({ key, view }) => {
-            if (['mainView'].includes(key)) {
+        getGlobalObject().mainWindowViews.forEach(({ view, pin }) => {
+            if (pin) {
                 return
             }
             view.setBounds({
@@ -72,60 +72,84 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         })
     })
 
-    ipcMain.on(IpcEvents.window.tab.create, (_, url: string) => {
-        const viewId = randomUUID()
-        const newView = new WebContentsView({
-            webPreferences: {
-                preload: join(__dirname, '../preload/tool.js'),
-                additionalArguments: [`--view-id=${viewId}`, `--url=${url}`]
-            }
-        })
-
-        const { width, height } = mainWindow.getContentBounds()
-        newView.setBounds({
-            x: getGlobalObject().menuWidth,
-            y: 40,
-            width: width - getGlobalObject().menuWidth,
-            height: height - 40
-        })
-        newView.setVisible(false)
-        newView.setBackgroundColor('rgba(0, 0, 0, 0)')
-
-        newView.webContents.setWindowOpenHandler((details) => {
-            void shell.openExternal(details.url)
-            return { action: 'deny' }
-        })
-
-        newView.webContents.on('did-finish-load', () => {
-            mainWindow.show()
-            if (is.dev) {
-                newView.webContents.openDevTools()
-            }
-        })
-
-        // HMR for renderer base on electron-vite cli.
-        // Load the remote URL for development or the local html file for production.
-        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-            void newView.webContents.loadURL(process.env['ELECTRON_RENDERER_URL'])
-        } else {
-            // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-            void newView.webContents.loadURL(
-                `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
+    ipcMain.on(
+        IpcEvents.window.tab.create,
+        (_, type: TabType, args: Record<string, string | number | boolean>) => {
+            const { viewId, preload, menuWidth } = ((): {
+                viewId: string
+                preload: string
+                menuWidth: number
+            } => {
+                switch (type) {
+                    case 'settings':
+                        return { viewId: 'settings', preload: 'settings.js', menuWidth: 0 }
+                    default:
+                        return {
+                            viewId: randomUUID(),
+                            preload: 'tool.js',
+                            menuWidth: getGlobalObject().menuWidth
+                        }
+                }
+            })()
+            const argStr = Object.entries(args).map(
+                ([key, value]) => `--${key}=${encodeURIComponent(value)}`
             )
-        }
+            const newView = new WebContentsView({
+                webPreferences: {
+                    preload: join(__dirname, `../preload/${preload}`),
+                    additionalArguments: [`--view-id=${viewId}`, ...argStr]
+                }
+            })
 
-        addTab(mainWindow, newView, viewId, viewId)
-        mainWindow.contentView.addChildView(newView)
-        switchTab(mainWindow, menuView, viewId)
-    })
+            const { width, height } = mainWindow.getContentBounds()
+            newView.setBounds({
+                x: menuWidth,
+                y: 40,
+                width: width - menuWidth,
+                height: height - 40
+            })
+            newView.setVisible(false)
+            newView.setBackgroundColor('rgba(0, 0, 0, 0)')
+
+            newView.webContents.setWindowOpenHandler((details) => {
+                void shell.openExternal(details.url)
+                return { action: 'deny' }
+            })
+
+            newView.webContents.on('did-finish-load', () => {
+                mainWindow.show()
+                if (is.dev) {
+                    newView.webContents.openDevTools()
+                }
+            })
+
+            // HMR for renderer base on electron-vite cli.
+            // Load the remote URL for development or the local html file for production.
+            if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+                void newView.webContents.loadURL(process.env['ELECTRON_RENDERER_URL'])
+            } else {
+                // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+                void newView.webContents.loadURL(
+                    `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
+                )
+            }
+
+            addTab(mainWindow, newView, viewId, type, viewId)
+            mainWindow.contentView.addChildView(newView)
+            switchTab(mainWindow, menuView, viewId)
+        }
+    )
 
     ipcMain.handle(IpcEvents.window.tab.list, () =>
         getGlobalObject().mainWindowViews.map(
-            ({ key, title, pin }) =>
+            ({ key, type, icon, title, pin, persistent }) =>
                 ({
                     key,
+                    type,
+                    icon,
                     title,
-                    pin
+                    pin,
+                    persistent
                 }) as Tab
         )
     )
@@ -134,8 +158,8 @@ export const processIpcEvents = (mainWindow: BrowserWindow, menuView: WebContent
         updateTab(mainWindow, tabs)
     })
 
-    ipcMain.on(IpcEvents.window.tab.switch, (_, key: string) => {
-        switchTab(mainWindow, menuView, key)
+    ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => {
+        return switchTab(mainWindow, menuView, key)
     })
 
     ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => {

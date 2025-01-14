@@ -11,7 +11,7 @@ declare global {
         windowControlsOverlay?: WindowControlsOverlay
     }
 
-    type Renderer = 'frame' | 'menu' | 'main' | 'tool'
+    type Renderer = 'frame' | 'menu' | 'main' | 'settings' | 'tool'
 
     interface OxygenAPI {
         platform: NodeJS.Platform
@@ -31,7 +31,7 @@ declare global {
                 onUpdate: (callback: (tabs: Tab[]) => void) => void
                 update: (tabs: Tab[]) => void
                 onSwitch: (callback: (key: string) => void) => void
-                switch: (key: string) => void
+                switch: (key: string) => Promise<boolean>
                 close: (key: string) => void
                 independent: (key: string) => void
             }
