@@ -1,7 +1,7 @@
 import CommonFramework from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import TitleBar from '#/TitleBar'
-import ToolMenu from '#/menus/Tool'
+import ToolMenu from '#/menus/ToolMenu'
 import MenuFramework from '#/MenuFramework'
 
 const App = () => {

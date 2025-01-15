@@ -1,6 +1,6 @@
 import { PropsWithChildren } from 'react'
 import Icon from '@ant-design/icons'
-import useStyles from '#/assets/css/components/tab-item.style'
+import useStyles from '#/assets/css/components/tab/item.style'
 
 interface TabItemProps extends PropsWithChildren {
     icon?: string
@@ -10,7 +10,7 @@ interface TabItemProps extends PropsWithChildren {
     onClose?: () => void
 }
 
-const TabItem = ({ icon, persistent, active, children, onClick, onClose }: TabItemProps) => {
+const Item = ({ icon, persistent, active, children, onClick, onClose }: TabItemProps) => {
     const { styles, cx } = useStyles()
 
     return (
@@ -40,4 +40,4 @@ const TabItem = ({ icon, persistent, active, children, onClick, onClose }: TabIt
     )
 }
 
-export default TabItem
+export default Item

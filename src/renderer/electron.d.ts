@@ -1,5 +1,4 @@
 import { Notification } from 'electron'
-import { Tab } from '#/components/TabList.tsx'
 
 declare global {
     interface WindowControlsOverlay {
@@ -27,9 +26,9 @@ declare global {
             }
             tab: {
                 create: (url: string) => void
-                list: () => Promise<Tab[]>
-                onUpdate: (callback: (tabs: Tab[]) => void) => void
-                update: (tabs: Tab[]) => void
+                list: () => Promise<TabInstance[]>
+                onUpdate: (callback: (tabs: TabInstance[]) => void) => void
+                update: (tabs: TabInstance[]) => void
                 onSwitch: (callback: (key: string) => void) => void
                 switch: (key: string) => Promise<boolean>
                 close: (key: string) => void

@@ -4,6 +4,8 @@
 
 type Platform = 'WEB' | 'DESKTOP' | 'ANDROID'
 
+type WindowTheme = 'FOLLOW_SYSTEM' | 'LIGHT' | 'DARK'
+
 interface ImportMetaEnv {
     readonly VITE_PLATFORM: Platform
     readonly VITE_DESKTOP_PROTOCOL: string
@@ -18,7 +20,13 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 
-type WindowTheme = 'FOLLOW_SYSTEM' | 'LIGHT' | 'DARK'
+interface TabInstance {
+    key: string
+    icon?: string
+    title: ReactNode
+    pin?: boolean
+    persistent?: boolean
+}
 
 interface RouteJsonObject {
     path: string

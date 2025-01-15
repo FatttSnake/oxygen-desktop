@@ -1,6 +1,6 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
-import TabList, { Tab } from '#/components/TabList'
+import Tab from '#/components/Tab'
 
 const TitleBar = () => {
     const { styles, cx, theme } = useStyles()
@@ -8,28 +8,28 @@ const TitleBar = () => {
     const [isCollapse, setIsCollapse] = useState(false)
     const [activeTab, setActiveTab] = useState<string>()
 
-    const [tabs, setTabs] = useState<Tab[]>([])
+    const [tabs, setTabs] = useState<TabInstance[]>([])
 
     const handleOnClickExpand = () => {
         oxygenApi.sidebar.collapse.update(!isCollapse)
         setIsCollapse(!isCollapse)
     }
 
-    const handleOnActiveTabChange = (tab?: Tab) => {
+    const handleOnActiveTabChange = (tab?: TabInstance) => {
         tab && oxygenApi.window.tab.switch(tab.key)
         tab && setActiveTab(tab.key)
     }
 
-    const handleOnTabClose = (tab: Tab) => {
+    const handleOnTabClose = (tab: TabInstance) => {
         oxygenApi.window.tab.close(tab.key)
     }
 
-    const handleOnTabsChange = (tabs: Tab[]) => {
+    const handleOnTabsChange = (tabs: TabInstance[]) => {
         setTabs(tabs)
         oxygenApi.window.tab.update(tabs)
     }
 
-    const handleOnIndependentTab = (tab: Tab) => {
+    const handleOnIndependentTab = (tab: TabInstance) => {
         oxygenApi.window.tab.independent(tab.key)
         oxygenApi.window.tab.create('')
     }
@@ -65,7 +65,7 @@ const TitleBar = () => {
                     </AntdButton>
                 </div>
                 <div className={styles.tabs}>
-                    <TabList
+                    <Tab.List
                         tabs={tabs}
                         activeTab={activeTab}
                         onActiveTabChange={handleOnActiveTabChange}

@@ -1,5 +1,5 @@
 import { createStyles } from 'antd-style'
-import { rgbaBlackToHex } from '$/util/common.tsx'
+import { rgbaBlackToHex } from '$/util/common'
 
 export default createStyles(({ cx, css, token }) => {
     const close = cx(css`

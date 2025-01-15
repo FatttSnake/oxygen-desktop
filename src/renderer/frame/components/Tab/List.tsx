@@ -1,4 +1,3 @@
-import { ReactNode } from 'react'
 import {
     DndContext,
     DragOverEvent,
@@ -10,32 +9,24 @@ import {
 } from '@dnd-kit/core'
 import { DragEndEvent } from '@dnd-kit/core/dist/types'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
-import useStyles from '#/assets/css/components/tab-list.style'
+import useStyles from '#/assets/css/components/tab/list.style'
 import HideScrollbar from '$/components/HideScrollbar'
 import Droppable from '$/components/dnd/Droppable'
 import Sortable from '$/components/dnd/Sortable'
 import DraggableOverlay from '$/components/dnd/DraggableOverlay'
-import TabItem from '#/components/TabItem'
-import TabSeparate from '#/components/TabSeparate'
-
-export interface Tab {
-    key: string
-    icon?: string
-    title: ReactNode
-    pin?: boolean
-    persistent?: boolean
-}
+import Item from '#/components/Tab/Item'
+import Separate from '#/components/Tab/Separate'
 
 interface TabListProps {
-    tabs: Tab[]
+    tabs: TabInstance[]
     activeTab?: string
-    onActiveTabChange?: (tab?: Tab) => void
-    onTabClose?: (tab: Tab) => void
-    onTabsChange?: (tabs: Tab[]) => void
-    onIndependentTab?: (tab: Tab) => void
+    onActiveTabChange?: (tab?: TabInstance) => void
+    onTabClose?: (tab: TabInstance) => void
+    onTabsChange?: (tabs: TabInstance[]) => void
+    onIndependentTab?: (tab: TabInstance) => void
 }
 
-const TabList = ({
+const List = ({
     tabs,
     activeTab,
     onActiveTabChange,
@@ -45,7 +36,7 @@ const TabList = ({
 }: TabListProps) => {
     const { styles } = useStyles()
     const [independentItem, setIndependentItem] = useState<string>()
-    const [activeItem, setActiveItem] = useState<Tab>()
+    const [activeItem, setActiveItem] = useState<TabInstance>()
     const sensors = useSensors(
         useSensor(MouseSensor, {
             activationConstraint: {
@@ -61,7 +52,7 @@ const TabList = ({
     )
 
     const handleOnDragStart = ({ active }: DragStartEvent) => {
-        setActiveItem(active.data.current as Tab)
+        setActiveItem(active.data.current as TabInstance)
     }
 
     const handleOnDragOver = ({ active, over }: DragOverEvent) => {
@@ -76,7 +67,7 @@ const TabList = ({
         }
 
         if (!over) {
-            onIndependentTab?.(active.data.current as Tab)
+            onIndependentTab?.(active.data.current as TabInstance)
         }
 
         setActiveItem(undefined)
@@ -104,12 +95,12 @@ const TabList = ({
                     onDragEnd={handleOnDragEnd}
                     onDragCancel={handleOnDragCancel}
                 >
-                    <TabSeparate />
+                    <Separate />
                     {tabs
                         .filter(({ pin }) => pin)
                         ?.map((tab) => (
                             <>
-                                <TabItem
+                                <Item
                                     icon={tab.icon}
                                     persistent={tab.persistent}
                                     active={tab.key === activeTab}
@@ -121,8 +112,8 @@ const TabList = ({
                                     }}
                                 >
                                     {tab.title}
-                                </TabItem>
-                                <TabSeparate />
+                                </Item>
+                                <Separate />
                             </>
                         ))}
                     <Droppable id={'tab'} className={styles.droppable}>
@@ -140,7 +131,7 @@ const TabList = ({
                                             isOver={independentItem === tab.key}
                                             className={styles.sortable}
                                         >
-                                            <TabItem
+                                            <Item
                                                 icon={tab.icon}
                                                 persistent={tab.persistent}
                                                 active={tab.key === activeTab}
@@ -152,16 +143,16 @@ const TabList = ({
                                                 }}
                                             >
                                                 {tab.title}
-                                            </TabItem>
+                                            </Item>
                                         </Sortable>
-                                        <TabSeparate key={`${tab.key}-`} />
+                                        <Separate key={`${tab.key}-`} />
                                     </>
                                 ))}
                         </SortableContext>
                         <DraggableOverlay>
                             {activeItem && (
                                 <>
-                                    <TabItem>{activeItem.title}</TabItem>
+                                    <Item>{activeItem.title}</Item>
                                 </>
                             )}
                         </DraggableOverlay>
@@ -172,4 +163,4 @@ const TabList = ({
     )
 }
 
-export default TabList
+export default List
