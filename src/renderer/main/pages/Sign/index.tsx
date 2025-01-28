@@ -42,33 +42,31 @@ const Sign = () => {
     }
 
     return (
-        <>
-            <FitFullscreen className={styles.root}>
-                <FitCenter>
-                    <FlexBox
-                        direction={'horizontal'}
-                        className={cx(styles.signBox, isSwitch ? styles.switch : '')}
-                    >
-                        <div className={cx(styles.side, !isSwitch ? styles.hidden : '')}>
-                            {leftComponent()}
+        <FitFullscreen className={styles.root}>
+            <FitCenter>
+                <FlexBox
+                    direction={'horizontal'}
+                    className={cx(styles.signBox, isSwitch ? styles.switch : '')}
+                >
+                    <div className={cx(styles.side, !isSwitch ? styles.hidden : '')}>
+                        {leftComponent()}
+                    </div>
+                    <div className={cx(styles.side, isSwitch ? styles.hidden : '')}>
+                        {rightComponent()}
+                    </div>
+                    <FlexBox className={styles.cover}>
+                        <div className={styles.ballBox}>
+                            <div className={styles.ball} />
                         </div>
-                        <div className={cx(styles.side, isSwitch ? styles.hidden : '')}>
-                            {rightComponent()}
-                        </div>
-                        <FlexBox className={styles.cover}>
-                            <div className={styles.ballBox}>
+                        <div className={styles.ballBox}>
+                            <div className={styles.mask}>
                                 <div className={styles.ball} />
                             </div>
-                            <div className={styles.ballBox}>
-                                <div className={styles.mask}>
-                                    <div className={styles.ball} />
-                                </div>
-                            </div>
-                        </FlexBox>
+                        </div>
                     </FlexBox>
-                </FitCenter>
-            </FitFullscreen>
-        </>
+                </FlexBox>
+            </FitCenter>
+        </FitFullscreen>
     )
 }
 

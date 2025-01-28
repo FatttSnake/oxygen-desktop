@@ -83,31 +83,29 @@ const Code = () => {
     }, [id])
 
     return (
-        <>
-            <FitFullscreen className={styles.root}>
-                <Card className={styles.rootBox}>
-                    <Playground.CodeEditor
-                        isDarkMode={isDarkMode}
-                        readonly
-                        files={files}
-                        selectedFileName={selectedFileName}
-                        onSelectedFileChange={setSelectedFileName}
-                        extraLibs={editorExtraLibs}
-                        onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                    />
-                </Card>
+        <FitFullscreen className={styles.root}>
+            <Card className={styles.rootBox}>
+                <Playground.CodeEditor
+                    isDarkMode={isDarkMode}
+                    readonly
+                    files={files}
+                    selectedFileName={selectedFileName}
+                    onSelectedFileChange={setSelectedFileName}
+                    extraLibs={editorExtraLibs}
+                    onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
+                />
+            </Card>
 
-                <Draggable bounds={'#root'}>
-                    <div className={styles.draggableContent}>
-                        <AntdFloatButton
-                            type={'primary'}
-                            icon={<Icon component={IconOxygenExecute} />}
-                            onClick={handleOnRunTool}
-                        />
-                    </div>
-                </Draggable>
-            </FitFullscreen>
-        </>
+            <Draggable bounds={'#root'}>
+                <div className={styles.draggableContent}>
+                    <AntdFloatButton
+                        type={'primary'}
+                        icon={<Icon component={IconOxygenExecute} />}
+                        onClick={handleOnRunTool}
+                    />
+                </div>
+            </Draggable>
+        </FitFullscreen>
     )
 }
 

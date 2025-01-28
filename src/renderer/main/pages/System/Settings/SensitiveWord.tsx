@@ -100,68 +100,66 @@ const SensitiveWord = () => {
     }, [])
 
     return (
-        <>
-            <SettingsCard
-                icon={IconOxygenSensitive}
-                title={'敏感词'}
-                loading={isLoading}
-                onReset={handleOnReset}
-                onSave={handleOnSave}
-                modifyOperationCode={['system:settings:modify:sensitive']}
-            >
-                <AntdTransfer
-                    listStyle={{ width: '100%', height: 400 }}
-                    oneWay
-                    showSearch
-                    pagination
-                    disabled={isAdding}
-                    titles={[
-                        <span
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'flex-end'
-                            }}
-                        >
-                            {selectedKeys?.length === 1 && (
-                                <AntdTooltip title={'删除选中项'}>
-                                    <Icon
-                                        style={{ fontSize: '1.2em' }}
-                                        component={IconOxygenDelete}
-                                        onClick={handleOnDelete}
-                                    />
-                                </AntdTooltip>
-                            )}
-                            备选
-                        </span>,
-                        '拦截'
-                    ]}
-                    dataSource={dataSource}
-                    targetKeys={targetKeys}
-                    selectedKeys={selectedKeys}
-                    onChange={(value) => {
-                        setTargetKeys(value as string[])
-                    }}
-                    onSelectChange={(value) => {
-                        setSelectedKeys(value as string[])
-                    }}
-                    rowKey={(item) => item.id}
-                    render={(item) => item.word}
-                />
-                <AntdInput
-                    value={newWord}
-                    onChange={handleOnChange}
-                    onPressEnter={handleOnAdd}
-                    disabled={isAdding}
-                    suffix={
-                        <AntdButton type={'primary'} onClick={handleOnAdd} disabled={isAdding}>
-                            <Icon component={IconOxygenPlus} />
-                        </AntdButton>
-                    }
-                    placeholder={'请输入敏感词'}
-                />
-            </SettingsCard>
-        </>
+        <SettingsCard
+            icon={IconOxygenSensitive}
+            title={'敏感词'}
+            loading={isLoading}
+            onReset={handleOnReset}
+            onSave={handleOnSave}
+            modifyOperationCode={['system:settings:modify:sensitive']}
+        >
+            <AntdTransfer
+                listStyle={{ width: '100%', height: 400 }}
+                oneWay
+                showSearch
+                pagination
+                disabled={isAdding}
+                titles={[
+                    <span
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'flex-end'
+                        }}
+                    >
+                        {selectedKeys?.length === 1 && (
+                            <AntdTooltip title={'删除选中项'}>
+                                <Icon
+                                    style={{ fontSize: '1.2em' }}
+                                    component={IconOxygenDelete}
+                                    onClick={handleOnDelete}
+                                />
+                            </AntdTooltip>
+                        )}
+                        备选
+                    </span>,
+                    '拦截'
+                ]}
+                dataSource={dataSource}
+                targetKeys={targetKeys}
+                selectedKeys={selectedKeys}
+                onChange={(value) => {
+                    setTargetKeys(value as string[])
+                }}
+                onSelectChange={(value) => {
+                    setSelectedKeys(value as string[])
+                }}
+                rowKey={(item) => item.id}
+                render={(item) => item.word}
+            />
+            <AntdInput
+                value={newWord}
+                onChange={handleOnChange}
+                onPressEnter={handleOnAdd}
+                disabled={isAdding}
+                suffix={
+                    <AntdButton type={'primary'} onClick={handleOnAdd} disabled={isAdding}>
+                        <Icon component={IconOxygenPlus} />
+                    </AntdButton>
+                }
+                placeholder={'请输入敏感词'}
+            />
+        </SettingsCard>
     )
 }
 

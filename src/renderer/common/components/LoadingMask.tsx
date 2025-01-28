@@ -11,22 +11,14 @@ const LoadingMask = (props: LoadingMaskProps) => {
     const { styles, theme } = useStyles()
 
     const loadingIcon = (
-        <>
-            <Icon
-                component={IconOxygenLoading}
-                style={{ fontSize: 24, color: theme.colorText }}
-                spin
-            />
-        </>
+        <Icon component={IconOxygenLoading} style={{ fontSize: 24, color: theme.colorText }} spin />
     )
     return props.hidden ? (
         props.children
     ) : (
-        <>
-            <div className={styles.loadingMask}>
-                {props.maskContent || <AntdSpin indicator={loadingIcon} />}
-            </div>
-        </>
+        <div className={styles.loadingMask}>
+            {props.maskContent || <AntdSpin indicator={loadingIcon} />}
+        </div>
     )
 }
 

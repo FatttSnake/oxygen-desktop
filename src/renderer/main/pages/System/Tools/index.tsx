@@ -130,42 +130,37 @@ const Tools = () => {
             width: '12em',
             align: 'center',
             render: (_, record) => (
-                <>
-                    <AntdSpace size={'middle'}>
-                        <a
-                            style={{ color: theme.colorPrimary }}
-                            onClick={handleOnViewBtnClick(record)}
-                        >
-                            查看
-                        </a>
-                        <Permission operationCode={['system:tool:modify:tool']}>
-                            {record.review === 'PROCESSING' && (
-                                <a
-                                    style={{ color: theme.colorPrimary }}
-                                    onClick={handleOnReviewBtnClick(record)}
-                                >
-                                    审核
-                                </a>
-                            )}
-                            {record.review === 'PASS' && (
-                                <a
-                                    style={{ color: theme.colorPrimary }}
-                                    onClick={handleOnOffShelveBtnClick(record)}
-                                >
-                                    下架
-                                </a>
-                            )}
-                        </Permission>
-                        <Permission operationCode={['system:tool:delete:tool']}>
+                <AntdSpace size={'middle'}>
+                    <a style={{ color: theme.colorPrimary }} onClick={handleOnViewBtnClick(record)}>
+                        查看
+                    </a>
+                    <Permission operationCode={['system:tool:modify:tool']}>
+                        {record.review === 'PROCESSING' && (
                             <a
                                 style={{ color: theme.colorPrimary }}
-                                onClick={handleOnDeleteBtnClick(record)}
+                                onClick={handleOnReviewBtnClick(record)}
                             >
-                                删除
+                                审核
                             </a>
-                        </Permission>
-                    </AntdSpace>{' '}
-                </>
+                        )}
+                        {record.review === 'PASS' && (
+                            <a
+                                style={{ color: theme.colorPrimary }}
+                                onClick={handleOnOffShelveBtnClick(record)}
+                            >
+                                下架
+                            </a>
+                        )}
+                    </Permission>
+                    <Permission operationCode={['system:tool:delete:tool']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnDeleteBtnClick(record)}
+                        >
+                            删除
+                        </a>
+                    </Permission>
+                </AntdSpace>
             )
         }
     ]

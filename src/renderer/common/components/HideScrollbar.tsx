@@ -515,153 +515,136 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
         ])
 
         return (
-            <>
+            <div
+                className={styles.hideScrollbarMask}
+                ref={maskRef}
+                onMouseMove={
+                    !isPreventScroll ? handleScrollbarMouseEvent('move', 'all') : undefined
+                }
+                onTouchMove={
+                    !isPreventScroll ? handleScrollbarTouchEvent('move', 'all') : undefined
+                }
+                onMouseUp={!isPreventScroll ? handleScrollbarMouseEvent('up', 'all') : undefined}
+                onTouchEnd={!isPreventScroll ? handleScrollbarTouchEvent('end', 'all') : undefined}
+                onMouseLeave={
+                    !isPreventScroll ? handleScrollbarMouseEvent('leave', 'all') : undefined
+                }
+                onTouchCancel={
+                    !isPreventScroll ? handleScrollbarTouchEvent('cancel', 'all') : undefined
+                }
+            >
                 <div
-                    className={styles.hideScrollbarMask}
-                    ref={maskRef}
-                    onMouseMove={
-                        !isPreventScroll ? handleScrollbarMouseEvent('move', 'all') : undefined
-                    }
-                    onTouchMove={
-                        !isPreventScroll ? handleScrollbarTouchEvent('move', 'all') : undefined
-                    }
-                    onMouseUp={
-                        !isPreventScroll ? handleScrollbarMouseEvent('up', 'all') : undefined
-                    }
-                    onTouchEnd={
-                        !isPreventScroll ? handleScrollbarTouchEvent('end', 'all') : undefined
-                    }
-                    onMouseLeave={
-                        !isPreventScroll ? handleScrollbarMouseEvent('leave', 'all') : undefined
-                    }
-                    onTouchCancel={
-                        !isPreventScroll ? handleScrollbarTouchEvent('cancel', 'all') : undefined
-                    }
+                    ref={rootRef}
+                    className={`${styles.hideScrollbarSelection}${className ? ` ${className}` : ''}`}
+                    tabIndex={0}
+                    style={{
+                        width: `calc(${maskRef.current?.clientWidth}px + ${verticalScrollbarWidth}px)`,
+                        height: `calc(${maskRef.current?.clientHeight}px + ${horizontalScrollbarWidth}px)`,
+                        touchAction: isPreventAnyScroll ? 'none' : '',
+                        msTouchAction: isPreventAnyScroll ? 'none' : '',
+                        ...style
+                    }}
+                    {...props}
+                    onMouseDown={isPreventAnyScroll ? handleDefaultMouseDown : undefined}
+                    onKeyDown={isPreventAnyScroll ? handleDefaultKeyDown : undefined}
+                    onTouchStart={isPreventAnyScroll ? handleDefaultTouchStart : undefined}
+                    onTouchMove={isPreventAnyScroll ? handleDefaultTouchmove : undefined}
+                    onScroll={handleDefaultScroll}
                 >
                     <div
-                        ref={rootRef}
-                        className={`${styles.hideScrollbarSelection}${className ? ` ${className}` : ''}`}
-                        tabIndex={0}
-                        style={{
-                            width: `calc(${maskRef.current?.clientWidth}px + ${verticalScrollbarWidth}px)`,
-                            height: `calc(${maskRef.current?.clientHeight}px + ${horizontalScrollbarWidth}px)`,
-                            touchAction: isPreventAnyScroll ? 'none' : '',
-                            msTouchAction: isPreventAnyScroll ? 'none' : '',
-                            ...style
-                        }}
-                        {...props}
-                        onMouseDown={isPreventAnyScroll ? handleDefaultMouseDown : undefined}
-                        onKeyDown={isPreventAnyScroll ? handleDefaultKeyDown : undefined}
-                        onTouchStart={isPreventAnyScroll ? handleDefaultTouchStart : undefined}
-                        onTouchMove={isPreventAnyScroll ? handleDefaultTouchmove : undefined}
-                        onScroll={handleDefaultScroll}
+                        className={styles.hideScrollbarContent}
+                        ref={contentRef}
+                        style={{ minWidth, minHeight }}
+                        data-refresh={refreshTime}
                     >
-                        <div
-                            className={styles.hideScrollbarContent}
-                            ref={contentRef}
-                            style={{ minWidth, minHeight }}
-                            data-refresh={refreshTime}
-                        >
-                            {children}
-                        </div>
+                        {children}
                     </div>
-                    {isShowVerticalScrollbar &&
-                        (!isHiddenVerticalScrollbarWhenFull || verticalScrollbarLength < 100) && (
-                            <div
-                                className={cx(
-                                    styles.scrollbar,
-                                    styles.verticalScrollbar,
-                                    isVerticalScrollbarAutoHide ? styles.hide : ''
-                                )}
-                                style={{
-                                    height: maskRef.current
-                                        ? maskRef.current?.clientHeight - 1
-                                        : undefined,
-                                    top: maskRef.current?.clientTop,
-                                    left: maskRef.current
-                                        ? maskRef.current?.clientLeft +
-                                          maskRef.current?.clientWidth -
-                                          1
-                                        : undefined,
-                                    padding: `${scrollbarAsidePadding}px ${scrollbarEdgePadding}px`
-                                }}
-                            >
-                                <div
-                                    className={styles.scrollbarBox}
-                                    style={{ width: scrollbarWidth }}
-                                >
-                                    <div
-                                        className={styles.scrollbarBoxBlock}
-                                        style={{
-                                            height: `${verticalScrollbarLength}%`,
-                                            top: `clamp(0px, ${verticalScrollbarPosition}%, ${
-                                                100 - verticalScrollbarLength
-                                            }%)`
-                                        }}
-                                        onMouseDown={
-                                            !isPreventScroll && !isPreventVerticalScroll
-                                                ? handleScrollbarMouseEvent('down', 'vertical')
-                                                : undefined
-                                        }
-                                        onTouchStart={
-                                            !isPreventScroll && !isPreventVerticalScroll
-                                                ? handleScrollbarTouchEvent('start', 'vertical')
-                                                : undefined
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    {isShowHorizontalScrollbar &&
-                        (!isHiddenHorizontalScrollbarWhenFull ||
-                            horizontalScrollbarLength < 100) && (
-                            <div
-                                className={cx(
-                                    styles.scrollbar,
-                                    styles.horizontalScrollbar,
-                                    isHorizontalScrollbarAutoHide ? styles.hide : ''
-                                )}
-                                style={{
-                                    width: maskRef.current
-                                        ? maskRef.current?.clientWidth - 1
-                                        : undefined,
-                                    left: maskRef.current?.clientLeft,
-                                    top: maskRef.current
-                                        ? maskRef.current?.clientTop +
-                                          maskRef.current?.clientHeight -
-                                          1
-                                        : undefined,
-                                    padding: `${scrollbarEdgePadding}px ${scrollbarAsidePadding}px`
-                                }}
-                            >
-                                <div
-                                    className={styles.scrollbarBox}
-                                    style={{ height: scrollbarWidth }}
-                                >
-                                    <div
-                                        className={styles.scrollbarBoxBlock}
-                                        style={{
-                                            width: `${horizontalScrollbarLength}%`,
-                                            left: `clamp(0px, ${horizontalScrollbarPosition}%, ${
-                                                100 - horizontalScrollbarLength
-                                            }%)`
-                                        }}
-                                        onMouseDown={
-                                            !isPreventScroll && !isPreventHorizontalScroll
-                                                ? handleScrollbarMouseEvent('down', 'horizontal')
-                                                : undefined
-                                        }
-                                        onTouchStart={
-                                            !isPreventScroll && !isPreventHorizontalScroll
-                                                ? handleScrollbarTouchEvent('start', 'horizontal')
-                                                : undefined
-                                        }
-                                    />
-                                </div>
-                            </div>
-                        )}
                 </div>
-            </>
+                {isShowVerticalScrollbar &&
+                    (!isHiddenVerticalScrollbarWhenFull || verticalScrollbarLength < 100) && (
+                        <div
+                            className={cx(
+                                styles.scrollbar,
+                                styles.verticalScrollbar,
+                                isVerticalScrollbarAutoHide ? styles.hide : ''
+                            )}
+                            style={{
+                                height: maskRef.current
+                                    ? maskRef.current?.clientHeight - 1
+                                    : undefined,
+                                top: maskRef.current?.clientTop,
+                                left: maskRef.current
+                                    ? maskRef.current?.clientLeft + maskRef.current?.clientWidth - 1
+                                    : undefined,
+                                padding: `${scrollbarAsidePadding}px ${scrollbarEdgePadding}px`
+                            }}
+                        >
+                            <div className={styles.scrollbarBox} style={{ width: scrollbarWidth }}>
+                                <div
+                                    className={styles.scrollbarBoxBlock}
+                                    style={{
+                                        height: `${verticalScrollbarLength}%`,
+                                        top: `clamp(0px, ${verticalScrollbarPosition}%, ${
+                                            100 - verticalScrollbarLength
+                                        }%)`
+                                    }}
+                                    onMouseDown={
+                                        !isPreventScroll && !isPreventVerticalScroll
+                                            ? handleScrollbarMouseEvent('down', 'vertical')
+                                            : undefined
+                                    }
+                                    onTouchStart={
+                                        !isPreventScroll && !isPreventVerticalScroll
+                                            ? handleScrollbarTouchEvent('start', 'vertical')
+                                            : undefined
+                                    }
+                                />
+                            </div>
+                        </div>
+                    )}
+                {isShowHorizontalScrollbar &&
+                    (!isHiddenHorizontalScrollbarWhenFull || horizontalScrollbarLength < 100) && (
+                        <div
+                            className={cx(
+                                styles.scrollbar,
+                                styles.horizontalScrollbar,
+                                isHorizontalScrollbarAutoHide ? styles.hide : ''
+                            )}
+                            style={{
+                                width: maskRef.current
+                                    ? maskRef.current?.clientWidth - 1
+                                    : undefined,
+                                left: maskRef.current?.clientLeft,
+                                top: maskRef.current
+                                    ? maskRef.current?.clientTop + maskRef.current?.clientHeight - 1
+                                    : undefined,
+                                padding: `${scrollbarEdgePadding}px ${scrollbarAsidePadding}px`
+                            }}
+                        >
+                            <div className={styles.scrollbarBox} style={{ height: scrollbarWidth }}>
+                                <div
+                                    className={styles.scrollbarBoxBlock}
+                                    style={{
+                                        width: `${horizontalScrollbarLength}%`,
+                                        left: `clamp(0px, ${horizontalScrollbarPosition}%, ${
+                                            100 - horizontalScrollbarLength
+                                        }%)`
+                                    }}
+                                    onMouseDown={
+                                        !isPreventScroll && !isPreventHorizontalScroll
+                                            ? handleScrollbarMouseEvent('down', 'horizontal')
+                                            : undefined
+                                    }
+                                    onTouchStart={
+                                        !isPreventScroll && !isPreventHorizontalScroll
+                                            ? handleScrollbarTouchEvent('start', 'horizontal')
+                                            : undefined
+                                    }
+                                />
+                            </div>
+                        </div>
+                    )}
+            </div>
         )
     }
 )

@@ -1,7 +1,7 @@
 import { createStyles } from 'antd-style'
 
 export default createStyles(() => ({
-    scroll: {
+    root: {
         minHeight: 0,
         flex: 1,
         width: '100%'

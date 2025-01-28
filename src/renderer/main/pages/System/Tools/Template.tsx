@@ -194,38 +194,36 @@ const Template = () => {
             width: '8em',
             align: 'center',
             render: (_, record) => (
-                <>
-                    <AntdSpace size={'middle'}>
-                        {hasEdited[record.id] && (
-                            <Permission operationCode={['system:tool:modify:template']}>
-                                <a
-                                    style={{ color: theme.colorPrimary }}
-                                    onClick={handleOnSaveBtnClick(record)}
-                                >
-                                    保存
-                                </a>
-                            </Permission>
-                        )}
-                        {!Object.keys(hasEdited).length && (
-                            <Permission operationCode={['system:tool:modify:template']}>
-                                <a
-                                    style={{ color: theme.colorPrimary }}
-                                    onClick={handleOnEditBtnClick(record)}
-                                >
-                                    编辑
-                                </a>
-                            </Permission>
-                        )}
-                        <Permission operationCode={['system:tool:delete:template']}>
+                <AntdSpace size={'middle'}>
+                    {hasEdited[record.id] && (
+                        <Permission operationCode={['system:tool:modify:template']}>
                             <a
                                 style={{ color: theme.colorPrimary }}
-                                onClick={handleOnDeleteBtnClick(record)}
+                                onClick={handleOnSaveBtnClick(record)}
                             >
-                                删除
+                                保存
                             </a>
                         </Permission>
-                    </AntdSpace>
-                </>
+                    )}
+                    {!Object.keys(hasEdited).length && (
+                        <Permission operationCode={['system:tool:modify:template']}>
+                            <a
+                                style={{ color: theme.colorPrimary }}
+                                onClick={handleOnEditBtnClick(record)}
+                            >
+                                编辑
+                            </a>
+                        </Permission>
+                    )}
+                    <Permission operationCode={['system:tool:delete:template']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnDeleteBtnClick(record)}
+                        >
+                            删除
+                        </a>
+                    </Permission>
+                </AntdSpace>
             )
         }
     ]
@@ -604,43 +602,41 @@ const Template = () => {
                 width: '12em',
                 align: 'center',
                 render: (_, record) => (
-                    <>
-                        <AntdSpace size={'middle'}>
-                            <Permission
-                                operationCode={[
-                                    'system:tool:query:template',
-                                    'system:tool:modify:template'
-                                ]}
+                    <AntdSpace size={'middle'}>
+                        <Permission
+                            operationCode={[
+                                'system:tool:query:template',
+                                'system:tool:modify:template'
+                            ]}
+                        >
+                            <a
+                                onClick={handleOnEditFile(record.name)}
+                                style={{ color: theme.colorPrimary }}
                             >
+                                {hasPermission('system:tool:modify:template') ? '编辑' : '查看'}
+                            </a>
+                        </Permission>
+                        {!Object.keys(hasEdited).length && (
+                            <Permission operationCode={['system:tool:modify:template']}>
                                 <a
-                                    onClick={handleOnEditFile(record.name)}
+                                    onClick={handleOnRenameFile(record.name)}
                                     style={{ color: theme.colorPrimary }}
                                 >
-                                    {hasPermission('system:tool:modify:template') ? '编辑' : '查看'}
+                                    重命名
                                 </a>
                             </Permission>
-                            {!Object.keys(hasEdited).length && (
-                                <Permission operationCode={['system:tool:modify:template']}>
-                                    <a
-                                        onClick={handleOnRenameFile(record.name)}
-                                        style={{ color: theme.colorPrimary }}
-                                    >
-                                        重命名
-                                    </a>
-                                </Permission>
-                            )}
-                            {!Object.keys(hasEdited).length && (
-                                <Permission operationCode={['system:tool:delete:template']}>
-                                    <a
-                                        onClick={handleOnDeleteFile(record.name)}
-                                        style={{ color: theme.colorPrimary }}
-                                    >
-                                        删除
-                                    </a>
-                                </Permission>
-                            )}
-                        </AntdSpace>
-                    </>
+                        )}
+                        {!Object.keys(hasEdited).length && (
+                            <Permission operationCode={['system:tool:delete:template']}>
+                                <a
+                                    onClick={handleOnDeleteFile(record.name)}
+                                    style={{ color: theme.colorPrimary }}
+                                >
+                                    删除
+                                </a>
+                            </Permission>
+                        )}
+                    </AntdSpace>
                 )
             }
         ]

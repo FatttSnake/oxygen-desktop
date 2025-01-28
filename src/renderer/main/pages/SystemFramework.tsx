@@ -45,13 +45,7 @@ const SystemFramework = () => {
                 </Sidebar>
             </div>
             <div className={styles.rightPanel}>
-                <Suspense
-                    fallback={
-                        <>
-                            <FullscreenLoadingMask />
-                        </>
-                    }
-                >
+                <Suspense fallback={<FullscreenLoadingMask />}>
                     <Outlet />
                 </Suspense>
             </div>

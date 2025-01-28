@@ -164,69 +164,67 @@ const FileSelector = ({
     }, [files])
 
     return (
-        <>
-            <div className={styles.root}>
-                <div className={styles.multiple}>
-                    <HideScrollbar
-                        ref={hideScrollbarRef}
-                        autoHideWaitingTime={800}
-                        scrollbarWidth={1}
-                        scrollbarAsidePadding={0}
-                        scrollbarEdgePadding={0}
-                    >
-                        <FlexBox direction={'horizontal'} className={styles.tabContent}>
-                            {tabs.map((item, index) => (
-                                <Item
-                                    key={index + item}
-                                    value={item}
-                                    active={selectedFileName === item}
-                                    creating={isCreating}
-                                    readonly={readonly || notRemovableFiles.includes(item)}
-                                    hasEditing={hasEditing}
-                                    setHasEditing={setHasEditing}
-                                    onValidate={handleOnValidateTab}
-                                    onOk={(name) => handleOnSaveTab(name, item)}
-                                    onCancel={handleOnCancel}
-                                    onRemove={handleOnRemove}
-                                    onClick={() => handleOnClickTab(item)}
-                                />
-                            ))}
-                            {!readonly && (
-                                <Item
-                                    className={styles.tabItemAdd}
-                                    value={'+'}
-                                    onClick={addTab}
-                                    readonly
-                                />
-                            )}
-                            <div className={styles.tabsMarginRight}>
-                                <div />
-                            </div>
-                        </FlexBox>
-                    </HideScrollbar>
-                </div>
-                {(files[IMPORT_MAP_FILE_NAME] || files[TS_CONFIG_FILE_NAME]) && (
-                    <div className={styles.sticky}>
-                        {files[TS_CONFIG_FILE_NAME] && (
+        <div className={styles.root}>
+            <div className={styles.multiple}>
+                <HideScrollbar
+                    ref={hideScrollbarRef}
+                    autoHideWaitingTime={800}
+                    scrollbarWidth={1}
+                    scrollbarAsidePadding={0}
+                    scrollbarEdgePadding={0}
+                >
+                    <FlexBox direction={'horizontal'} className={styles.tabContent}>
+                        {tabs.map((item, index) => (
                             <Item
-                                value={'tsconfig.json'}
-                                active={selectedFileName === TS_CONFIG_FILE_NAME}
-                                onClick={editTsconfig}
+                                key={index + item}
+                                value={item}
+                                active={selectedFileName === item}
+                                creating={isCreating}
+                                readonly={readonly || notRemovableFiles.includes(item)}
+                                hasEditing={hasEditing}
+                                setHasEditing={setHasEditing}
+                                onValidate={handleOnValidateTab}
+                                onOk={(name) => handleOnSaveTab(name, item)}
+                                onCancel={handleOnCancel}
+                                onRemove={handleOnRemove}
+                                onClick={() => handleOnClickTab(item)}
+                            />
+                        ))}
+                        {!readonly && (
+                            <Item
+                                className={styles.tabItemAdd}
+                                value={'+'}
+                                onClick={addTab}
                                 readonly
                             />
                         )}
-                        {files[IMPORT_MAP_FILE_NAME] && (
-                            <Item
-                                value={'Import Map'}
-                                active={selectedFileName === IMPORT_MAP_FILE_NAME}
-                                onClick={editImportMap}
-                                readonly
-                            />
-                        )}
-                    </div>
-                )}
+                        <div className={styles.tabsMarginRight}>
+                            <div />
+                        </div>
+                    </FlexBox>
+                </HideScrollbar>
             </div>
-        </>
+            {(files[IMPORT_MAP_FILE_NAME] || files[TS_CONFIG_FILE_NAME]) && (
+                <div className={styles.sticky}>
+                    {files[TS_CONFIG_FILE_NAME] && (
+                        <Item
+                            value={'tsconfig.json'}
+                            active={selectedFileName === TS_CONFIG_FILE_NAME}
+                            onClick={editTsconfig}
+                            readonly
+                        />
+                    )}
+                    {files[IMPORT_MAP_FILE_NAME] && (
+                        <Item
+                            value={'Import Map'}
+                            active={selectedFileName === IMPORT_MAP_FILE_NAME}
+                            onClick={editImportMap}
+                            readonly
+                        />
+                    )}
+                </div>
+            )}
+        </div>
     )
 }
 

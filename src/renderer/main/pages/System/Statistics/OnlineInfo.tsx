@@ -153,14 +153,12 @@ const OnlineInfo = () => {
         <StatisticsCard
             icon={IconOxygenOnline}
             title={
-                <>
-                    <FlexBox gap={10} direction={'horizontal'}>
-                        <span style={{ whiteSpace: 'nowrap' }}>在线用户</span>
-                        <AntdTag>
-                            {currentOnlineCount === -1 ? '获取中...' : `当前 ${currentOnlineCount}`}
-                        </AntdTag>
-                    </FlexBox>
-                </>
+                <FlexBox gap={10} direction={'horizontal'}>
+                    <span style={{ whiteSpace: 'nowrap' }}>在线用户</span>
+                    <AntdTag>
+                        {currentOnlineCount === -1 ? '获取中...' : `当前 ${currentOnlineCount}`}
+                    </AntdTag>
+                </FlexBox>
             }
             loading={isLoading}
             expand={

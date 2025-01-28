@@ -547,7 +547,7 @@ export const rgbaBlackToHex = (rgba: string) => {
     if (r !== 255 && r !== 0) {
         return '#000000'
     }
-    if (r == 255) {
+    if (r === 255) {
         r = 0
         a = 1 - a
     }

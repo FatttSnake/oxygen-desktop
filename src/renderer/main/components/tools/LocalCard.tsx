@@ -2,7 +2,7 @@ import { DetailedHTMLProps, HTMLAttributes, MouseEvent } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/tools/local-card.style'
-import { checkDesktop, omitTextByByte } from '$/util/common'
+import { checkDesktop, modal, omitTextByByte } from '$/util/common'
 import { getAndroidUrl, navigateToStore, navigateToView } from '$/util/navigation'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
@@ -47,7 +47,6 @@ const StoreCard = ({
 }: StoreCardProps) => {
     const { styles, theme } = useStyles()
     const navigate = useNavigate()
-    const [modal, contextHolder] = AntdModal.useModal()
     const cardRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -117,94 +116,91 @@ const StoreCard = ({
     }
 
     return (
-        <>
-            <Draggable
-                id={`${author.username}:${toolId}:local:${platform}`}
-                data={{
-                    icon,
-                    toolName,
-                    toolId,
-                    authorUsername: author.username,
-                    ver: 'local',
-                    platform
-                }}
-                hasDragHandle
+        <Draggable
+            id={`${author.username}:${toolId}:local:${platform}`}
+            data={{
+                icon,
+                toolName,
+                toolId,
+                authorUsername: author.username,
+                ver: 'local',
+                platform
+            }}
+            hasDragHandle
+        >
+            <Card
+                style={{ overflow: 'visible', ...style }}
+                ref={cardRef}
+                {...props}
+                onClick={handleCardOnClick}
             >
-                <Card
-                    style={{ overflow: 'visible', ...style }}
-                    ref={cardRef}
-                    {...props}
-                    onClick={handleCardOnClick}
-                >
-                    <FlexBox className={styles.root}>
-                        <div className={styles.header}>
-                            <div className={styles.version}>
-                                <AntdTag>
-                                    {platform.slice(0, 1)}-{ver}
-                                </AntdTag>
-                            </div>
-                            <div className={styles.operation}>
-                                <AntdTooltip title={'卸载'}>
+                <FlexBox className={styles.root}>
+                    <div className={styles.header}>
+                        <div className={styles.version}>
+                            <AntdTag>
+                                {platform.slice(0, 1)}-{ver}
+                            </AntdTag>
+                        </div>
+                        <div className={styles.operation}>
+                            <AntdTooltip title={'卸载'}>
+                                <Icon
+                                    component={IconOxygenDelete}
+                                    onClick={handleOnUninstallBtnClick}
+                                />
+                            </AntdTooltip>
+                            {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
+                                <AntdTooltip title={'Android 端'}>
                                     <Icon
-                                        component={IconOxygenDelete}
-                                        onClick={handleOnUninstallBtnClick}
+                                        component={IconOxygenMobile}
+                                        onClick={handleOnAndroidBtnClick}
                                     />
                                 </AntdTooltip>
-                                {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
-                                    <AntdTooltip title={'Android 端'}>
-                                        <Icon
-                                            component={IconOxygenMobile}
-                                            onClick={handleOnAndroidBtnClick}
-                                        />
-                                    </AntdTooltip>
-                                )}
-                                {platform === 'DESKTOP' && supportPlatform.includes('WEB') && (
-                                    <AntdTooltip title={'Web 端'}>
-                                        <Icon
-                                            component={IconOxygenBrowser}
-                                            onClick={handleOnWebBtnClick}
-                                        />
-                                    </AntdTooltip>
-                                )}
-                                <DragHandle />
-                            </div>
-                        </div>
-                        <div className={styles.icon}>
-                            <img src={`data:image/svg+xml;base64,${icon}`} alt={'Icon'} />
-                        </div>
-                        <div className={styles.info}>
-                            <div className={styles.toolName} title={toolName}>
-                                {toolName}
-                            </div>
-                            <div>{`ID: ${toolId}`}</div>
-                            {toolDesc && (
-                                <div className={styles.toolDesc} title={toolDesc}>
-                                    {omitTextByByte(toolDesc, 64)}
-                                </div>
                             )}
-                        </div>
-                        {showAuthor && (
-                            <div className={styles.author} onClick={handleOnClickAuthor}>
-                                <div className={styles.avatar}>
-                                    <AntdAvatar
-                                        src={
-                                            <AntdImage
-                                                preview={false}
-                                                src={`data:image/png;base64,${author.userInfo.avatar}`}
-                                                alt={'Avatar'}
-                                            />
-                                        }
-                                        style={{ background: theme.colorBgLayout }}
+                            {platform === 'DESKTOP' && supportPlatform.includes('WEB') && (
+                                <AntdTooltip title={'Web 端'}>
+                                    <Icon
+                                        component={IconOxygenBrowser}
+                                        onClick={handleOnWebBtnClick}
                                     />
-                                </div>
-                                <div className={styles.authorName}>{author.userInfo.nickname}</div>
+                                </AntdTooltip>
+                            )}
+                            <DragHandle />
+                        </div>
+                    </div>
+                    <div className={styles.icon}>
+                        <img src={`data:image/svg+xml;base64,${icon}`} alt={'Icon'} />
+                    </div>
+                    <div className={styles.info}>
+                        <div className={styles.toolName} title={toolName}>
+                            {toolName}
+                        </div>
+                        <div>{`ID: ${toolId}`}</div>
+                        {toolDesc && (
+                            <div className={styles.toolDesc} title={toolDesc}>
+                                {omitTextByByte(toolDesc, 64)}
                             </div>
                         )}
-                    </FlexBox>
-                </Card>
-            </Draggable>
-            {contextHolder}
-        </>
+                    </div>
+                    {showAuthor && (
+                        <div className={styles.author} onClick={handleOnClickAuthor}>
+                            <div className={styles.avatar}>
+                                <AntdAvatar
+                                    src={
+                                        <AntdImage
+                                            preview={false}
+                                            src={`data:image/png;base64,${author.userInfo.avatar}`}
+                                            alt={'Avatar'}
+                                        />
+                                    }
+                                    style={{ background: theme.colorBgLayout }}
+                                />
+                            </div>
+                            <div className={styles.authorName}>{author.userInfo.nickname}</div>
+                        </div>
+                    )}
+                </FlexBox>
+            </Card>
+        </Draggable>
     )
 }
 

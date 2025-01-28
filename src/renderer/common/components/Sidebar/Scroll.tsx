@@ -6,7 +6,7 @@ const Scroll = (props: PropsWithChildren) => {
     const { styles } = useStyles()
 
     return (
-        <div className={styles.scroll}>
+        <div className={styles.root}>
             <HideScrollbar
                 isShowVerticalScrollbar={true}
                 scrollbarWidth={2}

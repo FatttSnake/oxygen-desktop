@@ -124,31 +124,23 @@ const SignIn = () => {
                                 </>
                             ),
                             content: (
-                                <>
-                                    <AntdForm
-                                        form={twoFactorForm}
-                                        ref={() => {
-                                            setTimeout(() => {
-                                                twoFactorForm
-                                                    .getFieldInstance('twoFactorCode')
-                                                    .focus()
-                                            }, 50)
-                                        }}
+                                <AntdForm
+                                    form={twoFactorForm}
+                                    ref={() => {
+                                        setTimeout(() => {
+                                            twoFactorForm.getFieldInstance('twoFactorCode').focus()
+                                        }, 50)
+                                    }}
+                                >
+                                    <AntdForm.Item
+                                        name={'twoFactorCode'}
+                                        label={'验证码'}
+                                        style={{ marginTop: 10 }}
+                                        rules={[{ required: true, whitespace: true, len: 6 }]}
                                     >
-                                        <AntdForm.Item
-                                            name={'twoFactorCode'}
-                                            label={'验证码'}
-                                            style={{ marginTop: 10 }}
-                                            rules={[{ required: true, whitespace: true, len: 6 }]}
-                                        >
-                                            <AntdInput
-                                                showCount
-                                                maxLength={6}
-                                                autoComplete={'off'}
-                                            />
-                                        </AntdForm.Item>
-                                    </AntdForm>
-                                </>
+                                        <AntdInput showCount maxLength={6} autoComplete={'off'} />
+                                    </AntdForm.Item>
+                                </AntdForm>
                             ),
                             onOk: () =>
                                 twoFactorForm.validateFields().then(
@@ -200,11 +192,7 @@ const SignIn = () => {
                         setIsSigningIn(false)
                         break
                     default:
-                        void message.error(
-                            <>
-                                <strong>服务器出错了</strong>
-                            </>
-                        )
+                        void message.error(<strong>服务器出错了</strong>)
                         setIsSigningIn(false)
                 }
             })

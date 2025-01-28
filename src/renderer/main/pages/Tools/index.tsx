@@ -257,50 +257,44 @@ const Tools = () => {
                 </>
             ),
             content: (
-                <>
-                    <AntdForm
-                        form={upgradeForm}
-                        ref={() => {
-                            setTimeout(() => {
-                                upgradeForm?.getFieldInstance('toolId').focus()
-                            }, 50)
-                        }}
-                        labelCol={{ span: 4 }}
+                <AntdForm
+                    form={upgradeForm}
+                    ref={() => {
+                        setTimeout(() => {
+                            upgradeForm?.getFieldInstance('toolId').focus()
+                        }, 50)
+                    }}
+                    labelCol={{ span: 4 }}
+                >
+                    <AntdForm.Item
+                        initialValue={tool.toolId}
+                        name={'toolId'}
+                        label={'工具 ID'}
+                        style={{ marginTop: 10 }}
                     >
-                        <AntdForm.Item
-                            initialValue={tool.toolId}
-                            name={'toolId'}
-                            label={'工具 ID'}
-                            style={{ marginTop: 10 }}
-                        >
-                            <AntdInput disabled />
-                        </AntdForm.Item>
-                        <AntdForm.Item
-                            initialValue={tool.platform}
-                            label={'平台'}
-                            name={'platform'}
-                        >
-                            <AntdSelect disabled>
-                                <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
-                                <AntdSelect.Option key={'DESKTOP'}>Desktop</AntdSelect.Option>
-                                <AntdSelect.Option key={'ANDROID'}>Android</AntdSelect.Option>
-                            </AntdSelect>
-                        </AntdForm.Item>
-                        <AntdForm.Item
-                            name={'ver'}
-                            label={'版本'}
-                            rules={[
-                                { required: true, whitespace: true },
-                                {
-                                    pattern: /^\d+\.\d+\.\d+$/,
-                                    message: `格式必须为 '<数字>.<数字>.<数字>', eg. 1.0.3`
-                                }
-                            ]}
-                        >
-                            <AntdInput maxLength={10} showCount placeholder={'请输入版本'} />
-                        </AntdForm.Item>
-                    </AntdForm>
-                </>
+                        <AntdInput disabled />
+                    </AntdForm.Item>
+                    <AntdForm.Item initialValue={tool.platform} label={'平台'} name={'platform'}>
+                        <AntdSelect disabled>
+                            <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
+                            <AntdSelect.Option key={'DESKTOP'}>Desktop</AntdSelect.Option>
+                            <AntdSelect.Option key={'ANDROID'}>Android</AntdSelect.Option>
+                        </AntdSelect>
+                    </AntdForm.Item>
+                    <AntdForm.Item
+                        name={'ver'}
+                        label={'版本'}
+                        rules={[
+                            { required: true, whitespace: true },
+                            {
+                                pattern: /^\d+\.\d+\.\d+$/,
+                                message: `格式必须为 '<数字>.<数字>.<数字>', eg. 1.0.3`
+                            }
+                        ]}
+                    >
+                        <AntdInput maxLength={10} showCount placeholder={'请输入版本'} />
+                    </AntdForm.Item>
+                </AntdForm>
             ),
             onOk: () =>
                 upgradeForm.validateFields().then(

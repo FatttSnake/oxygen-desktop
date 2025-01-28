@@ -45,39 +45,35 @@ const Base = () => {
     }, [])
 
     return (
-        <>
-            <SettingsCard
-                icon={IconOxygenBase}
-                title={'基础'}
-                loading={isLoading}
-                onReset={handleOnReset}
-                onSave={handleOnSave}
-                modifyOperationCode={['system:settings:modify:base']}
+        <SettingsCard
+            icon={IconOxygenBase}
+            title={'基础'}
+            loading={isLoading}
+            onReset={handleOnReset}
+            onSave={handleOnSave}
+            modifyOperationCode={['system:settings:modify:base']}
+        >
+            <AntdForm
+                form={baseForm}
+                labelCol={{ flex: '7em' }}
+                disabled={!hasPermission('system:settings:modify:base')}
             >
-                <AntdForm
-                    form={baseForm}
-                    labelCol={{ flex: '7em' }}
-                    disabled={!hasPermission('system:settings:modify:base')}
-                >
-                    <AntdForm.Item label={'应用名称'} name={'appName'}>
-                        <AntdInput placeholder={'请输入应用名称'} />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'应用 URL'} name={'appUrl'}>
-                        <AntdInput placeholder={'请输入应用 URL'} />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'验证邮箱 URL'} name={'verifyUrl'}>
-                        <AntdInput
-                            placeholder={'请输入验证邮箱 URL，验证码使用 ${verifyCode} 代替'}
-                        />
-                    </AntdForm.Item>
-                    <AntdForm.Item label={'找回密码 URL'} name={'retrieveUrl'}>
-                        <AntdInput
-                            placeholder={'请输入找回密码 URL，验证码使用 ${retrieveCode} 代替'}
-                        />
-                    </AntdForm.Item>
-                </AntdForm>
-            </SettingsCard>
-        </>
+                <AntdForm.Item label={'应用名称'} name={'appName'}>
+                    <AntdInput placeholder={'请输入应用名称'} />
+                </AntdForm.Item>
+                <AntdForm.Item label={'应用 URL'} name={'appUrl'}>
+                    <AntdInput placeholder={'请输入应用 URL'} />
+                </AntdForm.Item>
+                <AntdForm.Item label={'验证邮箱 URL'} name={'verifyUrl'}>
+                    <AntdInput placeholder={'请输入验证邮箱 URL，验证码使用 ${verifyCode} 代替'} />
+                </AntdForm.Item>
+                <AntdForm.Item label={'找回密码 URL'} name={'retrieveUrl'}>
+                    <AntdInput
+                        placeholder={'请输入找回密码 URL，验证码使用 ${retrieveCode} 代替'}
+                    />
+                </AntdForm.Item>
+            </AntdForm>
+        </SettingsCard>
     )
 }
 

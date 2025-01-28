@@ -118,26 +118,24 @@ const Editor = ({
     }, [tsconfig])
 
     return (
-        <>
-            <div className={styles.root}>
-                <MonacoEditor
-                    theme={isDarkMode ? 'vitesse-dark' : 'vitesse-light'}
-                    path={file.name}
-                    language={file.language}
-                    value={file.value}
-                    onChange={onChange}
-                    beforeMount={handleOnEditorWillMount}
-                    onMount={handleOnEditorDidMount}
-                    options={{
-                        ...MonacoEditorConfig,
-                        ...options,
-                        theme: undefined,
-                        readOnly: readonly
-                    }}
-                />
-                {total > 0 && !finished && <div className={styles.loading} />}
-            </div>
-        </>
+        <div className={styles.root}>
+            <MonacoEditor
+                theme={isDarkMode ? 'vitesse-dark' : 'vitesse-light'}
+                path={file.name}
+                language={file.language}
+                value={file.value}
+                onChange={onChange}
+                beforeMount={handleOnEditorWillMount}
+                onMount={handleOnEditorDidMount}
+                options={{
+                    ...MonacoEditorConfig,
+                    ...options,
+                    theme: undefined,
+                    readOnly: readonly
+                }}
+            />
+            {total > 0 && !finished && <div className={styles.loading} />}
+        </div>
     )
 }
 

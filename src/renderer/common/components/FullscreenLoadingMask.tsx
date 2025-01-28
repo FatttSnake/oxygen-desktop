@@ -6,22 +6,14 @@ const FullscreenLoadingMask = () => {
     const { styles, theme } = useStyles()
 
     const loadingIcon = (
-        <>
-            <Icon
-                component={IconOxygenLoading}
-                style={{ fontSize: 24, color: theme.colorText }}
-                spin
-            />
-        </>
+        <Icon component={IconOxygenLoading} style={{ fontSize: 24, color: theme.colorText }} spin />
     )
     return (
-        <>
-            <FitFullscreen>
-                <div className={styles.fullscreenLoadingMask}>
-                    <AntdSpin indicator={loadingIcon} />
-                </div>
-            </FitFullscreen>
-        </>
+        <FitFullscreen>
+            <div className={styles.fullscreenLoadingMask}>
+                <AntdSpin indicator={loadingIcon} />
+            </div>
+        </FitFullscreen>
     )
 }
 

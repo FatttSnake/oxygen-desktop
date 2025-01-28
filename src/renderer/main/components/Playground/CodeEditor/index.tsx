@@ -126,46 +126,42 @@ const CodeEditor = ({
     }
 
     return (
-        <>
-            <FlexBox className={styles.root}>
-                {showFileSelector && (
-                    <FileSelector
-                        files={files}
-                        readonly={readonly}
-                        notRemovableFiles={notRemovable}
-                        selectedFileName={
-                            onSelectedFileChange ? propsSelectedFileName : selectedFileName
-                        }
-                        onChange={handleOnChangeSelectedFile}
-                        onRemoveFile={handleOnRemoveFile}
-                        onUpdateFileName={handleOnUpdateFileName}
-                        onAddFile={handleOnAddFile}
-                        onError={handleOnError}
-                    />
-                )}
-                <Editor
-                    isDarkMode={isDarkMode}
-                    tsconfig={tsconfig}
+        <FlexBox className={styles.root}>
+            {showFileSelector && (
+                <FileSelector
+                    files={files}
+                    readonly={readonly}
+                    notRemovableFiles={notRemovable}
                     selectedFileName={
                         onSelectedFileChange ? propsSelectedFileName : selectedFileName
                     }
-                    files={files}
-                    options={options}
-                    readonly={
-                        readonly ||
-                        readonlyFiles?.includes(
-                            onSelectedFileChange ? propsSelectedFileName : selectedFileName
-                        ) ||
-                        !files[onSelectedFileChange ? propsSelectedFileName : selectedFileName]
-                    }
-                    onChange={handleOnChangeFileContent}
-                    onJumpFile={handleOnChangeSelectedFile}
-                    extraLibs={extraLibs}
-                    onEditorDidMount={onEditorDidMount}
+                    onChange={handleOnChangeSelectedFile}
+                    onRemoveFile={handleOnRemoveFile}
+                    onUpdateFileName={handleOnUpdateFileName}
+                    onAddFile={handleOnAddFile}
+                    onError={handleOnError}
                 />
-                {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
-            </FlexBox>
-        </>
+            )}
+            <Editor
+                isDarkMode={isDarkMode}
+                tsconfig={tsconfig}
+                selectedFileName={onSelectedFileChange ? propsSelectedFileName : selectedFileName}
+                files={files}
+                options={options}
+                readonly={
+                    readonly ||
+                    readonlyFiles?.includes(
+                        onSelectedFileChange ? propsSelectedFileName : selectedFileName
+                    ) ||
+                    !files[onSelectedFileChange ? propsSelectedFileName : selectedFileName]
+                }
+                onChange={handleOnChangeFileContent}
+                onJumpFile={handleOnChangeSelectedFile}
+                extraLibs={extraLibs}
+                onEditorDidMount={onEditorDidMount}
+            />
+            {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
+        </FlexBox>
     )
 }
 

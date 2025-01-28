@@ -12,30 +12,28 @@ const Settings = () => {
     const { styles } = useStyles()
 
     return (
-        <>
-            <FitFullscreen>
-                <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
-                    <FlexBox direction={'horizontal'} className={styles.root}>
-                        <FlexBox className={styles.rootCol}>
-                            <Permission operationCode={['system:settings:query:base']}>
-                                <Base />
-                            </Permission>
-                            <Permission operationCode={['system:settings:query:sensitive']}>
-                                <SensitiveWord />
-                            </Permission>
-                        </FlexBox>
-                        <FlexBox className={styles.rootCol}>
-                            <Permission operationCode={['system:settings:query:mail']}>
-                                <Mail />
-                            </Permission>
-                            <Permission operationCode={['system:settings:query:two-factor']}>
-                                <TwoFactor />
-                            </Permission>
-                        </FlexBox>
+        <FitFullscreen>
+            <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
+                <FlexBox direction={'horizontal'} className={styles.root}>
+                    <FlexBox className={styles.rootCol}>
+                        <Permission operationCode={['system:settings:query:base']}>
+                            <Base />
+                        </Permission>
+                        <Permission operationCode={['system:settings:query:sensitive']}>
+                            <SensitiveWord />
+                        </Permission>
                     </FlexBox>
-                </HideScrollbar>
-            </FitFullscreen>
-        </>
+                    <FlexBox className={styles.rootCol}>
+                        <Permission operationCode={['system:settings:query:mail']}>
+                            <Mail />
+                        </Permission>
+                        <Permission operationCode={['system:settings:query:two-factor']}>
+                            <TwoFactor />
+                        </Permission>
+                    </FlexBox>
+                </FlexBox>
+            </HideScrollbar>
+        </FitFullscreen>
     )
 }
 

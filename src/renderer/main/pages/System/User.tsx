@@ -168,11 +168,9 @@ const User = () => {
                     ) : (
                         <>
                             {record.verify && (
-                                <>
-                                    <AntdPopover content={record.verify} trigger={'click'}>
-                                        <AntdTag style={{ cursor: 'pointer' }}>未验证</AntdTag>
-                                    </AntdPopover>
-                                </>
+                                <AntdPopover content={record.verify} trigger={'click'}>
+                                    <AntdTag style={{ cursor: 'pointer' }}>未验证</AntdTag>
+                                </AntdPopover>
                             )}
                             {record.locking && <AntdTag>锁定</AntdTag>}
                             {record.expiration && isPastTime(record.expiration) && (
@@ -192,36 +190,34 @@ const User = () => {
             width: '14em',
             align: 'center',
             render: (_, record) => (
-                <>
-                    <AntdSpace size={'middle'}>
-                        <Permission operationCode={['system:user:modify:password']}>
+                <AntdSpace size={'middle'}>
+                    <Permission operationCode={['system:user:modify:password']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnChangePasswordBtnClick(record)}
+                        >
+                            更改密码
+                        </a>
+                    </Permission>
+                    <Permission operationCode={['system:user:modify:one']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnEditBtnClick(record)}
+                        >
+                            编辑
+                        </a>
+                    </Permission>
+                    <Permission operationCode={['system:user:delete:one']}>
+                        {record.id !== '0' && (
                             <a
                                 style={{ color: theme.colorPrimary }}
-                                onClick={handleOnChangePasswordBtnClick(record)}
+                                onClick={handleOnDeleteBtnClick(record)}
                             >
-                                更改密码
+                                删除
                             </a>
-                        </Permission>
-                        <Permission operationCode={['system:user:modify:one']}>
-                            <a
-                                style={{ color: theme.colorPrimary }}
-                                onClick={handleOnEditBtnClick(record)}
-                            >
-                                编辑
-                            </a>
-                        </Permission>
-                        <Permission operationCode={['system:user:delete:one']}>
-                            {record.id !== '0' && (
-                                <a
-                                    style={{ color: theme.colorPrimary }}
-                                    onClick={handleOnDeleteBtnClick(record)}
-                                >
-                                    删除
-                                </a>
-                            )}
-                        </Permission>
-                    </AntdSpace>
-                </>
+                        )}
+                    </Permission>
+                </AntdSpace>
             )
         }
     ]
@@ -805,15 +801,13 @@ const User = () => {
                 <AntdInput allowClear placeholder={'请输入用户名'} />
             </AntdForm.Item>
             {!isDrawerEdit && (
-                <>
-                    <AntdForm.Item
-                        name={'password'}
-                        label={'密码'}
-                        rules={[{ required: true, whitespace: true }]}
-                    >
-                        <AntdInput.Password allowClear placeholder={'请输入密码'} />
-                    </AntdForm.Item>
-                </>
+                <AntdForm.Item
+                    name={'password'}
+                    label={'密码'}
+                    rules={[{ required: true, whitespace: true }]}
+                >
+                    <AntdInput.Password allowClear placeholder={'请输入密码'} />
+                </AntdForm.Item>
             )}
             <AntdForm.Item
                 name={'nickname'}

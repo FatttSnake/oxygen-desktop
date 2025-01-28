@@ -102,44 +102,40 @@ const Render = ({
     }, [selectedDevice, isRotate, iframeKey, iframeRef, iframeUrl, setIsLoaded])
 
     return mobileMode ? (
-        <>
-            <ReactFlow
-                colorMode={isDarkMode ? 'dark' : 'light'}
-                nodeTypes={{ simulation: Simulation }}
-                nodes={nodes}
-                proOptions={{ hideAttribution: true }}
-                fitView
-            >
-                <Background bgColor={theme.colorBgLayout} />
-                <MiniMap bgColor={theme.colorBgMask} zoomStep={1} pannable zoomable />
-                <Controls />
-                <Panel>
-                    <AntdSpace>
-                        <AntdSelect
-                            size={'small'}
-                            options={Object.values(devices).map((item) => ({
-                                label: item.name,
-                                value: item.name
-                            }))}
-                            value={selectedDevice}
-                            onChange={setSelectedDevice}
-                        />
-                        <AntdButton
-                            size={'small'}
-                            title={'旋转屏幕'}
-                            onClick={handleOnRotateDevice}
-                            icon={
-                                <Icon
-                                    component={
-                                        isRotate ? IconOxygenRotateRight : IconOxygenRotateLeft
-                                    }
-                                />
-                            }
-                        />
-                    </AntdSpace>
-                </Panel>
-            </ReactFlow>
-        </>
+        <ReactFlow
+            colorMode={isDarkMode ? 'dark' : 'light'}
+            nodeTypes={{ simulation: Simulation }}
+            nodes={nodes}
+            proOptions={{ hideAttribution: true }}
+            fitView
+        >
+            <Background bgColor={theme.colorBgLayout} />
+            <MiniMap bgColor={theme.colorBgMask} zoomStep={1} pannable zoomable />
+            <Controls />
+            <Panel>
+                <AntdSpace>
+                    <AntdSelect
+                        size={'small'}
+                        options={Object.values(devices).map((item) => ({
+                            label: item.name,
+                            value: item.name
+                        }))}
+                        value={selectedDevice}
+                        onChange={setSelectedDevice}
+                    />
+                    <AntdButton
+                        size={'small'}
+                        title={'旋转屏幕'}
+                        onClick={handleOnRotateDevice}
+                        icon={
+                            <Icon
+                                component={isRotate ? IconOxygenRotateRight : IconOxygenRotateLeft}
+                            />
+                        }
+                    />
+                </AntdSpace>
+            </Panel>
+        </ReactFlow>
     ) : (
         <iframe
             id={'abc'}

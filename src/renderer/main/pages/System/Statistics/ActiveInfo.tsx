@@ -152,11 +152,9 @@ const ActiveInfo = () => {
         <StatisticsCard
             icon={IconOxygenAnalysis}
             title={
-                <>
-                    <FlexBox gap={10} direction={'horizontal'}>
-                        <span style={{ whiteSpace: 'nowrap' }}>用户活跃</span>
-                    </FlexBox>
-                </>
+                <FlexBox gap={10} direction={'horizontal'}>
+                    <span style={{ whiteSpace: 'nowrap' }}>用户活跃</span>
+                </FlexBox>
             }
             loading={isLoading}
             expand={

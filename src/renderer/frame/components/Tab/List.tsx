@@ -150,11 +150,7 @@ const List = ({
                                 ))}
                         </SortableContext>
                         <DraggableOverlay>
-                            {activeItem && (
-                                <>
-                                    <Item>{activeItem.title}</Item>
-                                </>
-                            )}
+                            {activeItem && <Item>{activeItem.title}</Item>}
                         </DraggableOverlay>
                     </Droppable>
                 </DndContext>

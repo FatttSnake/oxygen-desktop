@@ -115,112 +115,110 @@ const User = () => {
     }, [])
 
     return (
-        <>
-            <FitFullscreen>
-                <HideScrollbar
-                    isShowVerticalScrollbar
-                    autoHideWaitingTime={1000}
-                    className={styles.root}
-                >
-                    <Card className={styles.content}>
-                        <FlexBox className={styles.info} direction={'horizontal'}>
-                            <div className={styles.avatarBox}>
-                                <AntdAvatar
-                                    src={
-                                        <img
-                                            src={`data:image/png;base64,${userWithInfoVo?.userInfo.avatar}`}
-                                            alt={'Avatar'}
-                                        />
-                                    }
-                                    size={144}
-                                    style={{
-                                        background: theme.colorBgLayout,
-                                        cursor: 'pointer'
-                                    }}
-                                    className={styles.avatar}
-                                />
+        <FitFullscreen>
+            <HideScrollbar
+                isShowVerticalScrollbar
+                autoHideWaitingTime={1000}
+                className={styles.root}
+            >
+                <Card className={styles.content}>
+                    <FlexBox className={styles.info} direction={'horizontal'}>
+                        <div className={styles.avatarBox}>
+                            <AntdAvatar
+                                src={
+                                    <img
+                                        src={`data:image/png;base64,${userWithInfoVo?.userInfo.avatar}`}
+                                        alt={'Avatar'}
+                                    />
+                                }
+                                size={144}
+                                style={{
+                                    background: theme.colorBgLayout,
+                                    cursor: 'pointer'
+                                }}
+                                className={styles.avatar}
+                            />
+                        </div>
+                        <FlexBox className={styles.infoName}>
+                            <div className={styles.nickname}>
+                                {userWithInfoVo?.userInfo.nickname}
                             </div>
-                            <FlexBox className={styles.infoName}>
-                                <div className={styles.nickname}>
-                                    {userWithInfoVo?.userInfo.nickname}
-                                </div>
-                                <a
-                                    className={styles.url}
-                                    onClick={handleOnCopyToClipboard(userWithInfoVo?.username)}
-                                >
-                                    {userWithInfoVo?.username &&
-                                        new URL(
-                                            `/store/${userWithInfoVo.username}`,
-                                            import.meta.env.VITE_UI_URL
-                                        ).href}
-                                    <Icon component={IconOxygenCopy} />
-                                </a>
-                            </FlexBox>
+                            <a
+                                className={styles.url}
+                                onClick={handleOnCopyToClipboard(userWithInfoVo?.username)}
+                            >
+                                {userWithInfoVo?.username &&
+                                    new URL(
+                                        `/store/${userWithInfoVo.username}`,
+                                        import.meta.env.VITE_UI_URL
+                                    ).href}
+                                <Icon component={IconOxygenCopy} />
+                            </a>
                         </FlexBox>
-                        <FlexBox direction={'horizontal'} className={styles.tools}>
-                            {!toolData.length && (
-                                <div className={styles.noTool}>该开发者暂未发布任何工具</div>
-                            )}
-                            {toolData
-                                ?.reduce((previousValue: ToolVo[], currentValue) => {
-                                    if (
-                                        !previousValue.some(
-                                            (value) =>
-                                                value.author.id === currentValue.author.id &&
-                                                value.toolId === currentValue.toolId
-                                        )
-                                    ) {
-                                        previousValue.push(currentValue)
-                                    }
-                                    return previousValue
-                                }, [])
-                                .map((item) => {
-                                    const tools = toolData.filter(
+                    </FlexBox>
+                    <FlexBox direction={'horizontal'} className={styles.tools}>
+                        {!toolData.length && (
+                            <div className={styles.noTool}>该开发者暂未发布任何工具</div>
+                        )}
+                        {toolData
+                            ?.reduce((previousValue: ToolVo[], currentValue) => {
+                                if (
+                                    !previousValue.some(
                                         (value) =>
-                                            value.author.id === item.author.id &&
-                                            value.toolId === item.toolId
+                                            value.author.id === currentValue.author.id &&
+                                            value.toolId === currentValue.toolId
                                     )
-                                    const webTool = tools.find((value) => value.platform === 'WEB')
-                                    const desktopTool = tools.find(
-                                        (value) => value.platform === 'DESKTOP'
-                                    )
-                                    const androidTool = tools.find(
-                                        (value) => value.platform === 'ANDROID'
-                                    )
-                                    const firstTool =
-                                        (checkDesktop()
-                                            ? desktopTool || webTool
-                                            : webTool || desktopTool) || androidTool
+                                ) {
+                                    previousValue.push(currentValue)
+                                }
+                                return previousValue
+                            }, [])
+                            .map((item) => {
+                                const tools = toolData.filter(
+                                    (value) =>
+                                        value.author.id === item.author.id &&
+                                        value.toolId === item.toolId
+                                )
+                                const webTool = tools.find((value) => value.platform === 'WEB')
+                                const desktopTool = tools.find(
+                                    (value) => value.platform === 'DESKTOP'
+                                )
+                                const androidTool = tools.find(
+                                    (value) => value.platform === 'ANDROID'
+                                )
+                                const firstTool =
+                                    (checkDesktop()
+                                        ? desktopTool || webTool
+                                        : webTool || desktopTool) || androidTool
 
-                                    return (
-                                        <StoreCard
-                                            key={firstTool!.id}
-                                            icon={firstTool!.icon}
-                                            toolName={firstTool!.name}
-                                            toolId={firstTool!.toolId}
-                                            toolDesc={firstTool!.description}
-                                            author={firstTool!.author}
-                                            showAuthor={false}
-                                            ver={firstTool!.ver}
-                                            platform={firstTool!.platform}
-                                            supportPlatform={tools.map((value) => value.platform)}
-                                            vers={tools.reduce(
-                                                (previousValue, currentValue) => ({
-                                                    ...previousValue,
-                                                    [currentValue.platform]: currentValue.ver
-                                                }),
-                                                {} as Record<Platform, string>
-                                            )}
-                                            favorite={firstTool!.favorite}
-                                        />
-                                    )
-                                })}
-                            {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
-                        </FlexBox>
-                    </Card>
-                </HideScrollbar>
-            </FitFullscreen>
-        </>
+                                return (
+                                    <StoreCard
+                                        key={firstTool!.id}
+                                        icon={firstTool!.icon}
+                                        toolName={firstTool!.name}
+                                        toolId={firstTool!.toolId}
+                                        toolDesc={firstTool!.description}
+                                        author={firstTool!.author}
+                                        showAuthor={false}
+                                        ver={firstTool!.ver}
+                                        platform={firstTool!.platform}
+                                        supportPlatform={tools.map((value) => value.platform)}
+                                        vers={tools.reduce(
+                                            (previousValue, currentValue) => ({
+                                                ...previousValue,
+                                                [currentValue.platform]: currentValue.ver
+                                            }),
+                                            {} as Record<Platform, string>
+                                        )}
+                                        favorite={firstTool!.favorite}
+                                    />
+                                )
+                            })}
+                        {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
+                    </FlexBox>
+                </Card>
+            </HideScrollbar>
+        </FitFullscreen>
     )
 }
 

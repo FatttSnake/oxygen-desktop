@@ -83,26 +83,24 @@ const Category = () => {
             width: '15em',
             align: 'center',
             render: (_, record) => (
-                <>
-                    <AntdSpace size={'middle'}>
-                        <Permission operationCode={['system:tool:modify:category']}>
-                            <a
-                                style={{ color: theme.colorPrimary }}
-                                onClick={handleOnEditBtnClick(record)}
-                            >
-                                编辑
-                            </a>
-                        </Permission>
-                        <Permission operationCode={['system:tool:delete:category']}>
-                            <a
-                                style={{ color: theme.colorPrimary }}
-                                onClick={handleOnDeleteBtnClick(record)}
-                            >
-                                删除
-                            </a>
-                        </Permission>
-                    </AntdSpace>
-                </>
+                <AntdSpace size={'middle'}>
+                    <Permission operationCode={['system:tool:modify:category']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnEditBtnClick(record)}
+                        >
+                            编辑
+                        </a>
+                    </Permission>
+                    <Permission operationCode={['system:tool:delete:category']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnDeleteBtnClick(record)}
+                        >
+                            删除
+                        </a>
+                    </Permission>
+                </AntdSpace>
             )
         }
     ]

@@ -162,39 +162,34 @@ const StorageInfo = () => {
     }, [storageInfoEChartsOption])
 
     return (
-        <>
-            <StatisticsCard
-                icon={IconOxygenMemory}
-                title={'内存信息'}
-                loading={isLoading}
-                expand={
-                    <AntdSelect
-                        value={refreshInterval}
-                        onChange={(value) => setRefreshInterval(value)}
-                    >
-                        <AntdSelect.Option key={1}>1秒</AntdSelect.Option>
-                        <AntdSelect.Option key={2}>2秒</AntdSelect.Option>
-                        <AntdSelect.Option key={3}>3秒</AntdSelect.Option>
-                        <AntdSelect.Option key={5}>5秒</AntdSelect.Option>
-                        <AntdSelect.Option key={10}>10秒</AntdSelect.Option>
-                        <AntdSelect.Option key={15}>15秒</AntdSelect.Option>
-                        <AntdSelect.Option key={20}>20秒</AntdSelect.Option>
-                        <AntdSelect.Option key={30}>30秒</AntdSelect.Option>
-                        <AntdSelect.Option key={60}>60秒</AntdSelect.Option>
-                        <AntdSelect.Option key={120}>2分</AntdSelect.Option>
-                        <AntdSelect.Option key={180}>3分</AntdSelect.Option>
-                        <AntdSelect.Option key={300}>5分</AntdSelect.Option>
-                        <AntdSelect.Option key={600}>10分</AntdSelect.Option>
-                    </AntdSelect>
-                }
-            >
-                <FlexBox className={styles.content} direction={'horizontal'}>
-                    <FlexBox className={styles.key} ref={keyDivRef} />
-                    <FlexBox className={styles.chartValue} ref={storageInfoDivRef} />
-                    <FlexBox className={styles.percentValue} ref={percentDivRef} />
-                </FlexBox>
-            </StatisticsCard>
-        </>
+        <StatisticsCard
+            icon={IconOxygenMemory}
+            title={'内存信息'}
+            loading={isLoading}
+            expand={
+                <AntdSelect value={refreshInterval} onChange={(value) => setRefreshInterval(value)}>
+                    <AntdSelect.Option key={1}>1秒</AntdSelect.Option>
+                    <AntdSelect.Option key={2}>2秒</AntdSelect.Option>
+                    <AntdSelect.Option key={3}>3秒</AntdSelect.Option>
+                    <AntdSelect.Option key={5}>5秒</AntdSelect.Option>
+                    <AntdSelect.Option key={10}>10秒</AntdSelect.Option>
+                    <AntdSelect.Option key={15}>15秒</AntdSelect.Option>
+                    <AntdSelect.Option key={20}>20秒</AntdSelect.Option>
+                    <AntdSelect.Option key={30}>30秒</AntdSelect.Option>
+                    <AntdSelect.Option key={60}>60秒</AntdSelect.Option>
+                    <AntdSelect.Option key={120}>2分</AntdSelect.Option>
+                    <AntdSelect.Option key={180}>3分</AntdSelect.Option>
+                    <AntdSelect.Option key={300}>5分</AntdSelect.Option>
+                    <AntdSelect.Option key={600}>10分</AntdSelect.Option>
+                </AntdSelect>
+            }
+        >
+            <FlexBox className={styles.content} direction={'horizontal'}>
+                <FlexBox className={styles.key} ref={keyDivRef} />
+                <FlexBox className={styles.chartValue} ref={storageInfoDivRef} />
+                <FlexBox className={styles.percentValue} ref={percentDivRef} />
+            </FlexBox>
+        </StatisticsCard>
     )
 }
 

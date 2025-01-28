@@ -103,43 +103,41 @@ const Group = () => {
             width: '15em',
             align: 'center',
             render: (value, record) => (
-                <>
-                    <AntdSpace size={'middle'}>
-                        <Permission operationCode={['system:group:modify:status']}>
-                            {value ? (
-                                <a
-                                    style={{ color: theme.colorPrimary }}
-                                    onClick={handleOnChangStatusBtnClick(record.id, false)}
-                                >
-                                    禁用
-                                </a>
-                            ) : (
-                                <a
-                                    style={{ color: theme.colorPrimary }}
-                                    onClick={handleOnChangStatusBtnClick(record.id, true)}
-                                >
-                                    启用
-                                </a>
-                            )}
-                        </Permission>
-                        <Permission operationCode={['system:group:modify:one']}>
+                <AntdSpace size={'middle'}>
+                    <Permission operationCode={['system:group:modify:status']}>
+                        {value ? (
                             <a
                                 style={{ color: theme.colorPrimary }}
-                                onClick={handleOnEditBtnClick(record)}
+                                onClick={handleOnChangStatusBtnClick(record.id, false)}
                             >
-                                编辑
+                                禁用
                             </a>
-                        </Permission>
-                        <Permission operationCode={['system:group:delete:one']}>
+                        ) : (
                             <a
                                 style={{ color: theme.colorPrimary }}
-                                onClick={handleOnDeleteBtnClick(record)}
+                                onClick={handleOnChangStatusBtnClick(record.id, true)}
                             >
-                                删除
+                                启用
                             </a>
-                        </Permission>
-                    </AntdSpace>
-                </>
+                        )}
+                    </Permission>
+                    <Permission operationCode={['system:group:modify:one']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnEditBtnClick(record)}
+                        >
+                            编辑
+                        </a>
+                    </Permission>
+                    <Permission operationCode={['system:group:delete:one']}>
+                        <a
+                            style={{ color: theme.colorPrimary }}
+                            onClick={handleOnDeleteBtnClick(record)}
+                        >
+                            删除
+                        </a>
+                    </Permission>
+                </AntdSpace>
             )
         }
     ]

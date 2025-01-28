@@ -83,82 +83,76 @@ const Store = () => {
     }, [])
 
     return (
-        <>
-            <FitFullscreen>
-                <HideScrollbar
-                    isShowVerticalScrollbar
-                    autoHideWaitingTime={1000}
-                    onScroll={handleOnScroll}
-                >
-                    <div className={cx(styles.search, isHideSearch ? styles.hide : '')}>
-                        <AntdInput.Search
-                            enterButton
-                            allowClear
-                            loading={isLoading}
-                            onSearch={handleOnSearch}
-                            placeholder={'请输入工具名或关键字'}
-                        />
-                    </div>
-                    <FlexBox direction={'horizontal'} className={styles.root}>
-                        {!toolData.length && <div className={styles.noTool}>未找到任何工具</div>}
-                        {toolData
-                            ?.reduce((previousValue: ToolVo[], currentValue) => {
-                                if (
-                                    !previousValue.some(
-                                        (value) =>
-                                            value.author.id === currentValue.author.id &&
-                                            value.toolId === currentValue.toolId
-                                    )
-                                ) {
-                                    previousValue.push(currentValue)
-                                }
-                                return previousValue
-                            }, [])
-                            .map((item) => {
-                                const tools = toolData.filter(
+        <FitFullscreen>
+            <HideScrollbar
+                isShowVerticalScrollbar
+                autoHideWaitingTime={1000}
+                onScroll={handleOnScroll}
+            >
+                <div className={cx(styles.search, isHideSearch ? styles.hide : '')}>
+                    <AntdInput.Search
+                        enterButton
+                        allowClear
+                        loading={isLoading}
+                        onSearch={handleOnSearch}
+                        placeholder={'请输入工具名或关键字'}
+                    />
+                </div>
+                <FlexBox direction={'horizontal'} className={styles.root}>
+                    {!toolData.length && <div className={styles.noTool}>未找到任何工具</div>}
+                    {toolData
+                        ?.reduce((previousValue: ToolVo[], currentValue) => {
+                            if (
+                                !previousValue.some(
                                     (value) =>
-                                        value.author.id === item.author.id &&
-                                        value.toolId === item.toolId
+                                        value.author.id === currentValue.author.id &&
+                                        value.toolId === currentValue.toolId
                                 )
-                                const webTool = tools.find((value) => value.platform === 'WEB')
-                                const desktopTool = tools.find(
-                                    (value) => value.platform === 'DESKTOP'
-                                )
-                                const androidTool = tools.find(
-                                    (value) => value.platform === 'ANDROID'
-                                )
-                                const firstTool =
-                                    (checkDesktop()
-                                        ? desktopTool || webTool
-                                        : webTool || desktopTool) || androidTool
+                            ) {
+                                previousValue.push(currentValue)
+                            }
+                            return previousValue
+                        }, [])
+                        .map((item) => {
+                            const tools = toolData.filter(
+                                (value) =>
+                                    value.author.id === item.author.id &&
+                                    value.toolId === item.toolId
+                            )
+                            const webTool = tools.find((value) => value.platform === 'WEB')
+                            const desktopTool = tools.find((value) => value.platform === 'DESKTOP')
+                            const androidTool = tools.find((value) => value.platform === 'ANDROID')
+                            const firstTool =
+                                (checkDesktop()
+                                    ? desktopTool || webTool
+                                    : webTool || desktopTool) || androidTool
 
-                                return (
-                                    <StoreCard
-                                        key={firstTool!.id}
-                                        icon={firstTool!.icon}
-                                        toolName={firstTool!.name}
-                                        toolId={firstTool!.toolId}
-                                        toolDesc={firstTool!.description}
-                                        author={firstTool!.author}
-                                        ver={firstTool!.ver}
-                                        platform={firstTool!.platform}
-                                        supportPlatform={tools.map((value) => value.platform)}
-                                        vers={tools.reduce(
-                                            (previousValue, currentValue) => ({
-                                                ...previousValue,
-                                                [currentValue.platform]: currentValue.ver
-                                            }),
-                                            {} as Record<Platform, string>
-                                        )}
-                                        favorite={firstTool!.favorite}
-                                    />
-                                )
-                            })}
-                        {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
-                    </FlexBox>
-                </HideScrollbar>
-            </FitFullscreen>
-        </>
+                            return (
+                                <StoreCard
+                                    key={firstTool!.id}
+                                    icon={firstTool!.icon}
+                                    toolName={firstTool!.name}
+                                    toolId={firstTool!.toolId}
+                                    toolDesc={firstTool!.description}
+                                    author={firstTool!.author}
+                                    ver={firstTool!.ver}
+                                    platform={firstTool!.platform}
+                                    supportPlatform={tools.map((value) => value.platform)}
+                                    vers={tools.reduce(
+                                        (previousValue, currentValue) => ({
+                                            ...previousValue,
+                                            [currentValue.platform]: currentValue.ver
+                                        }),
+                                        {} as Record<Platform, string>
+                                    )}
+                                    favorite={firstTool!.favorite}
+                                />
+                            )
+                        })}
+                    {hasNextPage && <LoadMoreCard onClick={handleOnLoadMore} />}
+                </FlexBox>
+            </HideScrollbar>
+        </FitFullscreen>
     )
 }
 

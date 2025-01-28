@@ -71,11 +71,7 @@ service.interceptors.response.use(
                 removeToken()
                 message
                     .error({
-                        content: (
-                            <>
-                                <strong>未登录</strong>
-                            </>
-                        ),
+                        content: <strong>未登录</strong>,
                         key: 'NO_LOGIN'
                     })
                     .then(() => {
@@ -87,11 +83,7 @@ service.interceptors.response.use(
                 removeToken()
                 message
                     .error({
-                        content: (
-                            <>
-                                <strong>登录已过期</strong>
-                            </>
-                        ),
+                        content: <strong>登录已过期</strong>,
                         key: 'LOGIN_HAS_EXPIRED'
                     })
                     .then(() => {
@@ -102,21 +94,13 @@ service.interceptors.response.use(
                 throw response?.data
             case PERMISSION_ACCESS_DENIED:
                 void message.error({
-                    content: (
-                        <>
-                            <strong>暂无权限操作</strong>
-                        </>
-                    ),
+                    content: <strong>暂无权限操作</strong>,
                     key: 'ACCESS_DENIED'
                 })
                 throw response?.data
             case SYSTEM_REQUEST_TOO_FREQUENT:
                 void message.warning({
-                    content: (
-                        <>
-                            <strong>请求过于频繁，请稍后重试</strong>
-                        </>
-                    ),
+                    content: <strong>请求过于频繁，请稍后重试</strong>,
                     key: 'REQUEST_TOO_FREQUENT'
                 })
                 throw response?.data

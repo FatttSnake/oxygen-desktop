@@ -14,26 +14,24 @@ const Statistics = () => {
     const { styles } = useStyles()
 
     return (
-        <>
-            <FitFullscreen>
-                <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
-                    <FlexBox direction={'horizontal'} className={styles.root}>
-                        <Permission operationCode={['system:statistics:query:usage']}>
-                            <OnlineInfo />
-                            <ActiveInfo />
-                        </Permission>
-                        <Permission operationCode={['system:statistics:query:base']}>
-                            <HardwareInfo />
-                            <SoftwareInfo />
-                        </Permission>
-                        <Permission operationCode={['system:statistics:query:real']}>
-                            <CPUInfo />
-                            <StorageInfo />
-                        </Permission>
-                    </FlexBox>
-                </HideScrollbar>
-            </FitFullscreen>
-        </>
+        <FitFullscreen>
+            <HideScrollbar isShowVerticalScrollbar autoHideWaitingTime={1000}>
+                <FlexBox direction={'horizontal'} className={styles.root}>
+                    <Permission operationCode={['system:statistics:query:usage']}>
+                        <OnlineInfo />
+                        <ActiveInfo />
+                    </Permission>
+                    <Permission operationCode={['system:statistics:query:base']}>
+                        <HardwareInfo />
+                        <SoftwareInfo />
+                    </Permission>
+                    <Permission operationCode={['system:statistics:query:real']}>
+                        <CPUInfo />
+                        <StorageInfo />
+                    </Permission>
+                </FlexBox>
+            </HideScrollbar>
+        </FitFullscreen>
     )
 }
 
