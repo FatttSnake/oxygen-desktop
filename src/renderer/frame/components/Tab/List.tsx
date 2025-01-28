@@ -95,12 +95,13 @@ const List = ({
                     onDragEnd={handleOnDragEnd}
                     onDragCancel={handleOnDragCancel}
                 >
-                    <Separate />
+                    <Separate key={'-'} />
                     {tabs
                         .filter(({ pin }) => pin)
                         ?.map((tab) => (
                             <>
                                 <Item
+                                    key={tab.key}
                                     icon={tab.icon}
                                     persistent={tab.persistent}
                                     active={tab.key === activeTab}
@@ -113,10 +114,10 @@ const List = ({
                                 >
                                     {tab.title}
                                 </Item>
-                                <Separate />
+                                <Separate key={`${tab.key}-`} />
                             </>
                         ))}
-                    <Droppable id={'tab'} className={styles.droppable}>
+                    <Droppable key={'tab'} id={'tab'} className={styles.droppable}>
                         <SortableContext
                             items={tabs.filter(({ pin }) => !pin).map((tab) => tab.key)}
                         >

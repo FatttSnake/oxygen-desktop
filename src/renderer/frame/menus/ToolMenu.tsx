@@ -1,5 +1,5 @@
 import { getToolMenuItem } from '$/util/common'
-import Sidebar from '#/components/Sidebar'
+import Sidebar from '$/components/Sidebar'
 
 const ToolMenu = () => {
     const [toolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
@@ -12,14 +12,18 @@ const ToolMenu = () => {
 
     return (
         <Sidebar>
-            {toolMenuItem.map((menuItem: ToolMenuItem) => (
-                <Sidebar.Item
-                    icon={menuItem.icon}
-                    onClick={handleOnClick(`${menuItem.authorUsername}:${menuItem.toolId}`)}
-                >
-                    {menuItem.toolName}
-                </Sidebar.Item>
-            ))}
+            <Sidebar.Scroll>
+                <Sidebar.ItemList>
+                    {toolMenuItem.map((menuItem: ToolMenuItem) => (
+                        <Sidebar.Item
+                            key={`${menuItem.authorUsername}:${menuItem.toolId}`}
+                            icon={menuItem.icon}
+                            text={menuItem.toolName}
+                            onClick={handleOnClick(`${menuItem.authorUsername}:${menuItem.toolId}`)}
+                        />
+                    ))}
+                </Sidebar.ItemList>
+            </Sidebar.Scroll>
         </Sidebar>
     )
 }
