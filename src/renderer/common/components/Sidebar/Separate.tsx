@@ -7,7 +7,7 @@ const Separate = ({
 }: DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>) => {
     const { styles, cx } = useStyles()
 
-    return <div className={cx(styles.separate, className)} {...props} />
+    return <div className={cx(styles.root, className)} {...props} />
 }
 
 export default Separate

@@ -24,7 +24,7 @@ export default createStyles(({ token }) => {
     `
 
     return {
-        submenu: {
+        root: {
             visibility: 'hidden',
             position: 'fixed',
             paddingLeft: token.paddingXS,

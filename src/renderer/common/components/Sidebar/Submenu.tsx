@@ -16,7 +16,7 @@ const Submenu = (props: SidebarSubmenuProps) => {
     return (
         <SubmenuContext.Provider value={{ isInSubmenu: true }}>
             <ul
-                className={cx(styles.submenu, isHover ? styles.hoveredSubmenu : '')}
+                className={cx(styles.root, isHover ? styles.hoveredSubmenu : '')}
                 style={{
                     top: props.submenuTop,
                     left: props.submenuLeft - 1

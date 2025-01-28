@@ -1,51 +1,43 @@
 import { createStyles } from 'antd-style'
 
 export default createStyles(({ cx, css, token }) => {
-    const menuBt = cx(css`
-        border-radius: ${token.borderRadiusLG}px;
-        overflow: hidden;
-        height: 40px;
-
-        a {
-            display: flex;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-            transition: all 0.2s;
-            background-color: ${token.colorBgContainer};
-        }
-    `)
-
     const active = cx(css`
         color: ${token.colorTextLightSolid};
         background-color: ${token.colorPrimary} !important;
     `)
 
     return {
-        item: css`
+        root: css`
             position: relative;
             font-size: ${token.fontSizeHeading5}px;
+            padding: ${token.paddingXXS}px ${token.paddingSM}px;
 
-            &:hover > div > a:not(.${active}),
-            &:hover > a:not(.${active}) {
+            &:hover > div:not(.${active}) {
                 background-color: ${token.colorBgLayout};
             }
         `,
 
-        submenuItem: css`
-            border-radius: ${token.borderRadiusLG}px;
-            white-space: nowrap;
-            overflow: hidden;
-            padding: 0 !important;
+        submenuItem: {
+            borderRadius: token.borderRadiusLG,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            padding: '0 !important',
 
-            a {
-                display: block;
-                padding: ${token.paddingXS}px ${token.paddingMD}px;
-                transition: all 0.2s;
+            '> div': {
+                display: 'block !important',
+                padding: `${token.paddingXS}px ${token.paddingMD}px !important`
             }
-        `,
+        },
 
-        menuBt,
+        menuBt: {
+            display: 'flex',
+            alignItems: 'center',
+            borderRadius: token.borderRadiusLG,
+            overflow: 'hidden',
+            height: 40,
+            transition: 'all 0.2s',
+            cursor: 'pointer'
+        },
 
         active,
 

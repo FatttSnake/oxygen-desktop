@@ -6,6 +6,8 @@ import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 
 const SystemFramework = () => {
     const { styles, cx } = useStyles()
+    const location = useLocation()
+    const navigate = useNavigate()
 
     return (
         <FitFullscreen className={cx(styles.root, 'flex-horizontal')}>
@@ -13,33 +15,43 @@ const SystemFramework = () => {
                 <Sidebar>
                     <Sidebar.Scroll>
                         <Sidebar.ItemList>
-                            {getSystemRouteJson().map((route) => {
-                                return (
+                            {getSystemRouteJson().map(
+                                (route) =>
                                     route.menu &&
                                     route.name && (
                                         <Sidebar.Item
-                                            end={route.id === 'system' ? true : undefined}
-                                            path={route.absolutePath}
                                             icon={route.icon}
                                             text={route.name}
                                             key={route.id}
+                                            active={
+                                                location.pathname === route.absolutePath &&
+                                                !route.children?.some(
+                                                    (item) =>
+                                                        location.pathname === item.absolutePath
+                                                )
+                                            }
+                                            onClick={() => navigate(route.absolutePath)}
                                         >
                                             {route.children?.map(
                                                 (subRoute) =>
                                                     subRoute.menu &&
                                                     subRoute.name && (
                                                         <Sidebar.Item
-                                                            end
-                                                            path={subRoute.absolutePath}
                                                             text={subRoute.name}
                                                             key={subRoute.id}
+                                                            active={
+                                                                location.pathname ===
+                                                                subRoute.absolutePath
+                                                            }
+                                                            onClick={() =>
+                                                                navigate(subRoute.absolutePath)
+                                                            }
                                                         />
                                                     )
                                             )}
                                         </Sidebar.Item>
                                     )
-                                )
-                            })}
+                            )}
                         </Sidebar.ItemList>
                     </Sidebar.Scroll>
                 </Sidebar>

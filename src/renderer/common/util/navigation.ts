@@ -154,3 +154,10 @@ export const getViewPath = (
 
 export const getAndroidUrl = (username: string, toolId: string) =>
     `${import.meta.env.VITE_APP_PROTOCOL}://opentool/${username}/${toolId}`
+
+export const checkIsSamePathname = (a: string, b: string) => {
+    const aPathname = a.substring(0, a.indexOf('?') === -1 ? a.length : a.indexOf('?'))
+    const bPathname = b.substring(0, b.indexOf('?') === -1 ? b.length : b.indexOf('?'))
+
+    return aPathname === bPathname
+}

@@ -7,11 +7,7 @@ export default createStyles(({ token }) => ({
         '.dnd-over-mask > li > div': {
             border: `1px dashed ${token.colorErrorHover}`,
             filter: `drop-shadow(1000px 0 0 ${token.colorErrorHover})`,
-            transform: 'translate(-1000px)',
-
-            '> a': {
-                backgroundColor: 'transparent !important'
-            }
+            transform: 'translate(-1000px)'
         }
     }
 }))
