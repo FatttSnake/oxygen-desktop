@@ -39,16 +39,15 @@ const oxygenApi = {
             onUpdate: (callback: (theme: WindowTheme) => void) =>
                 ipcRenderer.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) =>
                     callback(theme)
-                ),
-            update: (theme: WindowTheme) => ipcRenderer.send(IpcEvents.window.theme.update, theme)
+                )
         },
         titleBarOverlay: {
             setColor: (color: string, symbolColor: string) =>
                 ipcRenderer.send(IpcEvents.window.titleBarOverlay.setColor, color, symbolColor)
         },
         tab: {
-            create: (url: string) =>
-                ipcRenderer.send(IpcEvents.window.tab.create, 'tool' as TabType, { url }),
+            create: (type: TabType, args?: Record<string, string | number | boolean>) =>
+                ipcRenderer.send(IpcEvents.window.tab.create, type, args),
             list: (): Promise<Tab[]> => ipcRenderer.invoke(IpcEvents.window.tab.list),
             onUpdate: (callback: (tabs: Tab[]) => void) =>
                 ipcRenderer.on(IpcEvents.window.tab.update, (_, tabs: Tab[]) => callback(tabs)),

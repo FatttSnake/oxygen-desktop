@@ -2,16 +2,14 @@ import { join } from 'path'
 import fs from 'fs'
 import path from 'node:path'
 import url from 'node:url'
-import { app, BrowserWindow, WebContentsView, protocol, net } from 'electron'
+import { app, BrowserWindow, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
 import icon from '../../build/icon.ico?asset'
-import { IpcEvents } from './constants'
 import { settings } from './dataStore'
 import { processApp } from './processApp'
-import { processIpcEvents } from './ipcUtils'
+import { processIpcEvents } from './processIpcEvents'
 import { processMainWindow } from './processMainWindow'
 import { initFrameView } from './frameView'
-import { initMainView } from './mainView'
 
 global.sharedObject = {
     menuWidth: 0,
@@ -20,7 +18,6 @@ global.sharedObject = {
 }
 
 let mainWindow: BrowserWindow
-let mainView: WebContentsView
 
 // Application singleton execution
 if (!app.requestSingleInstanceLock()) {
@@ -46,9 +43,9 @@ const handleArgv = (argv: string[]) => {
 }
 
 const handleUrl = (url: string) => {
-    const { hostname, pathname } = new URL(url)
+    const { hostname } = new URL(url)
     if (hostname === 'openurl' && mainWindow) {
-        mainView.webContents.send(IpcEvents.mainView.url.open, pathname)
+        // mainView.webContents.send(IpcEvents.mainView.url.open, pathname)
         mainWindow.show()
     }
 }
@@ -97,15 +94,8 @@ const createWindow = () => {
         }
     })
 
-    mainView = new WebContentsView({
-        webPreferences: {
-            preload: join(__dirname, '../preload/main.js')
-        }
-    })
-
     processMainWindow(mainWindow)
     initFrameView(mainWindow)
-    initMainView(mainWindow, mainView)
     processIpcEvents(mainWindow)
 }
 

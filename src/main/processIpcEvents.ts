@@ -1,12 +1,16 @@
 import { join } from 'path'
 import { randomUUID } from 'node:crypto'
-import { BrowserWindow, ipcMain, shell, WebContentsView, nativeTheme } from 'electron'
+import { BrowserWindow, ipcMain, shell, WebContentsView, nativeTheme, app } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { IpcEvents } from './constants'
 import { settings } from './dataStore'
 import { addTab, getGlobalObject, removeTab, switchTab, updateTab } from './common'
 
 export const processIpcEvents = (mainWindow: BrowserWindow) => {
+    ipcMain.on(IpcEvents.app.url.open, (_, url: string) => shell.openExternal(url))
+
+    ipcMain.handle(IpcEvents.app.version.get, () => app.getVersion())
+
     ipcMain.handle(IpcEvents.window.theme.get, () => settings.window.getTheme())
 
     ipcMain.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) => {
@@ -67,26 +71,61 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
 
     ipcMain.on(
         IpcEvents.window.tab.create,
-        (_, type: TabType, args: Record<string, string | number | boolean>) => {
-            const { viewId, preload, menuWidth } = ((): {
+        (_, type: TabType, args?: Record<string, string | number | boolean>) => {
+            if (
+                (type === 'main' &&
+                    getGlobalObject().mainWindowViews.some(({ key }) => key === 'mainView')) ||
+                (type === 'settings' &&
+                    getGlobalObject().mainWindowViews.some(({ key }) => key === 'settingsView'))
+            ) {
+                return
+            }
+
+            const { viewId, preload, menuWidth, title, pin, persistent } = ((): {
                 viewId: string
                 preload: string
                 menuWidth: number
+                title: string
+                pin: boolean
+                persistent: boolean
             } => {
                 switch (type) {
-                    case 'settings':
-                        return { viewId: 'settings', preload: 'settings.js', menuWidth: 0 }
-                    default:
+                    case 'main':
                         return {
-                            viewId: randomUUID(),
-                            preload: 'tool.js',
-                            menuWidth: getGlobalObject().menuWidth
+                            viewId: 'mainView',
+                            preload: 'main.js',
+                            menuWidth: 0,
+                            title: 'Oxygen Toolbox',
+                            pin: true,
+                            persistent: true
                         }
+                    case 'settings':
+                        return {
+                            viewId: 'settingsView',
+                            preload: 'settings.js',
+                            menuWidth: 0,
+                            title: 'Settings',
+                            pin: true,
+                            persistent: false
+                        }
+                    default: {
+                        const viewId = randomUUID()
+                        return {
+                            viewId: viewId,
+                            preload: 'tool.js',
+                            menuWidth: getGlobalObject().menuWidth,
+                            title: viewId,
+                            pin: false,
+                            persistent: false
+                        }
+                    }
                 }
             })()
-            const argStr = Object.entries(args).map(
-                ([key, value]) => `--${key}=${encodeURIComponent(value)}`
-            )
+            const argStr = args
+                ? Object.entries(args).map(
+                      ([key, value]) => `--${key}=${encodeURIComponent(value)}`
+                  )
+                : []
             const newView = new WebContentsView({
                 webPreferences: {
                     preload: join(__dirname, `../preload/${preload}`),
@@ -127,7 +166,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
                 )
             }
 
-            addTab(mainWindow, newView, viewId, type, viewId)
+            addTab(mainWindow, newView, viewId, type, title, pin, persistent)
             mainWindow.contentView.addChildView(newView)
             switchTab(mainWindow, viewId)
         }

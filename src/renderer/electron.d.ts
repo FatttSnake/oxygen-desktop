@@ -12,9 +12,19 @@ declare global {
 
     type Renderer = 'frame' | 'menu' | 'main' | 'settings' | 'tool'
 
+    type TabType = 'main' | 'settings' | 'tool'
+
     interface OxygenAPI {
         platform: NodeJS.Platform
         renderer: Renderer
+        app: {
+            url: {
+                open: (url: string) => void
+            }
+            version: {
+                get: () => Promise<string>
+            }
+        }
         window: {
             theme: {
                 get: () => Promise<WindowTheme>
@@ -25,7 +35,7 @@ declare global {
                 setColor: (color: string, symbolColor: string) => void
             }
             tab: {
-                create: (url: string) => void
+                create: (type: TabType, args?: Record<string, string | number | boolean>) => void
                 list: () => Promise<TabInstance[]>
                 onUpdate: (callback: (tabs: TabInstance[]) => void) => void
                 update: (tabs: TabInstance[]) => void

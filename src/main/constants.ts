@@ -1,4 +1,12 @@
 export const IpcEvents = {
+    app: {
+        url: {
+            open: 'app:url:open'
+        },
+        version: {
+            get: 'app:version:get'
+        }
+    },
     window: {
         theme: {
             get: 'window:theme:get',

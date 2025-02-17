@@ -13,6 +13,7 @@ export const CommonContext = createContext({
 const CommonFramework = ({ children }: PropsWithChildren) => {
     const [themeMode, setThemeMode] = useState<WindowTheme>('FOLLOW_SYSTEM')
     const [isSystemDarkMode, setIsSystemDarkMode] = useState(false)
+    const [isThemeLoaded, setIsThemeLoaded] = useState(false)
 
     const getIsDark = () => {
         switch (themeMode) {
@@ -35,7 +36,10 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
         }
         darkThemeMq.addEventListener('change', darkThemeMqChangeListener)
 
-        oxygenApi.window.theme.get().then((theme) => setThemeMode(theme))
+        oxygenApi.window.theme.get().then((theme) => {
+            setThemeMode(theme)
+            setIsThemeLoaded(true)
+        })
         oxygenApi.window.theme.onUpdate((theme) => setThemeMode(theme))
 
         return () => {
@@ -43,7 +47,7 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
         }
     }, [])
 
-    return (
+    return isThemeLoaded ? (
         <AntdConfigProvider
             theme={{
                 cssVar: true,
@@ -66,7 +70,7 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
                 {children}
             </CommonContext.Provider>
         </AntdConfigProvider>
-    )
+    ) : undefined
 }
 
 export default CommonFramework

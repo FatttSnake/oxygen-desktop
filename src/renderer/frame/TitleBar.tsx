@@ -13,6 +13,7 @@ const TitleBar = () => {
     const handleOnClickExpand = () => {
         oxygenApi.sidebar.collapse.update(!isCollapse)
         setIsCollapse(!isCollapse)
+        oxygenApi.window.tab.create('tool', { url: '' })
     }
 
     const handleOnActiveTabChange = (tab?: TabInstance) => {
@@ -31,7 +32,11 @@ const TitleBar = () => {
 
     const handleOnIndependentTab = (tab: TabInstance) => {
         oxygenApi.window.tab.independent(tab.key)
-        oxygenApi.window.tab.create('')
+        oxygenApi.window.tab.create('tool', { url: '' })
+    }
+
+    const handleOnClickSettings = () => {
+        oxygenApi.window.tab.create('settings')
     }
 
     useEffect(() => {
@@ -46,6 +51,9 @@ const TitleBar = () => {
         })
         oxygenApi.window.tab.onSwitch((key) => setActiveTab(key))
         // oxygenApi.window.tab.create('')
+        if (!tabs.some(({ key }) => key === 'mainView')) {
+            oxygenApi.window.tab.create('main')
+        }
     }, [])
 
     return (
@@ -54,7 +62,7 @@ const TitleBar = () => {
             <div className={styles.titleBarCenter}>
                 <div className={styles.operation}>
                     {x === 0 && <Icon component={IconOxygenLogo} />}
-                    <AntdButton size={'small'} onClick={handleOnClickExpand}>
+                    <button className={styles.btn} onClick={handleOnClickExpand}>
                         <Icon
                             component={IconOxygenExpand}
                             className={cx(
@@ -62,7 +70,7 @@ const TitleBar = () => {
                                 isCollapse ? styles.collapse : undefined
                             )}
                         />
-                    </AntdButton>
+                    </button>
                 </div>
                 <div className={styles.tabs}>
                     <Tab.List
@@ -74,6 +82,10 @@ const TitleBar = () => {
                         onIndependentTab={handleOnIndependentTab}
                     />
                 </div>
+
+                <button className={cx(styles.btn, styles.settings)} onClick={handleOnClickSettings}>
+                    <Icon component={IconOxygenSetting} />
+                </button>
             </div>
             <div className={styles.titleBarRight} />
         </div>

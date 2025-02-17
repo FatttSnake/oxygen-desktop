@@ -13,6 +13,19 @@ export default createStyles(({ token }) => ({
         '-webkit-app-region': 'drag'
     },
 
+    btn: {
+        width: 28,
+        height: 28,
+        color: token.colorTextSecondary,
+        backgroundColor: 'transparent',
+        borderRadius: token.borderRadius,
+        fontSize: token.size,
+
+        ':hover': {
+            backgroundColor: token.colorBgTextHover
+        }
+    },
+
     titleBarLeft: {
         width: 'env(titlebar-area-x, 0)',
         height: '100%'
@@ -32,7 +45,7 @@ export default createStyles(({ token }) => ({
         gap: token.sizeSM,
         padding: `0 ${token.paddingSM}px`,
         height: '100%',
-        fontSize: token.fontSizeXL,
+        fontSize: token.sizeLG,
 
         button: {
             '-webkit-app-region': 'no-drag'
@@ -72,6 +85,11 @@ export default createStyles(({ token }) => ({
             right: 0,
             background: `linear-gradient(to left, ${token.colorBgContainer}ff, ${token.colorBgContainer}00)`
         }
+    },
+
+    settings: {
+        margin: `0 ${token.marginSM}px`,
+        '-webkit-app-region': 'no-drag'
     },
 
     titleBarRight: {
