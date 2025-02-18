@@ -1,17 +1,24 @@
+import { Router } from '@remix-run/router'
 import { init } from '$/util/common'
 import CommonFramework from '$/CommonFramework'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
-import { getRouter } from '%/router'
 
-export const AppContext = createContext({
+export const AppContext = createContext<{
+    router?: Router
+    refreshRouter: () => void
+}>({
     refreshRouter: () => {}
 })
 
-const App = () => {
+interface AppProps {
+    getRouterFunc: () => Router
+}
+
+const App = ({ getRouterFunc }: AppProps) => {
     const [messageInstance, messageHolder] = message.useMessage()
     const [notificationInstance, notificationHolder] = notification.useNotification()
     const [modalInstance, modalHolder] = AntdModal.useModal()
-    const [routerState, setRouterState] = useState(getRouter)
+    const [routerState, setRouterState] = useState(getRouterFunc)
 
     useEffect(() => {
         init(messageInstance, notificationInstance, modalInstance)
@@ -21,8 +28,9 @@ const App = () => {
         <CommonFramework>
             <AppContext.Provider
                 value={{
+                    router: routerState,
                     refreshRouter: () => {
-                        setRouterState(getRouter())
+                        setRouterState(getRouterFunc())
                     }
                 }}
             >

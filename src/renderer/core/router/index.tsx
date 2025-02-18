@@ -10,7 +10,7 @@ const root: RouteJsonObject[] = [
     {
         path: '/',
         absolutePath: '/',
-        component: lazy(() => import('@/AuthRoute')),
+        component: lazy(() => import('$/AuthRoute')),
         children: [
             {
                 path: 'register',

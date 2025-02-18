@@ -73,11 +73,24 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
         IpcEvents.window.tab.create,
         (_, type: TabType, args?: Record<string, string | number | boolean>) => {
             if (
-                (type === 'main' &&
-                    getGlobalObject().mainWindowViews.some(({ key }) => key === 'mainView')) ||
-                (type === 'settings' &&
-                    getGlobalObject().mainWindowViews.some(({ key }) => key === 'settingsView'))
+                type === 'core' &&
+                getGlobalObject().mainWindowViews.some(({ key }) => key === 'coreView')
             ) {
+                switchTab(mainWindow, 'coreView')
+                return
+            }
+            if (
+                type === 'settings' &&
+                getGlobalObject().mainWindowViews.some(({ key }) => key === 'settingsView')
+            ) {
+                switchTab(mainWindow, 'settingsView')
+                return
+            }
+            if (
+                type === 'sign' &&
+                getGlobalObject().mainWindowViews.some(({ key }) => key === 'signView')
+            ) {
+                switchTab(mainWindow, 'signView')
                 return
             }
 
@@ -90,10 +103,10 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
                 persistent: boolean
             } => {
                 switch (type) {
-                    case 'main':
+                    case 'core':
                         return {
-                            viewId: 'mainView',
-                            preload: 'main.js',
+                            viewId: 'coreView',
+                            preload: 'core.js',
                             menuWidth: 0,
                             title: 'Oxygen Toolbox',
                             pin: true,
@@ -105,6 +118,15 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
                             preload: 'settings.js',
                             menuWidth: 0,
                             title: 'Settings',
+                            pin: true,
+                            persistent: false
+                        }
+                    case 'sign':
+                        return {
+                            viewId: 'signView',
+                            preload: 'sign.js',
+                            menuWidth: 0,
+                            title: 'Sign',
                             pin: true,
                             persistent: false
                         }

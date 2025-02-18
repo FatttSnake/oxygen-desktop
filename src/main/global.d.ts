@@ -16,7 +16,7 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 
-type TabType = 'main' | 'settings' | 'tool'
+type TabType = 'core' | 'settings' | 'sign' | 'tool'
 
 interface Tab {
     key: string

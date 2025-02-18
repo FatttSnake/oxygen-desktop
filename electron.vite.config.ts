@@ -17,8 +17,9 @@ export default defineConfig({
             lib: {
                 entry: [
                     'src/preload/frame.ts',
-                    'src/preload/main.ts',
+                    'src/preload/core.ts',
                     'src/preload/settings.ts',
+                    'src/preload/sign.ts',
                     'src/preload/tool.ts'
                 ]
             }
@@ -95,8 +96,9 @@ export default defineConfig({
                 $: fileURLToPath(new URL('./src/renderer/common', import.meta.url)),
                 '#': fileURLToPath(new URL('./src/renderer/frame', import.meta.url)),
                 '-': fileURLToPath(new URL('./src/renderer/independentFrame', import.meta.url)),
-                '@': fileURLToPath(new URL('./src/renderer/main', import.meta.url)),
-                '%': fileURLToPath(new URL('./src/renderer/settings', import.meta.url))
+                '%': fileURLToPath(new URL('./src/renderer/settings', import.meta.url)),
+                '+': fileURLToPath(new URL('./src/renderer/sign', import.meta.url)),
+                '@': fileURLToPath(new URL('./src/renderer/core', import.meta.url))
             }
         }
     }

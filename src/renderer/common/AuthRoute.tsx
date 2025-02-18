@@ -1,7 +1,8 @@
+import { Location } from 'react-router'
 import { PRODUCTION_NAME } from '$/constants/common.constants'
-import { setPageTitle } from '$/util/common'
-import { getRedirectUrl } from '$/util/route'
+import { setPageTitle, message } from '$/util/common'
 import { getLoginStatus, getVerifyStatus_async } from '$/util/auth'
+import { navigateToLocation } from '$/util/navigation'
 
 const AuthRoute = () => {
     const navigate = useNavigate()
@@ -14,11 +15,12 @@ const AuthRoute = () => {
     const isLogin = getLoginStatus()
     const isVerify = getVerifyStatus_async()
 
-    useEffect(() => {
-        oxygenApi.mainView.url.onOpen((url) => {
-            navigate(url)
-        })
-    }, [])
+    const [prevLocation, setPrevLocation] = useState<Location>()
+    useBlocker(({ currentLocation }) => {
+        console.log('currentLocation', currentLocation)
+        setPrevLocation(currentLocation)
+        return false
+    })
 
     return useMemo(() => {
         setPageTitle(
@@ -29,12 +31,12 @@ const AuthRoute = () => {
 
         if (matches.some(({ handle }) => (handle as RouteHandle)?.auth)) {
             if (!isLogin) {
-                return (
-                    <Navigate
-                        replace
-                        to={getRedirectUrl('/login', `${lastMatch.pathname}${location.search}`)}
-                    />
-                )
+                console.log('qwe')
+                void message.warning({ key: 'no-login', content: '未登录' })
+                setTimeout(() => {
+                    navigateToLocation(navigate, prevLocation)
+                })
+                return undefined
             }
             if (isVerify === false && lastMatch.pathname !== '/verify') {
                 return <Navigate to={'/verify'} />

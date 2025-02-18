@@ -9,8 +9,9 @@
       "$/*": ["./src/renderer/common/*"],
       "#/*": ["./src/renderer/frame/*"],
       "-/*": ["./src/renderer/independentFrame/*"],
-      "@/*": ["./src/renderer/main/*"],
-      "%/*": ["./src/renderer/settings/*"]
+      "%/*": ["./src/renderer/settings/*"],
+      "+/*": ["./src/renderer/sign/*"],
+      "@/*": ["./src/renderer/core/*"]
     },
 
     /* Bundler mode */

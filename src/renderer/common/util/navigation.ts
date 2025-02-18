@@ -1,5 +1,9 @@
-import { NavigateFunction, NavigateOptions } from 'react-router'
+import { Location, NavigateFunction, NavigateOptions } from 'react-router'
 import { getRedirectUrl } from '$/util/route'
+
+export const navigateToLocation = (navigate: NavigateFunction, location?: Location) => {
+    location ? navigate(`${location.pathname}${location.search}`) : navigateToRoot(navigate)
+}
 
 export const navigateToRoot = (navigate: NavigateFunction, options?: NavigateOptions) => {
     navigate('/', options)

@@ -51,8 +51,8 @@ const TitleBar = () => {
         })
         oxygenApi.window.tab.onSwitch((key) => setActiveTab(key))
         // oxygenApi.window.tab.create('')
-        if (!tabs.some(({ key }) => key === 'mainView')) {
-            oxygenApi.window.tab.create('main')
+        if (!tabs.some(({ key }) => key === 'coreView')) {
+            oxygenApi.window.tab.create('core')
         }
     }, [])
 

@@ -1,10 +1,10 @@
 import CommonFramework from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
-import TitleBar from '#/TitleBar'
+import TitleBar from '#/components/TitleBar'
 import ToolMenu from '#/menus/ToolMenu'
-import MenuFramework from '#/MenuFramework'
+import MenuFramework from '#/components/MenuFramework'
 
-const App = () => {
+const Frame = () => {
     return (
         <CommonFramework>
             <FitFullscreen className={'flex-vertical'}>
@@ -17,4 +17,4 @@ const App = () => {
     )
 }
 
-export default App
+export default Frame

@@ -32,10 +32,5 @@ export const IpcEvents = {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
         }
-    },
-    mainView: {
-        url: {
-            open: 'mainView:url:open'
-        }
     }
 }

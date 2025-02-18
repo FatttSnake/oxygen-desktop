@@ -12,17 +12,12 @@ const IpcEvents = {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
         }
-    },
-    mainView: {
-        url: {
-            open: 'mainView:url:open'
-        }
     }
 }
 
 const oxygenApi = {
     platform: process.platform,
-    renderer: 'main',
+    renderer: 'core',
 
     window: {
         theme: {
@@ -40,12 +35,6 @@ const oxygenApi = {
                 ipcRenderer.on(IpcEvents.sidebar.collapse.update, (_, value: boolean) =>
                     callback(value)
                 )
-        }
-    },
-    mainView: {
-        url: {
-            onOpen: (callback: (url: string) => void) =>
-                ipcRenderer.on(IpcEvents.mainView.url.open, (_, url: string) => callback(url))
         }
     }
 }

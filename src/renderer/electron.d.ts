@@ -10,9 +10,9 @@ declare global {
         windowControlsOverlay?: WindowControlsOverlay
     }
 
-    type Renderer = 'frame' | 'menu' | 'main' | 'settings' | 'tool'
+    type Renderer = 'frame' | 'core' | 'settings' | 'sign' | 'tool'
 
-    type TabType = 'main' | 'settings' | 'tool'
+    type TabType = 'core' | 'settings' | 'sign' | 'tool'
 
     interface OxygenAPI {
         platform: NodeJS.Platform
@@ -53,11 +53,6 @@ declare global {
                 get: () => Promise<boolean>
                 update: (value: boolean) => void
                 onUpdate: (callback: (value: boolean) => void) => void
-            }
-        }
-        mainView: {
-            url: {
-                onOpen: (callback: (url: string) => void) => void
             }
         }
     }
