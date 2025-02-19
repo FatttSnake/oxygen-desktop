@@ -1,3 +1,4 @@
+import { matchRoutes } from 'react-router'
 import { hasPathPermission, hasPermission } from '$/util/auth'
 
 export const getRedirectUrl = (path: string, redirectUrl: string): string => {
@@ -72,4 +73,10 @@ export const setTitle = (jsonObject: RouteJsonObject[], title: string): RouteJso
 
         return value
     })
+}
+
+export const checkAuth = (routes: RouteObject[], path: string) => {
+    return !!matchRoutes(routes, path)?.some(
+        ({ route: { handle } }) => (handle as RouteHandle).auth
+    )
 }
