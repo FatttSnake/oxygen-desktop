@@ -212,9 +212,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
         updateTab(mainWindow, tabs)
     })
 
-    ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => {
-        return switchTab(mainWindow, key)
-    })
+    ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => switchTab(mainWindow, key))
 
     ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => {
         removeTab(mainWindow, key)
@@ -222,5 +220,47 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
 
     ipcMain.on(IpcEvents.window.tab.independent, (_, key: string) => {
         console.warn('Not Supported', key)
+    })
+
+    ipcMain.handle(IpcEvents.account.loginAccount.get, () => settings.account.getLoginAccount())
+
+    ipcMain.on(IpcEvents.account.loginAccount.update, (_, value?: string) =>
+        settings.account.saveLoginAccount(value)
+    )
+
+    ipcMain.handle(IpcEvents.account.refreshToken.get, () => settings.account.getRefreshToken())
+
+    ipcMain.on(IpcEvents.account.refreshToken.update, (_, value?: string) => {
+        settings.account.saveRefreshToken(value)
+        mainWindow.webContents.send(IpcEvents.account.refreshToken.update, value)
+        getGlobalObject().mainWindowViews.forEach((item) => {
+            if (item.pin) {
+                item.view.webContents.send(IpcEvents.account.refreshToken.update, value)
+            }
+        })
+    })
+
+    ipcMain.handle(IpcEvents.account.accessToken.get, () => settings.account.getAccessToken())
+
+    ipcMain.on(IpcEvents.account.accessToken.update, (_, value?: string) => {
+        settings.account.saveAccessToken(value)
+        mainWindow.webContents.send(IpcEvents.account.accessToken.update, value)
+        getGlobalObject().mainWindowViews.forEach((item) => {
+            if (item.pin) {
+                item.view.webContents.send(IpcEvents.account.accessToken.update, value)
+            }
+        })
+    })
+
+    ipcMain.handle(IpcEvents.account.userInfo.get, () => settings.account.getUserInfo())
+
+    ipcMain.on(IpcEvents.account.userInfo.update, (_, value?: UserWithPowerInfoVo) => {
+        settings.account.saveUserInfo(value)
+        mainWindow.webContents.send(IpcEvents.account.userInfo.update, value)
+        getGlobalObject().mainWindowViews.forEach((item) => {
+            if (item.pin) {
+                item.view.webContents.send(IpcEvents.account.userInfo.update, value)
+            }
+        })
     })
 }

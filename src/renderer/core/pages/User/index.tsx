@@ -7,7 +7,7 @@ import {
 } from '$/constants/common.constants'
 import { message, notification, modal } from '$/util/common'
 import { utcToLocalTime } from '$/util/datetime'
-import { getUserInfo, removeToken } from '$/util/auth'
+import { getUserInfo, removeAllToken } from '$/util/auth'
 import { r_sys_user_info_change_password, r_sys_user_info_update } from '$/services/system'
 import {
     r_auth_two_factor_create,
@@ -180,7 +180,7 @@ const User = () => {
                                 const response = res.data
                                 switch (response.code) {
                                     case DATABASE_UPDATE_SUCCESS:
-                                        removeToken()
+                                        removeAllToken()
                                         notification.info({
                                             message: '已退出登录',
                                             icon: (

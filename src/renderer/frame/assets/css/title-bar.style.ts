@@ -87,6 +87,25 @@ export default createStyles(({ token }) => ({
         }
     },
 
+    avatar: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: token.sizeXL,
+        height: token.sizeXL,
+        fontSize: token.sizeMS,
+        border: `2px ${token.colorBorder} solid`,
+        borderRadius: '50%',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        '-webkit-app-region': 'no-drag',
+
+        img: {
+            width: '100%',
+            height: '100%'
+        }
+    },
+
     settings: {
         margin: `0 ${token.marginSM}px`,
         '-webkit-app-region': 'no-drag'

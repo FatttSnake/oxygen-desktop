@@ -13,33 +13,58 @@ export const getQueryVariable = (variable: string) => {
 export const setCookie = (
     name: string,
     value: string,
-    daysToLive: number | null,
-    path: string | null
+    options: {
+        daysToLive?: number | null
+        path?: string | null
+        domain?: string | null
+        secure?: boolean
+        sameSite?: 'Strict' | 'Lax' | 'None' | string
+    } = {}
 ) => {
     let cookie = `${name}=${encodeURIComponent(value)}`
-
-    if (typeof daysToLive === 'number') {
-        cookie = `${cookie}; max-age=${daysToLive * 24 * 60 * 60}`
+    if (typeof options.daysToLive === 'number') {
+        cookie += `; max-age=${options.daysToLive * 24 * 60 * 60}`
     }
+    if (options.path) {
+        cookie += `; path=${options.path}`
+    }
+    if (options.domain) {
+        cookie += `; domain=${options.domain}`
+    }
+    let needSecure = options.secure
+    if (options.sameSite) {
+        const sameSite = options.sameSite.toLowerCase()
+        const validValues = ['strict', 'lax', 'none']
 
-    if (typeof path === 'string') {
-        cookie = `${cookie}; path=${path}`
+        if (validValues.includes(sameSite)) {
+            const formatted = sameSite.charAt(0).toUpperCase() + sameSite.slice(1)
+            cookie += `; SameSite=${formatted}`
+
+            // 自动为 None 添加 Secure
+            if (sameSite === 'none') {
+                needSecure = true
+            }
+        } else {
+            console.warn(`Invalid SameSite value: ${options.sameSite}`)
+        }
+    }
+    if (needSecure) {
+        cookie += '; Secure'
     }
 
     document.cookie = cookie
 }
 
 export const getCookie = (name: string) => {
-    const cookieArr = document.cookie.split(';')
+    const cookies = document.cookie.split(';')
 
-    for (const cookie of cookieArr) {
-        const cookiePair = cookie.split('=')
-        if (cookiePair[0].trim() === name) {
-            return decodeURIComponent(cookiePair[1])
-        }
-    }
+    return parseCookie(cookies, name)
+}
 
-    return null
+export const parseCookie = (cookies: string[] | undefined, name: string) => {
+    if (!cookies) return null
+    const target = cookies.find((c) => c.startsWith(`${name}=`))
+    return target ? decodeURIComponent(target.split(';')[0].split('=')[1]) : null
 }
 
 export const removeCookie = (name: string) => {

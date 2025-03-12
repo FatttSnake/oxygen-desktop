@@ -1,11 +1,11 @@
-import useStyles from '@/assets/css/pages/sign/index.style'
+import useStyles from '+/assets/css/index.style'
 import FitFullscreen from '$/components/FitFullscreen'
 import FitCenter from '$/components/FitCenter'
 import FlexBox from '$/components/FlexBox'
-import SignUp from '@/pages/Sign/SignUp'
-import Verify from '@/pages/Sign/Verify'
-import Forget from '@/pages/Sign/Forget'
-import SignIn from '@/pages/Sign/SignIn'
+import SignUp from '+/pages/SignUp'
+import Verify from '+/pages/Verify'
+import Forget from '+/pages/Forget'
+import SignIn from '+/pages/SignIn'
 
 const Sign = () => {
     const { styles, cx } = useStyles()

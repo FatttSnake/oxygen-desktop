@@ -1,6 +1,6 @@
 import Icon from '@ant-design/icons'
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
-import useStyles from '@/assets/css/pages/sign/sign-up.style'
+import useStyles from '+/assets/css/sign-up.style'
 import {
     DATABASE_DUPLICATE_KEY,
     H_CAPTCHA_SITE_KEY,
@@ -9,7 +9,7 @@ import {
     SYSTEM_MATCH_SENSITIVE_WORD
 } from '$/constants/common.constants'
 import { message } from '$/util/common'
-import { getLoginStatus, setToken } from '$/util/auth'
+import { getLoginStatus, setAccessToken, setRefreshToken } from '$/util/auth'
 import { navigateToLogin } from '$/util/navigation'
 import { r_auth_register, r_auth_resend } from '$/services/auth'
 import { CommonContext } from '$/CommonFramework'
@@ -81,7 +81,9 @@ const SignUp = () => {
                 const response = res.data
                 switch (response.code) {
                     case PERMISSION_REGISTER_SUCCESS:
-                        setToken(response.data?.token ?? '')
+                        oxygenApi.account.loginAccount.update(registerParam.username)
+                        setRefreshToken(response.data!.refreshToken)
+                        setAccessToken(response.data!.accessToken)
                         void message.success('恭喜，您快要完成注册了')
                         setIsFinish(true)
                         break

@@ -32,5 +32,23 @@ export const IpcEvents = {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
         }
+    },
+    account: {
+        loginAccount: {
+            get: 'account:loginAccount:get',
+            update: 'account:loginAccount:update'
+        },
+        accessToken: {
+            get: 'account:accessToken:get',
+            update: 'account:accessToken:update'
+        },
+        refreshToken: {
+            get: 'account:refreshToken:get',
+            update: 'account:refreshToken:update'
+        },
+        userInfo: {
+            get: 'account:userInfo:get',
+            update: 'account:userInfo:update'
+        }
     }
 }

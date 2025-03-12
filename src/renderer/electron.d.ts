@@ -51,13 +51,32 @@ declare global {
             }
             collapse: {
                 get: () => Promise<boolean>
-                update: (value: boolean) => void
                 onUpdate: (callback: (value: boolean) => void) => void
+                update: (value: boolean) => void
+            }
+        }
+        account: {
+            loginAccount: {
+                get: () => Promise<string | undefined>
+                update: (value?: string) => void
+            }
+            accessToken: {
+                get: () => Promise<string | undefined>
+                onUpdate: (callback: (value?: string) => void) => void
+                update: (value?: string) => void
+            }
+            refreshToken: {
+                get: () => Promise<string | undefined>
+                onUpdate: (callback: (value?: string) => void) => void
+                update: (value?: string) => void
+            }
+            userInfo: {
+                get: () => Promise<UserWithPowerInfoVo | undefined>
+                onUpdate: (callback: (value?: UserWithPowerInfoVo) => void) => void
+                update: (value?: UserWithPowerInfoVo) => void
             }
         }
     }
-
-    class Notify extends Notification {}
 
     declare const oxygenApi: OxygenAPI
 }

@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import Frame from '#/Frame'
 import Settings from '%/Settings'
 import Core from '@/Core'
+import Sign from '+/Sign'
 
 const getComponent = () => {
     switch (oxygenApi.renderer) {
@@ -10,6 +11,8 @@ const getComponent = () => {
             return <Frame />
         case 'settings':
             return <Settings />
+        case 'sign':
+            return <Sign />
         default:
             return <Core />
     }

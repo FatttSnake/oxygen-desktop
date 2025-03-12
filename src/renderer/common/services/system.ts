@@ -1,4 +1,5 @@
 import { Key } from 'react'
+import { SHA512 } from 'crypto-js'
 import {
     URL_SYS_USER_INFO,
     URL_SYS_USER,
@@ -35,7 +36,10 @@ export const r_sys_user_info_update = (param: UserInfoUpdateParam) =>
     request.patch(URL_SYS_USER_INFO, param)
 
 export const r_sys_user_info_change_password = (param: UserChangePasswordParam) =>
-    request.post(URL_SYS_USER_INFO, param)
+    request.post(URL_SYS_USER_INFO, {
+        originalPassword: SHA512(param.originalPassword).toString(),
+        newPassword: SHA512(param.newPassword).toString()
+    } as UserChangePasswordParam)
 
 export const r_sys_user_get = (param: UserGetParam) =>
     request.get<PageVo<UserWithRoleInfoVo>>(URL_SYS_USER, param)
@@ -45,7 +49,10 @@ export const r_sys_user_add = (param: UserAddEditParam) => request.post(URL_SYS_
 export const r_sys_user_update = (param: UserAddEditParam) => request.put(URL_SYS_USER, param)
 
 export const r_sys_user_change_password = (param: UserUpdatePasswordParam) =>
-    request.patch(URL_SYS_USER, param)
+    request.patch(URL_SYS_USER, {
+        ...param,
+        password: SHA512(param.password).toString()
+    } as UserUpdatePasswordParam)
 
 export const r_sys_user_delete = (id: string) => request.delete(`${URL_SYS_USER}/${id}`)
 

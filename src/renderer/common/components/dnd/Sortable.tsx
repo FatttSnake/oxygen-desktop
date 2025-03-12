@@ -10,9 +10,18 @@ interface SortableProps extends PropsWithChildren {
     isOver?: boolean
     className?: string
     hasDragHandle?: boolean
+    removeTabIndex?: boolean
 }
 
-const Sortable = ({ id, data, isOver, className, hasDragHandle, children }: SortableProps) => {
+const Sortable = ({
+    id,
+    data,
+    isOver,
+    className,
+    hasDragHandle,
+    removeTabIndex,
+    children
+}: SortableProps) => {
     const {
         attributes,
         isDragging,
@@ -59,6 +68,7 @@ const Sortable = ({ id, data, isOver, className, hasDragHandle, children }: Sort
             className={cx(className, isOver ? 'dnd-over-mask' : undefined)}
             {...attributes}
             {...listeners}
+            {...(removeTabIndex ? { tabIndex: undefined } : undefined)}
         >
             {children}
         </div>

@@ -73,7 +73,8 @@ interface Captcha {
 }
 
 interface TokenVo {
-    token: string
+    refreshToken: string
+    accessToken: string
 }
 
 interface UserInfoUpdateParam {

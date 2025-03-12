@@ -4,44 +4,12 @@ import system from '@/router/system'
 import user from '@/router/user'
 import tools from '@/router/tools'
 
-const lazySignPage = lazy(() => import('@/pages/Sign'))
-
 const root: RouteJsonObject[] = [
     {
         path: '/',
         absolutePath: '/',
         component: lazy(() => import('$/AuthRoute')),
         children: [
-            {
-                path: 'register',
-                absolutePath: '/register',
-                id: 'register',
-                component: lazySignPage
-            },
-            {
-                path: 'verify',
-                absolutePath: '/verify',
-                id: 'verify',
-                component: lazySignPage
-            },
-            {
-                path: 'forget',
-                absolutePath: '/forget',
-                id: 'forget',
-                component: lazySignPage
-            },
-            {
-                path: 'login',
-                absolutePath: '/login',
-                id: 'login',
-                component: lazySignPage
-            },
-            {
-                path: 'loading',
-                absolutePath: '/loading',
-                id: 'loading',
-                component: lazy(() => import('$/components/FullscreenLoadingMask'))
-            },
             {
                 path: 'user',
                 absolutePath: '/user',

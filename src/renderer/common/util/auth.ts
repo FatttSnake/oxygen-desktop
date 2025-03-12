@@ -1,100 +1,40 @@
 import _ from 'lodash'
-import {
-    STORAGE_TOKEN_KEY,
-    STORAGE_USER_INFO_KEY,
-    DATABASE_SELECT_SUCCESS
-} from '$/constants/common.constants'
-import { floorNumber, randomColor, randomFloat, randomInt } from '$/util/common'
-import { getLocalStorage, removeLocalStorage, setLocalStorage } from '$/util/browser'
+import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
+import { floorNumber } from '$/util/common'
 import { getFullTitle } from '$/util/route'
 import { r_sys_user_info_get } from '$/services/system'
 
-let captcha: Captcha
+let getUserInfoPromise: Promise<UserWithPowerInfoVo> | null = null
 
-export const setToken = (token: string) => {
-    setLocalStorage(STORAGE_TOKEN_KEY, token)
+let accessToken = await oxygenApi.account?.accessToken?.get()
+oxygenApi.account?.accessToken?.onUpdate((value) => (accessToken = value))
+let refreshToken = await oxygenApi.account?.refreshToken?.get()
+oxygenApi.account?.refreshToken?.onUpdate((value) => (refreshToken = value))
+let userInfo = await oxygenApi.account?.userInfo?.get()
+oxygenApi.account?.userInfo?.onUpdate((value) => (userInfo = value))
+
+export const getAccessToken = () => accessToken
+
+export const setAccessToken = (value: string) => {
+    oxygenApi.account.accessToken.update(value)
+    accessToken = value
 }
 
-export const removeToken = () => {
-    removeLocalStorage(STORAGE_USER_INFO_KEY)
-    removeLocalStorage(STORAGE_TOKEN_KEY)
-}
+export const getRefreshToken = () => refreshToken
 
-export const getToken = () => {
-    return getLocalStorage(STORAGE_TOKEN_KEY)
-}
-
-export const getCaptcha = (width: number, high: number, num: number) => {
-    const CHARTS = '23456789ABCDEFGHJKLMNPRSTUVWXYZabcdefghijklmnpqrstuvwxyz'.split('')
-
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
-
-    ctx.rect(0, 0, width, high)
-    ctx.clip()
-
-    ctx.fillStyle = randomColor(200, 250)
-    ctx.fillRect(0, 0, width, high)
-
-    for (let i = 0.05 * width * high; i > 0; i--) {
-        ctx.fillStyle = randomColor(0, 256)
-        ctx.fillRect(randomInt(0, width), randomInt(0, high), 1, 1)
-    }
-
-    ctx.font = `${high - 4}px Consolas`
-    ctx.fillStyle = randomColor(160, 200)
-    let value = ''
-    for (let i = 0; i < num; i++) {
-        const x = ((width - 10) / num) * i + 5
-        const y = high - 12
-        const r = Math.PI * randomFloat(-0.12, 0.12)
-        const ch = CHARTS[randomInt(0, CHARTS.length)]
-        value += ch
-        ctx.translate(x, y)
-        ctx.rotate(r)
-        ctx.fillText(ch, 0, 0)
-        ctx.rotate(-r)
-        ctx.translate(-x, -y)
-    }
-
-    const base64Src = canvas.toDataURL('image/jpg')
-    return {
-        value,
-        base64Src
-    }
-}
-
-export const getLoginStatus = () => {
-    return getLocalStorage(STORAGE_TOKEN_KEY) !== null
-}
-
-export const getVerifyStatus_async = () => {
-    if (getLocalStorage(STORAGE_USER_INFO_KEY) === null) {
-        return undefined
-    }
-    return (JSON.parse(getLocalStorage(STORAGE_USER_INFO_KEY) as string) as UserWithPowerInfoVo)
-        .verified
-}
-
-export const getUserInfo = async (force = false): Promise<UserWithPowerInfoVo> => {
-    if (getLocalStorage(STORAGE_USER_INFO_KEY) !== null && !force) {
-        return new Promise((resolve) => {
-            resolve(
-                JSON.parse(getLocalStorage(STORAGE_USER_INFO_KEY) as string) as UserWithPowerInfoVo
-            )
-        })
-    }
-    return requestUserInfo()
+export const setRefreshToken = (value: string) => {
+    oxygenApi.account.refreshToken.update(value)
+    refreshToken = value
 }
 
 export const requestUserInfo = async () => {
-    let user: UserWithPowerInfoVo | null
+    let user: UserWithPowerInfoVo | undefined
 
     await r_sys_user_info_get().then((value) => {
         const response = value.data
         if (response.code === DATABASE_SELECT_SUCCESS) {
-            user = response.data
-            setLocalStorage(STORAGE_USER_INFO_KEY, JSON.stringify(user))
+            user = response.data == null ? undefined : response.data
+            setUserInfo(user)
         }
     })
 
@@ -106,37 +46,63 @@ export const requestUserInfo = async () => {
     })
 }
 
+export const getUserInfo = async (force = false): Promise<UserWithPowerInfoVo> => {
+    if (userInfo && !force) {
+        return new Promise((resolve) => {
+            resolve(userInfo!)
+        })
+    }
+    return requestUserInfo()
+}
+
+export const getUserInfoQueue = async (): Promise<UserWithPowerInfoVo> => {
+    if (!getUserInfoPromise) {
+        getUserInfoPromise = getUserInfo()
+    }
+
+    return await getUserInfoPromise
+}
+
+export const setUserInfo = async (value?: UserWithPowerInfoVo) => {
+    oxygenApi.account.userInfo.update(value)
+    userInfo = value
+}
+
+export const removeAllToken = () => {
+    oxygenApi.account.accessToken.update()
+    accessToken = undefined
+    oxygenApi.account.refreshToken.update()
+    refreshToken = undefined
+    oxygenApi.account.userInfo.update()
+    userInfo = undefined
+}
+
+export const getLoginStatus = () => refreshToken !== undefined
+
+export const getVerifyStatus_async = () => userInfo?.verified
+
 export const getNickname = async () => {
-    const user = await getUserInfo()
+    const user = await getUserInfoQueue()
 
     return user.userInfo.nickname
 }
 
 export const getAvatar = async () => {
-    const user = await getUserInfo()
+    const user = await getUserInfoQueue()
 
     return user.userInfo.avatar
 }
 
 export const getUsername = async () => {
-    const user = await getUserInfo()
+    const user = await getUserInfoQueue()
 
     return user.username
 }
 
 export const getUserId = async () => {
-    const user = await getUserInfo()
+    const user = await getUserInfoQueue()
 
     return user.id
-}
-
-export const getCaptchaSrc = () => {
-    captcha = getCaptcha(300, 150, 4)
-    return captcha.base64Src
-}
-
-export const verifyCaptcha = (value: string) => {
-    return captcha.value.toLowerCase() === value.replace(/\s*/g, '').toLowerCase()
 }
 
 export const powerListToPowerTree = (
@@ -238,46 +204,22 @@ const parentToTree = (data: _DataNode[]): _DataNode[] => {
 }
 
 export const getPermissionPath = (): string[] => {
-    const s = getLocalStorage(STORAGE_USER_INFO_KEY)
-    if (s === null) {
+    if (!userInfo) {
         return []
     }
 
-    const user = JSON.parse(s) as UserWithPowerInfoVo
-    const paths: string[] = []
-    user.menus.forEach((menu) => {
-        paths.push(menu.url)
-    })
-
-    return paths
+    return userInfo.menus.map((menu) => menu.url)
 }
 
-export const hasPathPermission = (path: string) => {
-    let flag = false
-    getPermissionPath().forEach((value) => {
-        if (RegExp(value).test(path)) {
-            flag = true
-            return
-        }
-    })
-    return flag
-}
+export const hasPathPermission = (path: string) =>
+    getPermissionPath().some((value) => RegExp(value).test(path))
 
 export const getPermission = (): string[] => {
-    const s = getLocalStorage(STORAGE_USER_INFO_KEY)
-    if (s === null) {
+    if (!userInfo) {
         return []
     }
 
-    const user = JSON.parse(s) as UserWithPowerInfoVo
-    const operationCodes: string[] = []
-    user.operations.forEach((operation) => {
-        operationCodes.push(operation.code)
-    })
-
-    return operationCodes
+    return userInfo.operations.map((operation) => operation.code)
 }
 
-export const hasPermission = (operationCode: string) => {
-    return getPermission().indexOf(operationCode) !== -1
-}
+export const hasPermission = (operationCode: string) => getPermission().includes(operationCode)

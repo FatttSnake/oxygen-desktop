@@ -1,4 +1,4 @@
-import useStyles from '@/assets/css/pages/sign/verify.style'
+import useStyles from '+/assets/css/verify.style'
 import {
     PERMISSION_ACCOUNT_NEED_INIT,
     PERMISSION_NO_VERIFICATION_REQUIRED,
@@ -8,16 +8,14 @@ import {
 } from '$/constants/common.constants'
 import { message } from '$/util/common'
 import { getLoginStatus, getUserInfo, requestUserInfo } from '$/util/auth'
-import { navigateToLogin, navigateToRedirect, navigateToRepository } from '$/util/navigation'
+import { navigateToLogin, navigateToRepository } from '$/util/navigation'
 import { r_auth_resend, r_auth_verify } from '$/services/auth'
 import { r_api_avatar_random_base64 } from '$/services/api/avatar'
 import FitCenter from '$/components/FitCenter'
 import FlexBox from '$/components/FlexBox'
-import { AppContext } from '@/App'
 
 const Verify = () => {
     const { styles, theme } = useStyles()
-    const { refreshRouter } = useContext(AppContext)
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
     const [hasCode, setHasCode] = useState(true)
@@ -128,8 +126,7 @@ const Verify = () => {
                 case PERMISSION_VERIFY_SUCCESS:
                     message.success('恭喜你，完成了').then(() => {
                         void requestUserInfo().then(() => {
-                            refreshRouter()
-                            navigateToRedirect(navigate, searchParams, '/repository')
+                            oxygenApi.window.tab.close('signView')
                         })
                     })
                     break

@@ -1,6 +1,6 @@
 import Icon from '@ant-design/icons'
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
-import useStyles from '@/assets/css/pages/sign/sign-in.style'
+import useStyles from '+/assets/css/sign-in.style'
 import {
     H_CAPTCHA_SITE_KEY,
     PERMISSION_LOGIN_SUCCESS,
@@ -11,27 +11,20 @@ import {
     PERMISSION_USERNAME_NOT_FOUND,
     SYSTEM_INVALID_CAPTCHA_CODE
 } from '$/constants/common.constants'
-import { message, notification, modal } from '$/util/common'
-import { getUserInfo, setToken } from '$/util/auth'
+import { message, modal } from '$/util/common'
 import { utcToLocalTime } from '$/util/datetime'
-import {
-    navigateToForget,
-    navigateToRedirect,
-    navigateToRegister,
-    navigateToRoot
-} from '$/util/navigation'
+import { getUserInfo, setAccessToken, setRefreshToken } from '$/util/auth'
+import { navigateToForget, navigateToRegister } from '$/util/navigation'
 import { r_auth_login } from '$/services/auth'
 import { CommonContext } from '$/CommonFramework'
 import FitCenter from '$/components/FitCenter'
 import FlexBox from '$/components/FlexBox'
-import { AppContext } from '@/App'
 
 const SignIn = () => {
     const { styles } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
-    const { refreshRouter } = useContext(AppContext)
     const navigate = useNavigate()
-    const [searchParams] = useSearchParams()
+    const [loginForm] = AntdForm.useForm<LoginParam>()
     const turnstileRef = useRef<TurnstileInstance>()
     const [refreshTime, setRefreshTime] = useState(0)
     const [twoFactorForm] = AntdForm.useForm<{ twoFactorCode: string }>()
@@ -50,6 +43,9 @@ const SignIn = () => {
                 }
             }
         })
+        oxygenApi.account.loginAccount
+            .get()
+            .then((value) => loginForm.setFieldValue('account', value))
     }, [location.pathname])
 
     useEffect(() => {
@@ -83,33 +79,23 @@ const SignIn = () => {
                 const { code, data } = response
                 switch (code) {
                     case PERMISSION_LOGIN_SUCCESS:
-                        setToken(data?.token ?? '')
-                        message.success('登录成功').then(() => {
-                            void getUserInfo().then((user) => {
-                                refreshRouter()
-                                navigateToRedirect(navigate, searchParams, '/repository')
-
-                                notification.success({
-                                    message: '欢迎回来',
-                                    description: (
-                                        <>
-                                            <span>
-                                                你好 <strong>{user.userInfo.nickname}</strong>
-                                            </span>
-                                            <br />
-                                            <span>
-                                                最近登录：
-                                                {user.lastLoginTime
-                                                    ? `${utcToLocalTime(user.lastLoginTime)}【${
-                                                          user.lastLoginIp
-                                                      }】`
-                                                    : '无'}
-                                            </span>
-                                        </>
-                                    ),
-                                    placement: 'topRight'
-                                })
+                        oxygenApi.account.loginAccount.update(loginParam.account)
+                        setRefreshToken(data!.refreshToken)
+                        setAccessToken(data!.accessToken)
+                        void getUserInfo().then((user) => {
+                            new Notification(`欢迎回来，${user.userInfo.nickname}`, {
+                                body: `最近登录：${
+                                    user.lastLoginTime
+                                        ? `${utcToLocalTime(user.lastLoginTime)}【${
+                                              user.lastLoginIp
+                                          }】`
+                                        : '无'
+                                }`
                             })
+                        })
+                        void message.success('登录成功').then(() => {
+                            void oxygenApi.window.tab.switch('coreView')
+                            oxygenApi.window.tab.close('signView')
                         })
                         break
                     case PERMISSION_NEED_TWO_FACTOR:
@@ -208,7 +194,12 @@ const SignIn = () => {
                     <div className={styles.primary}>欢迎回来</div>
                     <div className={styles.secondary}>Welcome back</div>
                 </div>
-                <AntdForm autoComplete={'on'} onFinish={handleOnFinish} className={styles.form}>
+                <AntdForm
+                    form={loginForm}
+                    autoComplete={'on'}
+                    onFinish={handleOnFinish}
+                    className={styles.form}
+                >
                     <AntdForm.Item
                         name={'account'}
                         rules={[
@@ -250,15 +241,7 @@ const SignIn = () => {
                         />
                     </AntdForm.Item>
                     <FlexBox direction={'horizontal'} className={styles.addition}>
-                        <a
-                            onClick={() => {
-                                setTimeout(() => {
-                                    navigateToRoot(navigate)
-                                })
-                            }}
-                        >
-                            返回主页
-                        </a>
+                        <a />
                         <a
                             onClick={() => {
                                 navigateToForget(navigate, location.search, { replace: true })

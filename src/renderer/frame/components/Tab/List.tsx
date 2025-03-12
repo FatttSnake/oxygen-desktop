@@ -131,6 +131,7 @@ const List = ({
                                             data={tab}
                                             isOver={independentItem === tab.key}
                                             className={styles.sortable}
+                                            removeTabIndex
                                         >
                                             <Item
                                                 icon={tab.icon}

@@ -1,6 +1,6 @@
 import Icon from '@ant-design/icons'
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
-import useStyles from '@/assets/css/pages/sign/forget.style'
+import useStyles from '+/assets/css/forget.style'
 import {
     H_CAPTCHA_SITE_KEY,
     PERMISSION_FORGET_SUCCESS,
@@ -263,19 +263,20 @@ const Forget = () => {
                     ) : (
                         <div className={styles.success}>恭喜你，密码已更新，请重新登录。</div>
                     )}
-
-                    <div className={styles.footer}>
-                        找到了？
-                        <a
-                            onClick={() =>
-                                navigateToLogin(navigate, location.search, undefined, {
-                                    replace: true
-                                })
-                            }
-                        >
-                            登录
-                        </a>
-                    </div>
+                    <AntdForm>
+                        <div className={styles.footer}>
+                            找到了？
+                            <a
+                                onClick={() =>
+                                    navigateToLogin(navigate, location.search, undefined, {
+                                        replace: true
+                                    })
+                                }
+                            >
+                                登录
+                            </a>
+                        </div>
+                    </AntdForm>
                 </div>
             </FlexBox>
         </FitCenter>

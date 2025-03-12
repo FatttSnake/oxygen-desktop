@@ -536,7 +536,6 @@ const HideScrollbar = forwardRef<HideScrollbarElement, HideScrollbarProps>(
                 <div
                     ref={rootRef}
                     className={`${styles.hideScrollbarSelection}${className ? ` ${className}` : ''}`}
-                    tabIndex={0}
                     style={{
                         width: `calc(${maskRef.current?.clientWidth}px + ${verticalScrollbarWidth}px)`,
                         height: `calc(${maskRef.current?.clientHeight}px + ${horizontalScrollbarWidth}px)`,

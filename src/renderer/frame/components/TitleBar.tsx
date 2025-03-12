@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
+import { getAvatar, getLoginStatus, getNickname, getVerifyStatus_async } from '$/util/auth'
 import Tab from '#/components/Tab'
 
 const TitleBar = () => {
@@ -7,6 +8,9 @@ const TitleBar = () => {
     const { x } = navigator.windowControlsOverlay!.getTitlebarAreaRect()
     const [isCollapse, setIsCollapse] = useState(false)
     const [activeTab, setActiveTab] = useState<string>()
+    const [isLogin, setIsLogin] = useState(getLoginStatus)
+    const [nickname, setNickname] = useState('')
+    const [avatar, setAvatar] = useState('')
 
     const [tabs, setTabs] = useState<TabInstance[]>([])
 
@@ -35,6 +39,14 @@ const TitleBar = () => {
         oxygenApi.window.tab.create('tool', { url: '' })
     }
 
+    const handleOnClickUser = () => {
+        if (isLogin && getVerifyStatus_async() == true) {
+            /* empty */
+        } else {
+            oxygenApi.window.tab.create('sign')
+        }
+    }
+
     const handleOnClickSettings = () => {
         oxygenApi.window.tab.create('settings')
     }
@@ -54,6 +66,17 @@ const TitleBar = () => {
         if (!tabs.some(({ key }) => key === 'coreView')) {
             oxygenApi.window.tab.create('core')
         }
+        if (isLogin) {
+            getNickname().then(setNickname)
+            getAvatar().then(setAvatar)
+        }
+        oxygenApi.account.userInfo.onUpdate(() => {
+            setIsLogin(getLoginStatus)
+            if (getLoginStatus()) {
+                getNickname().then(setNickname)
+                getAvatar().then(setAvatar)
+            }
+        })
     }, [])
 
     return (
@@ -83,6 +106,17 @@ const TitleBar = () => {
                     />
                 </div>
 
+                <span
+                    className={styles.avatar}
+                    title={isLogin ? nickname : '登录'}
+                    onClick={handleOnClickUser}
+                >
+                    {isLogin ? (
+                        <img src={`data:image/png;base64,${avatar}`} alt={''} />
+                    ) : (
+                        <Icon viewBox={'-20 0 1024 1024'} component={IconOxygenUser} />
+                    )}
+                </span>
                 <button className={cx(styles.btn, styles.settings)} onClick={handleOnClickSettings}>
                     <Icon component={IconOxygenSetting} />
                 </button>
