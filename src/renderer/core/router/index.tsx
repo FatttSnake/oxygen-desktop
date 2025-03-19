@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { getAuthRoute, mapJsonToRoute, setTitle } from '$/util/route'
 import system from '@/router/system'
-import user from '@/router/user'
 import tools from '@/router/tools'
 
 const root: RouteJsonObject[] = [
@@ -10,15 +9,6 @@ const root: RouteJsonObject[] = [
         absolutePath: '/',
         component: lazy(() => import('$/AuthRoute')),
         children: [
-            {
-                path: 'user',
-                absolutePath: '/user',
-                id: 'userFramework',
-                component: lazy(() => import('@/pages/UserFramework')),
-                children: setTitle(user, '个人中心'),
-                name: '个人中心',
-                auth: true
-            },
             {
                 path: 'system',
                 absolutePath: '/system',

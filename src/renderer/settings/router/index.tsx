@@ -9,12 +9,11 @@ const root: RouteJsonObject[] = [
         component: lazy(() => import('$/AuthRoute')),
         children: [
             {
-                path: 'settings',
-                absolutePath: '/settings',
+                path: '',
+                absolutePath: '/',
                 id: 'settingsFramework',
                 component: lazy(() => import('%/pages/SettingsFramework')),
-                children: setTitle(settings, '设置'),
-                name: '设置'
+                children: setTitle(settings, '设置')
             },
             {
                 path: '*',
