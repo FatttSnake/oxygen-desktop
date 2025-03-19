@@ -5,6 +5,7 @@ import ItemList from '$/components/Sidebar/ItemList'
 import Scroll from '$/components/Sidebar/Scroll'
 import Separate from '$/components/Sidebar/Separate'
 import Submenu from '$/components/Sidebar/Submenu'
+import Group from '$/components/Sidebar/Group'
 
 export const SidebarContext = createContext({ isCollapse: false })
 
@@ -44,5 +45,6 @@ Sidebar.ItemList = ItemList
 Sidebar.Scroll = Scroll
 Sidebar.Separate = Separate
 Sidebar.Submenu = Submenu
+Sidebar.Group = Group
 
 export default Sidebar
