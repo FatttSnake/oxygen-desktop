@@ -378,7 +378,7 @@ const Edit = () => {
                     {formValues?.icon ? (
                         <img
                             src={`data:image/svg+xml;base64,${formValues.icon}`}
-                            alt={'icon'}
+                            alt={''}
                             style={{ width: '100%' }}
                         />
                     ) : (

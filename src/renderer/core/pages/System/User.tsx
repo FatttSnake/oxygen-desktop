@@ -89,7 +89,7 @@ const User = () => {
                         <AntdImage
                             preview={{ mask: <Icon component={IconOxygenEye} /> }}
                             src={`data:image/png;base64,${value}`}
-                            alt={'Avatar'}
+                            alt={''}
                         />
                     }
                     style={{ background: theme.colorBgLayout }}
@@ -778,7 +778,7 @@ const User = () => {
                                 src={`data:image/png;base64,${
                                     isDrawerEdit ? formValues?.avatar : avatar
                                 }`}
-                                alt={'Avatar'}
+                                alt={''}
                             />
                         }
                         size={100}

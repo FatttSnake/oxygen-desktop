@@ -162,12 +162,7 @@ const Verify = () => {
                         >
                             <AntdTooltip title={'点击获取新头像'}>
                                 <AntdAvatar
-                                    src={
-                                        <img
-                                            src={`data:image/png;base64,${avatar}`}
-                                            alt={'Avatar'}
-                                        />
-                                    }
+                                    src={<img src={`data:image/png;base64,${avatar}`} alt={''} />}
                                     size={100}
                                     style={{
                                         background: theme.colorBgLayout,

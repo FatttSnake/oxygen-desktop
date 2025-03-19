@@ -128,7 +128,7 @@ const User = () => {
                                 src={
                                     <img
                                         src={`data:image/png;base64,${userWithInfoVo?.userInfo.avatar}`}
-                                        alt={'Avatar'}
+                                        alt={''}
                                     />
                                 }
                                 size={144}

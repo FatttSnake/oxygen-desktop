@@ -55,7 +55,7 @@ const Item = (props: ItemProps) => {
                     {props.icon && (
                         <div className={styles.icon}>
                             {typeof props.icon === 'string' ? (
-                                <img src={`data:image/svg+xml;base64,${props.icon}`} alt={'icon'} />
+                                <img src={`data:image/svg+xml;base64,${props.icon}`} alt={''} />
                             ) : (
                                 <Icon component={props.icon} />
                             )}

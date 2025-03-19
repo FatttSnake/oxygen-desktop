@@ -58,7 +58,7 @@ const Tools = () => {
                         <AntdImage
                             preview={{ mask: <Icon component={IconOxygenEye} /> }}
                             src={`data:image/svg+xml;base64,${value}`}
-                            alt={'Avatar'}
+                            alt={''}
                         />
                     }
                     style={{ background: theme.colorBgLayout }}
