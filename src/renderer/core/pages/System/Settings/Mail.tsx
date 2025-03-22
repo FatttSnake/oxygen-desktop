@@ -31,7 +31,7 @@ const Mail = () => {
                         form={mailSendForm}
                         ref={() => {
                             setTimeout(() => {
-                                mailSendForm?.getFieldInstance('to').focus()
+                                mailSendForm?.getFieldInstance('to')?.focus()
                             }, 50)
                         }}
                     >

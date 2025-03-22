@@ -348,7 +348,7 @@ const User = () => {
                         wrapperCol={{ span: 18 }}
                         ref={() => {
                             setTimeout(() => {
-                                changePasswordForm?.getFieldInstance('password').focus()
+                                changePasswordForm?.getFieldInstance('password')?.focus()
                             }, 50)
                         }}
                     >

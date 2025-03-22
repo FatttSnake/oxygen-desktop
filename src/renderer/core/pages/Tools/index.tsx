@@ -261,7 +261,7 @@ const Tools = () => {
                     form={upgradeForm}
                     ref={() => {
                         setTimeout(() => {
-                            upgradeForm?.getFieldInstance('toolId').focus()
+                            upgradeForm?.getFieldInstance('toolId')?.focus()
                         }, 50)
                     }}
                     labelCol={{ span: 4 }}

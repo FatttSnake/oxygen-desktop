@@ -480,7 +480,7 @@ const Template = () => {
                         form={addFileForm}
                         ref={() => {
                             setTimeout(() => {
-                                addFileForm?.getFieldInstance('fileName').focus()
+                                addFileForm?.getFieldInstance('fileName')?.focus()
                             }, 50)
                         }}
                     >
@@ -672,7 +672,7 @@ const Template = () => {
                             form={renameFileForm}
                             ref={() => {
                                 setTimeout(() => {
-                                    renameFileForm?.getFieldInstance('fileName').focus()
+                                    renameFileForm?.getFieldInstance('fileName')?.focus()
                                 }, 50)
                             }}
                         >
