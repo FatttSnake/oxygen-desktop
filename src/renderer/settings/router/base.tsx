@@ -19,6 +19,7 @@ const baseSettings: RouteJsonObject[] = [
         name: '账户',
         icon: lazy(() => import('~icons/oxygen/user')),
         menu: true,
+        auth: true,
         titlePostfix: ' - 账户'
     }
 ]

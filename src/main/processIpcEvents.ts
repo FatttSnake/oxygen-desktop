@@ -263,4 +263,11 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
             }
         })
     })
+
+    ipcMain.on(IpcEvents.account.loginStatus.update, (_, isLogin: boolean) => {
+        mainWindow.webContents.send(IpcEvents.account.loginStatus.update, isLogin)
+        getGlobalObject().mainWindowViews.forEach((item) => {
+            item.view.webContents.send(IpcEvents.account.loginStatus.update, isLogin)
+        })
+    })
 }

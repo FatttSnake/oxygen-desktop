@@ -324,16 +324,8 @@ const User = () => {
             void modal.confirm({
                 centered: true,
                 maskClosable: true,
-                icon: <></>,
-                title: (
-                    <>
-                        <Icon
-                            style={{ color: theme.colorPrimary, marginRight: 10 }}
-                            component={IconOxygenSetting}
-                        />
-                        修改用户 {value.username} 的密码
-                    </>
-                ),
+                icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenPassword} />,
+                title: `修改用户 ${value.username} 的密码`,
                 footer: (_, { OkBtn, CancelBtn }) => (
                     <>
                         <OkBtn />

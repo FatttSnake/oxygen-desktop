@@ -6,12 +6,12 @@ import { r_sys_user_info_get } from '$/services/system'
 
 let getUserInfoPromise: Promise<UserWithPowerInfoVo> | null = null
 
-let accessToken = await oxygenApi.account?.accessToken?.get()
-oxygenApi.account?.accessToken?.onUpdate((value) => (accessToken = value))
-let refreshToken = await oxygenApi.account?.refreshToken?.get()
-oxygenApi.account?.refreshToken?.onUpdate((value) => (refreshToken = value))
-let userInfo = await oxygenApi.account?.userInfo?.get()
-oxygenApi.account?.userInfo?.onUpdate((value) => (userInfo = value))
+let accessToken = await oxygenApi.account.accessToken.get()
+oxygenApi.account.accessToken.onUpdate((value) => (accessToken = value))
+let refreshToken = await oxygenApi.account.refreshToken.get()
+oxygenApi.account.refreshToken.onUpdate((value) => (refreshToken = value))
+let userInfo = await oxygenApi.account.userInfo.get()
+oxygenApi.account.userInfo.onUpdate((value) => (userInfo = value))
 
 export const getAccessToken = () => accessToken
 
@@ -55,12 +55,15 @@ export const getUserInfo = async (force = false): Promise<UserWithPowerInfoVo> =
     return requestUserInfo()
 }
 
-export const getUserInfoQueue = async (): Promise<UserWithPowerInfoVo> => {
+export const getUserInfoQueue = async (): Promise<UserWithPowerInfoVo | undefined> => {
     if (!getUserInfoPromise) {
-        getUserInfoPromise = getUserInfo()
+        getUserInfoPromise = getUserInfo().finally(() => {
+            getUserInfoPromise = null
+        })
     }
+    await getUserInfoPromise
 
-    return await getUserInfoPromise
+    return userInfo
 }
 
 export const setUserInfo = async (value?: UserWithPowerInfoVo) => {
@@ -75,6 +78,7 @@ export const removeAllToken = () => {
     refreshToken = undefined
     oxygenApi.account.userInfo.update()
     userInfo = undefined
+    oxygenApi.account.loginStatus.update(false)
 }
 
 export const getLoginStatus = () => refreshToken !== undefined
@@ -84,25 +88,25 @@ export const getVerifyStatus_async = () => userInfo?.verified
 export const getNickname = async () => {
     const user = await getUserInfoQueue()
 
-    return user.userInfo.nickname
+    return user?.userInfo.nickname
 }
 
 export const getAvatar = async () => {
     const user = await getUserInfoQueue()
 
-    return user.userInfo.avatar
+    return user?.userInfo.avatar
 }
 
 export const getUsername = async () => {
     const user = await getUserInfoQueue()
 
-    return user.username
+    return user?.username
 }
 
 export const getUserId = async () => {
     const user = await getUserInfoQueue()
 
-    return user.id
+    return user?.id
 }
 
 export const powerListToPowerTree = (

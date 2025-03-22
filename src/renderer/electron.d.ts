@@ -75,6 +75,10 @@ declare global {
                 onUpdate: (callback: (value?: UserWithPowerInfoVo) => void) => void
                 update: (value?: UserWithPowerInfoVo) => void
             }
+            loginStatus: {
+                onUpdate: (callback: (isLogin: boolean) => void) => void
+                update: (isLogin: boolean) => void
+            }
         }
     }
 

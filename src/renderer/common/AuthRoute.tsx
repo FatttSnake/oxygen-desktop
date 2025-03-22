@@ -11,7 +11,7 @@ const AuthRoute = () => {
     const handle = lastMatch.handle as RouteHandle
     const location = useLocation()
     const outlet = useOutlet()
-    const isLogin = getLoginStatus()
+    const [isLogin, setIsLogin] = useState(getLoginStatus())
     const isVerify = getVerifyStatus_async()
 
     useBlocker(({ nextLocation }) => {
@@ -27,6 +27,12 @@ const AuthRoute = () => {
         }
         return false
     })
+
+    useEffect(() => {
+        oxygenApi.account.loginStatus.onUpdate((isLogin) => {
+            setIsLogin(isLogin)
+        })
+    }, [])
 
     return useMemo(() => {
         setPageTitle(

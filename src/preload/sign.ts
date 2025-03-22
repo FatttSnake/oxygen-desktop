@@ -27,6 +27,9 @@ const IpcEvents = {
         userInfo: {
             get: 'account:userInfo:get',
             update: 'account:userInfo:update'
+        },
+        loginStatus: {
+            update: 'account:loginStatus:update'
         }
     }
 }
@@ -85,6 +88,14 @@ const oxygenApi = {
                 ),
             update: (value?: UserWithPowerInfoVo) =>
                 ipcRenderer.send(IpcEvents.account.userInfo.update, value)
+        },
+        loginStatus: {
+            onUpdate: (callback: (isLogin: boolean) => void) =>
+                ipcRenderer.on(IpcEvents.account.loginStatus.update, (_, isLogin: boolean) =>
+                    callback(isLogin)
+                ),
+            update: (isLogin: boolean) =>
+                ipcRenderer.send(IpcEvents.account.loginStatus.update, isLogin)
         }
     }
 }

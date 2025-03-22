@@ -21,7 +21,7 @@ import FitCenter from '$/components/FitCenter'
 import FlexBox from '$/components/FlexBox'
 
 const SignIn = () => {
-    const { styles } = useStyles()
+    const { styles, theme } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
     const navigate = useNavigate()
     const [loginForm] = AntdForm.useForm<LoginParam>()
@@ -82,6 +82,7 @@ const SignIn = () => {
                         oxygenApi.account.loginAccount.update(loginParam.account)
                         setRefreshToken(data!.refreshToken)
                         setAccessToken(data!.accessToken)
+                        oxygenApi.account.loginStatus.update(true)
                         void getUserInfo().then((user) => {
                             new Notification(`欢迎回来，${user.userInfo.nickname}`, {
                                 body: `最近登录：${
@@ -93,7 +94,7 @@ const SignIn = () => {
                                 }`
                             })
                         })
-                        void message.success('登录成功').then(() => {
+                        void message.success('登录成功', 1).then(() => {
                             void oxygenApi.window.tab.switch('coreView')
                             oxygenApi.window.tab.close('signView')
                         })
@@ -102,6 +103,12 @@ const SignIn = () => {
                         twoFactorForm.resetFields()
                         void modal.confirm({
                             centered: true,
+                            icon: (
+                                <Icon
+                                    style={{ color: theme.colorPrimary }}
+                                    component={IconOxygen2FA}
+                                />
+                            ),
                             title: '双因素验证',
                             footer: (_, { OkBtn, CancelBtn }) => (
                                 <>
@@ -114,7 +121,7 @@ const SignIn = () => {
                                     form={twoFactorForm}
                                     ref={() => {
                                         setTimeout(() => {
-                                            twoFactorForm.getFieldInstance('twoFactorCode').focus()
+                                            twoFactorForm.getFieldInstance('twoFactorCode')?.focus()
                                         }, 50)
                                     }}
                                 >

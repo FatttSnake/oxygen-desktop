@@ -49,6 +49,9 @@ export const IpcEvents = {
         userInfo: {
             get: 'account:userInfo:get',
             update: 'account:userInfo:update'
+        },
+        loginStatus: {
+            update: 'account:loginStatus:update'
         }
     }
 }

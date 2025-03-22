@@ -5,6 +5,7 @@ import MaxWidthLayout from '$/components/MaxWidthLayout'
 import Header from '%/components/SettingsControl/Header'
 import Group from '%/components/SettingsControl/Group'
 import Item from '%/components/SettingsControl/Item'
+import User from '%/components/SettingsControl/User'
 
 interface SettingsControlProps extends PropsWithChildren {
     maxWidth?: number
@@ -24,5 +25,6 @@ const SettingsControl = ({ maxWidth = 1000, header, children }: SettingsControlP
 
 SettingsControl.Group = Group
 SettingsControl.Item = Item
+SettingsControl.User = User
 
 export default SettingsControl

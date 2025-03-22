@@ -3,7 +3,7 @@ import useStyles from '%/assets/css/components/settings-control/group.style'
 import FlexBox from '$/components/FlexBox'
 
 interface GroupProps extends PropsWithChildren {
-    title: ReactNode
+    title?: ReactNode
 }
 
 const Group = ({ title, children }: GroupProps) => {
@@ -11,7 +11,7 @@ const Group = ({ title, children }: GroupProps) => {
 
     return (
         <FlexBox className={styles.root}>
-            <div className={styles.title}>{title}</div>
+            {title && <div className={styles.title}>{title}</div>}
             <FlexBox className={styles.content}>{children}</FlexBox>
         </FlexBox>
     )

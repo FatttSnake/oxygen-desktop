@@ -1,4 +1,5 @@
 import useStyles from '%/assets/css/pages/settings-framework.style'
+import { getLoginStatus } from '$/util/auth'
 import FitFullscreen from '$/components/FitFullscreen'
 import Sidebar from '$/components/Sidebar'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
@@ -9,12 +10,17 @@ const SettingsFramework = () => {
     const { styles, cx } = useStyles()
     const location = useLocation()
     const navigate = useNavigate()
+    const [baseSettingsRouteJson, setBaseSettingsRouteJson] = useState(getBaseSettingsRouteJson())
+    const [systemSettingsRouteJson, setSystemSettingsRouteJson] = useState(
+        getSystemSettingsRouteJson()
+    )
 
     const mapRouterJsonObject = (route: RouteJsonObject[]) =>
         route.map(
             (route) =>
                 route.menu &&
-                route.name && (
+                route.name &&
+                (!route.auth || getLoginStatus()) && (
                     <Sidebar.Item
                         icon={route.icon}
                         text={route.name}
@@ -28,16 +34,23 @@ const SettingsFramework = () => {
                 )
         )
 
+    useEffect(() => {
+        oxygenApi.account.loginStatus.onUpdate(() => {
+            setBaseSettingsRouteJson(getBaseSettingsRouteJson())
+            setSystemSettingsRouteJson(getSystemSettingsRouteJson())
+        })
+    }, [])
+
     return (
         <FitFullscreen className={cx(styles.root, 'flex-horizontal')}>
             <div className={styles.leftPanel}>
                 <Sidebar>
                     <Sidebar.ItemList>
                         <Sidebar.Group title={'应用'}>
-                            {mapRouterJsonObject(getBaseSettingsRouteJson())}
+                            {mapRouterJsonObject(baseSettingsRouteJson)}
                         </Sidebar.Group>
                         <Sidebar.Group title={'系统'}>
-                            {mapRouterJsonObject(getSystemSettingsRouteJson())}
+                            {mapRouterJsonObject(systemSettingsRouteJson)}
                         </Sidebar.Group>
                     </Sidebar.ItemList>
                 </Sidebar>

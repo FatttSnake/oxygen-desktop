@@ -84,6 +84,7 @@ const SignUp = () => {
                         oxygenApi.account.loginAccount.update(registerParam.username)
                         setRefreshToken(response.data!.refreshToken)
                         setAccessToken(response.data!.accessToken)
+                        oxygenApi.account.loginStatus.update(true)
                         void message.success('恭喜，您快要完成注册了')
                         setIsFinish(true)
                         break

@@ -67,14 +67,14 @@ const TitleBar = () => {
             oxygenApi.window.tab.create('core')
         }
         if (isLogin) {
-            getNickname().then(setNickname)
-            getAvatar().then(setAvatar)
+            getNickname().then((nickname) => setNickname(nickname ?? ''))
+            getAvatar().then((avatar) => setAvatar(avatar ?? ''))
         }
         oxygenApi.account.userInfo.onUpdate(() => {
             setIsLogin(getLoginStatus)
             if (getLoginStatus()) {
-                getNickname().then(setNickname)
-                getAvatar().then(setAvatar)
+                getNickname().then((nickname) => setNickname(nickname ?? ''))
+                getAvatar().then((avatar) => setAvatar(avatar ?? ''))
             }
         })
     }, [])
