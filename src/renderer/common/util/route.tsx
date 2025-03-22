@@ -58,7 +58,7 @@ export const mapJsonToRoute = (jsonObject: RouteJsonObject[]): RouteObject[] => 
             menu: value.menu,
             auth: value.auth,
             permission: value.permission,
-            autoHide: value.autoHide
+            operationCode: value.operationCode
         },
         children: value.children && mapJsonToRoute(value.children)
     }))

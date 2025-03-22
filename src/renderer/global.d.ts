@@ -43,7 +43,6 @@ interface RouteJsonObject {
     auth?: boolean
     permission?: boolean
     operationCode?: string
-    autoHide?: boolean
     children?: RouteJsonObject[]
 }
 
@@ -57,7 +56,7 @@ interface RouteHandle {
     menu?: boolean
     auth?: boolean
     permission?: boolean
-    autoHide?: boolean
+    operationCode?: string
 }
 
 interface _Response<T> {
