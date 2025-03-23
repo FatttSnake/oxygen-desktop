@@ -1,14 +1,14 @@
-import useStyles from '@/assets/css/pages/system/statistics/index.style'
+import useStyles from '%/assets/css/pages/system/statistics/index.style'
 import FlexBox from '$/components/FlexBox'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
 import Permission from '$/components/Permission'
-import OnlineInfo from '@/pages/System/Statistics/OnlineInfo'
-import ActiveInfo from '@/pages/System/Statistics/ActiveInfo'
-import SoftwareInfo from '@/pages/System/Statistics/SoftwareInfo'
-import HardwareInfo from '@/pages/System/Statistics/HardwareInfo'
-import CPUInfo from '@/pages/System/Statistics/CPUInfo'
-import StorageInfo from '@/pages/System/Statistics/StorageInfo'
+import OnlineInfo from '%/pages/system/Statistics/OnlineInfo'
+import ActiveInfo from '%/pages/system/Statistics/ActiveInfo'
+import SoftwareInfo from '%/pages/system/Statistics/SoftwareInfo'
+import HardwareInfo from '%/pages/system/Statistics/HardwareInfo'
+import CPUInfo from '%/pages/system/Statistics/CPUInfo'
+import StorageInfo from '%/pages/system/Statistics/StorageInfo'
 
 const Statistics = () => {
     const { styles } = useStyles()

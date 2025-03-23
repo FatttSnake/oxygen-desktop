@@ -1,6 +1,5 @@
 import { cloneDeep } from 'lodash'
 import { getAuthRoute, mapJsonToRoute, setTitle } from '$/util/route'
-import system from '@/router/system'
 import tools from '@/router/tools'
 
 const root: RouteJsonObject[] = [
@@ -9,16 +8,6 @@ const root: RouteJsonObject[] = [
         absolutePath: '/',
         component: lazy(() => import('$/AuthRoute')),
         children: [
-            {
-                path: 'system',
-                absolutePath: '/system',
-                id: 'systemFramework',
-                component: lazy(() => import('@/pages/SystemFramework')),
-                children: setTitle(system, '系统配置'),
-                name: '系统配置',
-                auth: true,
-                permission: true
-            },
             {
                 path: '',
                 absolutePath: '/',

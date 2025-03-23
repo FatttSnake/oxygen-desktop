@@ -6,7 +6,7 @@ import {
     r_sys_settings_mail_send,
     r_sys_settings_mail_update
 } from '$/services/system'
-import SettingsCard from '@/components/system/SettingCard'
+import SettingsCard from '%/components/system/SettingCard'
 
 const Mail = () => {
     const [mailForm] = AntdForm.useForm<MailSettingsParam>()

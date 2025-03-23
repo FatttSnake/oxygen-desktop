@@ -1,5 +1,5 @@
 import Icon from '@ant-design/icons'
-import useStyles from '@/assets/css/pages/system/tools/base.style'
+import useStyles from '%/assets/css/pages/system/tools/base.style'
 import {
     DATABASE_DELETE_SUCCESS,
     DATABASE_DUPLICATE_KEY,

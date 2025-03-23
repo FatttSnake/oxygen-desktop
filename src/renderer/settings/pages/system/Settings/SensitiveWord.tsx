@@ -7,8 +7,8 @@ import {
     r_sys_settings_sensitive_delete,
     r_sys_settings_sensitive_get,
     r_sys_settings_sensitive_update
-} from '$/services/system.ts'
-import SettingsCard from '@/components/system/SettingCard'
+} from '$/services/system'
+import SettingsCard from '%/components/system/SettingCard'
 
 const SensitiveWord = () => {
     const [dataSource, setDataSource] = useState<SensitiveWordVo[]>()

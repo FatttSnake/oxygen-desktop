@@ -1,8 +1,8 @@
-import useStyles from '@/assets/css/pages/system/statistics/common.style'
+import useStyles from '%/assets/css/pages/system/statistics/common.style'
 import { message } from '$/util/common'
 import { r_sys_statistics_hardware } from '$/services/system'
 import FlexBox from '$/components/FlexBox'
-import StatisticsCard from '@/components/system/StatisticsCard'
+import StatisticsCard from '%/components/system/StatisticsCard'
 
 const HardwareInfo = () => {
     const { styles } = useStyles()

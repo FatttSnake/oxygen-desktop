@@ -30,7 +30,21 @@ const SettingsFramework = () => {
                             !route.children?.some((item) => location.pathname === item.absolutePath)
                         }
                         onClick={() => navigate(route.absolutePath)}
-                    />
+                    >
+                        {route.children?.map(
+                            (subRoute) =>
+                                subRoute.menu &&
+                                subRoute.name &&
+                                (!subRoute.auth || getLoginStatus()) && (
+                                    <Sidebar.Item
+                                        text={subRoute.name}
+                                        key={subRoute.id}
+                                        active={location.pathname === subRoute.absolutePath}
+                                        onClick={() => navigate(subRoute.absolutePath)}
+                                    />
+                                )
+                        )}
+                    </Sidebar.Item>
                 )
         )
 

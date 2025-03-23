@@ -1,7 +1,7 @@
 import { message } from '$/util/common'
 import { hasPermission } from '$/util/auth'
 import { r_sys_settings_two_factor_get, r_sys_settings_two_factor_update } from '$/services/system'
-import SettingsCard from '@/components/system/SettingCard'
+import SettingsCard from '%/components/system/SettingCard'
 
 const TwoFactor = () => {
     const [twoFactorForm] = AntdForm.useForm<TwoFactorSettingsParam>()

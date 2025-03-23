@@ -1,11 +1,11 @@
 import Icon from '@ant-design/icons'
 import * as echarts from 'echarts/core'
-import useStyles from '@/assets/css/pages/system/statistics/common.style'
+import useStyles from '%/assets/css/pages/system/statistics/common.style'
 import { getTimesBetweenTwoTimes } from '$/util/datetime'
 import { r_sys_statistics_active } from '$/services/system'
 import FlexBox from '$/components/FlexBox'
-import { getTooltipTimeFormatter, lineEChartsBaseOption } from '@/pages/System/Statistics/shared'
-import StatisticsCard from '@/components/system/StatisticsCard'
+import { getTooltipTimeFormatter, lineEChartsBaseOption } from '%/pages/system/Statistics/shared'
+import StatisticsCard from '%/components/system/StatisticsCard'
 
 const ActiveInfo = () => {
     const { styles } = useStyles()

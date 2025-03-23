@@ -1,7 +1,7 @@
 import { message } from '$/util/common'
 import { hasPermission } from '$/util/auth'
 import { r_sys_settings_base_get, r_sys_settings_base_update } from '$/services/system'
-import SettingsCard from '@/components/system/SettingCard'
+import SettingsCard from '%/components/system/SettingCard'
 
 const Base = () => {
     const [baseForm] = AntdForm.useForm<BaseSettingsParam>()

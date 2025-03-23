@@ -1,6 +1,6 @@
 import * as echarts from 'echarts/core'
 import { BarSeriesOption } from 'echarts/charts'
-import useStyles from '@/assets/css/pages/system/statistics/common.style'
+import useStyles from '%/assets/css/pages/system/statistics/common.style'
 import { formatByteSize } from '$/util/common'
 import { r_sys_statistics_storage } from '$/services/system'
 import FlexBox from '$/components/FlexBox'
@@ -8,8 +8,8 @@ import {
     barDefaultSeriesOption,
     barEChartsBaseOption,
     EChartsOption
-} from '@/pages/System/Statistics/shared'
-import StatisticsCard from '@/components/system/StatisticsCard'
+} from '%/pages/system/Statistics/shared'
+import StatisticsCard from '%/components/system/StatisticsCard'
 
 const StorageInfo = () => {
     const { styles } = useStyles()

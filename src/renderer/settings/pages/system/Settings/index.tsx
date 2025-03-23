@@ -1,12 +1,12 @@
-import useStyles from '@/assets/css/pages/system/settings/index.style'
+import useStyles from '%/assets/css/pages/system/settings/index.style'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
 import FlexBox from '$/components/FlexBox'
 import Permission from '$/components/Permission'
-import Base from '@/pages/System/Settings/Base'
-import Mail from '@/pages/System/Settings/Mail'
-import SensitiveWord from '@/pages/System/Settings/SensitiveWord'
-import TwoFactor from '@/pages/System/Settings/TwoFactor'
+import Base from '%/pages/system/Settings/Base'
+import Mail from '%/pages/system/Settings/Mail'
+import SensitiveWord from '%/pages/system/Settings/SensitiveWord'
+import TwoFactor from '%/pages/system/Settings/TwoFactor'
 
 const Settings = () => {
     const { styles } = useStyles()

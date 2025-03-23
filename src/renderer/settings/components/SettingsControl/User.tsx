@@ -3,7 +3,7 @@ import useStyles from '%/assets/css/components/settings-control/user.style'
 import { message, notification } from '$/util/common'
 import { removeAllToken } from '$/util/auth'
 import { r_auth_logout } from '$/services/auth'
-import { navigateToRoot } from '$/util/navigation.ts'
+import { navigateToRoot } from '$/util/navigation'
 
 interface UserProps {
     avatar?: string

@@ -1,6 +1,6 @@
 import Draggable from 'react-draggable'
 import Icon from '@ant-design/icons'
-import useStyles from '@/assets/css/pages/system/tools/code.style'
+import useStyles from '%/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { message, modal, checkDesktop, addExtraCssVariables } from '$/util/common'
 import { navigateToExecute, navigateToRepository } from '$/util/navigation'

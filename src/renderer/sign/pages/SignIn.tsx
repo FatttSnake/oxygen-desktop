@@ -82,8 +82,8 @@ const SignIn = () => {
                         oxygenApi.account.loginAccount.update(loginParam.account)
                         setRefreshToken(data!.refreshToken)
                         setAccessToken(data!.accessToken)
-                        oxygenApi.account.loginStatus.update(true)
                         void getUserInfo().then((user) => {
+                            oxygenApi.account.loginStatus.update(true)
                             new Notification(`欢迎回来，${user.userInfo.nickname}`, {
                                 body: `最近登录：${
                                     user.lastLoginTime
