@@ -22,6 +22,9 @@ export const IpcEvents = {
             switch: 'window:tab:switch',
             close: 'window:tab:close',
             independent: 'window:tab:independent'
+        },
+        navigate: {
+            goto: 'window:navigate:goto'
         }
     },
     sidebar: {

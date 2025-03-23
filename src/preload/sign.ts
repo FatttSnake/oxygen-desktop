@@ -9,6 +9,9 @@ const IpcEvents = {
         tab: {
             switch: 'window:tab:switch',
             close: 'window:tab:close'
+        },
+        navigate: {
+            goto: 'window:navigate:goto'
         }
     },
     account: {
@@ -50,6 +53,12 @@ const oxygenApi = {
             switch: (key: string): Promise<boolean> =>
                 ipcRenderer.invoke(IpcEvents.window.tab.switch, key),
             close: (key: string) => ipcRenderer.send(IpcEvents.window.tab.close, key)
+        },
+        navigate: {
+            onGoto: (callback: (value: string) => void) =>
+                ipcRenderer.on(IpcEvents.window.navigate.goto, (_, value: string) =>
+                    callback(value)
+                )
         }
     },
     account: {

@@ -1,5 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+const kebabCase = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+const getArgv = (key: string) => {
+    const value = process.argv.find((arg) => arg.startsWith(`--${kebabCase(key)}=`))?.split('=')[1]
+    return value ? decodeURIComponent(value) : undefined
+}
+
+const navigateTo = getArgv('navigateTo')
+
 const IpcEvents = {
     app: {
         url: {
@@ -13,6 +22,9 @@ const IpcEvents = {
         theme: {
             get: 'window:theme:get',
             update: 'window:theme:update'
+        },
+        navigate: {
+            goto: 'window:navigate:goto'
         }
     },
     sidebar: {
@@ -43,6 +55,7 @@ const IpcEvents = {
 const oxygenApi = {
     platform: process.platform,
     renderer: 'settings',
+    navigateTo,
 
     app: {
         url: {
@@ -60,6 +73,12 @@ const oxygenApi = {
                     callback(theme)
                 ),
             update: (theme: WindowTheme) => ipcRenderer.send(IpcEvents.window.theme.update, theme)
+        },
+        navigate: {
+            onGoto: (callback: (value: string) => void) =>
+                ipcRenderer.on(IpcEvents.window.navigate.goto, (_, value: string) =>
+                    callback(value)
+                )
         }
     },
     sidebar: {

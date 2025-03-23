@@ -106,7 +106,7 @@ const SignIn = () => {
                             icon: (
                                 <Icon
                                     style={{ color: theme.colorPrimary }}
-                                    component={IconOxygen2FA}
+                                    component={IconOxygen2fa}
                                 />
                             ),
                             title: '双因素验证',

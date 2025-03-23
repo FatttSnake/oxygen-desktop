@@ -1,7 +1,14 @@
 import { contextBridge } from 'electron'
 
-const viewId = process.argv.find((arg) => arg.startsWith('--view-id='))?.split('=')[1]
-const url = process.argv.find((arg) => arg.startsWith('--url='))?.split('=')[1]
+const kebabCase = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+const getArgv = (key: string) => {
+    const value = process.argv.find((arg) => arg.startsWith(`--${kebabCase(key)}=`))?.split('=')[1]
+    return value ? decodeURIComponent(value) : undefined
+}
+
+const viewId = getArgv('viewId')
+const url = getArgv('url')
 
 const oxygenApi = {
     platform: process.platform,

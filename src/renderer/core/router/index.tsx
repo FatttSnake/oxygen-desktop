@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 import { getAuthRoute, mapJsonToRoute, setTitle } from '$/util/route'
 import system from '@/router/system'
 import tools from '@/router/tools'
@@ -37,4 +37,4 @@ const root: RouteJsonObject[] = [
     }
 ]
 
-export const getRouter = () => createBrowserRouter(mapJsonToRoute(getAuthRoute(_.cloneDeep(root))))
+export const getRouter = () => createBrowserRouter(mapJsonToRoute(getAuthRoute(cloneDeep(root))))

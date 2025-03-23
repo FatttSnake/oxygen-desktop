@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 import { getAuthRoute, mapJsonToRoute } from '$/util/route'
 
 const lazySignPage = lazy(() => import('+/pages'))
@@ -46,4 +46,4 @@ const root: RouteJsonObject[] = [
     }
 ]
 
-export const getRouter = () => createBrowserRouter(mapJsonToRoute(getAuthRoute(_.cloneDeep(root))))
+export const getRouter = () => createBrowserRouter(mapJsonToRoute(getAuthRoute(cloneDeep(root))))

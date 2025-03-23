@@ -1,5 +1,6 @@
 import { join } from 'path'
 import { randomUUID } from 'node:crypto'
+import { kebabCase } from 'lodash'
 import { BrowserWindow, ipcMain, shell, WebContentsView, nativeTheme, app } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import { IpcEvents } from './constants'
@@ -84,6 +85,10 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
                 getGlobalObject().mainWindowViews.some(({ key }) => key === 'settingsView')
             ) {
                 switchTab(mainWindow, 'settingsView')
+                args?.['navigateTo'] &&
+                    getGlobalObject()
+                        .mainWindowViews.find(({ key }) => key === 'settingsView')
+                        ?.view.webContents.send(IpcEvents.window.navigate.goto, args['navigateTo'])
                 return
             }
             if (
@@ -145,7 +150,7 @@ export const processIpcEvents = (mainWindow: BrowserWindow) => {
             })()
             const argStr = args
                 ? Object.entries(args).map(
-                      ([key, value]) => `--${key}=${encodeURIComponent(value)}`
+                      ([key, value]) => `--${kebabCase(key)}=${encodeURIComponent(value)}`
                   )
                 : []
             const newView = new WebContentsView({

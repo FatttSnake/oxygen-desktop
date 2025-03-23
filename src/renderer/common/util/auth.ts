@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { floorNumber } from '$/util/common'
 import { getFullTitle } from '$/util/route'
@@ -191,7 +191,7 @@ const parentToTree = (data: _DataNode[]): _DataNode[] => {
         parents.forEach((parent) => {
             children.forEach((current, index) => {
                 if (current.parentId === parent.key) {
-                    const temp = _.cloneDeep(children)
+                    const temp = cloneDeep(children)
                     temp.splice(index, 1)
                     translator([current], temp)
                     typeof parent.children !== 'undefined'

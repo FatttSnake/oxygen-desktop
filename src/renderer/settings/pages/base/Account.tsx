@@ -279,7 +279,7 @@ const Account = () => {
                 centered: true,
                 maskClosable: true,
                 focusTriggerAfterClose: false,
-                icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygen2FA} />,
+                icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygen2fa} />,
                 title: '移除 2FA',
                 footer: (_, { OkBtn, CancelBtn }) => (
                     <>
@@ -293,7 +293,7 @@ const Account = () => {
                         centered: true,
                         maskClosable: true,
                         icon: (
-                            <Icon style={{ color: theme.colorPrimary }} component={IconOxygen2FA} />
+                            <Icon style={{ color: theme.colorPrimary }} component={IconOxygen2fa} />
                         ),
                         title: '移除 2FA',
                         footer: (_, { OkBtn, CancelBtn }) => (
@@ -370,7 +370,7 @@ const Account = () => {
                             icon: (
                                 <Icon
                                     style={{ color: theme.colorPrimary }}
-                                    component={IconOxygen2FA}
+                                    component={IconOxygen2fa}
                                 />
                             ),
                             title: '配置 2FA',
@@ -542,7 +542,7 @@ const Account = () => {
                                 </AntdButton>
                             </AntdTooltip>
                         </SettingsControl.Item>
-                        <SettingsControl.Item icon={IconOxygen2FA} name={'2FA'} desc={'双因素认证'}>
+                        <SettingsControl.Item icon={IconOxygen2fa} name={'2FA'} desc={'双因素认证'}>
                             <AntdTooltip title={userInfo?.twoFactor ? '移除' : '配置'}>
                                 <AntdButton
                                     disabled={isLoading || !userInfo}

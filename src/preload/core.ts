@@ -5,6 +5,9 @@ const IpcEvents = {
         theme: {
             get: 'window:theme:get',
             update: 'window:theme:update'
+        },
+        navigate: {
+            goto: 'window:navigate:goto'
         }
     },
     sidebar: {
@@ -42,6 +45,12 @@ const oxygenApi = {
             onUpdate: (callback: (theme: WindowTheme) => void) =>
                 ipcRenderer.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) =>
                     callback(theme)
+                )
+        },
+        navigate: {
+            onGoto: (callback: (value: string) => void) =>
+                ipcRenderer.on(IpcEvents.window.navigate.goto, (_, value: string) =>
+                    callback(value)
                 )
         }
     },

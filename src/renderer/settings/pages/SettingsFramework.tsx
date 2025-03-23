@@ -39,6 +39,9 @@ const SettingsFramework = () => {
             setBaseSettingsRouteJson(getBaseSettingsRouteJson())
             setSystemSettingsRouteJson(getSystemSettingsRouteJson())
         })
+
+        oxygenApi.navigateTo && navigate(oxygenApi.navigateTo)
+        oxygenApi.window.navigate.onGoto((value) => navigate(value))
     }, [])
 
     return (

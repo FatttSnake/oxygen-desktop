@@ -17,7 +17,7 @@ const TitleBar = () => {
     const handleOnClickExpand = () => {
         oxygenApi.sidebar.collapse.update(!isCollapse)
         setIsCollapse(!isCollapse)
-        oxygenApi.window.tab.create('tool', { url: '' })
+        // oxygenApi.window.tab.create('tool', { url: '' })
     }
 
     const handleOnActiveTabChange = (tab?: TabInstance) => {
@@ -41,7 +41,7 @@ const TitleBar = () => {
 
     const handleOnClickUser = () => {
         if (isLogin && getVerifyStatus_async() == true) {
-            /* empty */
+            oxygenApi.window.tab.create('settings', { navigateTo: '/base/account' })
         } else {
             oxygenApi.window.tab.create('sign')
         }

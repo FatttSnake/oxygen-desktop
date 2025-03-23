@@ -1,6 +1,6 @@
 import { Monaco } from '@monaco-editor/react'
 import { editor } from 'monaco-editor'
-import _ from 'lodash'
+import { cloneDeep } from 'lodash'
 import useStyles from '@/components/Playground/CodeEditor/index.style'
 import FlexBox from '$/components/FlexBox'
 import { IEditorOptions, IFiles, ITsconfig } from '@/components/Playground/shared'
@@ -70,13 +70,13 @@ const CodeEditor = ({
     }
 
     const handleOnRemoveFile = (fileName: string) => {
-        const clone = _.cloneDeep(files)
+        const clone = cloneDeep(files)
         delete clone[fileName]
         onRemoveFile?.(fileName, clone)
     }
 
     const handleOnAddFile = (fileName: string) => {
-        const clone = _.cloneDeep(files)
+        const clone = cloneDeep(files)
         clone[fileName] = {
             name: fileName,
             language: fileNameToLanguage(fileName),
@@ -116,7 +116,7 @@ const CodeEditor = ({
         if (!files[onSelectedFileChange ? propsSelectedFileName : selectedFileName]) {
             return
         }
-        const clone = _.cloneDeep(files)
+        const clone = cloneDeep(files)
         clone[onSelectedFileChange ? propsSelectedFileName : selectedFileName].value = code ?? ''
         onChangeFileContent?.(
             code,
