@@ -5,13 +5,17 @@ import ToolMenu from '#/menus/ToolMenu'
 import MenuFramework from '#/components/MenuFramework'
 
 const Frame = () => {
+    const [isShowMenu, setIsShowMenu] = useState(false)
+
     return (
         <CommonFramework>
             <FitFullscreen className={'flex-vertical'}>
-                <TitleBar />
-                <MenuFramework>
-                    <ToolMenu />
-                </MenuFramework>
+                <TitleBar onShowMenuChange={setIsShowMenu} />
+                {isShowMenu && (
+                    <MenuFramework>
+                        <ToolMenu />
+                    </MenuFramework>
+                )}
             </FitFullscreen>
         </CommonFramework>
     )

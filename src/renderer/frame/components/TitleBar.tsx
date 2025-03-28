@@ -3,7 +3,11 @@ import useStyles from '#/assets/css/title-bar.style'
 import { getAvatar, getLoginStatus, getNickname, getVerifyStatus_async } from '$/util/auth'
 import Tab from '#/components/Tab'
 
-const TitleBar = () => {
+interface TitleBarProps {
+    onShowMenuChange?: (visible: boolean) => void
+}
+
+const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
     const { styles, cx, theme } = useStyles()
     const { x } = navigator.windowControlsOverlay!.getTitlebarAreaRect()
     const [isCollapse, setIsCollapse] = useState(false)
@@ -50,6 +54,10 @@ const TitleBar = () => {
     const handleOnClickSettings = () => {
         oxygenApi.window.tab.create('settings')
     }
+
+    useEffect(() => {
+        onShowMenuChange?.(tabs.find((tab) => tab.key === activeTab)?.pin === false)
+    }, [tabs, activeTab])
 
     useEffect(() => {
         oxygenApi.window.titleBarOverlay.setColor(theme.colorBgContainer, theme.colorText)
