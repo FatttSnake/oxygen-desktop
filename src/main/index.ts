@@ -10,10 +10,12 @@ import { processApp } from './processApp'
 import { processIpcEvents } from './processIpcEvents'
 import { processMainWindow } from './processMainWindow'
 import { initFrameView } from './frameView'
+import { getGlobalObject } from './common'
 
 global.sharedObject = {
     menuWidth: 0,
-    mainWindowViews: [],
+    mainWindow: undefined,
+    views: [],
     independentWindows: {}
 }
 
@@ -93,10 +95,11 @@ const createWindow = () => {
             preload: join(__dirname, '../preload/frame.js')
         }
     })
+    getGlobalObject().mainWindow = mainWindow
 
     processMainWindow(mainWindow)
     initFrameView(mainWindow)
-    processIpcEvents(mainWindow)
+    processIpcEvents()
 }
 
 // This method will be called when Electron has finished

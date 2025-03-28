@@ -1,278 +1,95 @@
-import { join } from 'path'
-import { randomUUID } from 'node:crypto'
-import { kebabCase } from 'lodash'
-import { BrowserWindow, ipcMain, shell, WebContentsView, nativeTheme, app } from 'electron'
-import { is } from '@electron-toolkit/utils'
+import { ipcMain } from 'electron'
 import { IpcEvents } from './constants'
-import { settings } from './dataStore'
-import { addTab, getGlobalObject, removeTab, switchTab, updateTab } from './common'
+import {
+    createTab,
+    getAccessToken,
+    getAppVersion,
+    getLoginAccount,
+    getRefreshToken,
+    getSidebarIsCollapse,
+    getTheme,
+    getUserInfo,
+    independentTab,
+    listTab,
+    openUrlWithDefaultApp,
+    removeTab,
+    switchTab,
+    updateAccessToken,
+    updateLoginAccount,
+    updateLoginStatus,
+    updateRefreshToken,
+    updateSidebarIsCollapse,
+    updateSidebarWidth,
+    updateTab,
+    updateTheme,
+    updateTitleBarColor,
+    updateUserInfo
+} from './common'
 
-export const processIpcEvents = (mainWindow: BrowserWindow) => {
-    ipcMain.on(IpcEvents.app.url.open, (_, url: string) => shell.openExternal(url))
+export const processIpcEvents = () => {
+    ipcMain.on(IpcEvents.app.url.open, (_, url: string) => openUrlWithDefaultApp(url))
 
-    ipcMain.handle(IpcEvents.app.version.get, () => app.getVersion())
+    ipcMain.handle(IpcEvents.app.version.get, getAppVersion)
 
-    ipcMain.handle(IpcEvents.window.theme.get, () => settings.window.getTheme())
+    ipcMain.handle(IpcEvents.window.theme.get, getTheme)
 
-    ipcMain.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) => {
-        settings.window.saveTheme(theme)
-        mainWindow.webContents.send(IpcEvents.window.theme.update, theme)
-        getGlobalObject().mainWindowViews.forEach((item) => {
-            item.view.webContents.send(IpcEvents.window.theme.update, theme)
-        })
+    ipcMain.on(IpcEvents.window.theme.update, (_, theme: WindowTheme) => updateTheme(theme))
 
-        switch (theme) {
-            case 'FOLLOW_SYSTEM':
-                nativeTheme.themeSource = 'system'
-                break
-            case 'LIGHT':
-                nativeTheme.themeSource = 'light'
-                break
-            case 'DARK':
-                nativeTheme.themeSource = 'dark'
-        }
-    })
-
-    ipcMain.on(
-        IpcEvents.window.titleBarOverlay.setColor,
-        (_, color: string, symbolColor: string) => {
-            if (['win32', 'linux'].includes(process.platform)) {
-                mainWindow.setTitleBarOverlay({ color, symbolColor, height: 40 })
-            }
-        }
+    ipcMain.on(IpcEvents.window.titleBarOverlay.setColor, (_, color: string, symbolColor: string) =>
+        updateTitleBarColor(color, symbolColor)
     )
 
-    ipcMain.handle(IpcEvents.sidebar.collapse.get, () => settings.sidebar.getIsCollapsed())
+    ipcMain.on(IpcEvents.sidebar.width.update, (_, menuWidth: number) =>
+        updateSidebarWidth(menuWidth)
+    )
 
-    ipcMain.on(IpcEvents.sidebar.collapse.update, (_, value: boolean) => {
-        settings.sidebar.saveIsCollapsed(value)
-        mainWindow.webContents.send(IpcEvents.sidebar.collapse.update, value)
-        getGlobalObject().mainWindowViews.forEach((item) => {
-            if (item.pin) {
-                item.view.webContents.send(IpcEvents.sidebar.collapse.update, value)
-            }
-        })
-    })
+    ipcMain.handle(IpcEvents.sidebar.collapse.get, getSidebarIsCollapse)
 
-    ipcMain.on(IpcEvents.sidebar.width.update, (_, menuWidth: number) => {
-        getGlobalObject().menuWidth = menuWidth
-        const { width, height } = mainWindow.getContentBounds()
-        getGlobalObject().mainWindowViews.forEach(({ view, pin }) => {
-            if (pin) {
-                return
-            }
-            view.setBounds({
-                x: menuWidth,
-                y: 40,
-                width: width - menuWidth,
-                height: height - 40
-            })
-        })
-    })
+    ipcMain.on(IpcEvents.sidebar.collapse.update, (_, value: boolean) =>
+        updateSidebarIsCollapse(value)
+    )
 
     ipcMain.on(
         IpcEvents.window.tab.create,
-        (_, type: TabType, args?: Record<string, string | number | boolean>) => {
-            if (
-                type === 'core' &&
-                getGlobalObject().mainWindowViews.some(({ key }) => key === 'coreView')
-            ) {
-                switchTab(mainWindow, 'coreView')
-                return
-            }
-            if (
-                type === 'settings' &&
-                getGlobalObject().mainWindowViews.some(({ key }) => key === 'settingsView')
-            ) {
-                switchTab(mainWindow, 'settingsView')
-                args?.['navigateTo'] &&
-                    getGlobalObject()
-                        .mainWindowViews.find(({ key }) => key === 'settingsView')
-                        ?.view.webContents.send(IpcEvents.window.navigate.goto, args['navigateTo'])
-                return
-            }
-            if (
-                type === 'sign' &&
-                getGlobalObject().mainWindowViews.some(({ key }) => key === 'signView')
-            ) {
-                switchTab(mainWindow, 'signView')
-                return
-            }
-
-            const { viewId, preload, menuWidth, title, pin, persistent } = ((): {
-                viewId: string
-                preload: string
-                menuWidth: number
-                title: string
-                pin: boolean
-                persistent: boolean
-            } => {
-                switch (type) {
-                    case 'core':
-                        return {
-                            viewId: 'coreView',
-                            preload: 'core.js',
-                            menuWidth: 0,
-                            title: 'Oxygen Toolbox',
-                            pin: true,
-                            persistent: true
-                        }
-                    case 'settings':
-                        return {
-                            viewId: 'settingsView',
-                            preload: 'settings.js',
-                            menuWidth: 0,
-                            title: 'Settings',
-                            pin: true,
-                            persistent: false
-                        }
-                    case 'sign':
-                        return {
-                            viewId: 'signView',
-                            preload: 'sign.js',
-                            menuWidth: 0,
-                            title: 'Sign',
-                            pin: true,
-                            persistent: false
-                        }
-                    default: {
-                        const viewId = randomUUID()
-                        return {
-                            viewId: viewId,
-                            preload: 'tool.js',
-                            menuWidth: getGlobalObject().menuWidth,
-                            title: viewId,
-                            pin: false,
-                            persistent: false
-                        }
-                    }
-                }
-            })()
-            const argStr = args
-                ? Object.entries(args).map(
-                      ([key, value]) => `--${kebabCase(key)}=${encodeURIComponent(value)}`
-                  )
-                : []
-            const newView = new WebContentsView({
-                webPreferences: {
-                    preload: join(__dirname, `../preload/${preload}`),
-                    additionalArguments: [`--view-id=${viewId}`, ...argStr]
-                }
-            })
-
-            const { width, height } = mainWindow.getContentBounds()
-            newView.setBounds({
-                x: menuWidth,
-                y: 40,
-                width: width - menuWidth,
-                height: height - 40
-            })
-            newView.setVisible(false)
-            newView.setBackgroundColor('rgba(0, 0, 0, 0)')
-
-            newView.webContents.setWindowOpenHandler((details) => {
-                void shell.openExternal(details.url)
-                return { action: 'deny' }
-            })
-
-            newView.webContents.on('did-finish-load', () => {
-                mainWindow.show()
-                if (is.dev) {
-                    newView.webContents.openDevTools()
-                }
-            })
-
-            // HMR for renderer base on electron-vite cli.
-            // Load the remote URL for development or the local html file for production.
-            if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-                void newView.webContents.loadURL(process.env['ELECTRON_RENDERER_URL'])
-            } else {
-                // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-                void newView.webContents.loadURL(
-                    `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
-                )
-            }
-
-            addTab(mainWindow, newView, viewId, type, title, pin, persistent)
-            mainWindow.contentView.addChildView(newView)
-            switchTab(mainWindow, viewId)
-        }
+        (_, type: TabType, args?: Record<string, string | number | boolean>) =>
+            createTab(type, args)
     )
 
-    ipcMain.handle(IpcEvents.window.tab.list, () =>
-        getGlobalObject().mainWindowViews.map(
-            ({ key, type, icon, title, pin, persistent }) =>
-                ({
-                    key,
-                    type,
-                    icon,
-                    title,
-                    pin,
-                    persistent
-                }) as Tab
-        )
-    )
+    ipcMain.handle(IpcEvents.window.tab.list, listTab)
 
-    ipcMain.on(IpcEvents.window.tab.update, (_, tabs: Tab[]) => {
-        updateTab(mainWindow, tabs)
-    })
+    ipcMain.on(IpcEvents.window.tab.update, (_, tabs: Tab[]) => updateTab(tabs))
 
-    ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => switchTab(mainWindow, key))
+    ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => switchTab(key))
 
-    ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => {
-        removeTab(mainWindow, key)
-    })
+    ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => removeTab(key))
 
-    ipcMain.on(IpcEvents.window.tab.independent, (_, key: string) => {
-        console.warn('Not Supported', key)
-    })
+    ipcMain.on(IpcEvents.window.tab.independent, (_, key: string) => independentTab(key))
 
-    ipcMain.handle(IpcEvents.account.loginAccount.get, () => settings.account.getLoginAccount())
+    ipcMain.handle(IpcEvents.account.loginAccount.get, getLoginAccount)
 
     ipcMain.on(IpcEvents.account.loginAccount.update, (_, value?: string) =>
-        settings.account.saveLoginAccount(value)
+        updateLoginAccount(value)
     )
 
-    ipcMain.handle(IpcEvents.account.refreshToken.get, () => settings.account.getRefreshToken())
+    ipcMain.handle(IpcEvents.account.refreshToken.get, getRefreshToken)
 
-    ipcMain.on(IpcEvents.account.refreshToken.update, (_, value?: string) => {
-        settings.account.saveRefreshToken(value)
-        mainWindow.webContents.send(IpcEvents.account.refreshToken.update, value)
-        getGlobalObject().mainWindowViews.forEach((item) => {
-            if (item.pin) {
-                item.view.webContents.send(IpcEvents.account.refreshToken.update, value)
-            }
-        })
-    })
+    ipcMain.on(IpcEvents.account.refreshToken.update, (_, value?: string) =>
+        updateRefreshToken(value)
+    )
 
-    ipcMain.handle(IpcEvents.account.accessToken.get, () => settings.account.getAccessToken())
+    ipcMain.handle(IpcEvents.account.accessToken.get, getAccessToken)
 
-    ipcMain.on(IpcEvents.account.accessToken.update, (_, value?: string) => {
-        settings.account.saveAccessToken(value)
-        mainWindow.webContents.send(IpcEvents.account.accessToken.update, value)
-        getGlobalObject().mainWindowViews.forEach((item) => {
-            if (item.pin) {
-                item.view.webContents.send(IpcEvents.account.accessToken.update, value)
-            }
-        })
-    })
+    ipcMain.on(IpcEvents.account.accessToken.update, (_, value?: string) =>
+        updateAccessToken(value)
+    )
 
-    ipcMain.handle(IpcEvents.account.userInfo.get, () => settings.account.getUserInfo())
+    ipcMain.handle(IpcEvents.account.userInfo.get, getUserInfo)
 
-    ipcMain.on(IpcEvents.account.userInfo.update, (_, value?: UserWithPowerInfoVo) => {
-        settings.account.saveUserInfo(value)
-        mainWindow.webContents.send(IpcEvents.account.userInfo.update, value)
-        getGlobalObject().mainWindowViews.forEach((item) => {
-            if (item.pin) {
-                item.view.webContents.send(IpcEvents.account.userInfo.update, value)
-            }
-        })
-    })
+    ipcMain.on(IpcEvents.account.userInfo.update, (_, value?: UserWithPowerInfoVo) =>
+        updateUserInfo(value)
+    )
 
-    ipcMain.on(IpcEvents.account.loginStatus.update, (_, isLogin: boolean) => {
-        mainWindow.webContents.send(IpcEvents.account.loginStatus.update, isLogin)
-        getGlobalObject().mainWindowViews.forEach((item) => {
-            item.view.webContents.send(IpcEvents.account.loginStatus.update, isLogin)
-        })
-    })
+    ipcMain.on(IpcEvents.account.loginStatus.update, (_, isLogin: boolean) =>
+        updateLoginStatus(isLogin)
+    )
 }

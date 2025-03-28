@@ -1,10 +1,86 @@
-import { BrowserWindow, WebContentsView } from 'electron'
+import { join } from 'path'
+import { randomUUID } from 'node:crypto'
+import { kebabCase } from 'lodash'
+import { WebContentsView, WebContents, shell, app, nativeTheme } from 'electron'
+import { is } from '@electron-toolkit/utils'
 import { IpcEvents } from './constants'
+import { settings } from './dataStore'
 
 export const getGlobalObject = (): SharedObject => global.sharedObject
 
-export const addTab = (
-    mainWindow: BrowserWindow,
+export const getViews = () => getGlobalObject().views
+
+export const getMainWindow = () => getGlobalObject().mainWindow
+
+export const forEachViews = (callback: (value: ViewInfo) => void) => getViews().forEach(callback)
+
+export const forEachAllWebContents = (callback: (value: WebContents) => void) => {
+    callback(getMainWindow().webContents)
+    getViews()
+        .map((v) => v.view.webContents)
+        .forEach(callback)
+}
+
+export const forEachPinWebContents = (callback: (value: WebContents) => void) => {
+    callback(getMainWindow().webContents)
+    getViews()
+        .filter((v) => v.pin)
+        .map((v) => v.view.webContents)
+        .forEach(callback)
+}
+
+export const openUrlWithDefaultApp = shell.openExternal
+
+export const getAppVersion = app.getVersion
+
+export const getTheme = settings.window.getTheme
+
+export const updateTheme = (theme: WindowTheme) => {
+    settings.window.saveTheme(theme)
+    forEachAllWebContents((item) => item.send(IpcEvents.window.theme.update, theme))
+
+    switch (theme) {
+        case 'FOLLOW_SYSTEM':
+            nativeTheme.themeSource = 'system'
+            break
+        case 'LIGHT':
+            nativeTheme.themeSource = 'light'
+            break
+        case 'DARK':
+            nativeTheme.themeSource = 'dark'
+    }
+}
+
+export const updateTitleBarColor = (color: string, symbolColor: string) => {
+    if (['win32', 'linux'].includes(process.platform)) {
+        getMainWindow().setTitleBarOverlay({ color, symbolColor, height: 40 })
+    }
+}
+
+export const updateSidebarWidth = (menuWidth: number) => {
+    getGlobalObject().menuWidth = menuWidth
+    const { width, height } = getMainWindow().getContentBounds()
+    forEachViews(({ view, pin }) => {
+        if (pin) {
+            return
+        }
+        view.setBounds({
+            x: menuWidth,
+            y: 40,
+            width: width - menuWidth,
+            height: height - 40
+        })
+    })
+}
+
+export const getSidebarIsCollapse = settings.sidebar.getIsCollapsed
+
+export const updateSidebarIsCollapse = (isCollapse: boolean) => {
+    settings.sidebar.saveIsCollapsed(isCollapse)
+    forEachPinWebContents((item) => item.send(IpcEvents.sidebar.collapse.update, isCollapse))
+}
+
+const addTab = (
     view: WebContentsView,
     viewId: string,
     type: TabType,
@@ -13,10 +89,10 @@ export const addTab = (
     persistent = false
 ): Tab => {
     view.webContents.on('page-title-updated', (_, title) => {
-        getGlobalObject().mainWindowViews.forEach((item) => {
+        forEachViews((item) => {
             if (item.key === viewId) {
                 item.title = title
-                handleUpdateTabs(mainWindow)
+                handleUpdateTabs()
             }
         })
     })
@@ -24,14 +100,14 @@ export const addTab = (
         if (icon.endsWith('favicon.ico')) {
             return
         }
-        getGlobalObject().mainWindowViews.forEach((item) => {
+        forEachViews((item) => {
             if (item.key === viewId) {
                 item.icon = icon
-                handleUpdateTabs(mainWindow)
+                handleUpdateTabs()
             }
         })
     })
-    getGlobalObject().mainWindowViews.push({
+    getViews().push({
         key: viewId,
         type,
         view,
@@ -39,44 +115,176 @@ export const addTab = (
         pin,
         persistent
     })
-    handleUpdateTabs(mainWindow)
+    handleUpdateTabs()
     return { key: viewId, type, title, pin, persistent }
 }
 
-export const updateTab = (mainWindow: BrowserWindow, tabs: Tab[]) => {
-    getGlobalObject().mainWindowViews = tabs
-        .map((tab) => getGlobalObject().mainWindowViews.find((item) => item.key === tab.key))
-        .filter((item) => item !== undefined)
-    handleUpdateTabs(mainWindow)
+export const createTab = (type: TabType, args?: Record<string, string | number | boolean>) => {
+    if (type === 'core' && getViews().some(({ key }) => key === 'coreView')) {
+        switchTab('coreView')
+        return
+    }
+    if (type === 'settings' && getViews().some(({ key }) => key === 'settingsView')) {
+        switchTab('settingsView')
+        args?.['navigateTo'] &&
+            getGlobalObject()
+                .views.find(({ key }) => key === 'settingsView')
+                ?.view.webContents.send(IpcEvents.window.navigate.goto, args['navigateTo'])
+        return
+    }
+    if (type === 'sign' && getViews().some(({ key }) => key === 'signView')) {
+        switchTab('signView')
+        return
+    }
+
+    const { viewId, preload, menuWidth, title, pin, persistent } = ((): {
+        viewId: string
+        preload: string
+        menuWidth: number
+        title: string
+        pin: boolean
+        persistent: boolean
+    } => {
+        switch (type) {
+            case 'core':
+                return {
+                    viewId: 'coreView',
+                    preload: 'core.js',
+                    menuWidth: 0,
+                    title: 'Oxygen Toolbox',
+                    pin: true,
+                    persistent: true
+                }
+            case 'settings':
+                return {
+                    viewId: 'settingsView',
+                    preload: 'settings.js',
+                    menuWidth: 0,
+                    title: 'Settings',
+                    pin: true,
+                    persistent: false
+                }
+            case 'sign':
+                return {
+                    viewId: 'signView',
+                    preload: 'sign.js',
+                    menuWidth: 0,
+                    title: 'Sign',
+                    pin: true,
+                    persistent: false
+                }
+            default: {
+                const viewId = randomUUID()
+                return {
+                    viewId: viewId,
+                    preload: 'tool.js',
+                    menuWidth: getGlobalObject().menuWidth,
+                    title: viewId,
+                    pin: false,
+                    persistent: false
+                }
+            }
+        }
+    })()
+    const argStr = args
+        ? Object.entries(args).map(
+              ([key, value]) => `--${kebabCase(key)}=${encodeURIComponent(value)}`
+          )
+        : []
+    const newView = new WebContentsView({
+        webPreferences: {
+            preload: join(__dirname, `../preload/${preload}`),
+            additionalArguments: [`--view-id=${viewId}`, ...argStr]
+        }
+    })
+
+    const { width, height } = getMainWindow().getContentBounds()
+    newView.setBounds({
+        x: menuWidth,
+        y: 40,
+        width: width - menuWidth,
+        height: height - 40
+    })
+    newView.setVisible(false)
+    newView.setBackgroundColor('rgba(0, 0, 0, 0)')
+    newView.webContents.setWindowOpenHandler((details) => {
+        void shell.openExternal(details.url)
+        return { action: 'deny' }
+    })
+    newView.webContents.on('did-finish-load', () => {
+        getMainWindow().show()
+        if (is.dev) {
+            newView.webContents.openDevTools()
+        }
+    })
+
+    // HMR for renderer base on electron-vite cli.
+    // Load the remote URL for development or the local html file for production.
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        void newView.webContents.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    } else {
+        // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+        void newView.webContents.loadURL(
+            `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
+        )
+    }
+
+    addTab(newView, viewId, type, title, pin, persistent)
+    getMainWindow().contentView.addChildView(newView)
+    switchTab(viewId)
 }
 
-export const switchTab = (mainWindow: BrowserWindow, key: string): boolean => {
-    if (!getGlobalObject().mainWindowViews.find((item) => item.key === key)) {
+export const listTab = () =>
+    getViews().map(
+        ({ key, type, icon, title, pin, persistent }) =>
+            ({
+                key,
+                type,
+                icon,
+                title,
+                pin,
+                persistent
+            }) as Tab
+    )
+
+export const updateTab = (tabs: Tab[]) => {
+    getGlobalObject().views = tabs
+        .map((tab) => getViews().find((item) => item.key === tab.key))
+        .filter((item) => item !== undefined)
+    handleUpdateTabs()
+}
+
+export const switchTab = (key: string): boolean => {
+    if (!getViews().find((item) => item.key === key)) {
         return false
     }
 
-    getGlobalObject().mainWindowViews.forEach((item) => {
+    forEachViews((item) => {
         item.view.setVisible(item.key === key)
     })
-    mainWindow.webContents.send(IpcEvents.window.tab.switch, key)
+    getMainWindow().webContents.send(IpcEvents.window.tab.switch, key)
     return true
 }
 
-export const removeTab = (mainWindow: BrowserWindow, key: string) => {
-    getGlobalObject().mainWindowViews = getGlobalObject().mainWindowViews.filter((item) => {
+export const removeTab = (key: string) => {
+    getGlobalObject().views = getViews().filter((item) => {
         if (item.key === key) {
-            mainWindow.contentView.removeChildView(item.view)
+            getMainWindow().contentView.removeChildView(item.view)
             item.view.webContents.close()
         }
         return item.key !== key
     })
-    handleUpdateTabs(mainWindow)
+    handleUpdateTabs()
 }
 
-const handleUpdateTabs = (mainWindow: BrowserWindow) => {
-    mainWindow.webContents.send(
+export const independentTab = (key: string) => {
+    console.warn('Not Supported', key)
+}
+
+const handleUpdateTabs = () => {
+    getMainWindow().webContents.send(
         IpcEvents.window.tab.update,
-        getGlobalObject().mainWindowViews.map(
+        getViews().map(
             ({ key, type, icon, title, pin, persistent }) =>
                 ({
                     key,
@@ -89,3 +297,31 @@ const handleUpdateTabs = (mainWindow: BrowserWindow) => {
         )
     )
 }
+
+export const getLoginAccount = settings.account.getLoginAccount
+
+export const updateLoginAccount = (account?: string) => settings.account.saveLoginAccount(account)
+
+export const getRefreshToken = settings.account.getRefreshToken
+
+export const updateRefreshToken = (refreshToken?: string) => {
+    settings.account.saveRefreshToken(refreshToken)
+    forEachPinWebContents((item) => item.send(IpcEvents.account.refreshToken.update, refreshToken))
+}
+
+export const getAccessToken = settings.account.getAccessToken
+
+export const updateAccessToken = (accessToken?: string) => {
+    settings.account.saveAccessToken(accessToken)
+    forEachPinWebContents((item) => item.send(IpcEvents.account.accessToken.update, accessToken))
+}
+
+export const getUserInfo = settings.account.getUserInfo
+
+export const updateUserInfo = (userInfo?: UserWithPowerInfoVo) => {
+    settings.account.saveUserInfo(userInfo)
+    forEachPinWebContents((item) => item.send(IpcEvents.account.userInfo.update, userInfo))
+}
+
+export const updateLoginStatus = (isLogin: boolean) =>
+    forEachAllWebContents((item) => item.send(IpcEvents.account.loginStatus.update, isLogin))

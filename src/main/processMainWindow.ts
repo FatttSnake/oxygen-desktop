@@ -1,6 +1,6 @@
 import { BrowserWindow, nativeTheme } from 'electron'
 import { settings } from './dataStore'
-import { getGlobalObject } from './common'
+import { forEachViews, getGlobalObject } from './common'
 
 export const processMainWindow = (mainWindow: BrowserWindow) => {
     if (settings.window.getIsMaximize()) {
@@ -21,7 +21,7 @@ export const processMainWindow = (mainWindow: BrowserWindow) => {
     mainWindow.on('resize', () => {
         const { width, height } = mainWindow.getContentBounds()
         const menuWidth = getGlobalObject().menuWidth
-        getGlobalObject().mainWindowViews.forEach(({ view, pin }) => {
+        forEachViews(({ view, pin }) => {
             view.setBounds({
                 x: pin ? 0 : menuWidth,
                 y: 40,

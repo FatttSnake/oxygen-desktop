@@ -33,7 +33,8 @@ interface ViewInfo extends Tab {
 
 interface SharedObject {
     menuWidth: number
-    mainWindowViews: ViewInfo[]
+    mainWindow: _BrowserWindow
+    views: ViewInfo[]
     independentWindows: Record<string, _BrowserWindow>
 }
 
