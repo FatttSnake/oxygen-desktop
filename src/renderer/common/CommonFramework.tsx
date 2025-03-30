@@ -49,6 +49,7 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
 
         return () => {
             darkThemeMq.removeEventListener('change', darkThemeMqChangeListener)
+            oxygenApi.window.theme.offUpdate()
         }
     }, [])
 

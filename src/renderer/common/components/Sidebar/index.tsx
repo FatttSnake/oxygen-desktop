@@ -23,6 +23,10 @@ const Sidebar = (props: SidebarProps) => {
         oxygenApi.sidebar.collapse.onUpdate((value) => {
             setIsCollapse(value)
         })
+
+        return () => {
+            oxygenApi.sidebar.collapse.offUpdate()
+        }
     }, [])
 
     return (

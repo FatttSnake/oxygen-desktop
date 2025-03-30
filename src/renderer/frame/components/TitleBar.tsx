@@ -82,6 +82,12 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
                 getAvatar().then((avatar) => setAvatar(avatar ?? ''))
             }
         })
+
+        return () => {
+            oxygenApi.window.tab.offUpdate()
+            oxygenApi.window.tab.offSwitch()
+            oxygenApi.account.userInfo.offUpdate()
+        }
     }, [])
 
     return (

@@ -32,6 +32,10 @@ const AuthRoute = () => {
         oxygenApi.account.loginStatus.onUpdate((isLogin) => {
             setIsLogin(isLogin)
         })
+
+        return () => {
+            oxygenApi.account.loginStatus.offUpdate()
+        }
     }, [])
 
     return useMemo(() => {

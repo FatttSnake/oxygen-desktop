@@ -27,6 +27,7 @@ interface OxygenAPI {
         theme: {
             get: () => Promise<WindowTheme>
             onUpdate: (callback: (theme: WindowTheme) => void) => void
+            offUpdate: () => void
             update: (theme: WindowTheme) => void
         }
         titleBarOverlay: {
@@ -36,14 +37,17 @@ interface OxygenAPI {
             create: (type: TabType, args?: Record<string, string | number | boolean>) => void
             list: () => Promise<TabInstance[]>
             onUpdate: (callback: (tabs: TabInstance[]) => void) => void
+            offUpdate: () => void
             update: (tabs: TabInstance[]) => void
             onSwitch: (callback: (key: string) => void) => void
+            offSwitch: () => void
             switch: (key: string) => Promise<boolean>
             close: (key: string) => void
             independent: (key: string) => void
         }
         navigate: {
             onGoto: (callback: (value: string) => void) => void
+            offGoto: () => void
         }
     }
     sidebar: {
@@ -53,6 +57,7 @@ interface OxygenAPI {
         collapse: {
             get: () => Promise<boolean>
             onUpdate: (callback: (value: boolean) => void) => void
+            offUpdate: () => void
             update: (value: boolean) => void
         }
     }
@@ -64,20 +69,24 @@ interface OxygenAPI {
         accessToken: {
             get: () => Promise<string | undefined>
             onUpdate: (callback: (value?: string) => void) => void
+            offUpdate: () => void
             update: (value?: string) => void
         }
         refreshToken: {
             get: () => Promise<string | undefined>
             onUpdate: (callback: (value?: string) => void) => void
+            offUpdate: () => void
             update: (value?: string) => void
         }
         userInfo: {
             get: () => Promise<UserWithPowerInfoVo | undefined>
             onUpdate: (callback: (value?: UserWithPowerInfoVo) => void) => void
+            offUpdate: () => void
             update: (value?: UserWithPowerInfoVo) => void
         }
         loginStatus: {
             onUpdate: (callback: (isLogin: boolean) => void) => void
+            offUpdate: () => void
             update: (isLogin: boolean) => void
         }
     }

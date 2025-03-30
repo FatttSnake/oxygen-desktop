@@ -21,6 +21,10 @@ const General = () => {
         oxygenApi.window.theme.onUpdate((theme) => {
             setTheme(theme)
         })
+
+        return () => {
+            oxygenApi.window.theme.offUpdate()
+        }
     }, [])
 
     return (

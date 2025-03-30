@@ -56,6 +56,11 @@ const SettingsFramework = () => {
 
         oxygenApi.navigateTo && navigate(oxygenApi.navigateTo)
         oxygenApi.window.navigate.onGoto((value) => navigate(value))
+
+        return () => {
+            oxygenApi.account.loginStatus.offUpdate()
+            oxygenApi.window.navigate.offGoto()
+        }
     }, [])
 
     return (
