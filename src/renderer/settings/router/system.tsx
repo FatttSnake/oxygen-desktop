@@ -7,7 +7,7 @@ const systemSettings: RouteJsonObject[] = [
         id: 'settings-system-statistics',
         component: lazy(() => import('%/pages/system/Statistics')),
         name: '概况',
-        icon: lazy(() => import('~icons/oxygen/setting')),
+        icon: lazy(() => import('~icons/oxygen/chart')),
         menu: true,
         auth: true,
         permission: true,
