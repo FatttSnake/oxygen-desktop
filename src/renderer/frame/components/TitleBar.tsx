@@ -21,7 +21,6 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
     const handleOnClickExpand = () => {
         oxygenApi.sidebar.collapse.update(!isCollapse)
         setIsCollapse(!isCollapse)
-        // oxygenApi.window.tab.create('tool', { url: '' })
     }
 
     const handleOnActiveTabChange = (tab?: TabInstance) => {
@@ -40,7 +39,6 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
 
     const handleOnIndependentTab = (tab: TabInstance) => {
         oxygenApi.window.tab.independent(tab.key)
-        oxygenApi.window.tab.create('tool', { url: '' })
     }
 
     const handleOnClickUser = () => {
@@ -70,7 +68,6 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
             setTabs(tabs)
         })
         oxygenApi.window.tab.onSwitch((key) => setActiveTab(key))
-        // oxygenApi.window.tab.create('')
         if (!tabs.some(({ key }) => key === 'coreView')) {
             oxygenApi.window.tab.create('core')
         }

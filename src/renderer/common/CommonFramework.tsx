@@ -4,7 +4,7 @@ import zh_CN from 'antd/locale/zh_CN'
 import BaseStyles from '$/assets/css/base.style'
 import CommonStyles from '$/assets/css/common.style'
 import { COLOR_PRODUCTION } from '$/constants/common.constants'
-import { setPageFavicon } from '$/util/common'
+import { init, setPageFavicon } from '$/util/common'
 
 export const CommonContext = createContext({
     isDarkMode: false
@@ -14,6 +14,9 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
     const [themeMode, setThemeMode] = useState<WindowTheme>('FOLLOW_SYSTEM')
     const [isSystemDarkMode, setIsSystemDarkMode] = useState(false)
     const [isThemeLoaded, setIsThemeLoaded] = useState(false)
+    const [messageInstance, messageHolder] = message.useMessage()
+    const [notificationInstance, notificationHolder] = notification.useNotification()
+    const [modalInstance, modalHolder] = AntdModal.useModal()
 
     const getIsDark = () => {
         switch (themeMode) {
@@ -42,6 +45,8 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
         })
         oxygenApi.window.theme.onUpdate((theme) => setThemeMode(theme))
 
+        init(messageInstance, notificationInstance, modalInstance)
+
         return () => {
             darkThemeMq.removeEventListener('change', darkThemeMqChangeListener)
         }
@@ -69,6 +74,9 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
             <CommonContext.Provider value={{ isDarkMode: getIsDark() }}>
                 {children}
             </CommonContext.Provider>
+            {messageHolder}
+            {notificationHolder}
+            {modalHolder}
         </AntdConfigProvider>
     ) : undefined
 }
