@@ -24,7 +24,7 @@ const SensitiveWord = () => {
 
     const handleOnSave = () => {
         targetKeys &&
-            void r_sys_settings_sensitive_update({ ids: targetKeys }).then((res) => {
+            r_sys_settings_sensitive_update({ ids: targetKeys }).then((res) => {
                 const response = res.data
                 if (response.success) {
                     void message.success('保存成功')
@@ -36,7 +36,7 @@ const SensitiveWord = () => {
     }
 
     const handleOnDelete = () => {
-        void r_sys_settings_sensitive_delete(selectedKeys[0]).then((res) => {
+        r_sys_settings_sensitive_delete(selectedKeys[0]).then((res) => {
             const response = res.data
             if (response.success) {
                 void message.success('删除成功')
@@ -53,7 +53,7 @@ const SensitiveWord = () => {
         }
         setIsLoading(true)
 
-        void r_sys_settings_sensitive_get().then((res) => {
+        r_sys_settings_sensitive_get().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data
@@ -74,7 +74,7 @@ const SensitiveWord = () => {
         }
         setIsAdding(true)
 
-        void r_sys_settings_sensitive_add({ word: newWord, enable: false })
+        r_sys_settings_sensitive_add({ word: newWord, enable: false })
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

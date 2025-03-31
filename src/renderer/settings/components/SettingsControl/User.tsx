@@ -28,7 +28,7 @@ const User = ({
 
     const handleOnCopyToClipboard = () => {
         username &&
-            void navigator.clipboard
+            navigator.clipboard
                 .writeText(new URL(`/store/${username}`, import.meta.env.VITE_UI_URL).href)
                 .then(() => {
                     void message.success('已复制到剪切板')
@@ -41,7 +41,7 @@ const User = ({
         }
 
         setIsExiting(true)
-        void r_auth_logout().finally(() => {
+        r_auth_logout().finally(() => {
             navigateToRoot(navigate)
             removeAllToken()
             notification.info({

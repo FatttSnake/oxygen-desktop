@@ -190,7 +190,7 @@ const Log = () => {
 
         setIsLoading(true)
 
-        void r_sys_log_get({
+        r_sys_log_get({
             currentPage: tableParams.pagination?.current,
             pageSize: tableParams.pagination?.pageSize,
             sortField:

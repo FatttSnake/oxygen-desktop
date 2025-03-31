@@ -237,7 +237,7 @@ const Template = () => {
 
             const source = filesToBase64(editingFiles[value.id])
 
-            void r_sys_tool_template_update({ id: value.id, source })
+            r_sys_tool_template_update({ id: value.id, source })
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -287,7 +287,7 @@ const Template = () => {
                         if (confirmed) {
                             setIsLoading(true)
 
-                            void r_sys_tool_template_delete(value.id)
+                            r_sys_tool_template_delete(value.id)
                                 .then((res) => {
                                     const response = res.data
                                     if (response.code === DATABASE_DELETE_SUCCESS) {
@@ -320,7 +320,7 @@ const Template = () => {
         setIsSubmitting(true)
 
         if (isDrawerEdit) {
-            void r_sys_tool_template_update(formValues)
+            r_sys_tool_template_update(formValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -340,7 +340,7 @@ const Template = () => {
                     setIsSubmitting(false)
                 })
         } else {
-            void r_sys_tool_template_add({
+            r_sys_tool_template_add({
                 ...formValues,
                 baseId: formValues.baseId
                     ? (formValues.baseId as unknown as string[])[1]
@@ -382,7 +382,7 @@ const Template = () => {
         }
         setIsLoading(true)
 
-        void r_sys_tool_template_get({
+        r_sys_tool_template_get({
             currentPage: tableParams.pagination?.current,
             pageSize: tableParams.pagination?.pageSize,
             sortField:
@@ -426,7 +426,7 @@ const Template = () => {
         }
         setTemplateDetailLoading((prevState) => ({ ...prevState, [record.id]: true }))
 
-        void r_sys_tool_template_get_one(record.id)
+        r_sys_tool_template_get_one(record.id)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -533,7 +533,7 @@ const Template = () => {
                                     }
                                 }
 
-                                void r_sys_tool_template_update({
+                                r_sys_tool_template_update({
                                     id: record.id,
                                     source: filesToBase64(sourceFiles)
                                 })
@@ -727,7 +727,7 @@ const Template = () => {
                                         }
                                     }
 
-                                    void r_sys_tool_template_update({
+                                    r_sys_tool_template_update({
                                         id: record.id,
                                         source: filesToBase64(sourceFiles)
                                     })
@@ -788,7 +788,7 @@ const Template = () => {
 
                                 delete sourceFiles![fileName]
 
-                                void r_sys_tool_template_update({
+                                r_sys_tool_template_update({
                                     id: record.id,
                                     source: filesToBase64(sourceFiles!)
                                 })
@@ -853,7 +853,7 @@ const Template = () => {
         }
         setIsLoadingBaseData(true)
 
-        void r_sys_tool_base_get_list()
+        r_sys_tool_base_get_list()
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

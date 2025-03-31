@@ -44,12 +44,12 @@ const Verify = () => {
             setHasCode(false)
             return
         }
-        void r_auth_verify({ code })
+        r_auth_verify({ code })
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
                     case PERMISSION_ACCOUNT_NEED_INIT:
-                        void getUserInfo().then((user) => {
+                        getUserInfo().then((user) => {
                             setAvatar(user.userInfo.avatar)
                         })
                         break
@@ -72,7 +72,7 @@ const Verify = () => {
         }
         setIsSending(true)
         void message.loading({ content: '发送中', key: 'SENDING', duration: 0 })
-        void r_auth_resend()
+        r_auth_resend()
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -98,7 +98,7 @@ const Verify = () => {
             return
         }
         setIsGettingAvatar(true)
-        void r_api_avatar_random_base64()
+        r_api_avatar_random_base64()
             .then((res) => {
                 const response = res.data
                 if (response.success) {
@@ -116,7 +116,7 @@ const Verify = () => {
         }
         setIsVerifying(true)
 
-        void r_auth_verify({
+        r_auth_verify({
             code: searchParams.get('code') ?? '',
             avatar,
             nickname: verifyParam.nickname
@@ -125,7 +125,7 @@ const Verify = () => {
             switch (response.code) {
                 case PERMISSION_VERIFY_SUCCESS:
                     message.success('恭喜你，完成了').then(() => {
-                        void requestUserInfo().then(() => {
+                        requestUserInfo().then(() => {
                             oxygenApi.window.tab.close('signView')
                         })
                     })

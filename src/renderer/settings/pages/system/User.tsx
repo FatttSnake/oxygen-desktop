@@ -290,7 +290,7 @@ const User = () => {
                     if (confirmed) {
                         setIsLoadingUserData(true)
 
-                        void r_sys_user_delete_list(tableSelectedItem)
+                        r_sys_user_delete_list(tableSelectedItem)
                             .then((res) => {
                                 const response = res.data
 
@@ -388,7 +388,7 @@ const User = () => {
                         .then(
                             () => {
                                 return new Promise<void>((resolve, reject) => {
-                                    void r_sys_user_change_password({
+                                    r_sys_user_change_password({
                                         id: changePasswordForm.getFieldValue('id') as string,
                                         password: changePasswordForm.getFieldValue(
                                             'password'
@@ -470,7 +470,7 @@ const User = () => {
                         if (confirmed) {
                             setIsLoadingUserData(true)
 
-                            void r_sys_user_delete(value.id)
+                            r_sys_user_delete(value.id)
                                 .then((res) => {
                                     const response = res.data
                                     if (response.code === DATABASE_DELETE_SUCCESS) {
@@ -507,7 +507,7 @@ const User = () => {
         setIsDrawerSubmitting(true)
 
         if (isDrawerEdit) {
-            void r_sys_user_update({
+            r_sys_user_update({
                 ...formValues,
                 expiration: formValues.expiration
                     ? localTimeToUtc(formValues.expiration)
@@ -535,7 +535,7 @@ const User = () => {
                     setIsDrawerSubmitting(false)
                 })
         } else {
-            void r_sys_user_add({
+            r_sys_user_add({
                 ...formValues,
                 expiration: formValues.expiration
                     ? localTimeToUtc(formValues.expiration)
@@ -621,7 +621,7 @@ const User = () => {
 
         setIsLoadingUserData(true)
 
-        void r_sys_user_get({
+        r_sys_user_get({
             currentPage: tableParams.pagination?.current,
             pageSize: tableParams.pagination?.pageSize,
             sortField:
@@ -670,7 +670,7 @@ const User = () => {
 
         setIsLoadingRole(true)
 
-        void r_sys_role_get_list()
+        r_sys_role_get_list()
             .then((res) => {
                 const response = res.data
 
@@ -692,7 +692,7 @@ const User = () => {
 
         setIsLoadingGroup(true)
 
-        void r_sys_group_get_list()
+        r_sys_group_get_list()
             .then((res) => {
                 const response = res.data
 
@@ -708,7 +708,7 @@ const User = () => {
     }
 
     const getAvatar = () => {
-        void r_api_avatar_random_base64().then((res) => {
+        r_api_avatar_random_base64().then((res) => {
             const response = res.data
             if (response.success) {
                 response.data && setAvatar(response.data.base64)

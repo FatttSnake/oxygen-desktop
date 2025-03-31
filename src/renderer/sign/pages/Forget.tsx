@@ -78,7 +78,7 @@ const Forget = () => {
             return
         }
 
-        void r_auth_forget({ email: forgetParam.email, captchaCode })
+        r_auth_forget({ email: forgetParam.email, captchaCode })
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -111,7 +111,7 @@ const Forget = () => {
         }
         setIsChanging(true)
 
-        void r_auth_retrieve({
+        r_auth_retrieve({
             code: searchParams.get('code') ?? '',
             password: retrieveParam.password,
             captchaCode: retrieveCaptchaCode

@@ -189,7 +189,7 @@ const Role = () => {
                     if (confirmed) {
                         setIsLoading(true)
 
-                        void r_sys_role_delete_list(tableSelectedItem)
+                        r_sys_role_delete_list(tableSelectedItem)
                             .then((res) => {
                                 const response = res.data
 
@@ -243,7 +243,7 @@ const Role = () => {
                         if (confirmed) {
                             setIsLoading(true)
 
-                            void r_sys_role_delete(value.id)
+                            r_sys_role_delete(value.id)
                                 .then((res) => {
                                     const response = res.data
                                     if (response.code === DATABASE_DELETE_SUCCESS) {
@@ -277,7 +277,7 @@ const Role = () => {
         setIsSubmitting(true)
 
         if (isDrawerEdit) {
-            void r_sys_role_update(formValues)
+            r_sys_role_update(formValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -297,7 +297,7 @@ const Role = () => {
                     setIsSubmitting(false)
                 })
         } else {
-            void r_sys_role_add(formValues)
+            r_sys_role_add(formValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -366,7 +366,7 @@ const Role = () => {
             }
 
             setIsLoading(true)
-            void r_sys_role_change_status({ id, enable: newStatus })
+            r_sys_role_change_status({ id, enable: newStatus })
                 .then((res) => {
                     const response = res.data
                     if (response.code === DATABASE_UPDATE_SUCCESS) {
@@ -396,7 +396,7 @@ const Role = () => {
 
         setIsLoading(true)
 
-        void r_sys_role_get({
+        r_sys_role_get({
             currentPage: tableParams.pagination?.current,
             pageSize: tableParams.pagination?.pageSize,
             sortField:
@@ -450,7 +450,7 @@ const Role = () => {
 
         setIsLoadingPower(true)
 
-        void r_sys_power_get_list()
+        r_sys_power_get_list()
             .then((res) => {
                 const response = res.data
 

@@ -46,7 +46,7 @@ const ActiveInfo = () => {
 
         setIsLoading(true)
 
-        void r_sys_statistics_active({ scope: _scope }).then((res) => {
+        r_sys_statistics_active({ scope: _scope }).then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data

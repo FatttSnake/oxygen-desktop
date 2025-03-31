@@ -7,6 +7,7 @@ const getArgv = (key: string) => {
     return value ? decodeURIComponent(value) : undefined
 }
 
+const viewId = getArgv('viewId')
 const navigateTo = getArgv('navigateTo')
 
 const IpcEvents = {
@@ -57,6 +58,7 @@ const listeners: Record<string, IpcRendererEventListener> = {}
 const oxygenApi = {
     platform: process.platform,
     renderer: 'settings',
+    viewId,
     navigateTo,
 
     app: {

@@ -47,7 +47,7 @@ const StorageInfo = () => {
     }, [refreshInterval])
 
     const getStorageInfo = () => {
-        void r_sys_statistics_storage().then((res) => {
+        r_sys_statistics_storage().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data

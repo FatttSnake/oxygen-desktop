@@ -197,7 +197,7 @@ const Group = () => {
                     if (confirmed) {
                         setIsLoading(true)
 
-                        void r_sys_group_delete_list(tableSelectedItem)
+                        r_sys_group_delete_list(tableSelectedItem)
                             .then((res) => {
                                 const response = res.data
 
@@ -251,7 +251,7 @@ const Group = () => {
                         if (confirmed) {
                             setIsLoading(true)
 
-                            void r_sys_group_delete(value.id)
+                            r_sys_group_delete(value.id)
                                 .then((res) => {
                                     const response = res.data
                                     if (response.code === DATABASE_DELETE_SUCCESS) {
@@ -288,7 +288,7 @@ const Group = () => {
         setIsSubmitting(true)
 
         if (isDrawerEdit) {
-            void r_sys_group_update(formValues)
+            r_sys_group_update(formValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -308,7 +308,7 @@ const Group = () => {
                     setIsSubmitting(false)
                 })
         } else {
-            void r_sys_group_add(formValues)
+            r_sys_group_add(formValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -377,7 +377,7 @@ const Group = () => {
             }
 
             setIsLoading(true)
-            void r_sys_group_change_status({ id, enable: newStatus })
+            r_sys_group_change_status({ id, enable: newStatus })
                 .then((res) => {
                     const response = res.data
                     if (response.code === DATABASE_UPDATE_SUCCESS) {
@@ -407,7 +407,7 @@ const Group = () => {
 
         setIsLoading(true)
 
-        void r_sys_group_get({
+        r_sys_group_get({
             currentPage: tableParams.pagination?.current,
             pageSize: tableParams.pagination?.pageSize,
             sortField:
@@ -450,7 +450,7 @@ const Group = () => {
 
         setIsLoadingRole(true)
 
-        void r_sys_role_get_list()
+        r_sys_role_get_list()
             .then((res) => {
                 const response = res.data
 

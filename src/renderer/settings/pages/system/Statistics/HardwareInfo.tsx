@@ -9,7 +9,7 @@ const HardwareInfo = () => {
     const [hardwareInfoData, setHardwareInfoData] = useState<HardwareInfoVo>()
 
     useEffect(() => {
-        void r_sys_statistics_hardware().then((res) => {
+        r_sys_statistics_hardware().then((res) => {
             const response = res.data
             if (response.success) {
                 response.data && setHardwareInfoData(response.data)

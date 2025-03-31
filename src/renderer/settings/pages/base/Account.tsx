@@ -35,7 +35,7 @@ const Account = () => {
         setIsLoading(true)
         userInfoForm.resetFields()
         void message.loading({ content: '获取中……', key: 'LOADING', duration: 0 })
-        void r_api_avatar_random_base64()
+        r_api_avatar_random_base64()
             .then((res) => {
                 message.destroy('LOADING')
                 const response = res.data
@@ -64,7 +64,7 @@ const Account = () => {
                         ),
                         onOk: () =>
                             new Promise<void>((resolve) => {
-                                void r_sys_user_info_update({
+                                r_sys_user_info_update({
                                     avatar: userInfoForm.getFieldValue('avatar')
                                 })
                                     .then((res) => {
@@ -125,7 +125,7 @@ const Account = () => {
             ),
             onOk: () =>
                 new Promise<void>((resolve) => {
-                    void r_sys_user_info_update({
+                    r_sys_user_info_update({
                         nickname: userInfoForm.getFieldValue('nickname')
                     })
                         .then((res) => {
@@ -219,7 +219,7 @@ const Account = () => {
                 changePasswordForm.validateFields().then(
                     () =>
                         new Promise<void>((resolve, reject) => {
-                            void r_sys_user_info_change_password({
+                            r_sys_user_info_change_password({
                                 originalPassword: changePasswordForm.getFieldValue(
                                     'originalPassword'
                                 ) as string,
@@ -330,7 +330,7 @@ const Account = () => {
                             twoFactorForm.validateFields().then(
                                 () =>
                                     new Promise<void>((resolve) => {
-                                        void r_auth_two_factor_remove({
+                                        r_auth_two_factor_remove({
                                             code: twoFactorForm.getFieldValue(
                                                 'twoFactorCode'
                                             ) as string
@@ -359,7 +359,7 @@ const Account = () => {
         } else {
             setIsLoading(true)
             void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
-            void r_auth_two_factor_create()
+            r_auth_two_factor_create()
                 .then((res) => {
                     message.destroy('LOADING')
                     const response = res.data
@@ -422,7 +422,7 @@ const Account = () => {
                                 twoFactorForm.validateFields().then(
                                     () =>
                                         new Promise<void>((resolve) => {
-                                            void r_auth_two_factor_validate({
+                                            r_auth_two_factor_validate({
                                                 code: twoFactorForm.getFieldValue(
                                                     'twoFactorCode'
                                                 ) as string
@@ -465,7 +465,7 @@ const Account = () => {
         }
         setIsLoading(true)
 
-        void getUserInfo(force)
+        getUserInfo(force)
             .then((userInfo) => {
                 setUserInfo(userInfo)
             })

@@ -68,7 +68,7 @@ const SignIn = () => {
             return
         }
 
-        void r_auth_login({
+        r_auth_login({
             account: loginParam.account,
             password: loginParam.password,
             captchaCode,
@@ -82,9 +82,10 @@ const SignIn = () => {
                         oxygenApi.account.loginAccount.update(loginParam.account)
                         setRefreshToken(data!.refreshToken)
                         setAccessToken(data!.accessToken)
-                        void getUserInfo().then((user) => {
+                        getUserInfo().then((user) => {
                             oxygenApi.account.loginStatus.update(true)
                             new Notification(`欢迎回来，${user.userInfo.nickname}`, {
+                                icon: `data:image/png;base64,${user.userInfo.avatar}`,
                                 body: `最近登录：${
                                     user.lastLoginTime
                                         ? `${utcToLocalTime(user.lastLoginTime)}【${
@@ -94,7 +95,7 @@ const SignIn = () => {
                                 }`
                             })
                         })
-                        void message.success('登录成功', 1).then(() => {
+                        message.success('登录成功', 1).then(() => {
                             void oxygenApi.window.tab.switch('coreView')
                             oxygenApi.window.tab.close('signView')
                         })

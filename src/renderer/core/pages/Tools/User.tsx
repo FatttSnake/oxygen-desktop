@@ -26,7 +26,7 @@ const User = () => {
     const handleOnCopyToClipboard = (username?: string) => {
         return username
             ? () => {
-                  void navigator.clipboard
+                  navigator.clipboard
                       .writeText(new URL(`/store/${username}`, import.meta.env.VITE_UI_URL).href)
                       .then(() => {
                           void message.success('已复制到剪切板')
@@ -42,7 +42,7 @@ const User = () => {
         setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        void r_sys_user_info_get_basic(username!)
+        r_sys_user_info_get_basic(username!)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -79,7 +79,7 @@ const User = () => {
         setIsLoadingTools(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
-        void r_tool_store_get_by_username(username!, { currentPage: page })
+        r_tool_store_get_by_username(username!, { currentPage: page })
             .then((res) => {
                 const response = res.data
 

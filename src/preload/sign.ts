@@ -1,5 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+const kebabCase = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+const getArgv = (key: string) => {
+    const value = process.argv.find((arg) => arg.startsWith(`--${kebabCase(key)}=`))?.split('=')[1]
+    return value ? decodeURIComponent(value) : undefined
+}
+
+const viewId = getArgv('viewId')
+
 const IpcEvents = {
     window: {
         theme: {
@@ -42,6 +51,7 @@ const listeners: Record<string, IpcRendererEventListener> = {}
 const oxygenApi = {
     platform: process.platform,
     renderer: 'sign',
+    viewId,
 
     window: {
         theme: {

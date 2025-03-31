@@ -7,9 +7,9 @@ import esbuild, {
     Plugin,
     PluginBuild
 } from 'esbuild-wasm'
+import wasmURL from 'esbuild-wasm/esbuild.wasm?url'
 import localforage from 'localforage'
 import axios from 'axios'
-import esbuildWasmUrl from 'esbuild-wasm/esbuild.wasm?url'
 import { IFile, IFiles, IImportMap } from '@/components/Playground/shared'
 import {
     addReactImport,
@@ -28,10 +28,10 @@ class Compiler {
 
     constructor() {
         try {
-            void esbuild
+            esbuild
                 .initialize({
                     worker: true,
-                    wasmURL: esbuildWasmUrl
+                    wasmURL
                 })
                 .finally(() => {
                     this.init = true
@@ -173,8 +173,7 @@ class Compiler {
                 { namespace: 'oxygen', filter: /.*/ },
                 (args: OnLoadArgs): OnLoadResult | undefined => {
                     let file: IFile | undefined
-
-                    void ['', '.tsx', '.jsx', '.ts', '.js'].forEach((suffix) => {
+                    ;['', '.tsx', '.jsx', '.ts', '.js'].forEach((suffix) => {
                         file = file || files[`${args.path}${suffix}`]
                     })
                     if (file) {

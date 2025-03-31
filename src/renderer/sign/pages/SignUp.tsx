@@ -71,7 +71,7 @@ const SignUp = () => {
             return
         }
 
-        void r_auth_register({
+        r_auth_register({
             username: registerParam.username,
             email: registerParam.email,
             password: registerParam.password,
@@ -116,7 +116,7 @@ const SignUp = () => {
         }
         setIsSending(true)
         void message.loading({ content: '发送中', key: 'SENDING', duration: 0 })
-        void r_auth_resend()
+        r_auth_resend()
             .then((res) => {
                 const response = res.data
                 if (response.success) {

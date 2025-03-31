@@ -63,7 +63,7 @@ const Local = () => {
         setIsLoading(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
-        void n_tool_list()
+        n_tool_list()
             .then((data) => {
                 const list: ToolVo[] = []
                 data.forEach((value) => Object.values(value).forEach((item) => list.push(item)))

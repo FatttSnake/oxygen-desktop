@@ -44,7 +44,7 @@ const Execute = () => {
             const files = base64ToFiles(toolVo.source.data!)
             const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
 
-            void compiler
+            compiler
                 .compile(files, importMap, toolVo.entryPoint)
                 .then((result) => {
                     const output = result.outputFiles[0].text
@@ -68,7 +68,7 @@ const Execute = () => {
         setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        void r_sys_tool_get_one(id!)
+        r_sys_tool_get_one(id!)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

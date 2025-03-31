@@ -232,7 +232,7 @@ const Base = () => {
                 getBaseDetail(value)
             }
 
-            void new Promise<void>((resolve, reject) => {
+            new Promise<void>((resolve, reject) => {
                 const timer = setInterval(() => {
                     let loading
                     let data
@@ -325,7 +325,7 @@ const Base = () => {
                                             key: 'COMPILING',
                                             duration: 0
                                         })
-                                        void compiler
+                                        compiler
                                             .compile(
                                                 files,
                                                 importMap,
@@ -338,7 +338,7 @@ const Base = () => {
                                                     key: 'UPLOADING',
                                                     duration: 0
                                                 })
-                                                void r_sys_tool_base_update({
+                                                r_sys_tool_base_update({
                                                     id: value.id,
                                                     dist: strToBase64(result.outputFiles[0].text)
                                                 })
@@ -396,7 +396,7 @@ const Base = () => {
 
             const source = filesToBase64(editingFiles[value.id])
 
-            void r_sys_tool_base_update({ id: value.id, source })
+            r_sys_tool_base_update({ id: value.id, source })
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -441,7 +441,7 @@ const Base = () => {
                         if (confirmed) {
                             setIsLoading(true)
 
-                            void r_sys_tool_base_delete(value.id)
+                            r_sys_tool_base_delete(value.id)
                                 .then((res) => {
                                     const response = res.data
                                     if (response.code === DATABASE_DELETE_SUCCESS) {
@@ -474,7 +474,7 @@ const Base = () => {
         setIsSubmitting(true)
 
         if (isDrawerEdit) {
-            void r_sys_tool_base_update(formValues)
+            r_sys_tool_base_update(formValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -494,7 +494,7 @@ const Base = () => {
                     setIsSubmitting(false)
                 })
         } else {
-            void r_sys_tool_base_add(formValues)
+            r_sys_tool_base_add(formValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -531,7 +531,7 @@ const Base = () => {
         }
         setIsLoading(true)
 
-        void r_sys_tool_base_get({
+        r_sys_tool_base_get({
             currentPage: tableParams.pagination?.current,
             pageSize: tableParams.pagination?.pageSize,
             sortField:
@@ -575,7 +575,7 @@ const Base = () => {
         }
         setBaseDetailLoading((prevState) => ({ ...prevState, [record.id]: true }))
 
-        void r_sys_tool_base_get_one(record.id)
+        r_sys_tool_base_get_one(record.id)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -682,7 +682,7 @@ const Base = () => {
                                     }
                                 }
 
-                                void r_sys_tool_base_update({
+                                r_sys_tool_base_update({
                                     id: record.id,
                                     source: filesToBase64(sourceFiles)
                                 })
@@ -874,7 +874,7 @@ const Base = () => {
                                         }
                                     }
 
-                                    void r_sys_tool_base_update({
+                                    r_sys_tool_base_update({
                                         id: record.id,
                                         source: filesToBase64(sourceFiles)
                                     })
@@ -935,7 +935,7 @@ const Base = () => {
 
                                 delete sourceFiles![fileName]
 
-                                void r_sys_tool_base_update({
+                                r_sys_tool_base_update({
                                     id: record.id,
                                     source: filesToBase64(sourceFiles!)
                                 })

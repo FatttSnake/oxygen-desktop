@@ -13,7 +13,7 @@ const TwoFactor = () => {
     }
 
     const handleOnSave = () => {
-        void r_sys_settings_two_factor_update(twoFactorFormValues).then((res) => {
+        r_sys_settings_two_factor_update(twoFactorFormValues).then((res) => {
             const response = res.data
             if (response.success) {
                 void message.success('保存设置成功')
@@ -30,7 +30,7 @@ const TwoFactor = () => {
         }
         setIsLoading(true)
 
-        void r_sys_settings_two_factor_get().then((res) => {
+        r_sys_settings_two_factor_get().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data

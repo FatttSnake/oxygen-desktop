@@ -56,7 +56,7 @@ const Code = () => {
         setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        void r_sys_tool_get_one(id!)
+        r_sys_tool_get_one(id!)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

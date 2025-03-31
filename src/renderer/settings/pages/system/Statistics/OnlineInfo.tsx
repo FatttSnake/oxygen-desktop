@@ -48,7 +48,7 @@ const OnlineInfo = () => {
         setIsLoading(true)
         setCurrentOnlineCount(-1)
 
-        void r_sys_statistics_online({ scope: _scope }).then((res) => {
+        r_sys_statistics_online({ scope: _scope }).then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data

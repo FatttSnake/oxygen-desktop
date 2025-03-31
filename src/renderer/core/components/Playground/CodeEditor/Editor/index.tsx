@@ -77,7 +77,7 @@ const Editor = ({
     const handleOnEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
         editorRef.current = editor
         editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
-            void editor.getAction('editor.action.formatDocument')?.run()
+            editor.getAction('editor.action.formatDocument')?.run()
         })
 
         monacoRef.current = monaco

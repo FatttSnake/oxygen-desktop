@@ -43,14 +43,14 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
 
     const handleOnClickUser = () => {
         if (isLogin && getVerifyStatus_async() == true) {
-            oxygenApi.window.tab.create('settings', { navigateTo: '/base/account' })
+            void oxygenApi.window.tab.create('settings', { navigateTo: '/base/account' })
         } else {
-            oxygenApi.window.tab.create('sign')
+            void oxygenApi.window.tab.create('sign')
         }
     }
 
     const handleOnClickSettings = () => {
-        oxygenApi.window.tab.create('settings')
+        void oxygenApi.window.tab.create('settings')
     }
 
     useEffect(() => {
@@ -69,7 +69,7 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
         })
         oxygenApi.window.tab.onSwitch((key) => setActiveTab(key))
         if (!tabs.some(({ key }) => key === 'coreView')) {
-            oxygenApi.window.tab.create('core')
+            void oxygenApi.window.tab.create('core')
         }
         if (isLogin) {
             getNickname().then((nickname) => setNickname(nickname ?? ''))

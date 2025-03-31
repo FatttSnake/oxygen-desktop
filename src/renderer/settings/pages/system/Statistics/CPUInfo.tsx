@@ -48,7 +48,7 @@ const CPUInfo = () => {
     }, [refreshInterval])
 
     const getCpuInfo = () => {
-        void r_sys_statistics_cpu().then((res) => {
+        r_sys_statistics_cpu().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data

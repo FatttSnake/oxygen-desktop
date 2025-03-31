@@ -47,7 +47,7 @@ const Store = () => {
         setIsLoading(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
-        void r_tool_store_get({ currentPage: page, searchValue })
+        r_tool_store_get({ currentPage: page, searchValue })
             .then((res) => {
                 const response = res.data
 

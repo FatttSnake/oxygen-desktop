@@ -53,7 +53,7 @@ const Mail = () => {
                 mailSendForm.validateFields().then(
                     () => {
                         return new Promise<void>((resolve) => {
-                            void r_sys_settings_mail_send({
+                            r_sys_settings_mail_send({
                                 to: mailSendForm.getFieldValue('to') as string
                             }).then((res) => {
                                 const response = res.data
@@ -82,7 +82,7 @@ const Mail = () => {
     }
 
     const handleOnSave = () => {
-        void r_sys_settings_mail_update(mailFormValues).then((res) => {
+        r_sys_settings_mail_update(mailFormValues).then((res) => {
             const response = res.data
             if (response.success) {
                 void message.success('保存设置成功')
@@ -99,7 +99,7 @@ const Mail = () => {
         }
 
         setIsLoading(true)
-        void r_sys_settings_mail_get().then((res) => {
+        r_sys_settings_mail_get().then((res) => {
             const response = res.data
             if (response.success) {
                 const data = response.data

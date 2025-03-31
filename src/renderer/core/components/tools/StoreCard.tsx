@@ -70,7 +70,7 @@ const StoreCard = ({
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
         if (getLoginStatus()) {
-            void getUserId().then((value) => setUserId(value))
+            getUserId().then((value) => setUserId(value ?? ''))
         }
     }, [options])
 
@@ -119,7 +119,7 @@ const StoreCard = ({
             return
         }
         if (favorite_) {
-            void r_tool_remove_favorite({
+            r_tool_remove_favorite({
                 authorId: author.id,
                 toolId,
                 platform
@@ -132,7 +132,7 @@ const StoreCard = ({
                 }
             })
         } else {
-            void r_tool_add_favorite({
+            r_tool_add_favorite({
                 authorId: author.id,
                 toolId,
                 platform
@@ -162,7 +162,7 @@ const StoreCard = ({
         const newTools = {} as Record<Platform, ToolVo>
         const flags: boolean[] = []
         supportPlatform.forEach((platform) => {
-            void r_tool_detail(author.username, toolId, 'latest', platform)
+            r_tool_detail(author.username, toolId, 'latest', platform)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -184,7 +184,7 @@ const StoreCard = ({
                         return
                     }
                     if (flags.every((item) => item)) {
-                        void n_tool_install(author.username, toolId, newTools).then(() => {
+                        n_tool_install(author.username, toolId, newTools).then(() => {
                             void message.success(isAvailableUpdate ? '更新成功' : '安装成功')
                             setIsInstalled(true)
                             setIsAvailableUpdate(false)
@@ -249,7 +249,7 @@ const StoreCard = ({
     }
 
     useEffect(() => {
-        void n_tool_get(author.username, toolId).then((tools) => {
+        n_tool_get(author.username, toolId).then((tools) => {
             if (!tools) {
                 setIsInstalled(false)
                 return

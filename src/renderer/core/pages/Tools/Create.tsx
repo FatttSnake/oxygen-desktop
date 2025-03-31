@@ -41,7 +41,7 @@ const Create = () => {
     const handleOnFinish = (toolAddParam: ToolCreateParam) => {
         setIsCreating(true)
 
-        void r_tool_create(toolAddParam)
+        r_tool_create(toolAddParam)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -88,7 +88,7 @@ const Create = () => {
 
     const handleOnPlatformChange = (value: string) => {
         setIsLoadingTemplate(true)
-        void r_tool_template_get({
+        r_tool_template_get({
             platform: value
         })
             .then((res) => {
@@ -117,7 +117,7 @@ const Create = () => {
         }
 
         setIsLoadingTemplate(true)
-        void r_tool_template_get_one(value)
+        r_tool_template_get_one(value)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -144,7 +144,7 @@ const Create = () => {
             const files = base64ToFiles(template.source.data!)
             const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
 
-            void compiler
+            compiler
                 .compile(files, importMap, template.entryPoint)
                 .then((result) => {
                     const output = result.outputFiles[0].text
@@ -171,7 +171,7 @@ const Create = () => {
 
     useEffect(() => {
         setIsLoadingCategory(true)
-        void r_tool_category_get()
+        r_tool_category_get()
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

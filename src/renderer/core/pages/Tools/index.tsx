@@ -226,7 +226,7 @@ const Tools = () => {
                     if (confirmed) {
                         setIsLoading(true)
 
-                        void r_tool_delete(tool.id)
+                        r_tool_delete(tool.id)
                             .then((res) => {
                                 const response = res.data
                                 if (response.code === DATABASE_DELETE_SUCCESS) {
@@ -300,7 +300,7 @@ const Tools = () => {
                 upgradeForm.validateFields().then(
                     () => {
                         return new Promise<void>((resolve, reject) => {
-                            void r_tool_upgrade({
+                            r_tool_upgrade({
                                 toolId: tool.toolId,
                                 ver: upgradeForm.getFieldValue('ver') as string,
                                 platform: tool.platform
@@ -362,7 +362,7 @@ const Tools = () => {
                     if (confirmed) {
                         setIsLoading(true)
 
-                        void r_tool_submit(tool.id)
+                        r_tool_submit(tool.id)
                             .then((res) => {
                                 const response = res.data
                                 switch (response.code) {
@@ -402,7 +402,7 @@ const Tools = () => {
                     if (confirmed) {
                         setIsLoading(true)
 
-                        void r_tool_cancel(tool.id)
+                        r_tool_cancel(tool.id)
                             .then((res) => {
                                 const response = res.data
                                 switch (response.code) {
@@ -450,7 +450,7 @@ const Tools = () => {
         setIsLoading(true)
         void message.loading({ content: '加载工具列表中', key: 'LOADING', duration: 0 })
 
-        void r_tool_get({ currentPage: page })
+        r_tool_get({ currentPage: page })
             .then((res) => {
                 const response = res.data
 
@@ -491,7 +491,7 @@ const Tools = () => {
         setIsLoading(true)
         void message.loading({ content: '加载收藏列表中', key: 'LOADING', duration: 0 })
 
-        void r_tool_get_favorite({ currentPage: page })
+        r_tool_get_favorite({ currentPage: page })
             .then((res) => {
                 const response = res.data
 

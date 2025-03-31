@@ -115,7 +115,7 @@ const Edit = () => {
         setIsSubmitting(true)
         void message.loading({ content: '保存中', key: 'SAVING', duration: 0 })
 
-        void r_tool_update({
+        r_tool_update({
             id: toolData!.id,
             source: filesToBase64(files)
         })
@@ -177,7 +177,7 @@ const Edit = () => {
         }
         setIsSubmitting(true)
 
-        void r_tool_update({
+        r_tool_update({
             ...formValues,
             id: toolData!.id
         })
@@ -214,7 +214,7 @@ const Edit = () => {
         }
         setIsLoadingCategory(true)
 
-        void r_tool_category_get()
+        r_tool_category_get()
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -237,7 +237,7 @@ const Edit = () => {
         setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        void r_tool_detail('!', toolId!, 'latest', searchParams.get('platform') as Platform)
+        r_tool_detail('!', toolId!, 'latest', searchParams.get('platform') as Platform)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

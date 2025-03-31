@@ -10,7 +10,7 @@ const SoftwareInfo = () => {
     const [softwareInfoData, setSoftwareInfoData] = useState<SoftwareInfoVo>()
 
     useEffect(() => {
-        void r_sys_statistics_software().then((res) => {
+        r_sys_statistics_software().then((res) => {
             const response = res.data
             if (response.success) {
                 response.data && setSoftwareInfoData(response.data)
