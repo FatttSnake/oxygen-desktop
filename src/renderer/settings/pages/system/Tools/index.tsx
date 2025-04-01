@@ -22,9 +22,9 @@ import Card from '$/components/Card'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
 import Permission from '$/components/Permission'
-import compiler from '@/components/Playground/compiler'
-import { IImportMap } from '@/components/Playground/shared'
-import { base64ToFiles, IMPORT_MAP_FILE_NAME, strToBase64 } from '@/components/Playground/files'
+import compiler from '$/components/Playground/compiler'
+import { IImportMap } from '$/components/Playground/shared'
+import { base64ToFiles, IMPORT_MAP_FILE_NAME, strToBase64 } from '$/components/Playground/files'
 
 const Tools = () => {
     const theme = useTheme()

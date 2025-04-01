@@ -1,13 +1,13 @@
-import useStyles from '@/components/Playground/CodeEditor/FileSelector/index.style'
+import useStyles from '$/components/Playground/CodeEditor/FileSelector/index.style'
 import HideScrollbar, { HideScrollbarElement } from '$/components/HideScrollbar'
 import FlexBox from '$/components/FlexBox'
-import { IFiles } from '@/components/Playground/shared'
+import { IFiles } from '$/components/Playground/shared'
 import {
     getFileNameList,
     IMPORT_MAP_FILE_NAME,
     TS_CONFIG_FILE_NAME
-} from '@/components/Playground/files'
-import Item from '@/components/Playground/CodeEditor/FileSelector/Item'
+} from '$/components/Playground/files'
+import Item from '$/components/Playground/CodeEditor/FileSelector/Item'
 
 interface FileSelectorProps {
     files?: IFiles

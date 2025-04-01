@@ -1,6 +1,6 @@
 import { Dispatch, RefObject, SetStateAction } from 'react'
 import { Node, NodeProps } from '@xyflow/react'
-import useStyles from '@/components/Playground/Output/Preview/simulation.style'
+import useStyles from '$/components/Playground/Output/Preview/simulation.style'
 
 export type SimulationData = {
     deviceWidth: number

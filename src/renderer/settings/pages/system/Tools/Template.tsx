@@ -25,15 +25,15 @@ import FlexBox from '$/components/FlexBox'
 import HideScrollbar from '$/components/HideScrollbar'
 import Card from '$/components/Card'
 import Permission from '$/components/Permission'
-import Playground from '@/components/Playground'
-import { IFile, IFiles, ITsconfig } from '@/components/Playground/shared'
+import Playground from '$/components/Playground'
+import { IFile, IFiles, ITsconfig } from '$/components/Playground/shared'
 import {
     base64ToFiles,
     fileNameToLanguage,
     filesToBase64,
     getFilesSize,
     TS_CONFIG_FILE_NAME
-} from '@/components/Playground/files'
+} from '$/components/Playground/files'
 
 const Template = () => {
     const { styles, theme } = useStyles()

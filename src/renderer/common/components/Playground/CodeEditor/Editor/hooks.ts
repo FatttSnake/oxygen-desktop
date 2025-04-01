@@ -1,7 +1,7 @@
 import { editor, IPosition, Selection } from 'monaco-editor'
 import ScrollType = editor.ScrollType
 import { Monaco } from '@monaco-editor/react'
-import { createATA, TypeHelper } from '@/components/Playground/CodeEditor/Editor/ata'
+import { createATA, TypeHelper } from '$/components/Playground/CodeEditor/Editor/ata'
 
 export const useEditor = () => {
     const doOpenEditor = (

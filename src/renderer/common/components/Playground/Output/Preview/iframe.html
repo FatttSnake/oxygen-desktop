@@ -40,7 +40,7 @@
     if (data?.type === "GLOBAL_VARIABLES") {
       document.querySelector("#global-css-variables").textContent = data.data.globalCssVariables;
       for (const key in data.data.globalJsVariables) {
-        globalThis[key] = data.data.globalJsVariables[key]
+        globalThis[key] = data.data.globalJsVariables[key];
       }
     }
   });
@@ -48,7 +48,7 @@
 <script type="module" id="appSrc"></script>
 <div id="root">
   <div
-    style="position:absolute;top: 0;left:0;width:100%;height:100%;display: flex;justify-content: center;align-items: center;">
+    style="position:absolute;top: 0;left:0;width:100%;height:100%;display: flex;justify-content: center;align-items: center;color: #888;">
     Loading...
   </div>
 </div>

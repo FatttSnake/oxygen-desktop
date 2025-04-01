@@ -2,11 +2,11 @@ import { editor, Selection } from 'monaco-editor'
 import MonacoEditor, { Monaco } from '@monaco-editor/react'
 import { shikiToMonaco } from '@shikijs/monaco'
 import { createHighlighter } from 'shiki'
-import useStyles from '@/components/Playground/CodeEditor/Editor/index.style'
-import { IEditorOptions, IFiles, ITsconfig } from '@/components/Playground/shared'
-import { fileNameToLanguage, tsconfigJsonDiagnosticsOptions } from '@/components/Playground/files'
-import { useEditor, useTypesProgress } from '@/components/Playground/CodeEditor/Editor/hooks'
-import { MonacoEditorConfig } from '@/components/Playground/CodeEditor/Editor/monacoConfig'
+import useStyles from '$/components/Playground/CodeEditor/Editor/index.style'
+import { IEditorOptions, IFiles, ITsconfig } from '$/components/Playground/shared'
+import { fileNameToLanguage, tsconfigJsonDiagnosticsOptions } from '$/components/Playground/files'
+import { useEditor, useTypesProgress } from '$/components/Playground/CodeEditor/Editor/hooks'
+import { MonacoEditorConfig } from '$/components/Playground/CodeEditor/Editor/monacoConfig'
 
 export interface ExtraLib {
     path: string

@@ -1,4 +1,4 @@
-import { ExtraLib } from '@/components/Playground/CodeEditor/Editor'
+import { ExtraLib } from '$/components/Playground/CodeEditor/Editor'
 import indexDTS from '$/util/editorExtraLibs/_index.d.ts?raw'
 import nativeApiDTS from '$/util/editorExtraLibs/_NativeApi.d.ts?raw'
 

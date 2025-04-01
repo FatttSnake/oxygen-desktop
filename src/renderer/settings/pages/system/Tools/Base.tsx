@@ -24,7 +24,7 @@ import FlexBox from '$/components/FlexBox'
 import HideScrollbar from '$/components/HideScrollbar'
 import Card from '$/components/Card'
 import Permission from '$/components/Permission'
-import { IFile, IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
+import { IFile, IFiles, IImportMap, ITsconfig } from '$/components/Playground/shared'
 import {
     base64ToFiles,
     fileNameToLanguage,
@@ -33,9 +33,9 @@ import {
     IMPORT_MAP_FILE_NAME,
     strToBase64,
     TS_CONFIG_FILE_NAME
-} from '@/components/Playground/files'
-import compiler from '@/components/Playground/compiler'
-import Playground from '@/components/Playground'
+} from '$/components/Playground/files'
+import compiler from '$/components/Playground/compiler'
+import Playground from '$/components/Playground'
 
 const Base = () => {
     const { styles, theme } = useStyles()

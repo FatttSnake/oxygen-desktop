@@ -32,7 +32,6 @@
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",
-    "crypto-js": "^4.2.0",
     "electron-store": "^10.0.0",
     "electron-updater": "^6.3.9"
   },
@@ -60,6 +59,7 @@
     "antd": "^5.21.6",
     "antd-style": "^3.7.1",
     "axios": "^1.7.7",
+    "crypto-js": "^4.2.0",
     "custom-protocol-check": "^1.4.0",
     "dayjs": "^1.11.13",
     "echarts": "^5.5.1",

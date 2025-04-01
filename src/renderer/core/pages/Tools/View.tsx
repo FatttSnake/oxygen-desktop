@@ -20,10 +20,10 @@ import { n_tool_detail } from '$/services/native'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
-import Playground from '@/components/Playground'
-import compiler from '@/components/Playground/compiler'
-import { IImportMap } from '@/components/Playground/shared'
-import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '@/components/Playground/files'
+import Playground from '$/components/Playground'
+import compiler from '$/components/Playground/compiler'
+import { IImportMap } from '$/components/Playground/shared'
+import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '$/components/Playground/files'
 
 const View = () => {
     const { styles, theme } = useStyles()

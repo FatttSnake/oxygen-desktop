@@ -1,10 +1,10 @@
 import MonacoEditor from '@monaco-editor/react'
 import { Loader } from 'esbuild-wasm'
-import useStyles from '@/components/Playground/Output/Transform/index.style'
-import { IFile } from '@/components/Playground/shared'
-import { cssToJsFromFile, jsonToJsFromFile } from '@/components/Playground/files'
-import Compiler from '@/components/Playground/compiler'
-import { MonacoEditorConfig } from '@/components/Playground/CodeEditor/Editor/monacoConfig'
+import useStyles from '$/components/Playground/Output/Transform/index.style'
+import { IFile } from '$/components/Playground/shared'
+import { cssToJsFromFile, jsonToJsFromFile } from '$/components/Playground/files'
+import Compiler from '$/components/Playground/compiler'
+import { MonacoEditorConfig } from '$/components/Playground/CodeEditor/Editor/monacoConfig'
 
 interface OutputProps {
     isDarkMode?: boolean

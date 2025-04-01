@@ -1,14 +1,14 @@
-import useStyles from '@/components/Playground/index.style'
-import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
+import useStyles from '$/components/Playground/index.style'
+import { IFiles, IImportMap, ITsconfig } from '$/components/Playground/shared'
 import {
     ENTRY_FILE_NAME,
     IMPORT_MAP_FILE_NAME,
     MAIN_FILE_NAME,
     TS_CONFIG_FILE_NAME
-} from '@/components/Playground/files'
+} from '$/components/Playground/files'
 import FlexBox from '$/components/FlexBox'
-import CodeEditor from '@/components/Playground/CodeEditor'
-import Output from '@/components/Playground/Output'
+import CodeEditor from '$/components/Playground/CodeEditor'
+import Output from '$/components/Playground/Output'
 
 interface PlaygroundProps {
     isDarkMode?: boolean

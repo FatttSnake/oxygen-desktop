@@ -8,9 +8,9 @@ import { r_tool_detail } from '$/services/tool'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
-import Playground from '@/components/Playground'
-import { IFiles } from '@/components/Playground/shared'
-import { base64ToFiles } from '@/components/Playground/files'
+import Playground from '$/components/Playground'
+import { IFiles } from '$/components/Playground/shared'
+import { base64ToFiles } from '$/components/Playground/files'
 
 const Source = () => {
     const { styles } = useStyles()

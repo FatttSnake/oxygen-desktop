@@ -1,17 +1,17 @@
 import { Monaco } from '@monaco-editor/react'
 import { editor } from 'monaco-editor'
 import { cloneDeep } from 'lodash'
-import useStyles from '@/components/Playground/CodeEditor/index.style'
+import useStyles from '$/components/Playground/CodeEditor/index.style'
 import FlexBox from '$/components/FlexBox'
-import { IEditorOptions, IFiles, ITsconfig } from '@/components/Playground/shared'
+import { IEditorOptions, IFiles, ITsconfig } from '$/components/Playground/shared'
 import {
     fileNameToLanguage,
     getFileNameList,
     IMPORT_MAP_FILE_NAME,
     TS_CONFIG_FILE_NAME
-} from '@/components/Playground/files'
-import FileSelector from '@/components/Playground/CodeEditor/FileSelector'
-import Editor, { ExtraLib } from '@/components/Playground/CodeEditor/Editor'
+} from '$/components/Playground/files'
+import FileSelector from '$/components/Playground/CodeEditor/FileSelector'
+import Editor, { ExtraLib } from '$/components/Playground/CodeEditor/Editor'
 
 interface CodeEditorProps {
     isDarkMode?: boolean

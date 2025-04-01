@@ -18,10 +18,10 @@ import FlexBox from '$/components/FlexBox'
 import Card from '$/components/Card'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
-import Playground from '@/components/Playground'
-import compiler from '@/components/Playground/compiler'
-import { IImportMap } from '@/components/Playground/shared'
-import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '@/components/Playground/files'
+import { IImportMap } from '$/components/Playground/shared'
+import Playground from '$/components/Playground'
+import compiler from '$/components/Playground/compiler'
+import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '$/components/Playground/files'
 
 const Create = () => {
     const { styles, theme } = useStyles()

@@ -10,14 +10,14 @@ import esbuild, {
 import wasmURL from 'esbuild-wasm/esbuild.wasm?url'
 import localforage from 'localforage'
 import axios from 'axios'
-import { IFile, IFiles, IImportMap } from '@/components/Playground/shared'
+import { IFile, IFiles, IImportMap } from '$/components/Playground/shared'
 import {
     addReactImport,
     cssToJs,
     cssToJsFromFile,
     jsonToJs,
     jsonToJsFromFile
-} from '@/components/Playground/files'
+} from '$/components/Playground/files'
 
 class Compiler {
     private init = false

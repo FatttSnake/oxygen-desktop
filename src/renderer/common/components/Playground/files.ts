@@ -2,9 +2,9 @@ import { strFromU8, strToU8, unzlibSync, zlibSync } from 'fflate'
 import { languages } from 'monaco-editor'
 import DiagnosticsOptions = languages.json.DiagnosticsOptions
 import { formatByteSize } from '$/util/common'
-import { IFile, IFiles, ILanguage } from '@/components/Playground/shared'
-import tsconfigSchema from '@/components/Playground/tsconfig-schema.json'
-import importMapSchema from '@/components/Playground/import-map-schema.json'
+import { IFile, IFiles, ILanguage } from '$/components/Playground/shared'
+import tsconfigSchema from '$/components/Playground/tsconfig-schema.json'
+import importMapSchema from '$/components/Playground/import-map-schema.json'
 
 export const TS_CONFIG_FILE_NAME = 'tsconfig.json'
 export const MAIN_FILE_NAME = 'App.tsx'

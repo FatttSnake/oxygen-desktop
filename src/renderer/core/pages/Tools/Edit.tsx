@@ -22,15 +22,15 @@ import FitFullscreen from '$/components/FitFullscreen'
 import FlexBox from '$/components/FlexBox'
 import LoadingMask from '$/components/LoadingMask'
 import Card from '$/components/Card'
-import Playground from '@/components/Playground'
-import { IFiles, IImportMap, ITsconfig } from '@/components/Playground/shared'
+import Playground from '$/components/Playground'
+import { IFiles, IImportMap, ITsconfig } from '$/components/Playground/shared'
 import {
     base64ToFiles,
     base64ToStr,
     filesToBase64,
     IMPORT_MAP_FILE_NAME,
     TS_CONFIG_FILE_NAME
-} from '@/components/Playground/files'
+} from '$/components/Playground/files'
 
 const Edit = () => {
     const { styles, theme } = useStyles()
