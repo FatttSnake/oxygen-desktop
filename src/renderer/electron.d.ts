@@ -34,7 +34,10 @@ interface OxygenAPI {
             setColor: (color: string, symbolColor: string) => void
         }
         tab: {
-            create: (type: TabType, args?: Record<string, string | number | boolean>) => void
+            create: (
+                type: TabType,
+                args?: Record<string, string | number | boolean>
+            ) => Promise<string>
             list: () => Promise<TabInstance[]>
             onUpdate: (callback: (tabs: TabInstance[]) => void) => void
             offUpdate: () => void
@@ -44,6 +47,8 @@ interface OxygenAPI {
             switch: (key: string) => Promise<boolean>
             close: (key: string) => void
             independent: (key: string) => void
+            icon: (key: string, icon: string) => void
+            title: (key: string, title: string) => void
         }
         navigate: {
             onGoto: (callback: (value: string) => void) => void
@@ -88,6 +93,28 @@ interface OxygenAPI {
             onUpdate: (callback: (isLogin: boolean) => void) => void
             offUpdate: () => void
             update: (isLogin: boolean) => void
+        }
+    }
+    tool: {
+        view: {
+            onLoad: (
+                callback: (
+                    username: string,
+                    toolId: string,
+                    ver?: string,
+                    platform?: Platform,
+                    source?: string
+                ) => void
+            ) => void
+            offLoad: () => void
+            load: (
+                username: string,
+                toolId: string,
+                ver?: string,
+                platform?: Platform,
+                source?: string
+            ) => void
+            render: (key: string, dist: string) => void
         }
     }
 }

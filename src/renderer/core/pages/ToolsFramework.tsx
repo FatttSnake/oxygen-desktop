@@ -12,7 +12,7 @@ import type { DragEndEvent } from '@dnd-kit/core/dist/types'
 import useStyles from '@/assets/css/pages/tools-framework.style'
 import { tools } from '@/router/tools'
 import { message, checkDesktop, getToolMenuItem, saveToolMenuItem } from '$/util/common'
-import { checkIsSamePathname, getViewPath } from '$/util/navigation'
+import { navigateToView } from '$/util/navigation'
 import FitFullscreen from '$/components/FitFullscreen'
 import Sidebar from '$/components/Sidebar'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
@@ -189,25 +189,13 @@ const ToolsFramework = () => {
                                                             icon={icon}
                                                             text={toolName}
                                                             extend={<DragHandle padding={10} />}
-                                                            active={checkIsSamePathname(
-                                                                location.pathname,
-                                                                getViewPath(
+                                                            onClick={() =>
+                                                                navigateToView(
                                                                     authorUsername,
                                                                     toolId,
                                                                     platform,
                                                                     ver === 'local' ? '' : ver,
                                                                     ver === 'local'
-                                                                )
-                                                            )}
-                                                            onClick={() =>
-                                                                navigate(
-                                                                    getViewPath(
-                                                                        authorUsername,
-                                                                        toolId,
-                                                                        platform,
-                                                                        ver === 'local' ? '' : ver,
-                                                                        ver === 'local'
-                                                                    )
                                                                 )
                                                             }
                                                         />

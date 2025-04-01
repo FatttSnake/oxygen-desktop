@@ -38,24 +38,13 @@ export const navigateToLogin = (
 }
 
 export const navigateToView = (
-    navigate: NavigateFunction,
     username: string,
     toolId: string,
     platform: Platform,
     version?: string,
-    local?: boolean,
-    options?: NavigateOptions
+    local?: boolean
 ) => {
-    const searchParams = new URLSearchParams()
-    if (platform !== import.meta.env.VITE_PLATFORM) {
-        searchParams.append('platform', platform)
-    }
-    local && searchParams.append('source', 'local')
-
-    navigate(
-        `/view/${username}/${toolId}${version ? `/${version}` : ''}${searchParams.size ? `?${searchParams.toString()}` : ''}`,
-        options
-    )
+    oxygenApi.tool.view.load(username, toolId, version, platform, local ? 'local' : undefined)
 }
 
 export const navigateToSource = (

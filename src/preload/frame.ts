@@ -15,7 +15,9 @@ const IpcEvents = {
             update: 'window:tab:update',
             switch: 'window:tab:switch',
             close: 'window:tab:close',
-            independent: 'window:tab:independent'
+            independent: 'window:tab:independent',
+            icon: 'window:tab:icon',
+            title: 'window:tab:title'
         }
     },
     sidebar: {
@@ -43,6 +45,12 @@ const IpcEvents = {
         loginStatus: {
             update: 'account:loginStatus:update'
         }
+    },
+    tool: {
+        view: {
+            load: 'tool:view:load',
+            render: 'tool:view:render'
+        }
     }
 }
 
@@ -68,7 +76,7 @@ const oxygenApi = {
         },
         tab: {
             create: (type: TabType, args?: Record<string, string | number | boolean>) =>
-                ipcRenderer.send(IpcEvents.window.tab.create, type, args),
+                ipcRenderer.invoke(IpcEvents.window.tab.create, type, args),
             list: (): Promise<Tab[]> => ipcRenderer.invoke(IpcEvents.window.tab.list),
             onUpdate: (callback: (tabs: Tab[]) => void) => {
                 listeners['window:tab:update'] = (_, tabs: Tab[]) => callback(tabs)
@@ -86,7 +94,11 @@ const oxygenApi = {
             switch: (key: string): Promise<boolean> =>
                 ipcRenderer.invoke(IpcEvents.window.tab.switch, key),
             close: (key: string) => ipcRenderer.send(IpcEvents.window.tab.close, key),
-            independent: (key: string) => ipcRenderer.send(IpcEvents.window.tab.independent, key)
+            independent: (key: string) => ipcRenderer.send(IpcEvents.window.tab.independent, key),
+            icon: (key: string, icon: string) =>
+                ipcRenderer.send(IpcEvents.window.tab.icon, key, icon),
+            title: (key: string, title: string) =>
+                ipcRenderer.send(IpcEvents.window.tab.title, key, title)
         }
     },
     sidebar: {
@@ -181,6 +193,32 @@ const oxygenApi = {
                 ),
             update: (isLogin: boolean) =>
                 ipcRenderer.send(IpcEvents.account.loginStatus.update, isLogin)
+        }
+    },
+    tool: {
+        view: {
+            onLoad: (
+                callback: (
+                    username: string,
+                    toolId: string,
+                    ver?: string,
+                    platform?: Platform,
+                    source?: string
+                ) => void
+            ) => {
+                listeners['tool:view:load'] = (
+                    _,
+                    username: string,
+                    toolId: string,
+                    ver?: string,
+                    platform?: Platform,
+                    source?: string
+                ) => callback(username, toolId, ver, platform, source)
+                ipcRenderer.on(IpcEvents.tool.view.load, listeners['tool:view:load'])
+            },
+            offLoad: () => ipcRenderer.off(IpcEvents.tool.view.load, listeners['tool:view:load']),
+            render: (key: string, dist: string) =>
+                ipcRenderer.send(IpcEvents.tool.view.render, key, dist)
         }
     }
 }

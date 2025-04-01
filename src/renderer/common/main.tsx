@@ -1,21 +1,41 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import Frame from '#/Frame'
-import Settings from '%/Settings'
-import Core from '@/Core'
-import Sign from '+/Sign'
+import toolHtml from '$/assets/template/tool.html?raw'
 
-const getComponent = () => {
-    switch (oxygenApi.renderer) {
-        case 'frame':
-            return <Frame />
-        case 'settings':
-            return <Settings />
-        case 'sign':
-            return <Sign />
-        default:
-            return <Core />
-    }
+const Frame = lazy(() => import('#/Frame'))
+const Core = lazy(() => import('@/Core'))
+const Settings = lazy(() => import('%/Settings'))
+const Sign = lazy(() => import('+/Sign'))
+
+switch (oxygenApi.renderer) {
+    case 'frame':
+        createRoot(document.getElementById('root')!).render(
+            <StrictMode>
+                <Frame />
+            </StrictMode>
+        )
+        break
+    case 'core':
+        createRoot(document.getElementById('root')!).render(
+            <StrictMode>
+                <Core />
+            </StrictMode>
+        )
+        break
+    case 'settings':
+        createRoot(document.getElementById('root')!).render(
+            <StrictMode>
+                <Settings />
+            </StrictMode>
+        )
+        break
+    case 'sign':
+        createRoot(document.getElementById('root')!).render(
+            <StrictMode>
+                <Sign />
+            </StrictMode>
+        )
+        break
+    default:
+        document.documentElement.innerHTML = toolHtml
 }
-
-createRoot(document.getElementById('root')!).render(<StrictMode>{getComponent()}</StrictMode>)

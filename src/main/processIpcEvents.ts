@@ -11,8 +11,10 @@ import {
     getUserInfo,
     independentTab,
     listTab,
+    loadTool,
     openUrlWithDefaultApp,
     removeTab,
+    renderTool,
     switchTab,
     updateAccessToken,
     updateLoginAccount,
@@ -21,6 +23,8 @@ import {
     updateSidebarIsCollapse,
     updateSidebarWidth,
     updateTab,
+    updateTabIcon,
+    updateTabTitle,
     updateTheme,
     updateTitleBarColor,
     updateUserInfo
@@ -49,7 +53,7 @@ export const processIpcEvents = () => {
         updateSidebarIsCollapse(value)
     )
 
-    ipcMain.on(
+    ipcMain.handle(
         IpcEvents.window.tab.create,
         (_, type: TabType, args?: Record<string, string | number | boolean>) =>
             createTab(type, args)
@@ -64,6 +68,14 @@ export const processIpcEvents = () => {
     ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => removeTab(key))
 
     ipcMain.on(IpcEvents.window.tab.independent, (_, key: string) => independentTab(key))
+
+    ipcMain.on(IpcEvents.window.tab.icon, (_, key: string, icon: string) =>
+        updateTabIcon(key, icon)
+    )
+
+    ipcMain.on(IpcEvents.window.tab.title, (_, key: string, title: string) =>
+        updateTabTitle(key, title)
+    )
 
     ipcMain.handle(IpcEvents.account.loginAccount.get, getLoginAccount)
 
@@ -92,4 +104,12 @@ export const processIpcEvents = () => {
     ipcMain.on(IpcEvents.account.loginStatus.update, (_, isLogin: boolean) =>
         updateLoginStatus(isLogin)
     )
+
+    ipcMain.on(
+        IpcEvents.tool.view.load,
+        (_, username: string, toolId: string, ver?: string, platform?: Platform, source?: string) =>
+            loadTool(username, toolId, ver, platform, source)
+    )
+
+    ipcMain.on(IpcEvents.tool.view.render, (_, key: string, dist: string) => renderTool(key, dist))
 }

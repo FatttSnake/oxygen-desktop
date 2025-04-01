@@ -49,13 +49,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
 
     const handleOnOpenTool = () => {
         if (checkDesktop() || selectedTool.platform !== 'DESKTOP') {
-            navigateToView(
-                navigate,
-                '!',
-                selectedTool.toolId,
-                selectedTool.platform,
-                selectedTool.ver
-            )
+            navigateToView('!', selectedTool.toolId, selectedTool.platform, selectedTool.ver)
         } else {
             void message.warning('此应用需要桌面端环境，请在桌面端打开')
         }

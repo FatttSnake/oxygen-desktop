@@ -21,7 +21,9 @@ export const IpcEvents = {
             update: 'window:tab:update',
             switch: 'window:tab:switch',
             close: 'window:tab:close',
-            independent: 'window:tab:independent'
+            independent: 'window:tab:independent',
+            icon: 'window:tab:icon',
+            title: 'window:tab:title'
         },
         navigate: {
             goto: 'window:navigate:goto'
@@ -55,6 +57,12 @@ export const IpcEvents = {
         },
         loginStatus: {
             update: 'account:loginStatus:update'
+        }
+    },
+    tool: {
+        view: {
+            load: 'tool:view:load',
+            render: 'tool:view:render'
         }
     }
 }

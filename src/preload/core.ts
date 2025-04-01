@@ -1,5 +1,14 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+const kebabCase = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+const getArgv = (key: string) => {
+    const value = process.argv.find((arg) => arg.startsWith(`--${kebabCase(key)}=`))?.split('=')[1]
+    return value ? decodeURIComponent(value) : undefined
+}
+
+const viewId = getArgv('viewId')
+
 const IpcEvents = {
     window: {
         theme: {
@@ -32,6 +41,11 @@ const IpcEvents = {
         loginStatus: {
             update: 'account:loginStatus:update'
         }
+    },
+    tool: {
+        view: {
+            load: 'tool:view:load'
+        }
     }
 }
 
@@ -40,6 +54,7 @@ const listeners: Record<string, IpcRendererEventListener> = {}
 const oxygenApi = {
     platform: process.platform,
     renderer: 'core',
+    viewId,
 
     window: {
         theme: {
@@ -148,6 +163,17 @@ const oxygenApi = {
                 ),
             update: (isLogin: boolean) =>
                 ipcRenderer.send(IpcEvents.account.loginStatus.update, isLogin)
+        }
+    },
+    tool: {
+        view: {
+            load: (
+                username: string,
+                toolId: string,
+                ver?: string,
+                platform?: Platform,
+                source?: string
+            ) => ipcRenderer.send(IpcEvents.tool.view.load, username, toolId, ver, platform, source)
         }
     }
 }

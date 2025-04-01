@@ -147,11 +147,11 @@ const View = () => {
             return
         }
         if (username !== '!' && ver) {
-            navigateToView(navigate, username!, toolId!, platform as Platform)
+            navigateToView(username!, toolId!, platform as Platform)
             return
         }
         if (username === '!' && !ver) {
-            navigateToView(navigate, '!', toolId!, platform as Platform, 'latest')
+            navigateToView('!', toolId!, platform as Platform, 'latest')
             return
         }
         getTool()

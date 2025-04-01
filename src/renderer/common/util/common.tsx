@@ -556,3 +556,27 @@ export const rgbaBlackToHex = (rgba: string) => {
     const hex = (gray << 16) | (gray << 8) | gray
     return `#${hex.toString(16).padStart(6, '0')}`
 }
+
+export const convertObjToJsLiteral = (obj: unknown) => {
+    const isValidIdentifier = (key: string) => /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key)
+    const parseValue = (value: unknown) => {
+        if (typeof value === 'string') {
+            return JSON.stringify(value)
+        } else if (typeof value === 'number' || typeof value === 'boolean') {
+            return String(value)
+        } else if (value === null) {
+            return 'null'
+        } else if (Array.isArray(value)) {
+            const elements = value.map((item) => parseValue(item))
+            return `[${elements.join(', ')}]`
+        } else if (typeof value === 'object') {
+            const entries = Object.entries(value).map(([key, val]) => {
+                const formattedKey = isValidIdentifier(key) ? key : JSON.stringify(key)
+                return `${formattedKey}: ${parseValue(val)}`
+            })
+            return `{${entries.join(', ')}}`
+        }
+        return ''
+    }
+    return parseValue(obj)
+}

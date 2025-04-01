@@ -85,28 +85,31 @@ const addTab = (
     viewId: string,
     type: TabType,
     title: string = '',
-    pin = false,
-    persistent = false
+    pin: boolean,
+    persistent: boolean,
+    renderTool: boolean
 ): Tab => {
-    view.webContents.on('page-title-updated', (_, title) => {
-        forEachViews((item) => {
-            if (item.key === viewId) {
-                item.title = title
-                handleUpdateTabs()
-            }
+    !renderTool &&
+        view.webContents.on('page-title-updated', (_, title) => {
+            forEachViews((item) => {
+                if (item.key === viewId) {
+                    item.title = title
+                    handleUpdateTabs()
+                }
+            })
         })
-    })
-    view.webContents.on('page-favicon-updated', (_, [icon]) => {
-        if (icon.endsWith('favicon.ico')) {
-            return
-        }
-        forEachViews((item) => {
-            if (item.key === viewId) {
-                item.icon = icon
-                handleUpdateTabs()
+    !renderTool &&
+        view.webContents.on('page-favicon-updated', (_, [icon]) => {
+            if (icon.endsWith('favicon.ico')) {
+                return
             }
+            forEachViews((item) => {
+                if (item.key === viewId) {
+                    item.icon = icon
+                    handleUpdateTabs()
+                }
+            })
         })
-    })
     getViews().push({
         key: viewId,
         type,
@@ -137,13 +140,22 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
         return
     }
 
-    const { viewId, preload, menuWidth, title, pin, persistent } = ((): {
+    const {
+        viewId,
+        preload,
+        menuWidth,
+        title,
+        pin = false,
+        persistent = false,
+        renderTool = false
+    } = ((): {
         viewId: string
         preload: string
         menuWidth: number
         title: string
-        pin: boolean
-        persistent: boolean
+        pin?: boolean
+        persistent?: boolean
+        renderTool?: boolean
     } => {
         switch (type) {
             case 'core':
@@ -161,8 +173,7 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
                     preload: 'settings.js',
                     menuWidth: 0,
                     title: 'Settings',
-                    pin: true,
-                    persistent: false
+                    pin: true
                 }
             case 'sign':
                 return {
@@ -170,8 +181,7 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
                     preload: 'sign.js',
                     menuWidth: 0,
                     title: 'Sign',
-                    pin: true,
-                    persistent: false
+                    pin: true
                 }
             default: {
                 const viewId = randomUUID()
@@ -179,9 +189,8 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
                     viewId: viewId,
                     preload: 'tool.js',
                     menuWidth: getGlobalObject().menuWidth,
-                    title: viewId,
-                    pin: false,
-                    persistent: false
+                    title: '',
+                    renderTool: true
                 }
             }
         }
@@ -229,9 +238,11 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
         )
     }
 
-    addTab(newView, viewId, type, title, pin, persistent)
+    addTab(newView, viewId, type, title, pin, persistent, renderTool)
     getMainWindow().contentView.addChildView(newView)
     switchTab(viewId)
+
+    return viewId
 }
 
 export const listTab = () =>
@@ -281,6 +292,24 @@ export const independentTab = (key: string) => {
     console.warn('Not Supported', key)
 }
 
+export const updateTabIcon = (key: string, icon: string) => {
+    forEachViews((item) => {
+        if (item.key === key) {
+            item.icon = icon
+            handleUpdateTabs()
+        }
+    })
+}
+
+export const updateTabTitle = (key: string, title: string) => {
+    forEachViews((item) => {
+        if (item.key === key) {
+            item.title = title
+            handleUpdateTabs()
+        }
+    })
+}
+
 const handleUpdateTabs = () => {
     getMainWindow().webContents.send(
         IpcEvents.window.tab.update,
@@ -325,3 +354,24 @@ export const updateUserInfo = (userInfo?: UserWithPowerInfoVo) => {
 
 export const updateLoginStatus = (isLogin: boolean) =>
     forEachAllWebContents((item) => item.send(IpcEvents.account.loginStatus.update, isLogin))
+
+export const loadTool = (
+    username: string,
+    toolId: string,
+    ver?: string,
+    platform?: Platform,
+    source?: string
+) =>
+    getMainWindow().webContents.send(
+        IpcEvents.tool.view.load,
+        username,
+        toolId,
+        ver,
+        platform,
+        source
+    )
+
+export const renderTool = (key: string, dist: string) =>
+    getViews()
+        .find((item) => item.key === key)
+        ?.view.webContents.executeJavaScript(dist)

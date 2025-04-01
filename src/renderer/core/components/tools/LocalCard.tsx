@@ -72,12 +72,12 @@ const StoreCard = ({
                 okText: '确定',
                 cancelText: '模拟器',
                 onCancel() {
-                    navigateToView(navigate, author.username, toolId, platform, undefined, true)
+                    navigateToView(author.username, toolId, platform, undefined, true)
                 }
             })
             return
         }
-        navigateToView(navigate, author.username, toolId, platform, undefined, true)
+        navigateToView(author.username, toolId, platform, undefined, true)
     }
 
     const handleOnClickAuthor = (e: MouseEvent<HTMLDivElement>) => {
@@ -105,14 +105,14 @@ const StoreCard = ({
             okText: '确定',
             cancelText: '模拟器',
             onCancel() {
-                navigateToView(navigate, author.username, toolId, 'ANDROID', undefined, true)
+                navigateToView(author.username, toolId, 'ANDROID', undefined, true)
             }
         })
     }
 
     const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigateToView(navigate, author.username, toolId, 'WEB', undefined, true)
+        navigateToView(author.username, toolId, 'WEB', undefined, true)
     }
 
     return (

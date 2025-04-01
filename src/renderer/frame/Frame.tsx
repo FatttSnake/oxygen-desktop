@@ -3,6 +3,7 @@ import FitFullscreen from '$/components/FitFullscreen'
 import TitleBar from '#/components/TitleBar'
 import ToolMenu from '#/menus/ToolMenu'
 import MenuFramework from '#/components/MenuFramework'
+import ToolLoader from '#/components/ToolLoader'
 
 const Frame = () => {
     const [isShowMenu, setIsShowMenu] = useState(false)
@@ -17,6 +18,7 @@ const Frame = () => {
                     </MenuFramework>
                 )}
             </FitFullscreen>
+            <ToolLoader />
         </CommonFramework>
     )
 }

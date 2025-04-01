@@ -94,12 +94,12 @@ const StoreCard = ({
                 okText: '确定',
                 cancelText: '模拟器',
                 onCancel() {
-                    navigateToView(navigate, author.username, toolId, platform)
+                    navigateToView(author.username, toolId, platform)
                 }
             })
             return
         }
-        navigateToView(navigate, author.username, toolId, platform)
+        navigateToView(author.username, toolId, platform)
     }
 
     const handleOnClickAuthor = (e: MouseEvent<HTMLDivElement>) => {
@@ -214,7 +214,7 @@ const StoreCard = ({
             okText: '确定',
             cancelText: '模拟器',
             onCancel() {
-                navigateToView(navigate, author.username, toolId, 'ANDROID')
+                navigateToView(author.username, toolId, 'ANDROID')
             }
         })
     }
@@ -240,12 +240,12 @@ const StoreCard = ({
             )
             return
         }
-        navigateToView(navigate, author.username, toolId, 'DESKTOP')
+        navigateToView(author.username, toolId, 'DESKTOP')
     }
 
     const handleOnWebBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigateToView(navigate, author.username, toolId, 'WEB')
+        navigateToView(author.username, toolId, 'WEB')
     }
 
     useEffect(() => {
