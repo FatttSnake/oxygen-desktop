@@ -6,7 +6,12 @@ export default createStyles(({ token }) => ({
         flex: 1,
         height: 0,
         backgroundColor: token.colorBgLayout,
-        overflow: 'hidden'
+        overflow: 'hidden',
+        visibility: 'hidden'
+    },
+
+    visible: {
+        visibility: 'visible'
     },
 
     collapsed: {

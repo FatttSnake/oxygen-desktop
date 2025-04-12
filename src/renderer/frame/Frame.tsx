@@ -12,11 +12,9 @@ const Frame = () => {
         <CommonFramework>
             <FitFullscreen className={'flex-vertical'}>
                 <TitleBar onShowMenuChange={setIsShowMenu} />
-                {isShowMenu && (
-                    <MenuFramework>
-                        <ToolMenu />
-                    </MenuFramework>
-                )}
+                <MenuFramework isVisible={isShowMenu}>
+                    <ToolMenu />
+                </MenuFramework>
             </FitFullscreen>
             <ToolLoader />
         </CommonFramework>

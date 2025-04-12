@@ -1,7 +1,11 @@
 import { PropsWithChildren } from 'react'
 import useStyles from '#/assets/css/menu-framework.style'
 
-const MenuFramework = ({ children }: PropsWithChildren) => {
+interface MenuFrameworkProps extends PropsWithChildren {
+    isVisible?: boolean
+}
+
+const MenuFramework = ({ isVisible, children }: MenuFrameworkProps) => {
     const { styles, cx } = useStyles()
     const menuRef = useRef<HTMLDivElement>(null)
     const [isCollapse, setIsCollapse] = useState((menuRef.current?.clientWidth ?? 0) <= 80)
@@ -30,7 +34,13 @@ const MenuFramework = ({ children }: PropsWithChildren) => {
     }, [])
 
     return (
-        <div className={cx(styles.root, isCollapse ? styles.collapsed : undefined)}>
+        <div
+            className={cx(
+                styles.root,
+                isVisible ? styles.visible : undefined,
+                isCollapse ? styles.collapsed : undefined
+            )}
+        >
             <div className={styles.menu} ref={menuRef}>
                 {children}
             </div>
