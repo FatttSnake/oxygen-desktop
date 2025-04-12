@@ -1,11 +1,11 @@
 import { Children, PropsWithChildren } from 'react'
 import useStyles from '$/assets/css/components/sidebar/group.style'
 
-interface GroupProps extends PropsWithChildren {
+interface GroupProps {
     title: string
 }
 
-const Group = ({ title, children }: GroupProps) => {
+const Group = ({ title, children }: PropsWithChildren<GroupProps>) => {
     const { styles } = useStyles()
 
     return (

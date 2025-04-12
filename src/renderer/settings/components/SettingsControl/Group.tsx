@@ -2,11 +2,11 @@ import { PropsWithChildren, ReactNode } from 'react'
 import useStyles from '%/assets/css/components/settings-control/group.style'
 import FlexBox from '$/components/FlexBox'
 
-interface GroupProps extends PropsWithChildren {
+interface GroupProps {
     title?: ReactNode
 }
 
-const Group = ({ title, children }: GroupProps) => {
+const Group = ({ title, children }: PropsWithChildren<GroupProps>) => {
     const { styles } = useStyles()
 
     return (

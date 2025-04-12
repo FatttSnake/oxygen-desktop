@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react'
 import { defaultDropAnimationSideEffects, DragOverlay, DropAnimation } from '@dnd-kit/core'
 
-interface DraggableOverlayProps extends PropsWithChildren {
+interface DraggableOverlayProps {
     isDelete?: boolean
 }
 
@@ -15,7 +15,7 @@ const dropAnimationConfig: DropAnimation = {
     })
 }
 
-const DraggableOverlay = ({ children }: DraggableOverlayProps) => {
+const DraggableOverlay = ({ children }: PropsWithChildren<DraggableOverlayProps>) => {
     return <DragOverlay dropAnimation={dropAnimationConfig}>{children}</DragOverlay>
 }
 

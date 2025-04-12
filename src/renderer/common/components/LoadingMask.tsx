@@ -2,12 +2,12 @@ import { PropsWithChildren, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import useStyles from '$/assets/css/components/loading-mask.style'
 
-interface LoadingMaskProps extends PropsWithChildren {
+interface LoadingMaskProps {
     hidden?: boolean
     maskContent?: ReactNode
 }
 
-const LoadingMask = (props: LoadingMaskProps) => {
+const LoadingMask = (props: PropsWithChildren<LoadingMaskProps>) => {
     const { styles, theme } = useStyles()
 
     const loadingIcon = (

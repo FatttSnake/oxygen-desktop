@@ -2,13 +2,13 @@ import { CSSProperties, PropsWithChildren } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { HandleContext, HandleContextInst } from '$/components/dnd/HandleContext'
 
-interface DraggableProps extends PropsWithChildren {
+interface DraggableProps {
     id: string
     data: ToolMenuItem
     hasDragHandle?: boolean
 }
 
-const Draggable = ({ id, data, hasDragHandle, children }: DraggableProps) => {
+const Draggable = ({ id, data, hasDragHandle, children }: PropsWithChildren<DraggableProps>) => {
     const {
         attributes,
         isDragging,

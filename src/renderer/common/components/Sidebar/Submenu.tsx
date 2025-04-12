@@ -4,12 +4,12 @@ import { ItemContext } from '$/components/Sidebar/Item'
 
 export const SubmenuContext = createContext({ isInSubmenu: false })
 
-interface SidebarSubmenuProps extends PropsWithChildren {
+interface SidebarSubmenuProps {
     submenuTop: number
     submenuLeft: number
 }
 
-const Submenu = (props: SidebarSubmenuProps) => {
+const Submenu = (props: PropsWithChildren<SidebarSubmenuProps>) => {
     const { styles, cx } = useStyles()
     const { isHover } = useContext(ItemContext)
 

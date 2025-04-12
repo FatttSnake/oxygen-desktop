@@ -6,7 +6,7 @@ import FlexBox from '$/components/FlexBox'
 import Permission from '$/components/Permission'
 import LoadingMask from '$/components/LoadingMask'
 
-interface SettingsCardProps extends PropsWithChildren {
+interface SettingsCardProps {
     icon: IconComponent
     title: string
     loading?: boolean
@@ -15,7 +15,7 @@ interface SettingsCardProps extends PropsWithChildren {
     onReset?: () => void
     onSave?: () => void
 }
-export const SettingsCard = (props: SettingsCardProps) => {
+export const SettingsCard = (props: PropsWithChildren<SettingsCardProps>) => {
     const { styles } = useStyles()
 
     return (

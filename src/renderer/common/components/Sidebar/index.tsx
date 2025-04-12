@@ -9,13 +9,13 @@ import Group from '$/components/Sidebar/Group'
 
 export const SidebarContext = createContext({ isCollapse: false })
 
-interface SidebarProps extends PropsWithChildren {
+interface SidebarProps {
     width?: string
     bottomFixed?: ReactNode
     onCollapseChange?: (isCollapse: boolean) => void
 }
 
-const Sidebar = (props: SidebarProps) => {
+const Sidebar = (props: PropsWithChildren<SidebarProps>) => {
     const { styles, cx } = useStyles()
     const [isCollapse, setIsCollapse] = useState(true)
 

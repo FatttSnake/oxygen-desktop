@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react'
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/components/tab/item.style'
 
-interface TabItemProps extends PropsWithChildren {
+interface TabItemProps {
     icon?: string
     persistent?: boolean
     active?: boolean
@@ -10,7 +10,14 @@ interface TabItemProps extends PropsWithChildren {
     onClose?: () => void
 }
 
-const Item = ({ icon, persistent, active, children, onClick, onClose }: TabItemProps) => {
+const Item = ({
+    icon,
+    persistent,
+    active,
+    children,
+    onClick,
+    onClose
+}: PropsWithChildren<TabItemProps>) => {
     const { styles, cx } = useStyles()
 
     return (

@@ -1,11 +1,11 @@
 import { PropsWithChildren } from 'react'
 import useStyles from '#/assets/css/menu-framework.style'
 
-interface MenuFrameworkProps extends PropsWithChildren {
+interface MenuFrameworkProps {
     isVisible?: boolean
 }
 
-const MenuFramework = ({ isVisible, children }: MenuFrameworkProps) => {
+const MenuFramework = ({ isVisible, children }: PropsWithChildren<MenuFrameworkProps>) => {
     const { styles, cx } = useStyles()
     const menuRef = useRef<HTMLDivElement>(null)
     const [isCollapse, setIsCollapse] = useState((menuRef.current?.clientWidth ?? 0) <= 80)

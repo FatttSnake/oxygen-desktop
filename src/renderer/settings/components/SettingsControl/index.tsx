@@ -7,12 +7,16 @@ import Group from '%/components/SettingsControl/Group'
 import Item from '%/components/SettingsControl/Item'
 import User from '%/components/SettingsControl/User'
 
-interface SettingsControlProps extends PropsWithChildren {
+interface SettingsControlProps {
     maxWidth?: number
     header?: ReactNode
 }
 
-const SettingsControl = ({ maxWidth = 1000, header, children }: SettingsControlProps) => {
+const SettingsControl = ({
+    maxWidth = 1000,
+    header,
+    children
+}: PropsWithChildren<SettingsControlProps>) => {
     const { styles, theme } = useStyles()
 
     return (

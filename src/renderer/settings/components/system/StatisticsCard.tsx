@@ -5,14 +5,14 @@ import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import LoadingMask from '$/components/LoadingMask'
 
-interface StatisticsCardProps extends PropsWithChildren {
+interface StatisticsCardProps {
     icon: IconComponent
     title: ReactNode
     loading?: boolean
     expand?: ReactNode
 }
 
-export const StatisticsCard = (props: StatisticsCardProps) => {
+export const StatisticsCard = (props: PropsWithChildren<StatisticsCardProps>) => {
     const { styles } = useStyles()
 
     return (

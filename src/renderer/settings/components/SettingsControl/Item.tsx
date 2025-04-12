@@ -2,14 +2,14 @@ import { PropsWithChildren, ReactNode } from 'react'
 import useStyles from '%/assets/css/components/settings-control/item.style'
 import Icon from '@ant-design/icons'
 
-interface ItemProps extends PropsWithChildren {
+interface ItemProps {
     icon?: IconComponent
     name: ReactNode
     desc?: ReactNode
     onClick?: () => void
 }
 
-const Item = ({ icon, name, desc, children, onClick }: ItemProps) => {
+const Item = ({ icon, name, desc, children, onClick }: PropsWithChildren<ItemProps>) => {
     const { styles, cx } = useStyles()
 
     return (
