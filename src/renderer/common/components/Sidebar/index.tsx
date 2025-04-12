@@ -12,6 +12,7 @@ export const SidebarContext = createContext({ isCollapse: false })
 interface SidebarProps extends PropsWithChildren {
     width?: string
     bottomFixed?: ReactNode
+    onCollapseChange?: (isCollapse: boolean) => void
 }
 
 const Sidebar = (props: SidebarProps) => {
@@ -19,9 +20,13 @@ const Sidebar = (props: SidebarProps) => {
     const [isCollapse, setIsCollapse] = useState(true)
 
     useEffect(() => {
-        oxygenApi.sidebar.collapse.get().then((value) => setIsCollapse(value))
+        oxygenApi.sidebar.collapse.get().then((value) => {
+            setIsCollapse(value)
+            props.onCollapseChange?.(value)
+        })
         oxygenApi.sidebar.collapse.onUpdate((value) => {
             setIsCollapse(value)
+            props.onCollapseChange?.(value)
         })
 
         return () => {

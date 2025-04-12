@@ -2,9 +2,26 @@ import { createStyles } from 'antd-style'
 
 export default createStyles(({ token }) => ({
     root: {
-        width: 'fit-content',
-        height: '100vh',
+        display: 'flex',
+        flex: 1,
+        height: 0,
+        backgroundColor: token.colorBgLayout,
+        overflow: 'hidden'
+    },
+
+    collapsed: {
+        backgroundColor: token.colorBgContainer
+    },
+
+    menu: {
         backgroundColor: token.colorBgContainer,
+        borderRadius: `0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px 0`
+    },
+
+    content: {
+        flex: 1,
+        backgroundColor: token.colorBgLayout,
+        borderRadius: `${token.borderRadiusLG}px 0 0 ${token.borderRadiusLG}px`,
         overflow: 'hidden'
     }
 }))

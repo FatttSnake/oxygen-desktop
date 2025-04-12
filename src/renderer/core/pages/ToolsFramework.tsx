@@ -32,6 +32,7 @@ const ToolsFramework = () => {
     const { styles, cx } = useStyles()
     const location = useLocation()
     const navigate = useNavigate()
+    const [isMenuCollapse, setIsMenuCollapse] = useState(false)
     const [deleteItem, setDeleteItem] = useState<string>()
     const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
     const [activeItem, setActiveItem] = useState<ToolMenuItem>()
@@ -119,7 +120,13 @@ const ToolsFramework = () => {
                 }
             }}
         >
-            <FitFullscreen className={cx(styles.root, 'flex-horizontal')}>
+            <FitFullscreen
+                className={cx(
+                    'flex-horizontal',
+                    styles.root,
+                    isMenuCollapse ? styles.collapsed : undefined
+                )}
+            >
                 <DndContext
                     sensors={sensors}
                     onDragStart={handleOnDragStart}
@@ -128,7 +135,7 @@ const ToolsFramework = () => {
                     onDragCancel={handleOnDragCancel}
                 >
                     <div className={styles.leftPanel}>
-                        <Sidebar>
+                        <Sidebar onCollapseChange={setIsMenuCollapse}>
                             <Sidebar.ItemList>
                                 <Sidebar.Item
                                     icon={tools[0].icon}

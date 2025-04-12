@@ -2,15 +2,16 @@ import { PropsWithChildren } from 'react'
 import useStyles from '#/assets/css/menu-framework.style'
 
 const MenuFramework = ({ children }: PropsWithChildren) => {
-    const { styles } = useStyles()
-    const rootRef = useRef<HTMLDivElement>(null)
+    const { styles, cx } = useStyles()
+    const menuRef = useRef<HTMLDivElement>(null)
+    const [isCollapse, setIsCollapse] = useState((menuRef.current?.clientWidth ?? 0) <= 80)
 
     useEffect(() => {
-        if (!rootRef.current) {
+        if (!menuRef.current) {
             return
         }
 
-        oxygenApi.sidebar.width.update(rootRef.current.clientWidth)
+        oxygenApi.sidebar.width.update(menuRef.current.clientWidth)
         const resizeObserver = new ResizeObserver(
             ([
                 {
@@ -18,9 +19,10 @@ const MenuFramework = ({ children }: PropsWithChildren) => {
                 }
             ]) => {
                 oxygenApi.sidebar.width.update(width)
+                setIsCollapse(width <= 80)
             }
         )
-        resizeObserver.observe(rootRef.current)
+        resizeObserver.observe(menuRef.current)
 
         return () => {
             resizeObserver.disconnect()
@@ -28,8 +30,11 @@ const MenuFramework = ({ children }: PropsWithChildren) => {
     }, [])
 
     return (
-        <div className={styles.root} ref={rootRef}>
-            {children}
+        <div className={cx(styles.root, isCollapse ? styles.collapsed : undefined)}>
+            <div className={styles.menu} ref={menuRef}>
+                {children}
+            </div>
+            <div className={styles.content} />
         </div>
     )
 }

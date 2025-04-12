@@ -2,11 +2,17 @@ import { createStyles } from 'antd-style'
 
 export default createStyles(({ token }) => ({
     root: {
+        backgroundColor: token.colorBgLayout
+    },
+
+    collapsed: {
         backgroundColor: token.colorBgContainer
     },
 
     leftPanel: {
-        backgroundColor: token.colorBgContainer
+        backgroundColor: token.colorBgContainer,
+        borderRadius: `0 ${token.borderRadiusLG}px ${token.borderRadiusLG}px 0`,
+        overflow: 'hidden'
     },
 
     menuDroppable: {
@@ -21,7 +27,7 @@ export default createStyles(({ token }) => ({
         flex: 1,
         width: 0,
         backgroundColor: token.colorBgLayout,
-        borderRadius: token.borderRadiusLG,
+        borderRadius: `${token.borderRadiusLG}px 0 0 ${token.borderRadiusLG}px`,
         overflow: 'hidden'
     }
 }))
