@@ -21,12 +21,12 @@ export const processMainWindow = (mainWindow: BrowserWindow) => {
     mainWindow.on('resize', () => {
         const { width, height } = mainWindow.getContentBounds()
         const menuWidth = getGlobalObject().menuWidth
-        forEachViews(({ view, pin }) => {
+        forEachViews(({ view, padding, pin }) => {
             view.setBounds({
-                x: pin ? 0 : menuWidth,
-                y: 40,
-                width: pin ? width : width - menuWidth,
-                height: height - 40
+                x: (pin ? 0 : menuWidth) + padding,
+                y: 40 + padding,
+                width: (pin ? width : width - menuWidth) - padding * 2,
+                height: height - 40 - padding * 2
             })
         })
     })

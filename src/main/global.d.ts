@@ -21,6 +21,7 @@ type TabType = 'core' | 'settings' | 'sign' | 'tool'
 interface Tab {
     key: string
     type: TabType
+    padding: number
     icon?: string
     title: string
     pin?: boolean

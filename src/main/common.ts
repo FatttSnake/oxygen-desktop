@@ -60,15 +60,15 @@ export const updateTitleBarColor = (color: string, symbolColor: string) => {
 export const updateSidebarWidth = (menuWidth: number) => {
     getGlobalObject().menuWidth = menuWidth
     const { width, height } = getMainWindow().getContentBounds()
-    forEachViews(({ view, pin }) => {
+    forEachViews(({ view, padding, pin }) => {
         if (pin) {
             return
         }
         view.setBounds({
-            x: menuWidth,
-            y: 40,
-            width: width - menuWidth,
-            height: height - 40
+            x: menuWidth + padding,
+            y: 40 + padding,
+            width: width - menuWidth - padding * 2,
+            height: height - 40 - padding * 2
         })
     })
 }
@@ -84,6 +84,7 @@ const addTab = (
     view: WebContentsView,
     viewId: string,
     type: TabType,
+    padding: number,
     title: string = '',
     pin: boolean,
     persistent: boolean,
@@ -114,12 +115,13 @@ const addTab = (
         key: viewId,
         type,
         view,
+        padding,
         title,
         pin,
         persistent
     })
     handleUpdateTabs()
-    return { key: viewId, type, title, pin, persistent }
+    return { key: viewId, type, padding, title, pin, persistent }
 }
 
 export const createTab = (type: TabType, args?: Record<string, string | number | boolean>) => {
@@ -143,6 +145,7 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
     const {
         viewId,
         preload,
+        padding = 0,
         menuWidth,
         title,
         pin = false,
@@ -151,6 +154,7 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
     } = ((): {
         viewId: string
         preload: string
+        padding?: number
         menuWidth: number
         title: string
         pin?: boolean
@@ -188,6 +192,7 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
                 return {
                     viewId: viewId,
                     preload: 'tool.js',
+                    padding: 20,
                     menuWidth: getGlobalObject().menuWidth,
                     title: '',
                     renderTool: true
@@ -209,10 +214,10 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
 
     const { width, height } = getMainWindow().getContentBounds()
     newView.setBounds({
-        x: menuWidth,
-        y: 40,
-        width: width - menuWidth,
-        height: height - 40
+        x: menuWidth + padding,
+        y: 40 + padding,
+        width: width - menuWidth - padding * 2,
+        height: height - 40 - padding * 2
     })
     newView.setVisible(false)
     newView.setBackgroundColor('rgba(0, 0, 0, 0)')
@@ -238,7 +243,7 @@ export const createTab = (type: TabType, args?: Record<string, string | number |
         )
     }
 
-    addTab(newView, viewId, type, title, pin, persistent, renderTool)
+    addTab(newView, viewId, type, padding, title, pin, persistent, renderTool)
     getMainWindow().contentView.addChildView(newView)
     switchTab(viewId)
 
