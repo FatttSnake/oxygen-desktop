@@ -5,9 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Preview</title>
   <style id="global-css-variables"></style>
+  <style>
+    :root {
+      background-color: var(--colorBgLayout);
+      clip-path: inset(0 round 8px);
+    }
+  </style>
 </head>
 <body>
-<div id="root" style="border-radius: 8px; overflow: hidden;">
+<div id="root">
   <div
     style="position:absolute;top: 0;left:0;width:100%;height:100%;display: flex;justify-content: center;align-items: center;color: #888;">
     Loading...
