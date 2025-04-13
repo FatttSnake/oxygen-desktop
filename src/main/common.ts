@@ -376,7 +376,13 @@ export const loadTool = (
         source
     )
 
-export const renderTool = (key: string, dist: string) =>
-    getViews()
-        .find((item) => item.key === key)
-        ?.view.webContents.executeJavaScript(dist)
+export const renderTool = (dist: string, key?: string) =>
+    key
+        ? getViews()
+              .find((item) => item.key === key)
+              ?.view.webContents.executeJavaScript(dist)
+        : forEachViews(({ type, view }) => {
+              if (type === 'tool') {
+                  void view.webContents.executeJavaScript(dist)
+              }
+          })

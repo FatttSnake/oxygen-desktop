@@ -18,9 +18,9 @@ import compiler from '$/components/Playground/compiler'
 
 const ToolLoader = () => {
     const _theme = useTheme()
-    const [, setTheme] = useState(_theme)
     const { isDarkMode: _isDarkMode } = useContext(CommonContext)
-    const [, setIsDarkMode] = useState(_isDarkMode)
+    const themeRef = useRef(_theme)
+    const isDarkModeRef = useRef(_isDarkMode)
     const [isLoading, setIsLoading] = useState(false)
 
     const errorMessage = (viewId: string, content: string) => {
@@ -36,6 +36,28 @@ const ToolLoader = () => {
             })
     }
 
+    const refreshGlobalVariables = (key?: string) => {
+        oxygenApi.tool.view.render(
+            setupGlobalJsVariablesCode.replace(
+                "'${replace_with_code}'",
+                convertObjToJsLiteral({
+                    OxygenTheme: {
+                        ...removeUselessAttributes(themeRef.current),
+                        isDarkMode: isDarkModeRef.current
+                    }
+                })
+            ),
+            key
+        )
+        oxygenApi.tool.view.render(
+            setupGlobalCssVariablesCode.replace(
+                "'${replace_with_code}'",
+                convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
+            ),
+            key
+        )
+    }
+
     const render = (
         viewId: string,
         icon: string,
@@ -43,36 +65,10 @@ const ToolLoader = () => {
         dist: string,
         baseDist: string
     ) => {
-        let theme = _theme
-        let isDarkMode = _isDarkMode
-        setTheme((prevState) => {
-            theme = prevState
-            return prevState
-        })
-        setIsDarkMode((prevState) => {
-            isDarkMode = prevState
-            return prevState
-        })
         oxygenApi.window.tab.icon(viewId, icon)
         oxygenApi.window.tab.title(viewId, title)
-        console.log('isDarkMode', isDarkMode)
-        oxygenApi.tool.view.render(
-            viewId,
-            setupGlobalJsVariablesCode.replace(
-                "'${replace_with_code}'",
-                convertObjToJsLiteral({
-                    OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
-                })
-            )
-        )
-        oxygenApi.tool.view.render(
-            viewId,
-            setupGlobalCssVariablesCode.replace(
-                "'${replace_with_code}'",
-                convertObjToJsLiteral(generateThemeCssVariables(theme).styles)
-            )
-        )
-        oxygenApi.tool.view.render(viewId, `(() => {${dist}})();\n(() => {${baseDist}})();`)
+        refreshGlobalVariables(viewId)
+        oxygenApi.tool.view.render(`(() => {${dist}})();\n(() => {${baseDist}})();`, viewId)
     }
 
     const compile = (viewId: string, toolVo: ToolVo, needCompile: boolean) => {
@@ -171,12 +167,10 @@ const ToolLoader = () => {
     }
 
     useEffect(() => {
-        setTheme(_theme)
-    }, [_theme])
-
-    useEffect(() => {
-        setIsDarkMode(_isDarkMode)
-    }, [_isDarkMode])
+        themeRef.current = _theme
+        isDarkModeRef.current = _isDarkMode
+        refreshGlobalVariables()
+    }, [_theme, _isDarkMode])
 
     useEffect(() => {
         oxygenApi.tool.view.onLoad(

@@ -217,8 +217,8 @@ const oxygenApi = {
                 ipcRenderer.on(IpcEvents.tool.view.load, listeners['tool:view:load'])
             },
             offLoad: () => ipcRenderer.off(IpcEvents.tool.view.load, listeners['tool:view:load']),
-            render: (key: string, dist: string) =>
-                ipcRenderer.send(IpcEvents.tool.view.render, key, dist)
+            render: (dist: string, key?: string) =>
+                ipcRenderer.send(IpcEvents.tool.view.render, dist, key)
         }
     }
 }

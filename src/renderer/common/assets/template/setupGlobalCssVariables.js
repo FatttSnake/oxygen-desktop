@@ -1,3 +1,5 @@
-const globalCssVariables = '${replace_with_code}'
+;(() => {
+    document.querySelector('#global-css-variables').textContent = '${replace_with_code}'
 
-document.querySelector('#global-css-variables').textContent = globalCssVariables
+    window.dispatchEvent(new Event('globalCssVariablesChange'))
+})()

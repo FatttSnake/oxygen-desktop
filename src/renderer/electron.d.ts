@@ -114,7 +114,7 @@ interface OxygenAPI {
                 platform?: Platform,
                 source?: string
             ) => void
-            render: (key: string, dist: string) => void
+            render: (dist: string, key?: string) => void
         }
     }
 }

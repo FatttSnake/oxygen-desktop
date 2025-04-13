@@ -111,5 +111,5 @@ export const processIpcEvents = () => {
             loadTool(username, toolId, ver, platform, source)
     )
 
-    ipcMain.on(IpcEvents.tool.view.render, (_, key: string, dist: string) => renderTool(key, dist))
+    ipcMain.on(IpcEvents.tool.view.render, (_, dist: string, key?: string) => renderTool(dist, key))
 }
