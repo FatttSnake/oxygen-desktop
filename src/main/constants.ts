@@ -66,3 +66,9 @@ export const IpcEvents = {
         }
     }
 }
+
+export const WindowConstants = {
+    WINDOW_MIN_WIDTH: 600,
+    WINDOW_MIN_HEIGHT: 400,
+    TITLE_BAR_HEIGHT: 40
+}

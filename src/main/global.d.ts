@@ -16,6 +16,8 @@ interface ImportMeta {
     readonly env: ImportMetaEnv
 }
 
+type WindowType = 'main' | 'message' | 'independent'
+
 type TabType = 'core' | 'settings' | 'sign' | 'tool'
 
 interface Tab {
@@ -34,9 +36,7 @@ interface ViewInfo extends Tab {
 
 interface SharedObject {
     menuWidth: number
-    mainWindow: _BrowserWindow
-    views: ViewInfo[]
-    independentWindows: Record<string, _BrowserWindow>
+    windows: WindowInfo[]
 }
 
 interface WindowBounds {

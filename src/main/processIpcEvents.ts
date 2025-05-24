@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron'
 import { IpcEvents } from './constants'
+import TabManager from './tabManager'
 import {
-    createTab,
     getAccessToken,
     getAppVersion,
     getLoginAccount,
@@ -9,22 +9,15 @@ import {
     getSidebarIsCollapse,
     getTheme,
     getUserInfo,
-    independentTab,
-    listTab,
     loadTool,
     openUrlWithDefaultApp,
-    removeTab,
     renderTool,
-    switchTab,
     updateAccessToken,
     updateLoginAccount,
     updateLoginStatus,
     updateRefreshToken,
     updateSidebarIsCollapse,
     updateSidebarWidth,
-    updateTab,
-    updateTabIcon,
-    updateTabTitle,
     updateTheme,
     updateTitleBarColor,
     updateUserInfo
@@ -56,25 +49,25 @@ export const processIpcEvents = () => {
     ipcMain.handle(
         IpcEvents.window.tab.create,
         (_, type: TabType, args?: Record<string, string | number | boolean>) =>
-            createTab(type, args)
+            TabManager.createTab(type, args)
     )
 
-    ipcMain.handle(IpcEvents.window.tab.list, listTab)
+    ipcMain.handle(IpcEvents.window.tab.list, TabManager.listTab)
 
-    ipcMain.on(IpcEvents.window.tab.update, (_, tabs: Tab[]) => updateTab(tabs))
+    ipcMain.on(IpcEvents.window.tab.update, (_, tabs: Tab[]) => TabManager.updateTab(tabs))
 
-    ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => switchTab(key))
+    ipcMain.handle(IpcEvents.window.tab.switch, (_, key: string) => TabManager.switchTab(key))
 
-    ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => removeTab(key))
+    ipcMain.on(IpcEvents.window.tab.close, (_, key: string) => TabManager.removeTab(key))
 
-    ipcMain.on(IpcEvents.window.tab.independent, (_, key: string) => independentTab(key))
+    ipcMain.on(IpcEvents.window.tab.independent, (_, key: string) => TabManager.independentTab(key))
 
     ipcMain.on(IpcEvents.window.tab.icon, (_, key: string, icon: string) =>
-        updateTabIcon(key, icon)
+        TabManager.updateTabIcon(key, icon)
     )
 
     ipcMain.on(IpcEvents.window.tab.title, (_, key: string, title: string) =>
-        updateTabTitle(key, title)
+        TabManager.updateTabTitle(key, title)
     )
 
     ipcMain.handle(IpcEvents.account.loginAccount.get, getLoginAccount)

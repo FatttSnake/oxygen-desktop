@@ -2,24 +2,11 @@ import { join } from 'path'
 import fs from 'fs'
 import path from 'node:path'
 import url from 'node:url'
-import { app, BrowserWindow, protocol, net } from 'electron'
+import { app, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
-import icon from '../../build/icon.ico?asset'
-import { settings } from './dataStore'
+import WindowManager from './windowManager'
 import { processApp } from './processApp'
 import { processIpcEvents } from './processIpcEvents'
-import { processMainWindow } from './processMainWindow'
-import { initFrameView } from './frameView'
-import { getGlobalObject } from './common'
-
-global.sharedObject = {
-    menuWidth: 0,
-    mainWindow: undefined,
-    views: [],
-    independentWindows: {}
-}
-
-let mainWindow: BrowserWindow
 
 // Application singleton execution
 if (!app.requestSingleInstanceLock()) {
@@ -35,6 +22,20 @@ args.push('--')
 app.setAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
 // app.removeAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
 
+const handleUrl = (url: string) => {
+    const { hostname } = new URL(url)
+    if (hostname === 'openurl' && WindowManager.existsMainWindow()) {
+        // mainView.webContents.send(IpcEvents.mainView.url.open, pathname)
+        WindowManager.showMainWindow()
+    }
+}
+
+// macOS
+app.on('open-url', (_, argv) => {
+    handleUrl(argv)
+})
+
+// Windows
 const handleArgv = (argv: string[]) => {
     const prefix = `${import.meta.env.VITE_DESKTOP_PROTOCOL}:`
     const offset = app.isPackaged ? 1 : 2
@@ -43,26 +44,11 @@ const handleArgv = (argv: string[]) => {
         handleUrl(url)
     }
 }
-
-const handleUrl = (url: string) => {
-    const { hostname } = new URL(url)
-    if (hostname === 'openurl' && mainWindow) {
-        // mainView.webContents.send(IpcEvents.mainView.url.open, pathname)
-        mainWindow.show()
-    }
-}
-
-// Windows
 handleArgv(process.argv)
 app.on('second-instance', (_, argv) => {
     if (process.platform === 'win32') {
         handleArgv(argv)
     }
-})
-
-// macOS
-app.on('open-url', (_, argv) => {
-    handleUrl(argv)
 })
 
 protocol.registerSchemesAsPrivileged([
@@ -75,32 +61,6 @@ protocol.registerSchemesAsPrivileged([
         }
     }
 ])
-
-const createWindow = () => {
-    const { width, height } = settings.window.getBounds()
-    // Create the browser window.
-    mainWindow = new BrowserWindow({
-        minWidth: 600,
-        minHeight: 400,
-        width,
-        height,
-        titleBarStyle: 'hidden',
-        titleBarOverlay: {
-            height: 40
-        },
-        show: false,
-        autoHideMenuBar: true,
-        icon,
-        webPreferences: {
-            preload: join(__dirname, '../preload/frame.js')
-        }
-    })
-    getGlobalObject().mainWindow = mainWindow
-
-    processMainWindow(mainWindow)
-    initFrameView(mainWindow)
-    processIpcEvents()
-}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -130,9 +90,10 @@ app.whenReady().then(() => {
 
     // Set app user model id for windows
     electronApp.setAppUserModelId('top.fatweb')
-    createWindow()
 
-    processApp(createWindow)
+    processIpcEvents()
+    processApp()
+    WindowManager.createMainWindow()
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
