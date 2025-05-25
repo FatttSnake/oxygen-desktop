@@ -11,9 +11,13 @@ type Renderer = 'frame' | 'core' | 'settings' | 'sign' | 'tool'
 
 type TabType = 'core' | 'settings' | 'sign' | 'tool'
 
+type WindowType = 'main' | 'message' | 'independent'
+
 interface OxygenAPI {
     platform: NodeJS.Platform
     renderer: Renderer
+    windowType: WindowType
+    viewId: string
     navigateTo?: string
     app: {
         url: {
@@ -24,6 +28,9 @@ interface OxygenAPI {
         }
     }
     window: {
+        common: {
+            afterLoad: () => void
+        }
         theme: {
             get: () => Promise<WindowTheme>
             onUpdate: (callback: (theme: WindowTheme) => void) => void

@@ -1,7 +1,21 @@
 import { contextBridge, ipcRenderer } from 'electron'
 
+const kebabCase = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+const getArgv = (key: string) => {
+    const value = process.argv.find((arg) => arg.startsWith(`--${kebabCase(key)}=`))?.split('=')[1]
+    return value ? decodeURIComponent(value) : undefined
+}
+
+const windowType = getArgv('windowType')
+const windowId = getArgv('windowId')
+const viewId = getArgv('viewId')
+
 const IpcEvents = {
     window: {
+        common: {
+            afterLoad: 'window:common:afterLoad'
+        },
         theme: {
             get: 'window:theme:get',
             update: 'window:theme:update'
@@ -59,8 +73,14 @@ const listeners: Record<string, IpcRendererEventListener> = {}
 const oxygenApi = {
     platform: process.platform,
     renderer: 'frame',
+    windowType,
+    windowId,
+    viewId,
 
     window: {
+        common: {
+            afterLoad: () => ipcRenderer.send(IpcEvents.window.common.afterLoad, windowId)
+        },
         theme: {
             get: (): Promise<WindowTheme> => ipcRenderer.invoke(IpcEvents.window.theme.get),
             onUpdate: (callback: (theme: WindowTheme) => void) => {

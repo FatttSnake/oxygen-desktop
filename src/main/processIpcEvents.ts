@@ -2,6 +2,7 @@ import { ipcMain } from 'electron'
 import { IpcEvents } from './constants'
 import TabManager from './tabManager'
 import {
+    afterLoadFrame,
     getAccessToken,
     getAppVersion,
     getLoginAccount,
@@ -27,6 +28,8 @@ export const processIpcEvents = () => {
     ipcMain.on(IpcEvents.app.url.open, (_, url: string) => openUrlWithDefaultApp(url))
 
     ipcMain.handle(IpcEvents.app.version.get, getAppVersion)
+
+    ipcMain.on(IpcEvents.window.common.afterLoad, (_, key: string) => afterLoadFrame(key))
 
     ipcMain.handle(IpcEvents.window.theme.get, getTheme)
 

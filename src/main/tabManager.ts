@@ -1,4 +1,4 @@
-import { IpcEvents } from './constants'
+import { IpcEvents, WindowConstants } from './constants'
 import windowManager from './windowManager'
 import { randomUUID } from 'node:crypto'
 import WindowManager from './windowManager'
@@ -167,9 +167,9 @@ const TabManager = {
         const { width, height } = mainWindow.window.getContentBounds()
         newView.setBounds({
             x: menuWidth + padding,
-            y: 40 + padding,
+            y: WindowConstants.TITLE_BAR_HEIGHT + padding,
             width: width - menuWidth - padding * 2,
-            height: height - 40 - padding * 2
+            height: height - WindowConstants.TITLE_BAR_HEIGHT - padding * 2
         })
         newView.setVisible(false)
         newView.setBackgroundColor('rgba(0, 0, 0, 0)')
@@ -178,9 +178,8 @@ const TabManager = {
             return { action: 'deny' }
         })
         newView.webContents.on('did-finish-load', () => {
-            mainWindow.window.show()
             if (is.dev) {
-                newView.webContents.openDevTools()
+                // newView.webContents.openDevTools()
             }
         })
 
@@ -214,11 +213,11 @@ const TabManager = {
                 }) as Tab
         ) ?? [],
     updateTab: (tabs: Tab[]) => {
-        getMainWindow()?.setViews(
-            tabs
-                .map((tab) => getMainWindowViews()?.find((item) => item.key === tab.key))
-                .filter((item) => item !== undefined)
-        )
+        getMainWindowViews()?.forEach(({ key }) => {
+            if (!tabs.some((tab) => tab.key === key)) {
+                getMainWindow()?.closeView(key)
+            }
+        })
         handleUpdateTabs()
     },
     switchTab: (key: string): boolean => {
@@ -238,7 +237,17 @@ const TabManager = {
         handleUpdateTabs()
     },
     independentTab: (key: string) => {
-        console.warn('Not Supported', key)
+        const mainWindow = getMainWindow()
+        const targetView = mainWindow?.getView(key)
+        if (!mainWindow || !targetView) {
+            return
+        }
+
+        targetView.view.setVisible(false)
+        mainWindow.removeView(key)
+        handleUpdateTabs()
+        WindowManager.createWindow(key, 'independent', targetView.icon, targetView.title)
+        WindowManager.windows.get(key)?.addView(targetView)
     },
     updateTabIcon: (key: string, icon: string) => {
         const view = getMainWindow()?.getView(key)

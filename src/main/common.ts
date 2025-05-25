@@ -7,6 +7,30 @@ export const openUrlWithDefaultApp = shell.openExternal
 
 export const getAppVersion = app.getVersion
 
+export const afterLoadFrame = (key: string) => {
+    const windowInfo = WindowManager.windows.get(key)
+    if (!windowInfo) {
+        return
+    }
+
+    if (settings.window.getIsMaximize()) {
+        windowInfo.window.maximize()
+    }
+    if (windowInfo.type === 'independent') {
+        windowInfo.forEachViews(({ view }) => view.setVisible(true))
+
+        const { width, height } = windowInfo.window.getContentBounds()
+        windowInfo.forEachViews(({ view }) => {
+            view.setBounds({
+                x: 0,
+                y: WindowConstants.TITLE_BAR_HEIGHT,
+                width: width,
+                height: height - WindowConstants.TITLE_BAR_HEIGHT
+            })
+        })
+    }
+}
+
 export const getTheme = settings.window.getTheme
 
 export const updateTheme = (theme: WindowTheme) => {
@@ -30,7 +54,7 @@ export const updateTheme = (theme: WindowTheme) => {
 export const updateTitleBarColor = (color: string, symbolColor: string) => {
     if (['win32', 'linux'].includes(process.platform)) {
         WindowManager.windows.forEach(({ window }) => {
-            window.setTitleBarOverlay({
+            window?.setTitleBarOverlay({
                 color,
                 symbolColor,
                 height: WindowConstants.TITLE_BAR_HEIGHT
@@ -52,9 +76,9 @@ export const updateSidebarWidth = (menuWidth: number) => {
         }
         view.setBounds({
             x: menuWidth + padding,
-            y: 40 + padding,
+            y: WindowConstants.TITLE_BAR_HEIGHT + padding,
             width: width - menuWidth - padding * 2,
-            height: height - 40 - padding * 2
+            height: height - WindowConstants.TITLE_BAR_HEIGHT - padding * 2
         })
     })
 }

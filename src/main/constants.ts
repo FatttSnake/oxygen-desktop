@@ -8,6 +8,9 @@ export const IpcEvents = {
         }
     },
     window: {
+        common: {
+            afterLoad: 'window:common:afterLoad'
+        },
         theme: {
             get: 'window:theme:get',
             update: 'window:theme:update'
@@ -70,5 +73,6 @@ export const IpcEvents = {
 export const WindowConstants = {
     WINDOW_MIN_WIDTH: 600,
     WINDOW_MIN_HEIGHT: 400,
+    DEFAULT_TITLE: 'Oxygen Toolbox',
     TITLE_BAR_HEIGHT: 40
 }

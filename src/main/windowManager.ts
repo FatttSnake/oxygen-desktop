@@ -1,9 +1,10 @@
 import { join } from 'path'
 import { BrowserWindow, nativeTheme, shell, WebContents } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import icon from '../../build/icon.ico?asset'
+import appIcon from '../../build/icon.ico?asset'
 import { settings } from './dataStore'
 import { WindowConstants } from './constants'
+import { svgToNativeImage } from './utils'
 
 const getGlobalObject = (): SharedObject => global.sharedObject
 const setGlobalObject = (newGlobalObject: SharedObject) => (global.sharedObject = newGlobalObject)
@@ -42,18 +43,40 @@ export class WindowInfo {
         this.forEachWebContents(callback, (viewInfo) => viewInfo.pin === true)
     }
     public getView = (key: string) => this.listViews().find((view) => view.key === key)
-    public setViews = (views: ViewInfo[]) => {
+    private setViews = (views: ViewInfo[]) => {
         this.views = views
     }
-    public addView = (view: ViewInfo) => this.listViews().push(view)
+    public addView = (viewInfo: ViewInfo) => {
+        this.window.contentView.addChildView(viewInfo.view)
+        this.listViews().push(viewInfo)
+    }
     public existsView = (key: string) => this.listViews().some((view) => view.key === key)
+    public clearViews = () => {
+        this.forEachViews(({ key }) => {
+            this.closeView(key)
+        })
+    }
     public closeView = (key: string) => {
         if (!this.existsView(key)) {
             return false
         }
 
         this.getView(key)?.view.webContents.close()
-        this.setViews(this.listViews().filter((view) => view.key !== key))
+        return this.removeView(key)
+    }
+    public removeView = (key: string) => {
+        if (!this.existsView(key)) {
+            return false
+        }
+
+        this.setViews(
+            this.listViews().filter((viewInfo) => {
+                if (viewInfo.key === key) {
+                    this.window.contentView.removeChildView(viewInfo.view)
+                }
+                return viewInfo.key !== key
+            })
+        )
 
         return true
     }
@@ -74,10 +97,12 @@ const WindowManager = {
         add: (window: WindowInfo) => getGlobalObject().windows.push(window),
         exists: (key: string) => getGlobalObject().windows.some((item) => item.key === key),
         close: (key: string) => {
-            if (!WindowManager.windows.exists(key)) {
+            const windowInfo = WindowManager.windows.get(key)
+            if (!windowInfo) {
                 return false
             }
-            WindowManager.windows.get(key)?.window.close()
+            windowInfo.clearViews()
+            windowInfo.window.destroy()
             getGlobalObject().windows = getGlobalObject().windows.filter((item) => item.key !== key)
 
             return true
@@ -90,7 +115,12 @@ const WindowManager = {
         }
     },
 
-    createWindow: (key: string, type: WindowType) => {
+    createWindow: (
+        key: string,
+        type: WindowType,
+        icon?: string,
+        title = WindowConstants.DEFAULT_TITLE
+    ) => {
         const { width, height } = settings.window.getBounds()
         const newWindow = new BrowserWindow({
             minWidth: WindowConstants.WINDOW_MIN_WIDTH,
@@ -99,18 +129,23 @@ const WindowManager = {
             height,
             titleBarStyle: 'hidden',
             titleBarOverlay: {
-                height: WindowConstants.TITLE_BAR_HEIGHT
+                height: WindowConstants.TITLE_BAR_HEIGHT,
+                color: '#ffffff00',
+                symbolColor: '#888'
             },
             show: false,
             autoHideMenuBar: true,
-            icon,
+            title,
+            icon: icon ? svgToNativeImage(icon) : appIcon,
             webPreferences: {
-                preload: join(__dirname, '../preload/frame.js')
+                preload: join(__dirname, '../preload/frame.js'),
+                additionalArguments: [
+                    `--window-type=${type}`,
+                    `--window-id=${key}`,
+                    '--view-id=frameView'
+                ]
             }
         })
-        if (settings.window.getIsMaximize()) {
-            newWindow.maximize()
-        }
         switch (settings.window.getTheme()) {
             case 'FOLLOW_SYSTEM':
                 nativeTheme.themeSource = 'system'
@@ -123,6 +158,10 @@ const WindowManager = {
         }
         newWindow.removeMenu()
 
+        newWindow.on('close', (event) => {
+            event.preventDefault()
+            WindowManager.windows.close(key)
+        })
         newWindow.on('resize', () => {
             const { width, height } = newWindow.getContentBounds()
             const menuWidth = (() => {
@@ -136,9 +175,9 @@ const WindowManager = {
             WindowManager.windows.get(key)?.forEachViews(({ view, padding, pin }) => {
                 view.setBounds({
                     x: (pin ? 0 : menuWidth) + padding,
-                    y: 40 + padding,
+                    y: WindowConstants.TITLE_BAR_HEIGHT + padding,
                     width: (pin ? width : width - menuWidth) - padding * 2,
-                    height: height - 40 - padding * 2
+                    height: height - WindowConstants.TITLE_BAR_HEIGHT - padding * 2
                 })
             })
         })
@@ -154,8 +193,9 @@ const WindowManager = {
             return { action: 'deny' }
         })
         newWindow.webContents.on('did-finish-load', () => {
+            newWindow.show()
             if (is.dev) {
-                newWindow.webContents.openDevTools()
+                // newWindow.webContents.openDevTools()
             }
         })
         // HMR for renderer base on electron-vite cli.
