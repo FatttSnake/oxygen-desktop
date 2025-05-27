@@ -1,6 +1,6 @@
-import window from './window'
-import sidebar from './sidebar'
-import account from './account'
+import window from '#/dataStore/window'
+import sidebar from '#/dataStore/sidebar'
+import account from '#/dataStore/account'
 
 export const settings = {
     window,

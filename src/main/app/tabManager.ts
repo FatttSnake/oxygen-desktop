@@ -1,11 +1,10 @@
-import { IpcEvents, WindowConstants } from './constants'
-import windowManager from './windowManager'
-import { randomUUID } from 'node:crypto'
-import WindowManager from './windowManager'
-import { kebabCase } from 'lodash'
-import { shell, WebContentsView } from 'electron'
 import { join } from 'path'
+import { randomUUID } from 'node:crypto'
+import { shell, WebContentsView } from 'electron'
+import { kebabCase } from 'lodash'
 import { is } from '@electron-toolkit/utils'
+import { IpcEvents, WindowConstants } from '#/constants'
+import windowManager from '#/app/windowManager'
 
 const getMainWindow = () => windowManager.getMainWindow()
 const getMainWindowViews = () => getMainWindow()?.listViews()
@@ -145,7 +144,7 @@ const TabManager = {
                         viewId: viewId,
                         preload: 'tool.js',
                         padding: 20,
-                        menuWidth: WindowManager.menuWidth.get(),
+                        menuWidth: windowManager.menuWidth.get(),
                         title: '',
                         renderTool: true
                     }
@@ -246,8 +245,8 @@ const TabManager = {
         targetView.view.setVisible(false)
         mainWindow.removeView(key)
         handleUpdateTabs()
-        WindowManager.createWindow(key, 'independent', targetView.icon, targetView.title)
-        WindowManager.windows.get(key)?.addView(targetView)
+        windowManager.createWindow(key, 'independent', targetView.icon, targetView.title)
+        windowManager.windows.get(key)?.addView(targetView)
     },
     updateTabIcon: (key: string, icon: string) => {
         const view = getMainWindow()?.getView(key)

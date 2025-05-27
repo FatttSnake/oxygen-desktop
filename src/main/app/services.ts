@@ -1,7 +1,7 @@
 import { shell, app, nativeTheme } from 'electron'
-import { IpcEvents, WindowConstants } from './constants'
-import { settings } from './dataStore'
-import WindowManager from './windowManager'
+import { IpcEvents, WindowConstants } from '#/constants'
+import { settings } from '#/dataStore'
+import WindowManager from '#/app/windowManager'
 
 export const openUrlWithDefaultApp = shell.openExternal
 

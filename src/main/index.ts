@@ -1,55 +1,18 @@
 import { join } from 'path'
 import fs from 'fs'
-import path from 'node:path'
 import url from 'node:url'
 import { app, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
-import WindowManager from './windowManager'
-import { processApp } from './processApp'
-import { processIpcEvents } from './processIpcEvents'
+import WindowManager from '#/app/windowManager'
+import handleAppEvents from '#/app/handleAppEvents'
+import handleIpcEvents from '#/app/handleIpcEvents'
 
 // Application singleton execution
 if (!app.requestSingleInstanceLock()) {
     app.quit()
 }
 
-// Register protocol client
-const args: string[] = []
-if (!app.isPackaged) {
-    args.push(path.resolve(process.argv[1]))
-}
-args.push('--')
-app.setAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
-// app.removeAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
-
-const handleUrl = (url: string) => {
-    const { hostname } = new URL(url)
-    if (hostname === 'openurl' && WindowManager.existsMainWindow()) {
-        // mainView.webContents.send(IpcEvents.mainView.url.open, pathname)
-        WindowManager.showMainWindow()
-    }
-}
-
-// macOS
-app.on('open-url', (_, argv) => {
-    handleUrl(argv)
-})
-
-// Windows
-const handleArgv = (argv: string[]) => {
-    const prefix = `${import.meta.env.VITE_DESKTOP_PROTOCOL}:`
-    const offset = app.isPackaged ? 1 : 2
-    const url = argv.find((arg, index) => index >= offset && arg.startsWith(prefix))
-    if (url) {
-        handleUrl(url)
-    }
-}
-handleArgv(process.argv)
-app.on('second-instance', (_, argv) => {
-    if (process.platform === 'win32') {
-        handleArgv(argv)
-    }
-})
+handleAppEvents()
 
 protocol.registerSchemesAsPrivileged([
     {
@@ -91,19 +54,6 @@ app.whenReady().then(() => {
     // Set app user model id for windows
     electronApp.setAppUserModelId('top.fatweb')
 
-    processIpcEvents()
-    processApp()
+    handleIpcEvents()
     WindowManager.createMainWindow()
 })
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-})
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

@@ -6,14 +6,25 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "$/*": ["./src/renderer/common/*"],
-      "#/*": ["./src/renderer/frame/*"],
-      "-/*": ["./src/renderer/independentFrame/*"],
-      "%/*": ["./src/renderer/settings/*"],
-      "+/*": ["./src/renderer/sign/*"],
-      "@/*": ["./src/renderer/core/*"]
+      "$/*": [
+        "./src/renderer/common/*"
+      ],
+      "#/*": [
+        "./src/renderer/frame/*"
+      ],
+      "-/*": [
+        "./src/renderer/independentFrame/*"
+      ],
+      "%/*": [
+        "./src/renderer/settings/*"
+      ],
+      "+/*": [
+        "./src/renderer/sign/*"
+      ],
+      "@/*": [
+        "./src/renderer/core/*"
+      ]
     },
-
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
@@ -21,18 +32,22 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
-    "types": ["unplugin-icons/types/react"]
+    "types": [
+      "unplugin-icons/types/react"
+    ]
   },
   "extends": "@electron-toolkit/tsconfig/tsconfig.web.json",
   "include": [
-    "src/renderer/**/*",
+    "src/renderer/**/*"
   ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
 }

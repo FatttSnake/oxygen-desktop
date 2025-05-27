@@ -1,10 +1,10 @@
 import { join } from 'path'
 import { BrowserWindow, nativeTheme, shell, WebContents } from 'electron'
 import { is } from '@electron-toolkit/utils'
-import appIcon from '../../build/icon.ico?asset'
-import { settings } from './dataStore'
-import { WindowConstants } from './constants'
-import { svgToNativeImage } from './utils'
+import appIcon from '^/build/icon.ico?asset'
+import { settings } from '#/dataStore'
+import { WindowConstants } from '#/constants'
+import { svgToNativeImage } from '#/util/asset'
 
 const getGlobalObject = (): SharedObject => global.sharedObject
 const setGlobalObject = (newGlobalObject: SharedObject) => (global.sharedObject = newGlobalObject)

@@ -1,6 +1,6 @@
 import { ipcMain } from 'electron'
-import { IpcEvents } from './constants'
-import TabManager from './tabManager'
+import { IpcEvents } from '#/constants'
+import TabManager from '#/app/tabManager'
 import {
     afterLoadFrame,
     getAccessToken,
@@ -22,9 +22,9 @@ import {
     updateTheme,
     updateTitleBarColor,
     updateUserInfo
-} from './common'
+} from '#/app/services'
 
-export const processIpcEvents = () => {
+export default () => {
     ipcMain.on(IpcEvents.app.url.open, (_, url: string) => openUrlWithDefaultApp(url))
 
     ipcMain.handle(IpcEvents.app.version.get, getAppVersion)

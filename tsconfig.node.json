@@ -1,12 +1,27 @@
 {
-    "compilerOptions": {
-        "composite": true,
-        "types": ["electron-vite/node"],
-        "skipLibCheck": true,
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "allowSyntheticDefaultImports": true
-    },
+  "compilerOptions": {
+    "composite": true,
+    "types": [
+      "electron-vite/node"
+    ],
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "^/*": [
+        "./*"
+      ],
+      "#/*": [
+        "./src/main/*"
+      ]
+    }
+  },
   "extends": "@electron-toolkit/tsconfig/tsconfig.node.json",
-  "include": ["electron.vite.config.*", "src/main/**/*", "src/preload/**/*", "build/resolvers/*"],
+  "include": [
+    "electron.vite.config.*",
+    "src/main/**/*",
+    "src/preload/**/*",
+    "build/resolvers/*"
+  ]
 }

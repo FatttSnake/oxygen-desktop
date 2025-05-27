@@ -1,4 +1,4 @@
-import store from './store'
+import store from '#/dataStore/store'
 
 const getBounds = () => store.get('window_bounds')
 

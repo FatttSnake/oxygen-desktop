@@ -1,5 +1,5 @@
-import { Resvg } from '@resvg/resvg-js'
 import { nativeImage } from 'electron'
+import { Resvg } from '@resvg/resvg-js'
 
 export const svgToNativeImage = (svgDataUrl: string) => {
     const base64Data = svgDataUrl.replace(/^data:image\/svg\+xml;base64,/, '')

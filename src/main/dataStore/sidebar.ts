@@ -1,4 +1,4 @@
-import store from './store'
+import store from '#/dataStore/store'
 
 const getIsCollapsed = () => store.get('sidebar_isCollapsed')
 
