@@ -1,6 +1,6 @@
 import { PRODUCTION_NAME } from '$/constants/common.constants'
 import { setPageTitle, message } from '$/util/common'
-import { getLoginStatus, getVerifyStatus_async } from '$/util/auth'
+import { getLoginStatus, getVerifyStatus } from '$/util/auth'
 import { AppContext } from '$/App'
 import { checkAuth } from '$/util/route'
 
@@ -12,7 +12,7 @@ const AuthRoute = () => {
     const location = useLocation()
     const outlet = useOutlet()
     const [isLogin, setIsLogin] = useState(getLoginStatus())
-    const isVerify = getVerifyStatus_async()
+    const isVerify = getVerifyStatus()
 
     useBlocker(({ nextLocation }) => {
         if (checkAuth(router!.routes, nextLocation.pathname)) {

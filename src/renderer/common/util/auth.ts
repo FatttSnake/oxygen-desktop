@@ -1,10 +1,11 @@
 import { cloneDeep } from 'lodash'
+import { AxiosResponse } from 'axios'
 import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { floorNumber } from '$/util/common'
 import { getFullTitle } from '$/util/route'
 import { r_sys_user_info_get } from '$/services/system'
 
-let getUserInfoPromise: Promise<UserWithPowerInfoVo> | null = null
+let requestUserInfoPromise: Promise<AxiosResponse<_Response<UserWithPowerInfoVo>>> | undefined
 
 let accessToken = await oxygenApi.account.accessToken.get()
 oxygenApi.account.accessToken.onUpdate((value) => (accessToken = value))
@@ -28,42 +29,25 @@ export const setRefreshToken = (value: string) => {
 }
 
 export const requestUserInfo = async () => {
-    let user: UserWithPowerInfoVo | undefined
+    if (!requestUserInfoPromise) {
+        requestUserInfoPromise = r_sys_user_info_get().finally(() => {
+            requestUserInfoPromise = undefined
+        })
+    }
 
-    await r_sys_user_info_get().then((value) => {
-        const response = value.data
-        if (response.code === DATABASE_SELECT_SUCCESS) {
-            user = response.data == null ? undefined : response.data
-            setUserInfo(user)
-        }
-    })
-
-    return new Promise<UserWithPowerInfoVo>((resolve, reject) => {
-        if (user) {
-            resolve(user)
-        }
-        reject(user)
-    })
+    const response = (await requestUserInfoPromise).data
+    if (response.code === DATABASE_SELECT_SUCCESS) {
+        void setUserInfo(response.data!)
+        return response.data!
+    }
+    throw Error('获取用户信息失败')
 }
 
 export const getUserInfo = async (force = false): Promise<UserWithPowerInfoVo> => {
     if (userInfo && !force) {
-        return new Promise((resolve) => {
-            resolve(userInfo!)
-        })
+        return userInfo!
     }
     return requestUserInfo()
-}
-
-export const getUserInfoQueue = async (): Promise<UserWithPowerInfoVo | undefined> => {
-    if (!getUserInfoPromise) {
-        getUserInfoPromise = getUserInfo().finally(() => {
-            getUserInfoPromise = null
-        })
-    }
-    await getUserInfoPromise
-
-    return userInfo
 }
 
 export const setUserInfo = async (value?: UserWithPowerInfoVo) => {
@@ -81,30 +65,24 @@ export const removeAllToken = () => {
     oxygenApi.account.loginStatus.update(false)
 }
 
-export const getLoginStatus = () => refreshToken !== undefined
+export const getLoginStatus = () => !!refreshToken
 
-export const getVerifyStatus_async = () => userInfo?.verified
+export const getVerifyStatus = () => userInfo?.verified
 
 export const getNickname = async () => {
-    const user = await getUserInfoQueue()
+    const user = await getUserInfo()
 
     return user?.userInfo.nickname
 }
 
 export const getAvatar = async () => {
-    const user = await getUserInfoQueue()
+    const user = await getUserInfo()
 
     return user?.userInfo.avatar
 }
 
-export const getUsername = async () => {
-    const user = await getUserInfoQueue()
-
-    return user?.username
-}
-
 export const getUserId = async () => {
-    const user = await getUserInfoQueue()
+    const user = await getUserInfo()
 
     return user?.id
 }

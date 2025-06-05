@@ -17,21 +17,19 @@ import {
     setRefreshToken
 } from '$/util/auth'
 
-let refreshTokenPromise: Promise<void> | null = null
+let refreshTokenPromise: Promise<void> | undefined
 
-const checkTokenIsExpired = () => {
-    if (!getRefreshToken()) {
-        return false
-    }
-    const accessToken = getAccessToken()
-    if (!accessToken) {
+const checkTokenIsExpired = (token?: string) => {
+    if (!token) {
         return true
     }
-    const jwt = jwtDecode<JwtPayload>(accessToken)
+
+    const jwt = jwtDecode<JwtPayload>(token)
     if (!jwt.exp) {
         return true
     }
-    return jwt.exp * 1000 - new Date().getTime() < 100000
+
+    return jwt.exp * 1e3 - new Date().getTime() < 1e5
 }
 
 const service: AxiosInstance = axios.create({
@@ -53,14 +51,17 @@ service.defaults.paramsSerializer = (params: Record<string, string>) => {
 
 service.interceptors.request.use(
     async (config) => {
-        if (checkTokenIsExpired()) {
+        if (checkTokenIsExpired(getRefreshToken())) {
+            return config
+        }
+        if (checkTokenIsExpired(getAccessToken())) {
             try {
                 if (!refreshTokenPromise) {
                     refreshTokenPromise = axios
-                        .post(
+                        .post<_Response<TokenVo>>(
                             `${import.meta.env.VITE_API_TOKEN_URL}?refreshToken=${getRefreshToken()}`
                         )
-                        .then((res: AxiosResponse<_Response<TokenVo>>) => {
+                        .then((res) => {
                             const response = res.data
                             if (response.code === PERMISSION_TOKEN_REFRESH_SUCCESS) {
                                 setAccessToken(response.data!.accessToken)
@@ -68,7 +69,7 @@ service.interceptors.request.use(
                             }
                         })
                         .finally(() => {
-                            refreshTokenPromise = null
+                            refreshTokenPromise = undefined
                         })
                 }
                 await refreshTokenPromise
@@ -76,10 +77,10 @@ service.interceptors.request.use(
                 return Promise.reject(error)
             }
         }
-        if (getAccessToken() && !checkTokenIsExpired()) {
-            const accessToken = getAccessToken()
-            config.headers.set('Authorization', `Bearer ${accessToken}`)
-        }
+
+        const accessToken = getAccessToken()
+        config.headers.set('Authorization', `Bearer ${accessToken}`)
+
         return config
     },
     async (error) => {

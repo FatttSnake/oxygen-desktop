@@ -1,6 +1,6 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
-import { getAvatar, getLoginStatus, getNickname, getVerifyStatus_async } from '$/util/auth'
+import { getAvatar, getLoginStatus, getNickname, getVerifyStatus } from '$/util/auth'
 import Tab from '#/components/Tab'
 
 interface TitleBarProps {
@@ -42,7 +42,7 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
     }
 
     const handleOnClickUser = () => {
-        if (isLogin && getVerifyStatus_async() == true) {
+        if (isLogin && getVerifyStatus() == true) {
             void oxygenApi.window.tab.create('settings', { navigateTo: '/base/account' })
         } else {
             void oxygenApi.window.tab.create('sign')
