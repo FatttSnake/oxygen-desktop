@@ -41,6 +41,9 @@ const IpcEvents = {
         collapse: {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
+        },
+        menu: {
+            update: 'sidebar:menu:update'
         }
     },
     account: {
@@ -154,6 +157,20 @@ const oxygenApi = {
                     listeners[IpcEvents.sidebar.collapse.update]
                 ),
             update: (value: boolean) => ipcRenderer.send(IpcEvents.sidebar.collapse.update, value)
+        },
+        menu: {
+            onUpdate: (callback: () => void) => {
+                listeners[IpcEvents.sidebar.menu.update] = () => callback()
+                ipcRenderer.on(
+                    IpcEvents.sidebar.menu.update,
+                    listeners[IpcEvents.sidebar.menu.update]
+                )
+            },
+            offUpdate: () =>
+                ipcRenderer.off(
+                    IpcEvents.sidebar.menu.update,
+                    listeners[IpcEvents.sidebar.menu.update]
+                )
         }
     },
     account: {

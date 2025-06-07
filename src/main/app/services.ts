@@ -96,6 +96,9 @@ export const updateSidebarIsCollapse = (isCollapse: boolean) => {
     )
 }
 
+export const updateSidebarMenu = () =>
+    WindowManager.getMainWindow()?.window.webContents.send(IpcEvents.sidebar.menu.update)
+
 export const getLoginAccount = settings.account.getLoginAccount
 
 export const updateLoginAccount = (account?: string) => settings.account.saveLoginAccount(account)

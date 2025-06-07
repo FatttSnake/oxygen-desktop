@@ -146,7 +146,7 @@ const ToolLoader = () => {
             return
         }
 
-        r_tool_detail(username, toolId, ver, platform)
+        r_tool_detail(username, toolId, ver.length ? ver : 'latest', platform)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

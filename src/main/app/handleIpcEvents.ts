@@ -18,6 +18,7 @@ import {
     updateLoginStatus,
     updateRefreshToken,
     updateSidebarIsCollapse,
+    updateSidebarMenu,
     updateSidebarWidth,
     updateTheme,
     updateTitleBarColor,
@@ -48,6 +49,8 @@ export default () => {
     ipcMain.on(IpcEvents.sidebar.collapse.update, (_, value: boolean) =>
         updateSidebarIsCollapse(value)
     )
+
+    ipcMain.on(IpcEvents.sidebar.menu.update, updateSidebarMenu)
 
     ipcMain.handle(
         IpcEvents.window.tab.create,

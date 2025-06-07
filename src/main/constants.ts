@@ -39,6 +39,9 @@ export const IpcEvents = {
         collapse: {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
+        },
+        menu: {
+            update: 'sidebar:menu:update'
         }
     },
     account: {

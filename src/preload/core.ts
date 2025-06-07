@@ -23,6 +23,9 @@ const IpcEvents = {
         collapse: {
             get: 'sidebar:collapse:get',
             update: 'sidebar:collapse:update'
+        },
+        menu: {
+            update: 'sidebar:menu:update'
         }
     },
     account: {
@@ -104,6 +107,9 @@ const oxygenApi = {
                     IpcEvents.sidebar.collapse.update,
                     listeners[IpcEvents.sidebar.collapse.update]
                 )
+        },
+        menu: {
+            update: () => ipcRenderer.send(IpcEvents.sidebar.menu.update)
         }
     },
     account: {

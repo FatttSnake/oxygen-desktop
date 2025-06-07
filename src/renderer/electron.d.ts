@@ -72,6 +72,11 @@ interface OxygenAPI {
             offUpdate: () => void
             update: (value: boolean) => void
         }
+        menu: {
+            update: () => void
+            onUpdate: (callback: () => void) => void
+            offUpdate: () => void
+        }
     }
     account: {
         loginAccount: {

@@ -2,15 +2,25 @@ import { getToolMenuItem } from '$/util/common'
 import Sidebar from '$/components/Sidebar'
 
 const ToolMenu = () => {
-    const [toolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
+    const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
 
-    const handleOnClick = (path: string) => {
+    const handleOnClick = (menuItem: ToolMenuItem) => {
         return () => {
-            console.log(path)
+            console.log(menuItem)
         }
     }
 
-    return (
+    useEffect(() => {
+        oxygenApi.sidebar.menu.onUpdate(() => {
+            setToolMenuItem(getToolMenuItem)
+        })
+
+        return () => {
+            oxygenApi.sidebar.menu.offUpdate()
+        }
+    }, [])
+
+    return toolMenuItem.length ? (
         <Sidebar>
             <Sidebar.Scroll>
                 <Sidebar.ItemList>
@@ -19,13 +29,13 @@ const ToolMenu = () => {
                             key={`${menuItem.authorUsername}:${menuItem.toolId}`}
                             icon={menuItem.icon}
                             text={menuItem.toolName}
-                            onClick={handleOnClick(`${menuItem.authorUsername}:${menuItem.toolId}`)}
+                            onClick={handleOnClick(menuItem)}
                         />
                     ))}
                 </Sidebar.ItemList>
             </Sidebar.Scroll>
         </Sidebar>
-    )
+    ) : undefined
 }
 
 export default ToolMenu

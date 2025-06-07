@@ -161,6 +161,7 @@ export const checkDesktop = () => import.meta.env.VITE_PLATFORM === 'DESKTOP'
 
 export const saveToolMenuItem = (toolMenuItem: ToolMenuItem[]) => {
     setLocalStorage(STORAGE_TOOL_MENU_ITEM_KEY, JSON.stringify(toolMenuItem))
+    oxygenApi.sidebar.menu.update()
 }
 
 export const getToolMenuItem = (): ToolMenuItem[] => {
