@@ -84,11 +84,18 @@ const oxygenApi = {
         theme: {
             get: (): Promise<WindowTheme> => ipcRenderer.invoke(IpcEvents.window.theme.get),
             onUpdate: (callback: (theme: WindowTheme) => void) => {
-                listeners['window:theme:update'] = (_, theme: WindowTheme) => callback(theme)
-                ipcRenderer.on(IpcEvents.window.theme.update, listeners['window:theme:update'])
+                listeners[IpcEvents.window.theme.update] = (_, theme: WindowTheme) =>
+                    callback(theme)
+                ipcRenderer.on(
+                    IpcEvents.window.theme.update,
+                    listeners[IpcEvents.window.theme.update]
+                )
             },
             offUpdate: () =>
-                ipcRenderer.off(IpcEvents.window.theme.update, listeners['window:theme:update'])
+                ipcRenderer.off(
+                    IpcEvents.window.theme.update,
+                    listeners[IpcEvents.window.theme.update]
+                )
         },
         titleBarOverlay: {
             setColor: (color: string, symbolColor: string) =>
@@ -99,18 +106,24 @@ const oxygenApi = {
                 ipcRenderer.invoke(IpcEvents.window.tab.create, type, args),
             list: (): Promise<Tab[]> => ipcRenderer.invoke(IpcEvents.window.tab.list),
             onUpdate: (callback: (tabs: Tab[]) => void) => {
-                listeners['window:tab:update'] = (_, tabs: Tab[]) => callback(tabs)
-                ipcRenderer.on(IpcEvents.window.tab.update, listeners['window:tab:update'])
+                listeners[IpcEvents.window.tab.update] = (_, tabs: Tab[]) => callback(tabs)
+                ipcRenderer.on(IpcEvents.window.tab.update, listeners[IpcEvents.window.tab.update])
             },
             offUpdate: () =>
-                ipcRenderer.off(IpcEvents.window.tab.update, listeners['window:tab:update']),
+                ipcRenderer.off(
+                    IpcEvents.window.tab.update,
+                    listeners[IpcEvents.window.tab.update]
+                ),
             update: (tabs: Tab[]) => ipcRenderer.send(IpcEvents.window.tab.update, tabs),
             onSwitch: (callback: (key: string) => void) => {
-                listeners['window:tab:switch'] = (_, key: string) => callback(key)
-                ipcRenderer.on(IpcEvents.window.tab.switch, listeners['window:tab:switch'])
+                listeners[IpcEvents.window.tab.switch] = (_, key: string) => callback(key)
+                ipcRenderer.on(IpcEvents.window.tab.switch, listeners[IpcEvents.window.tab.switch])
             },
             offSwitch: () =>
-                ipcRenderer.off(IpcEvents.window.tab.switch, listeners['window:tab:switch']),
+                ipcRenderer.off(
+                    IpcEvents.window.tab.switch,
+                    listeners[IpcEvents.window.tab.switch]
+                ),
             switch: (key: string): Promise<boolean> =>
                 ipcRenderer.invoke(IpcEvents.window.tab.switch, key),
             close: (key: string) => ipcRenderer.send(IpcEvents.window.tab.close, key),
@@ -128,16 +141,17 @@ const oxygenApi = {
         collapse: {
             get: (): Promise<boolean> => ipcRenderer.invoke(IpcEvents.sidebar.collapse.get),
             onUpdate: (callback: (value: boolean) => void) => {
-                listeners['sidebar:collapse:update'] = (_, value: boolean) => callback(value)
+                listeners[IpcEvents.sidebar.collapse.update] = (_, value: boolean) =>
+                    callback(value)
                 ipcRenderer.on(
                     IpcEvents.sidebar.collapse.update,
-                    listeners['sidebar:collapse:update']
+                    listeners[IpcEvents.sidebar.collapse.update]
                 )
             },
             offUpdate: () =>
                 ipcRenderer.off(
                     IpcEvents.sidebar.collapse.update,
-                    listeners['sidebar:collapse:update']
+                    listeners[IpcEvents.sidebar.collapse.update]
                 ),
             update: (value: boolean) => ipcRenderer.send(IpcEvents.sidebar.collapse.update, value)
         }
@@ -147,16 +161,17 @@ const oxygenApi = {
             get: (): Promise<string | undefined> =>
                 ipcRenderer.invoke(IpcEvents.account.accessToken.get),
             onUpdate: (callback: (value?: string) => void) => {
-                listeners['account:accessToken:update'] = (_, value?: string) => callback(value)
+                listeners[IpcEvents.account.accessToken.update] = (_, value?: string) =>
+                    callback(value)
                 ipcRenderer.on(
                     IpcEvents.account.accessToken.update,
-                    listeners['account:accessToken:update']
+                    listeners[IpcEvents.account.accessToken.update]
                 )
             },
             offUpdate: () =>
                 ipcRenderer.off(
                     IpcEvents.account.accessToken.update,
-                    listeners['account:accessToken:update']
+                    listeners[IpcEvents.account.accessToken.update]
                 ),
             update: (value?: string) =>
                 ipcRenderer.send(IpcEvents.account.accessToken.update, value)
@@ -165,16 +180,17 @@ const oxygenApi = {
             get: (): Promise<string | undefined> =>
                 ipcRenderer.invoke(IpcEvents.account.refreshToken.get),
             onUpdate: (callback: (value?: string) => void) => {
-                listeners['account:refreshToken:update'] = (_, value?: string) => callback(value)
+                listeners[IpcEvents.account.refreshToken.update] = (_, value?: string) =>
+                    callback(value)
                 ipcRenderer.on(
                     IpcEvents.account.refreshToken.update,
-                    listeners['account:refreshToken:update']
+                    listeners[IpcEvents.account.refreshToken.update]
                 )
             },
             offUpdate: () =>
                 ipcRenderer.off(
                     IpcEvents.account.refreshToken.update,
-                    listeners['account:refreshToken:update']
+                    listeners[IpcEvents.account.refreshToken.update]
                 ),
             update: (value?: string) =>
                 ipcRenderer.send(IpcEvents.account.refreshToken.update, value)
@@ -183,33 +199,34 @@ const oxygenApi = {
             get: (): Promise<UserWithPowerInfoVo | undefined> =>
                 ipcRenderer.invoke(IpcEvents.account.userInfo.get),
             onUpdate: (callback: (value: UserWithPowerInfoVo) => void) => {
-                listeners['account:userInfo:update'] = (_, value: UserWithPowerInfoVo) =>
+                listeners[IpcEvents.account.userInfo.update] = (_, value: UserWithPowerInfoVo) =>
                     callback(value)
                 ipcRenderer.on(
                     IpcEvents.account.userInfo.update,
-                    listeners['account:userInfo:update']
+                    listeners[IpcEvents.account.userInfo.update]
                 )
             },
             offUpdate: () =>
                 ipcRenderer.off(
                     IpcEvents.account.userInfo.update,
-                    listeners['account:userInfo:update']
+                    listeners[IpcEvents.account.userInfo.update]
                 ),
             update: (value?: UserWithPowerInfoVo) =>
                 ipcRenderer.send(IpcEvents.account.userInfo.update, value)
         },
         loginStatus: {
             onUpdate: (callback: (isLogin: boolean) => void) => {
-                listeners['account:loginStatus:update'] = (_, isLogin: boolean) => callback(isLogin)
+                listeners[IpcEvents.account.loginStatus.update] = (_, isLogin: boolean) =>
+                    callback(isLogin)
                 ipcRenderer.on(
                     IpcEvents.account.loginStatus.update,
-                    listeners['account:loginStatus:update']
+                    listeners[IpcEvents.account.loginStatus.update]
                 )
             },
             offUpdate: () =>
                 ipcRenderer.off(
                     IpcEvents.account.loginStatus.update,
-                    listeners['account:loginStatus:update']
+                    listeners[IpcEvents.account.loginStatus.update]
                 ),
             update: (isLogin: boolean) =>
                 ipcRenderer.send(IpcEvents.account.loginStatus.update, isLogin)
@@ -226,7 +243,7 @@ const oxygenApi = {
                     source?: string
                 ) => void
             ) => {
-                listeners['tool:view:load'] = (
+                listeners[IpcEvents.tool.view.load] = (
                     _,
                     username: string,
                     toolId: string,
@@ -234,9 +251,10 @@ const oxygenApi = {
                     platform?: Platform,
                     source?: string
                 ) => callback(username, toolId, ver, platform, source)
-                ipcRenderer.on(IpcEvents.tool.view.load, listeners['tool:view:load'])
+                ipcRenderer.on(IpcEvents.tool.view.load, listeners[IpcEvents.tool.view.load])
             },
-            offLoad: () => ipcRenderer.off(IpcEvents.tool.view.load, listeners['tool:view:load']),
+            offLoad: () =>
+                ipcRenderer.off(IpcEvents.tool.view.load, listeners[IpcEvents.tool.view.load]),
             render: (dist: string, key?: string) =>
                 ipcRenderer.send(IpcEvents.tool.view.render, dist, key)
         }
