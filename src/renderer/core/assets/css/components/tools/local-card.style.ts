@@ -55,7 +55,8 @@ export default createStyles(({ cx, css, token }) => {
 
         icon: {
             img: {
-                width: token.sizeXL * 2
+                width: token.sizeXL * 2,
+                height: token.sizeXL * 2
             }
         },
 
