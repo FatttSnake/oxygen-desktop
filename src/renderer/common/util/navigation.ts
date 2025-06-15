@@ -1,9 +1,5 @@
-import { Location, NavigateFunction, NavigateOptions } from 'react-router'
+import { NavigateFunction, NavigateOptions } from 'react-router'
 import { getRedirectUrl } from '$/util/route'
-
-export const navigateToLocation = (navigate: NavigateFunction, location?: Location) => {
-    location ? navigate(`${location.pathname}${location.search}`) : navigateToRoot(navigate)
-}
 
 export const navigateToRoot = (navigate: NavigateFunction, options?: NavigateOptions) => {
     navigate('/', options)
@@ -66,15 +62,6 @@ export const navigateToSource = (
     )
 }
 
-export const navigateToRedirect = (
-    navigate: NavigateFunction,
-    searchParams: URLSearchParams,
-    defaultUrl: '/repository' | '/',
-    options?: NavigateOptions
-) => {
-    navigate(searchParams.get('redirect') ?? defaultUrl, options)
-}
-
 export const navigateToForget = (
     navigate: NavigateFunction,
     locationSearch: string,
@@ -121,36 +108,9 @@ export const navigateToEdit = (
     navigate(`/edit/${toolId}${searchParams.size ? `?${searchParams.toString()}` : ''}`, options)
 }
 
-export const navigateToUser = (navigate: NavigateFunction, options?: NavigateOptions) => {
-    navigate('/user', options)
-}
-
 export const navigateToTools = (navigate: NavigateFunction, options?: NavigateOptions) => {
     navigate('/system/tools', options)
 }
 
-export const getViewPath = (
-    username: string,
-    toolId: string,
-    platform: Platform,
-    version?: string,
-    local?: boolean
-) => {
-    const searchParams = new URLSearchParams()
-    if (platform !== import.meta.env.VITE_PLATFORM) {
-        searchParams.append('platform', platform)
-    }
-    local && searchParams.append('source', 'local')
-
-    return `/view/${username}/${toolId}${version ? `/${version}` : ''}${searchParams.size ? `?${searchParams.toString()}` : ''}`
-}
-
 export const getAndroidUrl = (username: string, toolId: string) =>
     `${import.meta.env.VITE_APP_PROTOCOL}://opentool/${username}/${toolId}`
-
-export const checkIsSamePathname = (a: string, b: string) => {
-    const aPathname = a.substring(0, a.indexOf('?') === -1 ? a.length : a.indexOf('?'))
-    const bPathname = b.substring(0, b.indexOf('?') === -1 ? b.length : b.indexOf('?'))
-
-    return aPathname === bPathname
-}

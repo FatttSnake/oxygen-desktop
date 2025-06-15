@@ -6,13 +6,7 @@ import useStyles from '@/assets/css/components/tools/store-card.style'
 import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { message, modal, checkDesktop, omitTextByByte } from '$/util/common'
 import { getLoginStatus, getUserId } from '$/util/auth'
-import {
-    getAndroidUrl,
-    navigateToLogin,
-    navigateToSource,
-    navigateToStore,
-    navigateToView
-} from '$/util/navigation'
+import { getAndroidUrl, navigateToSource, navigateToStore, navigateToView } from '$/util/navigation'
 import { r_tool_add_favorite, r_tool_detail, r_tool_remove_favorite } from '$/services/tool'
 import { n_tool_get, n_tool_install } from '$/services/native'
 import Card from '$/components/Card'
@@ -115,7 +109,7 @@ const StoreCard = ({
     const handleOnStarBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
         if (!getLoginStatus()) {
-            navigateToLogin(navigate, undefined, `${location.pathname}${location.search}`)
+            void message.warning('未登录')
             return
         }
         if (favorite_) {
