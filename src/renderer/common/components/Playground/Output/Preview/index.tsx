@@ -10,7 +10,6 @@ interface PreviewProps {
     entryPoint: string
     preExpansionCode?: string
     postExpansionCode?: string
-    mobileMode?: boolean
     globalJsVariables?: Record<string, unknown>
     globalCssVariables?: string
 }
@@ -22,7 +21,6 @@ const Preview = ({
     entryPoint,
     preExpansionCode = '',
     postExpansionCode = '',
-    mobileMode = false,
     globalJsVariables,
     globalCssVariables
 }: PreviewProps) => {
@@ -51,7 +49,6 @@ const Preview = ({
             <Render
                 iframeKey={iframeKey}
                 compiledCode={compiledCode}
-                mobileMode={mobileMode}
                 globalJsVariables={globalJsVariables}
                 globalCssVariables={globalCssVariables}
             />

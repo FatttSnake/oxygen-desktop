@@ -23,14 +23,11 @@ const Execute = () => {
     const { id } = useParams()
     const [isLoading, setIsLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
-    const [isMobileMode, setIsMobileMode] = useState(false)
 
     const render = (toolVo: ToolVo) => {
         try {
             switch (toolVo.platform) {
                 case 'ANDROID':
-                    setIsMobileMode(true)
-                    break
                 case 'DESKTOP':
                     if (!checkDesktop()) {
                         message.warning('此应用需要桌面端环境，请在桌面端打开').then(() => {
@@ -100,7 +97,6 @@ const Execute = () => {
                 <Playground.Output.Preview.Render
                     iframeKey={`${id}`}
                     compiledCode={compiledCode}
-                    mobileMode={isMobileMode}
                     globalJsVariables={{
                         OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
                     }}

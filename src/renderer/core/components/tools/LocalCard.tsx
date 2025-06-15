@@ -9,7 +9,7 @@ import FlexBox from '$/components/FlexBox'
 import DragHandle from '$/components/dnd/DragHandle'
 import Draggable from '$/components/dnd/Draggable'
 
-interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+interface LocalCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: string
     toolName: string
     toolId: string
@@ -23,7 +23,7 @@ interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement
     onUninstall?: (username: string, toolId: string) => void
 }
 
-const StoreCard = ({
+const LocalCard = ({
     style,
     ref,
     icon,
@@ -44,7 +44,7 @@ const StoreCard = ({
     supportPlatform,
     onUninstall,
     ...props
-}: StoreCardProps) => {
+}: LocalCardProps) => {
     const { styles, theme } = useStyles()
     const navigate = useNavigate()
     const cardRef = useRef<HTMLDivElement>(null)
@@ -54,12 +54,8 @@ const StoreCard = ({
     }, [options])
 
     const handleCardOnClick = () => {
-        if (!checkDesktop() && platform === 'DESKTOP') {
-            void message.warning('此应用需要桌面端环境，请在桌面端打开')
-            return
-        }
         if (platform === 'ANDROID') {
-            void modal.confirm({
+            void modal.info({
                 centered: true,
                 icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
                 title: 'Android 端',
@@ -68,12 +64,7 @@ const StoreCard = ({
                         <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
                         <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                     </FlexBox>
-                ),
-                okText: '确定',
-                cancelText: '模拟器',
-                onCancel() {
-                    navigateToView(author.username, toolId, platform, undefined, true)
-                }
+                )
             })
             return
         }
@@ -92,7 +83,7 @@ const StoreCard = ({
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        void modal.confirm({
+        void modal.info({
             centered: true,
             icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
             title: 'Android 端',
@@ -101,12 +92,7 @@ const StoreCard = ({
                     <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
                     <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                 </FlexBox>
-            ),
-            okText: '确定',
-            cancelText: '模拟器',
-            onCancel() {
-                navigateToView(author.username, toolId, 'ANDROID', undefined, true)
-            }
+            )
         })
     }
 
@@ -164,7 +150,9 @@ const StoreCard = ({
                                     />
                                 </AntdTooltip>
                             )}
-                            <DragHandle />
+                            {platform !== 'ANDROID' && (checkDesktop() || platform === 'WEB') && (
+                                <DragHandle />
+                            )}
                         </div>
                     </div>
                     <div className={styles.icon}>
@@ -204,4 +192,4 @@ const StoreCard = ({
     )
 }
 
-export default StoreCard
+export default LocalCard

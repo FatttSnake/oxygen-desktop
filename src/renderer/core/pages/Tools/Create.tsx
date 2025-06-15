@@ -381,7 +381,6 @@ const Create = () => {
                             <Playground.Output.Preview.Render
                                 iframeKey={previewTemplate}
                                 compiledCode={compiledCode}
-                                mobileMode={formValues.platform === 'ANDROID'}
                                 globalJsVariables={{
                                     OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
                                 }}

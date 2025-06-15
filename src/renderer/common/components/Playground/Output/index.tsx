@@ -12,7 +12,6 @@ interface OutputProps {
     entryPoint: string
     preExpansionCode?: string
     postExpansionCode?: string
-    mobileMode?: boolean
     globalJsVariables?: Record<string, unknown>
     globalCssVariables?: string
 }
@@ -25,7 +24,6 @@ const Output = ({
     entryPoint,
     preExpansionCode,
     postExpansionCode,
-    mobileMode = false,
     globalJsVariables,
     globalCssVariables
 }: OutputProps) => {
@@ -50,7 +48,6 @@ const Output = ({
                     entryPoint={entryPoint}
                     preExpansionCode={preExpansionCode}
                     postExpansionCode={postExpansionCode}
-                    mobileMode={mobileMode}
                     globalJsVariables={globalJsVariables}
                     globalCssVariables={globalCssVariables}
                 />

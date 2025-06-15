@@ -24,7 +24,7 @@ const Code = () => {
     const [platform, setPlatform] = useState<Platform>('WEB')
 
     const handleOnRunTool = () => {
-        if (checkDesktop() || platform !== 'DESKTOP') {
+        if (checkDesktop() || platform === 'WEB') {
             void modal.confirm({
                 centered: true,
                 maskClosable: true,

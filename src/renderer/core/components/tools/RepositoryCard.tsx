@@ -1,7 +1,7 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import useStyles from '@/assets/css/components/tools/repository-card.style'
-import { omitTextByByte } from '$/util/common'
+import { checkDesktop, omitTextByByte } from '$/util/common'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import Draggable from '$/components/dnd/Draggable'
@@ -66,7 +66,9 @@ const RepositoryCard = ({
                 <FlexBox className={styles.root}>
                     <div className={styles.header}>
                         {children}
-                        <DragHandle />
+                        {platform !== 'ANDROID' && (checkDesktop() || platform === 'WEB') && (
+                            <DragHandle />
+                        )}
                     </div>
                     <div className={styles.icon}>
                         <img src={`data:image/svg+xml;base64,${icon}`} alt={''} />

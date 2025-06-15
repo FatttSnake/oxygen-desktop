@@ -48,7 +48,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
     }
 
     const handleOnOpenTool = () => {
-        if (checkDesktop() || selectedTool.platform !== 'DESKTOP') {
+        if (checkDesktop() || selectedTool.platform === 'WEB') {
             navigateToView('!', selectedTool.toolId, selectedTool.platform, selectedTool.ver)
         } else {
             void message.warning('此应用需要桌面端环境，请在桌面端打开')
@@ -58,7 +58,7 @@ const ToolCard = ({ tools, onDelete, onUpgrade, onSubmit, onCancel }: ToolCardPr
     const handleOnEditTool = () => {
         if (['NONE', 'REJECT'].includes(selectedTool.review)) {
             return () => {
-                if (checkDesktop() || selectedTool.platform !== 'DESKTOP') {
+                if (checkDesktop() || selectedTool.platform === 'WEB') {
                     navigateToEdit(navigate, selectedTool.toolId, selectedTool.platform)
                 } else {
                     void message.warning('此应用需要桌面端环境，请在桌面端编辑')
@@ -303,10 +303,7 @@ const Tools = () => {
                                 switch (response.code) {
                                     case DATABASE_UPDATE_SUCCESS:
                                         void message.success('创建新版本成功')
-                                        if (
-                                            checkDesktop() ||
-                                            response.data!.platform !== 'DESKTOP'
-                                        ) {
+                                        if (checkDesktop() || response.data!.platform === 'WEB') {
                                             navigateToEdit(
                                                 navigate,
                                                 response.data!.toolId,

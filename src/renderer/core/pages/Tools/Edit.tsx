@@ -471,7 +471,6 @@ const Edit = () => {
                                 importMap={importMap!}
                                 entryPoint={entryPoint}
                                 postExpansionCode={baseDist}
-                                mobileMode={toolData?.platform === 'ANDROID'}
                                 globalJsVariables={{
                                     OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
                                 }}

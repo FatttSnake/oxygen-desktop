@@ -187,7 +187,7 @@ const ToolLoader = () => {
                 setIsLoading(true)
 
                 oxygenApi.window.tab.create('tool').then((viewId) => {
-                    if (!['WEB', 'DESKTOP', 'ANDROID'].includes(platform)) {
+                    if (!['WEB', 'DESKTOP'].includes(platform)) {
                         errorMessage(viewId, `不支持的平台：${platform}`)
                         return
                     }

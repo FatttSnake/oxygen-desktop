@@ -74,7 +74,7 @@ const StoreCard = ({
             return
         }
         if (platform === 'ANDROID') {
-            void modal.confirm({
+            void modal.info({
                 centered: true,
                 keyboard: false,
                 icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
@@ -84,12 +84,7 @@ const StoreCard = ({
                         <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
                         <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                     </FlexBox>
-                ),
-                okText: '确定',
-                cancelText: '模拟器',
-                onCancel() {
-                    navigateToView(author.username, toolId, platform)
-                }
+                )
             })
             return
         }
@@ -194,7 +189,7 @@ const StoreCard = ({
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        void modal.confirm({
+        void modal.info({
             centered: true,
             keyboard: false,
             icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
@@ -204,12 +199,7 @@ const StoreCard = ({
                     <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
                     <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                 </FlexBox>
-            ),
-            okText: '确定',
-            cancelText: '模拟器',
-            onCancel() {
-                navigateToView(author.username, toolId, 'ANDROID')
-            }
+            )
         })
     }
 
@@ -341,7 +331,9 @@ const StoreCard = ({
                                     />
                                 </AntdTooltip>
                             )}
-                            <DragHandle />
+                            {platform !== 'ANDROID' && (checkDesktop() || platform === 'WEB') && (
+                                <DragHandle />
+                            )}
                         </div>
                     </div>
                     <div className={styles.icon}>

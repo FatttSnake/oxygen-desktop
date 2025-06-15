@@ -11,7 +11,7 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
 import useStyles from '@/assets/css/pages/tools-framework.style'
 import { tools } from '@/router/tools'
-import { message, checkDesktop, getToolMenuItem, saveToolMenuItem } from '$/util/common'
+import { getToolMenuItem, saveToolMenuItem } from '$/util/common'
 import { navigateToView } from '$/util/navigation'
 import FitFullscreen from '$/components/FitFullscreen'
 import Sidebar from '$/components/Sidebar'
@@ -82,12 +82,7 @@ const ToolsFramework = () => {
                         ver === newItem.ver
                 ) === -1
             ) {
-                if (!checkDesktop() && newItem.platform === 'DESKTOP') {
-                    void message.warning('暂不支持添加桌面端应用')
-                    setToolMenuItem(toolMenuItem)
-                } else {
-                    setToolMenuItem([...toolMenuItem, newItem])
-                }
+                setToolMenuItem([...toolMenuItem, newItem])
             }
         }
 
