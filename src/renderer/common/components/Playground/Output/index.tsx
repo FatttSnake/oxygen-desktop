@@ -1,3 +1,4 @@
+import useStyles from '$/components/Playground/Output/index.style'
 import FlexBox from '$/components/FlexBox'
 import { IFiles, IImportMap } from '$/components/Playground/shared'
 import Playground from '$/components/Playground'
@@ -27,10 +28,11 @@ const Output = ({
     globalJsVariables,
     globalCssVariables
 }: OutputProps) => {
+    const { styles } = useStyles()
     const [selectedTab, setSelectedTab] = useState('Preview')
 
     return (
-        <FlexBox>
+        <FlexBox className={styles.root}>
             <Playground.CodeEditor.FileSelector
                 files={{
                     Preview: { name: 'Preview', language: 'json', value: '' },

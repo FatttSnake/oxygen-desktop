@@ -438,44 +438,55 @@ const Edit = () => {
                 <Card className={styles.rootBox}>
                     <FlexBox direction={'horizontal'} className={styles.content}>
                         <LoadingMask hidden={!isLoading}>
-                            <Playground.CodeEditor
-                                isDarkMode={isDarkMode}
-                                tsconfig={tsconfig}
-                                files={{
-                                    ...files,
-                                    [IMPORT_MAP_FILE_NAME]: {
-                                        name: IMPORT_MAP_FILE_NAME,
-                                        language: 'json',
-                                        value: importMapRaw
-                                    },
-                                    [TS_CONFIG_FILE_NAME]: {
-                                        name: TS_CONFIG_FILE_NAME,
-                                        language: 'json',
-                                        value: tsconfigRaw
-                                    }
-                                }}
-                                notRemovable={[entryPoint]}
-                                selectedFileName={selectedFileName}
-                                onAddFile={(_, files) => setFiles(files)}
-                                onRemoveFile={(_, files) => setFiles(files)}
-                                onRenameFile={(_, __, files) => setFiles(files)}
-                                onChangeFileContent={handleOnChangeFileContent}
-                                onSelectedFileChange={setSelectedFileName}
-                                extraLibs={editorExtraLibs}
-                                onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                            />
-                            <Playground.Output
-                                isDarkMode={isDarkMode}
-                                files={files}
-                                selectedFileName={selectedFileName}
-                                importMap={importMap!}
-                                entryPoint={entryPoint}
-                                postExpansionCode={baseDist}
-                                globalJsVariables={{
-                                    OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
-                                }}
-                                globalCssVariables={generateThemeCssVariables(theme).styles}
-                            />
+                            <AntdSplitter>
+                                <AntdSplitter.Panel collapsible>
+                                    <Playground.CodeEditor
+                                        isDarkMode={isDarkMode}
+                                        tsconfig={tsconfig}
+                                        files={{
+                                            ...files,
+                                            [IMPORT_MAP_FILE_NAME]: {
+                                                name: IMPORT_MAP_FILE_NAME,
+                                                language: 'json',
+                                                value: importMapRaw
+                                            },
+                                            [TS_CONFIG_FILE_NAME]: {
+                                                name: TS_CONFIG_FILE_NAME,
+                                                language: 'json',
+                                                value: tsconfigRaw
+                                            }
+                                        }}
+                                        notRemovable={[entryPoint]}
+                                        selectedFileName={selectedFileName}
+                                        onAddFile={(_, files) => setFiles(files)}
+                                        onRemoveFile={(_, files) => setFiles(files)}
+                                        onRenameFile={(_, __, files) => setFiles(files)}
+                                        onChangeFileContent={handleOnChangeFileContent}
+                                        onSelectedFileChange={setSelectedFileName}
+                                        extraLibs={editorExtraLibs}
+                                        onEditorDidMount={(_, monaco) =>
+                                            addExtraCssVariables(monaco)
+                                        }
+                                    />
+                                </AntdSplitter.Panel>
+                                <AntdSplitter.Panel collapsible>
+                                    <Playground.Output
+                                        isDarkMode={isDarkMode}
+                                        files={files}
+                                        selectedFileName={selectedFileName}
+                                        importMap={importMap!}
+                                        entryPoint={entryPoint}
+                                        postExpansionCode={baseDist}
+                                        globalJsVariables={{
+                                            OxygenTheme: {
+                                                ...removeUselessAttributes(theme),
+                                                isDarkMode
+                                            }
+                                        }}
+                                        globalCssVariables={generateThemeCssVariables(theme).styles}
+                                    />
+                                </AntdSplitter.Panel>
+                            </AntdSplitter>
                         </LoadingMask>
                         {isShowDraggableMask && <div className={styles.draggableMask} />}
                     </FlexBox>

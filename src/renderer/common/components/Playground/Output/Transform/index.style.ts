@@ -2,7 +2,8 @@ import { createStyles } from 'antd-style'
 
 export default createStyles(({ token }) => ({
     root: {
-        position: 'relative'
+        position: 'relative',
+        height: 0
     },
 
     errorMessage: {

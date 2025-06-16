@@ -343,6 +343,7 @@ const primitiveNames = [
     'Slider',
     'Space',
     'Spin',
+    'Splitter',
     'Statistic',
     'StatisticCountdown',
     'Step',

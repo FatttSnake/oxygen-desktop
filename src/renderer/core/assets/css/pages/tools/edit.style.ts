@@ -13,11 +13,7 @@ export default createStyles(() => ({
     content: {
         position: 'relative',
         width: '100%',
-        height: '100%',
-
-        '> *': {
-            width: 0
-        }
+        height: '100%'
     },
 
     draggableMask: {
