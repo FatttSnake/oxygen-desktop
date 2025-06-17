@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, KeyboardEvent, ChangeEvent, MouseEvent } from 'react'
-import useStyles from '$/components/Playground/CodeEditor/FileSelector/item.style'
+import useStyles from '$/assets/css/components/playground/code-editor/file-selector-item.style'
 
 interface ItemProps {
     className?: string

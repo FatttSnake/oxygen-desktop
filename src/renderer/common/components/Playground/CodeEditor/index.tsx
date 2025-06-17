@@ -1,7 +1,7 @@
 import { Monaco } from '@monaco-editor/react'
 import { editor } from 'monaco-editor'
 import { cloneDeep } from 'lodash'
-import useStyles from '$/components/Playground/CodeEditor/index.style'
+import useStyles from '$/assets/css/components/playground/code-editor/index.style'
 import FlexBox from '$/components/FlexBox'
 import { IEditorOptions, IFiles, ITsconfig } from '$/components/Playground/shared'
 import {

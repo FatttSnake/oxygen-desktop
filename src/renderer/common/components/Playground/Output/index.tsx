@@ -1,4 +1,4 @@
-import useStyles from '$/components/Playground/Output/index.style'
+import useStyles from '$/assets/css/components/playground/output/index.style'
 import FlexBox from '$/components/FlexBox'
 import { IFiles, IImportMap } from '$/components/Playground/shared'
 import Playground from '$/components/Playground'

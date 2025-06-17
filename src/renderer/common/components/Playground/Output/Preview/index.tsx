@@ -1,4 +1,4 @@
-import useStyles from '$/components/Playground/Output/Preview/index.style'
+import useStyles from '$/assets/css/components/playground/output/preview.style'
 import { IFiles, IImportMap } from '$/components/Playground/shared'
 import Compiler from '$/components/Playground/compiler'
 import Render from '$/components/Playground/Output/Preview/Render'

@@ -1,4 +1,4 @@
-import useStyles from '$/components/Playground/index.style'
+import useStyles from '$/assets/css/components/playground/index.style'
 import { IFiles, IImportMap, ITsconfig } from '$/components/Playground/shared'
 import {
     ENTRY_FILE_NAME,
