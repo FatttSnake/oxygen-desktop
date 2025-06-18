@@ -827,11 +827,11 @@ const Template = () => {
         return (
             <Card>
                 <AntdTable
-                    loading={templateDetailLoading[record.id]}
-                    dataSource={sourceFileList}
-                    columns={detailColumns}
-                    pagination={false}
                     rowKey={(record) => record.name}
+                    columns={detailColumns}
+                    dataSource={sourceFileList}
+                    loading={templateDetailLoading[record.id]}
+                    pagination={false}
                 />
             </Card>
         )
@@ -1023,9 +1023,9 @@ const Template = () => {
                     <FlexBox direction={'horizontal'} className={styles.root}>
                         <Card>
                             <AntdTable
-                                dataSource={templateData}
-                                columns={templateColumns}
                                 rowKey={(record) => record.id}
+                                columns={templateColumns}
+                                dataSource={templateData}
                                 pagination={tableParams.pagination}
                                 loading={isLoading}
                                 scroll={{ x: true }}

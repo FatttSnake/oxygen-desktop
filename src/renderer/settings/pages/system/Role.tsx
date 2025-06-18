@@ -565,9 +565,9 @@ const Role = () => {
     const table = (
         <Card>
             <AntdTable
-                dataSource={roleData}
-                columns={dataColumns}
                 rowKey={(record) => record.id}
+                columns={dataColumns}
+                dataSource={roleData}
                 pagination={tableParams.pagination}
                 loading={isLoading}
                 scroll={{ x: true }}

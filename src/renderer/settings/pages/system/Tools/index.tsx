@@ -92,13 +92,13 @@ const Tools = () => {
         {
             dataIndex: 'keywords',
             title: '关键词',
-            render: (value: string[]) => value.map((item) => <AntdTag>{item}</AntdTag>)
+            render: (value: string[]) => value.map((item) => <AntdTag key={item}>{item}</AntdTag>)
         },
         {
             dataIndex: 'categories',
             title: '类别',
             render: (value: { name: string }[]) =>
-                value.map((item) => <AntdTag>{item.name}</AntdTag>)
+                value.map((item) => <AntdTag key={item.name}>{item.name}</AntdTag>)
         },
         {
             dataIndex: 'review',
@@ -565,8 +565,9 @@ const Tools = () => {
     const table = (
         <Card>
             <AntdTable
-                dataSource={toolData}
+                rowKey={(record) => record.id}
                 columns={dataColumns}
+                dataSource={toolData}
                 pagination={tableParams.pagination}
                 loading={isLoading}
                 scroll={{ x: true }}

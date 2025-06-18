@@ -974,11 +974,11 @@ const Base = () => {
         return (
             <Card>
                 <AntdTable
-                    loading={baseDetailLoading[record.id]}
-                    dataSource={sourceFileList}
-                    columns={detailColumns}
-                    pagination={false}
                     rowKey={(record) => record.name}
+                    columns={detailColumns}
+                    dataSource={sourceFileList}
+                    loading={baseDetailLoading[record.id]}
+                    pagination={false}
                 />
             </Card>
         )
@@ -1081,9 +1081,9 @@ const Base = () => {
                     <FlexBox direction={'horizontal'} className={styles.root}>
                         <Card>
                             <AntdTable
-                                dataSource={baseData}
-                                columns={baseColumns}
                                 rowKey={(record) => record.id}
+                                columns={baseColumns}
+                                dataSource={baseData}
                                 pagination={tableParams.pagination}
                                 loading={isLoading}
                                 expandable={{

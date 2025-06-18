@@ -556,9 +556,9 @@ const Group = () => {
     const table = (
         <Card>
             <AntdTable
-                dataSource={groupData}
-                columns={dataColumns}
                 rowKey={(record) => record.id}
+                columns={dataColumns}
+                dataSource={groupData}
                 pagination={tableParams.pagination}
                 loading={isLoading}
                 scroll={{ x: true }}

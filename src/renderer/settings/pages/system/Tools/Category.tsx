@@ -292,9 +292,9 @@ const Category = () => {
                 >
                     <Card>
                         <AntdTable
-                            dataSource={categoryData}
-                            columns={categoryColumns}
                             rowKey={(record) => record.id}
+                            columns={categoryColumns}
+                            dataSource={categoryData}
                             loading={isLoading}
                             scroll={{ x: true }}
                             pagination={false}

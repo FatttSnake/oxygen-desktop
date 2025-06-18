@@ -275,9 +275,9 @@ const Log = () => {
     const table = (
         <Card>
             <AntdTable
-                dataSource={logData}
-                columns={dataColumns}
                 rowKey={(record) => record.id}
+                columns={dataColumns}
+                dataSource={logData}
                 pagination={tableParams.pagination}
                 loading={isLoading}
                 onChange={handleOnTableChange}

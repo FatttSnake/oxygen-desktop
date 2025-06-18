@@ -953,9 +953,9 @@ const User = () => {
     const table = (
         <Card>
             <AntdTable
-                dataSource={userData}
-                columns={dataColumns}
                 rowKey={(record) => record.id}
+                columns={dataColumns}
+                dataSource={userData}
                 pagination={tableParams.pagination}
                 loading={isLoadingUserData}
                 scroll={{ x: true }}
