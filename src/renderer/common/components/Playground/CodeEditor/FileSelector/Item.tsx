@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, KeyboardEvent, ChangeEvent, MouseEvent } from 'react'
 import useStyles from '$/assets/css/components/playground/code-editor/file-selector-item.style'
+import { modal } from '$/util/common'
 
 interface ItemProps {
     className?: string
@@ -100,9 +101,21 @@ const Item = ({
         if (hasEditing) {
             return
         }
-        if (confirm(`确定删除文件 ${value} ？`)) {
-            onRemove?.(value)
-        }
+        modal
+            .confirm({
+                centered: true,
+                maskClosable: true,
+                title: '确定删除',
+                content: `确定删除文件 ${value} 吗？`
+            })
+            .then(
+                (confirmed) => {
+                    if (confirmed) {
+                        onRemove?.(value)
+                    }
+                },
+                () => {}
+            )
     }
 
     useEffect(() => {
