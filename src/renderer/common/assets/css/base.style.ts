@@ -28,5 +28,12 @@ export default createGlobalStyle(({ theme }) => ({
         content: '"."',
         height: 0
     },
-    '.clearfix': { zoom: 1 }
+    '.clearfix': { zoom: 1 },
+    '::-webkit-scrollbar': {
+        width: 4
+    },
+    '::-webkit-scrollbar-thumb': {
+        borderRadius: theme.borderRadiusLG,
+        backgroundColor: theme.colorSplit
+    }
 }))
