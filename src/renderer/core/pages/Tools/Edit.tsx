@@ -1,4 +1,4 @@
-import Draggable from 'react-draggable'
+import Draggable, { DraggableData, DraggableEvent } from 'react-draggable'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/pages/tools/edit.style'
 import {
@@ -44,6 +44,7 @@ const Edit = () => {
     const [searchParams] = useSearchParams({
         platform: import.meta.env.VITE_PLATFORM
     })
+    const dragStartPos = useRef({ x: 0, y: 0 })
     const [form] = AntdForm.useForm<ToolUpdateParam>()
     const formValues = AntdForm.useWatch([], form)
     const [isLoading, setIsLoading] = useState(false)
@@ -56,7 +57,7 @@ const Edit = () => {
     const [tsconfig, setTsconfig] = useState<ITsconfig>()
     const [entryPoint, setEntryPoint] = useState('')
     const [baseDist, setBaseDist] = useState('')
-    const [isShowDraggableMask, setIsShowDraggableMask] = useState(false)
+    const [isDragging, setIsDragging] = useState(false)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -93,6 +94,10 @@ const Edit = () => {
     }
 
     const handleOnSetting = () => {
+        if (isDragging) {
+            return
+        }
+
         setIsDrawerOpen(true)
         form.setFieldValue('icon', toolData?.icon)
         form.setFieldValue('name', toolData?.name)
@@ -108,8 +113,28 @@ const Edit = () => {
         void form.validateFields()
     }
 
+    const handleOnDragStart = (_: DraggableEvent, data: DraggableData) => {
+        dragStartPos.current = { x: data.x, y: data.y }
+        setIsDragging(false)
+    }
+
+    const handleOnDragMove = (_: DraggableEvent, data: DraggableData) => {
+        const distance = Math.sqrt(
+            Math.pow(data.x - dragStartPos.current.x, 2) +
+                Math.pow(data.y - dragStartPos.current.y, 2)
+        )
+
+        if (distance > 5) {
+            setIsDragging(true)
+        }
+    }
+
+    const handleOnDragStop = () => {
+        setTimeout(() => setIsDragging(false))
+    }
+
     const handleOnSave = () => {
-        if (isSubmitting) {
+        if (isDragging || isSubmitting) {
             return
         }
         setIsSubmitting(true)
@@ -488,13 +513,14 @@ const Edit = () => {
                                 </AntdSplitter.Panel>
                             </AntdSplitter>
                         </LoadingMask>
-                        {isShowDraggableMask && <div className={styles.draggableMask} />}
+                        {isDragging && <div className={styles.draggableMask} />}
                     </FlexBox>
                 </Card>
                 <Draggable
-                    onStart={() => setIsShowDraggableMask(true)}
-                    onStop={() => setIsShowDraggableMask(false)}
                     bounds={'#root'}
+                    onStart={handleOnDragStart}
+                    onDrag={handleOnDragMove}
+                    onStop={handleOnDragStop}
                 >
                     <div className={styles.draggableContent}>
                         {hasEdited ? (

@@ -1,4 +1,4 @@
-import Draggable from 'react-draggable'
+import Draggable, { DraggableData, DraggableEvent } from 'react-draggable'
 import Icon from '@ant-design/icons'
 import useStyles from '%/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
@@ -18,12 +18,38 @@ const Code = () => {
     const { isDarkMode } = useContext(CommonContext)
     const navigate = useNavigate()
     const { id } = useParams()
+    const dragStartPos = useRef({ x: 0, y: 0 })
     const [isLoading, setIsLoading] = useState(false)
     const [files, setFiles] = useState<IFiles>({})
     const [selectedFileName, setSelectedFileName] = useState('')
+    const [isDragging, setIsDragging] = useState(false)
     const [platform, setPlatform] = useState<Platform>('WEB')
 
+    const handleOnDragStart = (_: DraggableEvent, data: DraggableData) => {
+        dragStartPos.current = { x: data.x, y: data.y }
+        setIsDragging(false)
+    }
+
+    const handleOnDragMove = (_: DraggableEvent, data: DraggableData) => {
+        const distance = Math.sqrt(
+            Math.pow(data.x - dragStartPos.current.x, 2) +
+                Math.pow(data.y - dragStartPos.current.y, 2)
+        )
+
+        if (distance > 5) {
+            setIsDragging(true)
+        }
+    }
+
+    const handleOnDragStop = () => {
+        setTimeout(() => setIsDragging(false))
+    }
+
     const handleOnRunTool = () => {
+        if (isDragging) {
+            return
+        }
+
         if (checkDesktop() || platform === 'WEB') {
             void modal.confirm({
                 centered: true,
@@ -96,7 +122,12 @@ const Code = () => {
                 />
             </Card>
 
-            <Draggable bounds={'#root'}>
+            <Draggable
+                bounds={'#root'}
+                onStart={handleOnDragStart}
+                onDrag={handleOnDragMove}
+                onStop={handleOnDragStop}
+            >
                 <div className={styles.draggableContent}>
                     <AntdFloatButton
                         type={'primary'}
