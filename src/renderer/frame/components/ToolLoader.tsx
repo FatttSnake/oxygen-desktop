@@ -90,10 +90,7 @@ const ToolLoader = () => {
                         )
                     })
                     .catch((reason) => {
-                        void message.error({
-                            content: `编译失败：${reason}`,
-                            style: { transform: 'translateY(40px)' }
-                        })
+                        errorMessage(viewId, `编译失败：${reason}`)
                     })
             } catch (e) {
                 errorMessage(viewId, '载入工具失败')
@@ -110,7 +107,7 @@ const ToolLoader = () => {
                     baseDist
                 )
             } catch (e) {
-                void message.error('载入工具失败')
+                errorMessage(viewId, '载入工具失败')
             }
         }
     }
