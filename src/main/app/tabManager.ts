@@ -178,7 +178,7 @@ const TabManager = {
         })
         newView.webContents.on('did-finish-load', () => {
             if (is.dev) {
-                // newView.webContents.openDevTools()
+                newView.webContents.openDevTools()
             }
         })
 

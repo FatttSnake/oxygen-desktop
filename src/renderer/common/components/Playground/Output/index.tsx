@@ -39,7 +39,10 @@ const Output = ({
                     Transform: { name: 'Transform', language: 'json', value: '' }
                 }}
                 selectedFileName={selectedTab}
-                onChange={(tabName) => setSelectedTab(tabName)}
+                onChange={(tabName) => {
+                    setSelectedTab(tabName)
+                    return true
+                }}
                 readonly
             />
             {selectedTab === 'Preview' && (

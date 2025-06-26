@@ -1,15 +1,8 @@
 import { Monaco } from '@monaco-editor/react'
 import { editor } from 'monaco-editor'
-import { cloneDeep } from 'lodash'
 import useStyles from '$/assets/css/components/playground/code-editor/index.style'
 import FlexBox from '$/components/FlexBox'
 import { IEditorOptions, IFiles, ITsconfig } from '$/components/Playground/shared'
-import {
-    fileNameToLanguage,
-    getFileNameList,
-    IMPORT_MAP_FILE_NAME,
-    TS_CONFIG_FILE_NAME
-} from '$/components/Playground/files'
 import FileSelector from '$/components/Playground/CodeEditor/FileSelector'
 import Editor, { ExtraLib } from '$/components/Playground/CodeEditor/Editor'
 
@@ -18,19 +11,19 @@ interface CodeEditorProps {
     showFileSelector?: boolean
     tsconfig?: ITsconfig
     files: IFiles
+    selectedFileName: string
     readonly?: boolean
     readonlyFiles?: string[]
-    notRemovable?: string[]
-    selectedFileName?: string
+    notRemovableFiles?: string[]
     options?: IEditorOptions
     extraLibs?: ExtraLib[]
     onEditorDidMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void
-    onSelectedFileChange?: (fileName: string) => void
-    onAddFile?: (fileName: string, files: IFiles) => void
-    onRemoveFile?: (fileName: string, files: IFiles) => void
-    onRenameFile?: (newFileName: string, oldFileName: string, files: IFiles) => void
-    onChangeFileContent?: (content: string, fileName: string, files: IFiles) => void
-    onError?: (msg: string) => void
+    onSelectedFileChange?: (fileName: string) => boolean
+    onChangeFileContent?: (content: string, fileName: string) => void
+    onAddFile?: (fileName: string) => boolean
+    onRenameFile?: (newFileName: string, oldFileName: string) => boolean
+    onRemoveFile?: (fileName: string) => boolean
+    listenOnError?: (listener: ((message: string) => void) | undefined) => void
 }
 
 const CodeEditor = ({
@@ -38,92 +31,38 @@ const CodeEditor = ({
     showFileSelector = true,
     tsconfig,
     files,
+    selectedFileName,
     readonly,
     readonlyFiles,
-    notRemovable,
+    notRemovableFiles,
     options,
-    onSelectedFileChange,
-    onAddFile,
-    onRemoveFile,
-    onRenameFile,
-    onChangeFileContent,
-    onError,
     extraLibs,
     onEditorDidMount,
-    ...props
+    onSelectedFileChange,
+    onChangeFileContent,
+    onAddFile,
+    onRenameFile,
+    onRemoveFile,
+    listenOnError
 }: CodeEditorProps) => {
     const { styles } = useStyles()
-    const filteredFilesName = getFileNameList(files).filter(
-        (item) => ![IMPORT_MAP_FILE_NAME, TS_CONFIG_FILE_NAME].includes(item) && !files[item].hidden
-    )
-    const propsSelectedFileName =
-        props.selectedFileName || (filteredFilesName.length ? filteredFilesName[0] : '')
-    const [selectedFileName, setSelectedFileName] = useState(propsSelectedFileName)
     const [errorMsg, setErrorMsg] = useState('')
+    const timer = useRef(-1)
 
-    const handleOnChangeSelectedFile = (fileName: string) => {
-        if (onSelectedFileChange) {
-            onSelectedFileChange(fileName)
-        } else {
-            setSelectedFileName(fileName)
+    useEffect(() => {
+        listenOnError?.((message) => {
+            setErrorMsg(message)
+
+            clearTimeout(timer.current)
+            timer.current = setTimeout(() => {
+                setErrorMsg('')
+            }, 5e3)
+        })
+
+        return () => {
+            listenOnError?.(undefined)
         }
-    }
-
-    const handleOnRemoveFile = (fileName: string) => {
-        const clone = cloneDeep(files)
-        delete clone[fileName]
-        onRemoveFile?.(fileName, clone)
-    }
-
-    const handleOnAddFile = (fileName: string) => {
-        const clone = cloneDeep(files)
-        clone[fileName] = {
-            name: fileName,
-            language: fileNameToLanguage(fileName),
-            value: ''
-        }
-        onAddFile?.(fileName, clone)
-        handleOnChangeSelectedFile(fileName)
-    }
-
-    const handleOnUpdateFileName = (newFileName: string, oldFileName: string) => {
-        if (!files[oldFileName] || !newFileName) {
-            return
-        }
-
-        const { [oldFileName]: value, ...rest } = files
-        const newFile: IFiles = {
-            [newFileName]: {
-                ...value,
-                language: fileNameToLanguage(newFileName),
-                name: newFileName
-            }
-        }
-        const newFiles: IFiles = { ...rest, ...newFile }
-
-        onRenameFile?.(newFileName, oldFileName, newFiles)
-    }
-
-    const handleOnError = (msg: string) => {
-        if (onError) {
-            onError(msg)
-        } else {
-            setErrorMsg(msg)
-        }
-    }
-
-    const handleOnChangeFileContent = (code: string = '') => {
-        if (!files[onSelectedFileChange ? propsSelectedFileName : selectedFileName]) {
-            return
-        }
-        const clone = cloneDeep(files)
-        clone[onSelectedFileChange ? propsSelectedFileName : selectedFileName].value = code ?? ''
-        onChangeFileContent?.(
-            code,
-            onSelectedFileChange ? propsSelectedFileName : selectedFileName,
-            clone
-        )
-    }
+    }, [])
 
     return (
         <FlexBox className={styles.root}>
@@ -131,34 +70,29 @@ const CodeEditor = ({
                 <FileSelector
                     files={files}
                     readonly={readonly}
-                    notRemovableFiles={notRemovable}
-                    selectedFileName={
-                        onSelectedFileChange ? propsSelectedFileName : selectedFileName
-                    }
-                    onChange={handleOnChangeSelectedFile}
-                    onRemoveFile={handleOnRemoveFile}
-                    onUpdateFileName={handleOnUpdateFileName}
-                    onAddFile={handleOnAddFile}
-                    onError={handleOnError}
+                    notRemovableFiles={notRemovableFiles}
+                    selectedFileName={selectedFileName}
+                    onChange={onSelectedFileChange}
+                    onAddFile={onAddFile}
+                    onUpdateFileName={onRenameFile}
+                    onRemoveFile={onRemoveFile}
                 />
             )}
             <Editor
                 isDarkMode={isDarkMode}
                 tsconfig={tsconfig}
-                selectedFileName={onSelectedFileChange ? propsSelectedFileName : selectedFileName}
+                selectedFileName={selectedFileName}
                 files={files}
-                options={options}
                 readonly={
                     readonly ||
-                    readonlyFiles?.includes(
-                        onSelectedFileChange ? propsSelectedFileName : selectedFileName
-                    ) ||
-                    !files[onSelectedFileChange ? propsSelectedFileName : selectedFileName]
+                    readonlyFiles?.includes(selectedFileName) ||
+                    !files[selectedFileName]
                 }
-                onChange={handleOnChangeFileContent}
-                onJumpFile={handleOnChangeSelectedFile}
                 extraLibs={extraLibs}
+                options={options}
                 onEditorDidMount={onEditorDidMount}
+                onChange={onChangeFileContent}
+                onJumpFile={onSelectedFileChange}
             />
             {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
         </FlexBox>

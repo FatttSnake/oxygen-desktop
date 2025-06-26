@@ -1,90 +1,65 @@
-import { Dispatch, SetStateAction, KeyboardEvent, ChangeEvent, MouseEvent } from 'react'
+import { KeyboardEvent, ChangeEvent, MouseEvent } from 'react'
 import useStyles from '$/assets/css/components/playground/code-editor/file-selector-item.style'
 import { modal } from '$/util/common'
 
 interface ItemProps {
     className?: string
-    readonly?: boolean
-    creating?: boolean
     value: string
     active?: boolean
-    hasEditing?: boolean
-    setHasEditing?: Dispatch<SetStateAction<boolean>>
-    onOk?: (fileName: string) => void
-    onCancel?: () => void
-    onRemove?: (fileName: string) => void
+    readonly?: boolean
+    editing?: boolean
     onClick?: () => void
-    onValidate?: (newFileName: string, oldFileName: string) => boolean
+    onEditing?: () => void
+    onChange?: (newValue: string) => boolean
+    onCancel?: () => void
+    onRemove?: () => void
 }
 
 const Item = ({
     className,
-    readonly = false,
     value,
     active = false,
-    hasEditing,
-    setHasEditing,
-    onOk,
-    onCancel,
-    onRemove,
+    readonly = false,
+    editing = false,
     onClick,
-    onValidate,
-    ...prop
+    onEditing,
+    onChange,
+    onCancel,
+    onRemove
 }: ItemProps) => {
     const { styles, cx } = useStyles()
     const inputRef = useRef<HTMLInputElement>(null)
     const [fileName, setFileName] = useState(value)
-    const [isCreating, setIsCreating] = useState(prop.creating)
 
-    const handleOnClick = () => {
-        if (hasEditing) {
+    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setFileName(e.target.value)
+    }
+
+    const handleOnFinish = () => {
+        if (onChange?.(fileName) ?? true) {
             return
         }
 
-        onClick?.()
+        inputRef.current?.focus()
     }
 
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             event.preventDefault()
-            finishNameFile()
+            onChange?.(fileName)
         } else if (event.key === 'Escape') {
             event.preventDefault()
-            cancelNameFile()
+            setFileName(value)
+            onCancel?.()
         }
-    }
-
-    const finishNameFile = () => {
-        if (!isCreating || onValidate ? !onValidate?.(fileName, value) : false) {
-            inputRef.current?.focus()
-            return
-        }
-
-        if (fileName === value && active) {
-            setIsCreating(false)
-            setHasEditing?.(false)
-            return
-        }
-
-        onOk?.(fileName)
-        setIsCreating(false)
-        setHasEditing?.(false)
-    }
-
-    const cancelNameFile = () => {
-        setFileName(value)
-        setIsCreating(false)
-        setHasEditing?.(false)
-        onCancel?.()
     }
 
     const handleOnDoubleClick = () => {
-        if (readonly || isCreating || hasEditing) {
+        if (readonly || editing) {
             return
         }
 
-        setIsCreating(true)
-        setHasEditing?.(true)
+        onEditing?.()
         setFileName(value)
         setTimeout(() => {
             inputRef.current?.focus()
@@ -92,15 +67,8 @@ const Item = ({
         })
     }
 
-    const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFileName(e.target.value)
-    }
-
     const handleOnDelete = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        if (hasEditing) {
-            return
-        }
         modal
             .confirm({
                 centered: true,
@@ -111,7 +79,7 @@ const Item = ({
             .then(
                 (confirmed) => {
                     if (confirmed) {
-                        onRemove?.(value)
+                        onRemove?.()
                     }
                 },
                 () => {}
@@ -119,21 +87,20 @@ const Item = ({
     }
 
     useEffect(() => {
-        inputRef.current?.focus()
+        if (editing) {
+            inputRef.current?.focus()
+        }
     }, [])
 
     return (
-        <div
-            className={cx(styles.root, active ? styles.active : '', className)}
-            onClick={handleOnClick}
-        >
-            {isCreating ? (
+        <div className={cx(styles.root, active ? styles.active : '', className)} onClick={onClick}>
+            {editing ? (
                 <div className={styles.tabItemInput}>
                     <input
                         ref={inputRef}
                         value={fileName}
                         onChange={handleOnChange}
-                        onBlur={finishNameFile}
+                        onBlur={handleOnFinish}
                         onKeyDown={handleKeyDown}
                         spellCheck={'false'}
                     />

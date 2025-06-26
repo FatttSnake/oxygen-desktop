@@ -9,19 +9,18 @@ import { r_sys_tool_get_one } from '$/services/system'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
-import { IFiles } from '$/components/Playground/shared'
-import { base64ToFiles } from '$/components/Playground/files'
 import Playground from '$/components/Playground'
+import { usePlaygroundState } from '$/hooks/usePlaygroundState'
+import { base64ToFiles } from '$/components/Playground/files'
 
 const Code = () => {
     const { styles } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
     const navigate = useNavigate()
     const { id } = useParams()
+    const { init, tsconfig, files, selectedFileName, setSelectedFileName } = usePlaygroundState()
     const dragStartPos = useRef({ x: 0, y: 0 })
     const [isLoading, setIsLoading] = useState(false)
-    const [files, setFiles] = useState<IFiles>({})
-    const [selectedFileName, setSelectedFileName] = useState('')
     const [isDragging, setIsDragging] = useState(false)
     const [platform, setPlatform] = useState<Platform>('WEB')
 
@@ -67,8 +66,7 @@ const Code = () => {
 
     const render = (toolVo: ToolVo) => {
         try {
-            setFiles(base64ToFiles(toolVo.source.data!))
-            setSelectedFileName(toolVo.entryPoint)
+            init(base64ToFiles(toolVo.source.data!), toolVo.entryPoint, toolVo.entryPoint)
             setPlatform(toolVo.platform)
         } catch (e) {
             void message.error('载入工具失败')
@@ -113,12 +111,13 @@ const Code = () => {
             <Card className={styles.rootBox}>
                 <Playground.CodeEditor
                     isDarkMode={isDarkMode}
-                    readonly
+                    tsconfig={tsconfig}
                     files={files}
                     selectedFileName={selectedFileName}
-                    onSelectedFileChange={setSelectedFileName}
+                    readonly
                     extraLibs={editorExtraLibs}
                     onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
+                    onSelectedFileChange={setSelectedFileName}
                 />
             </Card>
 

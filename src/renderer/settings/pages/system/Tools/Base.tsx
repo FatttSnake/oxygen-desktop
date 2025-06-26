@@ -27,15 +27,16 @@ import Permission from '$/components/Permission'
 import { IFile, IFiles, IImportMap, ITsconfig } from '$/components/Playground/shared'
 import {
     base64ToFiles,
+    EMPTY_FILES,
     fileNameToLanguage,
     filesToBase64,
     getFilesSize,
     IMPORT_MAP_FILE_NAME,
     strToBase64,
-    TS_CONFIG_FILE_NAME
+    TSCONFIG_FILE_NAME
 } from '$/components/Playground/files'
-import compiler from '$/components/Playground/compiler'
 import Playground from '$/components/Playground'
+import compiler from '$/components/Playground/compiler'
 
 const Base = () => {
     const { styles, theme } = useStyles()
@@ -303,7 +304,7 @@ const Base = () => {
                                                 (value) =>
                                                     ![
                                                         IMPORT_MAP_FILE_NAME,
-                                                        TS_CONFIG_FILE_NAME
+                                                        TSCONFIG_FILE_NAME
                                                     ].includes(value) &&
                                                     !value.endsWith('.d.ts') &&
                                                     !value.endsWith('.css') &&
@@ -604,12 +605,11 @@ const Base = () => {
 
     const expandedRowRender = (record: ToolBaseVo) => {
         const baseDetailVo = baseDetailData[record.id]
-        let sourceFiles: IFiles | undefined = undefined
-        let sourceFileList: IFile[] = []
+        let sourceFiles: IFiles = base64ToFiles('')
         if (baseDetailVo) {
             sourceFiles = base64ToFiles(baseDetailVo.source.data!)
-            sourceFileList = Object.values(sourceFiles)
         }
+        const sourceFileList = Object.values(sourceFiles)
 
         const handleOnAddFile = () => {
             void modal.confirm({
@@ -762,26 +762,28 @@ const Base = () => {
                                 {hasPermission('system:tool:modify:base') ? '编辑' : '查看'}
                             </a>
                         </Permission>
-                        {!Object.keys(hasEdited).length && (
-                            <Permission operationCode={['system:tool:modify:base']}>
-                                <a
-                                    onClick={handleOnRenameFile(record.name)}
-                                    style={{ color: theme.colorPrimary }}
-                                >
-                                    重命名
-                                </a>
-                            </Permission>
-                        )}
-                        {!Object.keys(hasEdited).length && (
-                            <Permission operationCode={['system:tool:delete:base']}>
-                                <a
-                                    onClick={handleOnDeleteFile(record.name)}
-                                    style={{ color: theme.colorPrimary }}
-                                >
-                                    删除
-                                </a>
-                            </Permission>
-                        )}
+                        {!Object.keys(hasEdited).length &&
+                            !Object.keys(EMPTY_FILES).includes(record.name) && (
+                                <Permission operationCode={['system:tool:modify:base']}>
+                                    <a
+                                        onClick={handleOnRenameFile(record.name)}
+                                        style={{ color: theme.colorPrimary }}
+                                    >
+                                        重命名
+                                    </a>
+                                </Permission>
+                            )}
+                        {!Object.keys(hasEdited).length &&
+                            !Object.keys(EMPTY_FILES).includes(record.name) && (
+                                <Permission operationCode={['system:tool:delete:base']}>
+                                    <a
+                                        onClick={handleOnDeleteFile(record.name)}
+                                        style={{ color: theme.colorPrimary }}
+                                    >
+                                        删除
+                                    </a>
+                                </Permission>
+                            )}
                     </AntdSpace>
                 )
             }
@@ -984,11 +986,18 @@ const Base = () => {
         )
     }
 
-    const handleOnChangeFileContent = (_content: string, _fileName: string, files: IFiles) => {
+    const handleOnChangeFileContent = (fileName: string, content: string) => {
         if (!hasPermission('system:tool:modify:base')) {
             return
         }
-        setEditingFiles((prevState) => ({ ...prevState, [editingBaseId]: files }))
+
+        setEditingFiles((prevState) => ({
+            ...prevState,
+            [editingBaseId]: {
+                ...prevState[editingBaseId],
+                [fileName]: { ...prevState[editingBaseId][fileName], value: content }
+            }
+        }))
         if (!hasEdited[editingBaseId]) {
             setHasEdited((prevState) => ({ ...prevState, [editingBaseId]: true }))
         }
@@ -996,7 +1005,7 @@ const Base = () => {
 
     useEffect(() => {
         try {
-            const tsconfigStr = editingFiles[editingBaseId][TS_CONFIG_FILE_NAME].value
+            const tsconfigStr = editingFiles[editingBaseId][TSCONFIG_FILE_NAME].value
             setTsconfig(JSON.parse(tsconfigStr) as ITsconfig)
         } catch (e) {
             /* empty */
@@ -1100,7 +1109,10 @@ const Base = () => {
                                     isDarkMode={isDarkMode}
                                     files={editingFiles[editingBaseId]}
                                     selectedFileName={editingFileName}
-                                    onSelectedFileChange={setEditingFileName}
+                                    onSelectedFileChange={(fileName) => {
+                                        setEditingFileName(fileName)
+                                        return true
+                                    }}
                                     onChangeFileContent={handleOnChangeFileContent}
                                     showFileSelector={false}
                                     tsconfig={tsconfig}

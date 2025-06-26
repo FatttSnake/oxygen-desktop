@@ -6,12 +6,24 @@ import { IFile, IFiles, ILanguage } from '$/components/Playground/shared'
 import tsconfigSchema from '$/assets/schema/playground/tsconfig-schema.json'
 import importMapSchema from '$/assets/schema/playground/import-map-schema.json'
 
-export const TS_CONFIG_FILE_NAME = 'tsconfig.json'
+export const TSCONFIG_FILE_NAME = 'tsconfig.json'
 export const MAIN_FILE_NAME = 'App.tsx'
 export const IMPORT_MAP_FILE_NAME = 'import-map.json'
 export const ENTRY_FILE_NAME = 'main.tsx'
+export const EMPTY_FILES = {
+    [IMPORT_MAP_FILE_NAME]: {
+        name: IMPORT_MAP_FILE_NAME,
+        language: 'json',
+        value: JSON.stringify({})
+    },
+    [TSCONFIG_FILE_NAME]: {
+        name: TSCONFIG_FILE_NAME,
+        language: 'json',
+        value: JSON.stringify({ compilerOptions: {} })
+    }
+} as IFiles
 
-export const getFileNameList = (files: IFiles) => Object.keys(files)
+export const getFileNameList = (files: Record<string, IFile>) => Object.keys(files)
 
 export const fileNameToLanguage = (name: string): ILanguage => {
     const suffix = name.split('.').pop() || ''
@@ -47,9 +59,12 @@ export const getFilesSize = (files: IFiles) =>
 
 export const base64ToFiles = (base64: string): IFiles => {
     try {
+        if (!base64) {
+            return EMPTY_FILES
+        }
         return JSON.parse(base64ToStr(base64)) as IFiles
     } catch (e) {
-        return {}
+        return EMPTY_FILES
     }
 }
 

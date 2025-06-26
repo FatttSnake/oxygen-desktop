@@ -29,10 +29,11 @@ import Playground from '$/components/Playground'
 import { IFile, IFiles, ITsconfig } from '$/components/Playground/shared'
 import {
     base64ToFiles,
+    EMPTY_FILES,
     fileNameToLanguage,
     filesToBase64,
     getFilesSize,
-    TS_CONFIG_FILE_NAME
+    TSCONFIG_FILE_NAME
 } from '$/components/Playground/files'
 
 const Template = () => {
@@ -457,12 +458,11 @@ const Template = () => {
 
     const expandedRowRender = (record: ToolTemplateVo) => {
         const templateDetailVo = templateDetailData[record.id]
-        let sourceFiles: IFiles | undefined = undefined
-        let sourceFileList: IFile[] = []
+        let sourceFiles: IFiles = base64ToFiles('')
         if (templateDetailVo) {
             sourceFiles = base64ToFiles(templateDetailVo.source.data!)
-            sourceFileList = Object.values(sourceFiles)
         }
+        const sourceFileList = Object.values(sourceFiles)
 
         const handleOnAddFile = () => {
             void modal.confirm({
@@ -616,26 +616,28 @@ const Template = () => {
                                 {hasPermission('system:tool:modify:template') ? '编辑' : '查看'}
                             </a>
                         </Permission>
-                        {!Object.keys(hasEdited).length && (
-                            <Permission operationCode={['system:tool:modify:template']}>
-                                <a
-                                    onClick={handleOnRenameFile(record.name)}
-                                    style={{ color: theme.colorPrimary }}
-                                >
-                                    重命名
-                                </a>
-                            </Permission>
-                        )}
-                        {!Object.keys(hasEdited).length && (
-                            <Permission operationCode={['system:tool:delete:template']}>
-                                <a
-                                    onClick={handleOnDeleteFile(record.name)}
-                                    style={{ color: theme.colorPrimary }}
-                                >
-                                    删除
-                                </a>
-                            </Permission>
-                        )}
+                        {!Object.keys(hasEdited).length &&
+                            !Object.keys(EMPTY_FILES).includes(record.name) && (
+                                <Permission operationCode={['system:tool:modify:template']}>
+                                    <a
+                                        onClick={handleOnRenameFile(record.name)}
+                                        style={{ color: theme.colorPrimary }}
+                                    >
+                                        重命名
+                                    </a>
+                                </Permission>
+                            )}
+                        {!Object.keys(hasEdited).length &&
+                            !Object.keys(EMPTY_FILES).includes(record.name) && (
+                                <Permission operationCode={['system:tool:delete:template']}>
+                                    <a
+                                        onClick={handleOnDeleteFile(record.name)}
+                                        style={{ color: theme.colorPrimary }}
+                                    >
+                                        删除
+                                    </a>
+                                </Permission>
+                            )}
                     </AntdSpace>
                 )
             }
@@ -837,11 +839,18 @@ const Template = () => {
         )
     }
 
-    const handleOnChangeFileContent = (_content: string, _fileName: string, files: IFiles) => {
+    const handleOnChangeFileContent = (fileName: string, content: string) => {
         if (!hasPermission('system:tool:modify:template')) {
             return
         }
-        setEditingFiles((prevState) => ({ ...prevState, [editingTemplateId]: files }))
+
+        setEditingFiles((prevState) => ({
+            ...prevState,
+            [editingTemplateId]: {
+                ...prevState[editingTemplateId],
+                [fileName]: { ...prevState[editingTemplateId][fileName], value: content }
+            }
+        }))
         if (!hasEdited[editingTemplateId]) {
             setHasEdited((prevState) => ({ ...prevState, [editingTemplateId]: true }))
         }
@@ -871,7 +880,7 @@ const Template = () => {
 
     useEffect(() => {
         try {
-            const tsconfigStr = editingFiles[editingTemplateId][TS_CONFIG_FILE_NAME].value
+            const tsconfigStr = editingFiles[editingTemplateId][TSCONFIG_FILE_NAME].value
             setTsconfig(JSON.parse(tsconfigStr) as ITsconfig)
         } catch (e) {
             /* empty */
@@ -1042,7 +1051,10 @@ const Template = () => {
                                     isDarkMode={isDarkMode}
                                     files={editingFiles[editingTemplateId]}
                                     selectedFileName={editingFileName}
-                                    onSelectedFileChange={setEditingFileName}
+                                    onSelectedFileChange={(fileName) => {
+                                        setEditingFileName(fileName)
+                                        return true
+                                    }}
                                     onChangeFileContent={handleOnChangeFileContent}
                                     showFileSelector={false}
                                     tsconfig={tsconfig}

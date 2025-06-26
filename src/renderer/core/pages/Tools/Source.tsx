@@ -9,7 +9,7 @@ import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
 import Playground from '$/components/Playground'
-import { IFiles } from '$/components/Playground/shared'
+import { usePlaygroundState } from '$/hooks/usePlaygroundState'
 import { base64ToFiles } from '$/components/Playground/files'
 
 const Source = () => {
@@ -20,14 +20,12 @@ const Source = () => {
     const [searchParams] = useSearchParams({
         platform: import.meta.env.VITE_PLATFORM
     })
+    const { init, tsconfig, files, selectedFileName, setSelectedFileName } = usePlaygroundState()
     const [isLoading, setIsLoading] = useState(false)
-    const [files, setFiles] = useState<IFiles>({})
-    const [selectedFileName, setSelectedFileName] = useState('')
 
     const render = (toolVo: ToolVo) => {
         try {
-            setFiles(base64ToFiles(toolVo.source.data!))
-            setSelectedFileName(toolVo.entryPoint)
+            init(base64ToFiles(toolVo.source.data!), toolVo.entryPoint, toolVo.entryPoint)
         } catch (e) {
             void message.error('载入工具失败')
         }
@@ -88,12 +86,13 @@ const Source = () => {
             <Card className={styles.content}>
                 <Playground.CodeEditor
                     isDarkMode={isDarkMode}
-                    readonly
+                    tsconfig={tsconfig}
                     files={files}
                     selectedFileName={selectedFileName}
-                    onSelectedFileChange={setSelectedFileName}
+                    readonly
                     extraLibs={editorExtraLibs}
                     onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
+                    onSelectedFileChange={setSelectedFileName}
                 />
             </Card>
         </FitFullscreen>
