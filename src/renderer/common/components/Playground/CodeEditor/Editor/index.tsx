@@ -23,7 +23,7 @@ interface EditorProps {
     options?: IEditorOptions
     onEditorDidMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void
     onChange?: (fileName: string, code: string) => void
-    onJumpFile?: (fileName: string) => void
+    onJumpFile?: (fileName: string) => boolean
 }
 
 const Editor = ({
@@ -144,8 +144,10 @@ const Editor = ({
         customDoOpenEditorRef.current = (editor, input) => {
             const path = input.resource.path
             if (!['/lib.dom.d.ts', '/node_modules/'].some((item) => path.startsWith(item))) {
-                onJumpFile?.(path.replace('/', ''))
-                doOpenEditor(editor, input)
+                const targetFile = path.replace('/', '')
+                if (targetFile === selectedFileName || onJumpFile?.(targetFile)) {
+                    setTimeout(() => doOpenEditor(editor, input))
+                }
             }
         }
     }, [onJumpFile])
