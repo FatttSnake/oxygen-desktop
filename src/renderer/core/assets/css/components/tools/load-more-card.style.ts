@@ -2,8 +2,8 @@ import { createStyles } from 'antd-style'
 
 export default createStyles(({ token }) => ({
     root: {
-        width: '100%',
-        height: '100%',
+        width: '180px',
+        height: '290px',
         textAlign: 'center',
         alignItems: 'center',
         justifyContent: 'center',

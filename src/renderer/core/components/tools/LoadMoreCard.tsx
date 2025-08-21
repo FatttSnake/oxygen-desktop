@@ -27,7 +27,7 @@ const LoadMoreCard = ({ onClick }: LoadMoreCardProps) => {
         <Card ref={cardRef} onClick={onClick}>
             <FlexBox className={styles.root}>
                 <div className={styles.icon}>
-                    <Icon component={IconOxygenMore} />{' '}
+                    <Icon component={IconOxygenMore} />
                 </div>
                 <div className={styles.text}>加载更多</div>
             </FlexBox>
