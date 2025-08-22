@@ -7,7 +7,7 @@ export default createStyles(({ cx, css, token }) => {
         transition: all 0.1s ease;
     `)
 
-    const edit = cx(css`
+    const buttonGroup = cx(css`
         > * {
             > :first-child {
                 flex: 1;
@@ -34,7 +34,7 @@ export default createStyles(({ cx, css, token }) => {
         opacity: 0;
 
         > *,
-        .${edit} > * {
+        .${buttonGroup} > * {
             width: 100%;
         }
     `)
@@ -104,6 +104,6 @@ export default createStyles(({ cx, css, token }) => {
 
         operation,
 
-        edit
+        buttonGroup
     }
 })

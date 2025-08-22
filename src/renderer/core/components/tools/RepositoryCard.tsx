@@ -89,22 +89,28 @@ const RepositoryCard = ({
                             </AntdButton>
                         )}
                         {onEdit && onPublish && (
-                            <div className={styles.edit}>
+                            <div className={styles.buttonGroup}>
                                 <AntdButton.Group size={'small'}>
                                     <AntdButton onClick={onEdit}>编辑</AntdButton>
                                     <AntdButton onClick={onPublish}>发布</AntdButton>
                                 </AntdButton.Group>
                             </div>
                         )}
-                        {onSource && (
-                            <AntdButton size={'small'} onClick={onSource}>
-                                源码
-                            </AntdButton>
-                        )}
-                        {onCancelReview && (
-                            <AntdButton size={'small'} onClick={onCancelReview}>
-                                取消审核
-                            </AntdButton>
+                        {(onSource || onCancelReview) && (
+                            <div className={styles.buttonGroup}>
+                                <AntdButton.Group size={'small'}>
+                                    {onSource && (
+                                        <AntdButton size={'small'} onClick={onSource}>
+                                            源码
+                                        </AntdButton>
+                                    )}
+                                    {onCancelReview && (
+                                        <AntdButton size={'small'} onClick={onCancelReview}>
+                                            取消审核
+                                        </AntdButton>
+                                    )}
+                                </AntdButton.Group>
+                            </div>
                         )}
                         {onDelete && (
                             <AntdButton size={'small'} danger onClick={onDelete}>
