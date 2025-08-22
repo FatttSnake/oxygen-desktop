@@ -278,12 +278,6 @@ const Tools = () => {
             centered: true,
             maskClosable: true,
             title: '更新工具',
-            footer: (_, { OkBtn, CancelBtn }) => (
-                <>
-                    <OkBtn />
-                    <CancelBtn />
-                </>
-            ),
             content: (
                 <AntdForm
                     form={upgradeForm}

@@ -19,12 +19,6 @@ const Mail = () => {
             centered: true,
             maskClosable: true,
             title: '发送测试邮件',
-            footer: (_, { OkBtn, CancelBtn }) => (
-                <>
-                    <OkBtn />
-                    <CancelBtn />
-                </>
-            ),
             content: (
                 <>
                     <AntdForm

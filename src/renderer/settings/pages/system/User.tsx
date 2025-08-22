@@ -326,12 +326,6 @@ const User = () => {
                 maskClosable: true,
                 icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenPassword} />,
                 title: `修改用户 ${value.username} 的密码`,
-                footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                        <OkBtn />
-                        <CancelBtn />
-                    </>
-                ),
                 content: (
                     <AntdForm
                         form={changePasswordForm}

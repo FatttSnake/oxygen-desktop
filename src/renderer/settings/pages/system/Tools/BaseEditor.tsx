@@ -132,12 +132,6 @@ const BaseEditor = () => {
                     centered: true,
                     maskClosable: true,
                     title: '编译',
-                    footer: (_, { OkBtn, CancelBtn }) => (
-                        <>
-                            <OkBtn />
-                            <CancelBtn />
-                        </>
-                    ),
                     content: (
                         <AntdForm form={compileForm}>
                             <AntdForm.Item
@@ -352,12 +346,6 @@ const BaseEditor = () => {
                 title={'未保存'}
                 onOk={() => blocker.proceed?.()}
                 onCancel={() => blocker.reset?.()}
-                footer={(_, { OkBtn, CancelBtn }) => (
-                    <>
-                        <OkBtn />
-                        <CancelBtn />
-                    </>
-                )}
             >
                 离开此页面将丢失所有未保存数据，是否继续？
             </AntdModal>

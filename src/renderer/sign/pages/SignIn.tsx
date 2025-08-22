@@ -111,12 +111,6 @@ const SignIn = () => {
                                 />
                             ),
                             title: '双因素验证',
-                            footer: (_, { OkBtn, CancelBtn }) => (
-                                <>
-                                    <OkBtn />
-                                    <CancelBtn />
-                                </>
-                            ),
                             content: (
                                 <AntdForm
                                     form={twoFactorForm}

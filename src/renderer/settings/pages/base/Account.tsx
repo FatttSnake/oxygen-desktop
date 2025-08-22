@@ -51,12 +51,6 @@ const Account = () => {
                             />
                         ),
                         title: '更换头像',
-                        footer: (_, { OkBtn, CancelBtn }) => (
-                            <>
-                                <OkBtn />
-                                <CancelBtn />
-                            </>
-                        ),
                         content: (
                             <FitCenter style={{ padding: theme.paddingXL }}>
                                 <AntdImage src={`data:image/png;base64,${response.data?.base64}`} />
@@ -104,12 +98,6 @@ const Account = () => {
             maskClosable: true,
             icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenUser} />,
             title: '修改昵称',
-            footer: (_, { OkBtn, CancelBtn }) => (
-                <>
-                    <OkBtn />
-                    <CancelBtn />
-                </>
-            ),
             content: (
                 <AntdForm form={userInfoForm} style={{ paddingTop: theme.paddingXL }}>
                     <AntdForm.Item
@@ -156,12 +144,6 @@ const Account = () => {
             maskClosable: true,
             icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenPassword} />,
             title: '修改密码',
-            footer: (_, { OkBtn, CancelBtn }) => (
-                <>
-                    <OkBtn />
-                    <CancelBtn />
-                </>
-            ),
             content: (
                 <AntdForm
                     form={changePasswordForm}
@@ -281,12 +263,6 @@ const Account = () => {
                 focusTriggerAfterClose: false,
                 icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygen2fa} />,
                 title: '移除 2FA',
-                footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                        <OkBtn />
-                        <CancelBtn />
-                    </>
-                ),
                 content: '确定移除 2FA ？',
                 onOk: () => {
                     void modal.confirm({
@@ -296,12 +272,6 @@ const Account = () => {
                             <Icon style={{ color: theme.colorPrimary }} component={IconOxygen2fa} />
                         ),
                         title: '移除 2FA',
-                        footer: (_, { OkBtn, CancelBtn }) => (
-                            <>
-                                <OkBtn />
-                                <CancelBtn />
-                            </>
-                        ),
                         content: (
                             <AntdForm
                                 form={twoFactorForm}
@@ -374,12 +344,6 @@ const Account = () => {
                                 />
                             ),
                             title: '配置 2FA',
-                            footer: (_, { OkBtn, CancelBtn }) => (
-                                <>
-                                    <OkBtn />
-                                    <CancelBtn />
-                                </>
-                            ),
                             content: (
                                 <>
                                     <div
