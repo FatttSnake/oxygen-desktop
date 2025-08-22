@@ -9,17 +9,5 @@ export default createStyles(({ token }) => ({
         gap: token.sizeSM,
         width: '100%',
         height: '100%'
-    },
-
-    draggableContent: {
-        position: 'fixed',
-        insetInlineEnd: 48,
-        insetBlockEnd: 48,
-
-        '> *': {
-            position: 'relative',
-            insetInlineEnd: 0,
-            insetBlockEnd: 0
-        }
     }
 }))
