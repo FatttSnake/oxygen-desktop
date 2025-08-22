@@ -111,6 +111,12 @@ const Forget = () => {
         }
         setIsChanging(true)
 
+        if (!retrieveCaptchaCode) {
+            void message.warning('请先通过验证')
+            setIsChanging(false)
+            return
+        }
+
         r_auth_retrieve({
             code: searchParams.get('code') ?? '',
             password: retrieveParam.password,
