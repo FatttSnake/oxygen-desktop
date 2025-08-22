@@ -1,9 +1,14 @@
+import localforage from 'localforage'
 import { editor, languages, Position } from 'monaco-editor'
 import { Monaco } from '@monaco-editor/react'
 import { AntdToken, css, Theme } from 'antd-style'
 import { DATABASE_SELECT_SUCCESS, STORAGE_TOOL_MENU_ITEM_KEY } from '$/constants/common.constants'
 import { getLocalStorage, setLocalStorage } from '$/util/browser'
 import { r_tool_base_get_dist } from '$/services/tool'
+
+const toolBaseCache = localforage.createInstance({
+    name: 'toolBaseCache'
+})
 
 export const saveToolMenuItem = (toolMenuItem: ToolMenuItem[]) => {
     setLocalStorage(STORAGE_TOOL_MENU_ITEM_KEY, JSON.stringify(toolMenuItem))
@@ -354,10 +359,20 @@ export const convertObjToJsLiteral = (obj: unknown) => {
 }
 
 export const processBaseDist = async <T>(baseId: string, baseVersion: number, obj: T) => {
+    const cached = await toolBaseCache.getItem<ToolBaseWithDistVo>(`${baseId}:${baseVersion}`)
+
+    if (cached) {
+        return {
+            ...obj,
+            toolBaseVo: cached
+        }
+    }
+
     const res = await r_tool_base_get_dist(baseId, baseVersion)
     const response = res.data
 
     if (response.code === DATABASE_SELECT_SUCCESS) {
+        void toolBaseCache.setItem(`${baseId}:${baseVersion}`, response.data!)
         return {
             ...obj,
             toolBaseVo: response.data!

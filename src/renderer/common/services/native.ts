@@ -1,6 +1,6 @@
 import localforage from 'localforage'
 
-const toolDB = localforage.createInstance({ name: 'toolDB' })
+const toolDB = localforage.createInstance({ name: 'localTool' })
 
 export const n_tool_get = async (username: string, toolId: string) => {
     return toolDB.getItem<Record<Platform, LocalToolVo>>(`${username}:${toolId}`)
