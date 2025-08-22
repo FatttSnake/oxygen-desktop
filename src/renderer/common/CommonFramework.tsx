@@ -3,7 +3,7 @@ import { theme } from 'antd'
 import zh_CN from 'antd/locale/zh_CN'
 import BaseStyles from '$/assets/css/base.style'
 import CommonStyles from '$/assets/css/common.style'
-import { COLOR_PRODUCTION } from '$/constants/common.constants'
+import { COLOR_ACTIVE, COLOR_HOVER, COLOR_PRIMARY } from '$/constants/common.constants'
 import { init, setPageFavicon } from '$/util/common'
 
 export const CommonContext = createContext({
@@ -59,8 +59,10 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
                 cssVar: true,
                 algorithm: getIsDark() ? theme.darkAlgorithm : theme.defaultAlgorithm,
                 token: {
-                    colorPrimary: COLOR_PRODUCTION,
-                    colorLinkHover: COLOR_PRODUCTION
+                    colorPrimary: COLOR_PRIMARY,
+                    colorLink: COLOR_PRIMARY,
+                    colorLinkHover: COLOR_HOVER,
+                    colorLinkActive: COLOR_ACTIVE
                 },
                 components: {
                     Tree: {

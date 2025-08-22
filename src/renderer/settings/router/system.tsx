@@ -76,6 +76,15 @@ const systemSettings: RouteJsonObject[] = [
                 titlePostfix: ' - 工具模板'
             },
             {
+                path: 'template/:id',
+                absolutePath: '/system/tools/template',
+                id: 'tools-system-tools-template-editor',
+                component: lazy(() => import('%/pages/system/Tools/TemplateEditor.tsx')),
+                name: '模板编辑器',
+                operationCode: 'system:tool:query:template',
+                titlePostfix: ' - 工具模板编辑器'
+            },
+            {
                 path: 'base',
                 absolutePath: '/system/tools/base',
                 id: 'tools-system-tools-base',
@@ -86,6 +95,15 @@ const systemSettings: RouteJsonObject[] = [
                 permission: true,
                 operationCode: 'system:tool:query:base',
                 titlePostfix: ' - 工具基板'
+            },
+            {
+                path: 'base/:id/:version?',
+                absolutePath: '/system/tools/base',
+                id: 'tools-system-tools-base-editor',
+                component: lazy(() => import('%/pages/system/Tools/BaseEditor')),
+                name: '基板编辑器',
+                operationCode: 'system:tool:query:base',
+                titlePostfix: ' - 工具基板编辑器'
             },
             {
                 path: 'category',

@@ -1,10 +1,11 @@
 import useStyles from '@/assets/css/pages/tools/source.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
-import { addExtraCssVariables, message } from '$/util/common'
+import { message } from '$/util/common'
 import { getLoginStatus } from '$/util/auth'
 import { navigateToRepository, navigateToSource } from '$/util/navigation'
+import { addExtraCssVariables } from '$/util/tool'
 import editorExtraLibs from '$/util/editorExtraLibs'
-import { r_tool_detail } from '$/services/tool'
+import { r_tool_get_source } from '$/services/tool'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
@@ -23,9 +24,9 @@ const Source = () => {
     const { init, tsconfig, files, selectedFileName, setSelectedFileName } = usePlaygroundState()
     const [isLoading, setIsLoading] = useState(false)
 
-    const render = (toolVo: ToolVo) => {
+    const render = (toolVo: ToolWithSourceVo) => {
         try {
-            init(base64ToFiles(toolVo.source.data!), toolVo.entryPoint, toolVo.entryPoint)
+            init(base64ToFiles(toolVo.source.data!), true, toolVo.entryPoint, toolVo.entryPoint)
         } catch (e) {
             void message.error('载入工具失败')
         }
@@ -38,7 +39,12 @@ const Source = () => {
         setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        r_tool_detail(username!, toolId!, ver || 'latest', searchParams.get('platform') as Platform)
+        r_tool_get_source(
+            username!,
+            toolId!,
+            ver || 'latest',
+            searchParams.get('platform') as Platform
+        )
             .then((res) => {
                 const response = res.data
                 switch (response.code) {

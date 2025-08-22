@@ -1,4 +1,3 @@
-import Draggable, { DraggableData, DraggableEvent } from 'react-draggable'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/pages/tools/edit.style'
 import {
@@ -8,15 +7,24 @@ import {
     TOOL_HAS_BEEN_PUBLISHED,
     TOOL_UNDER_REVIEW
 } from '$/constants/common.constants'
-import {
-    addExtraCssVariables,
-    generateThemeCssVariables,
-    message,
-    removeUselessAttributes
-} from '$/util/common'
+import { message, modal } from '$/util/common'
 import { navigateToRepository } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
-import { r_tool_category_get, r_tool_detail, r_tool_update } from '$/services/tool'
+import {
+    addExtraCssVariables,
+    formatToolBaseVersion,
+    generateThemeCssVariables,
+    processBaseDist,
+    removeUselessAttributes
+} from '$/util/tool'
+import {
+    r_tool_base_get_latest_version,
+    r_tool_category_get,
+    r_tool_get_source,
+    r_tool_update,
+    r_tool_update_source,
+    r_tool_upgrade_base
+} from '$/services/tool'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import FlexBox from '$/components/FlexBox'
@@ -25,6 +33,7 @@ import Card from '$/components/Card'
 import Playground from '$/components/Playground'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
 import { base64ToFiles, base64ToStr, filesToBase64 } from '$/components/Playground/files'
+import ToolBar from '@/components/tools/ToolBar'
 
 const Edit = () => {
     const { styles, theme } = useStyles()
@@ -38,7 +47,6 @@ const Edit = () => {
     const [searchParams] = useSearchParams({
         platform: import.meta.env.VITE_PLATFORM
     })
-    const dragStartPos = useRef({ x: 0, y: 0 })
     const [form] = AntdForm.useForm<ToolUpdateParam>()
     const formValues = AntdForm.useWatch([], form)
     const {
@@ -58,14 +66,16 @@ const Edit = () => {
         listenOnError
     } = usePlaygroundState()
     const [isLoading, setIsLoading] = useState(false)
-    const [toolData, setToolData] = useState<ToolVo>()
+    const [toolData, setToolData] = useState<ToolWithSourceVo>()
     const [baseDist, setBaseDist] = useState('')
-    const [isDragging, setIsDragging] = useState(false)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
     const [isLoadingCategory, setIsLoadingCategory] = useState(false)
+    const [baseLatestVersion, setBaseLatestVersion] = useState<number>()
+    const hasNewBaseVersion =
+        !!toolData && !!baseLatestVersion && baseLatestVersion > toolData.baseVersion
 
     useBeforeUnload(
         useCallback(
@@ -80,11 +90,45 @@ const Edit = () => {
         { capture: true }
     )
 
-    const handleOnSetting = () => {
-        if (isDragging) {
-            return
-        }
+    const handleOnUpgradeBase = () => {
+        modal
+            .confirm({
+                centered: true,
+                maskClosable: true,
+                title: '更新',
+                content: `基板将从 ${formatToolBaseVersion(toolData!.baseVersion)} 更新到 ${formatToolBaseVersion(baseLatestVersion!)}`
+            })
+            .then(
+                (confirmed) => {
+                    if (!confirmed || isSubmitting) {
+                        return
+                    }
+                    setIsSubmitting(true)
+                    void message.loading({ content: '更新中', key: 'UPGRADING', duration: 0 })
 
+                    r_tool_upgrade_base({
+                        id: toolData!.id,
+                        baseVersion: baseLatestVersion!
+                    })
+                        .then((res) => {
+                            const response = res.data
+                            if (response.success) {
+                                void message.success('更新成功')
+                                getTool()
+                            } else {
+                                void message.error('更新失败，请稍后重试')
+                            }
+                        })
+                        .finally(() => {
+                            setIsSubmitting(false)
+                            message.destroy('UPGRADING')
+                        })
+                },
+                () => {}
+            )
+    }
+
+    const handleOnSetting = () => {
         setIsDrawerOpen(true)
         form.setFieldValue('icon', toolData?.icon)
         form.setFieldValue('name', toolData?.name)
@@ -100,34 +144,14 @@ const Edit = () => {
         void form.validateFields()
     }
 
-    const handleOnDragStart = (_: DraggableEvent, data: DraggableData) => {
-        dragStartPos.current = { x: data.x, y: data.y }
-        setIsDragging(false)
-    }
-
-    const handleOnDragMove = (_: DraggableEvent, data: DraggableData) => {
-        const distance = Math.sqrt(
-            Math.pow(data.x - dragStartPos.current.x, 2) +
-                Math.pow(data.y - dragStartPos.current.y, 2)
-        )
-
-        if (distance > 5) {
-            setIsDragging(true)
-        }
-    }
-
-    const handleOnDragStop = () => {
-        setTimeout(() => setIsDragging(false))
-    }
-
     const handleOnSave = () => {
-        if (isDragging || isSubmitting) {
+        if (isSubmitting) {
             return
         }
         setIsSubmitting(true)
         void message.loading({ content: '保存中', key: 'SAVING', duration: 0 })
 
-        r_tool_update({
+        r_tool_update_source({
             id: toolData!.id,
             source: filesToBase64(files)
         })
@@ -249,7 +273,7 @@ const Edit = () => {
         setIsLoading(true)
         void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
 
-        r_tool_detail('!', toolId!, 'latest', searchParams.get('platform') as Platform)
+        r_tool_get_source('!', toolId!, 'latest', searchParams.get('platform') as Platform)
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
@@ -290,13 +314,20 @@ const Edit = () => {
         if (!toolData) {
             return
         }
+
+        r_tool_base_get_latest_version(toolData.baseId).then((res) => {
+            const response = res.data
+            if (response.success) {
+                setBaseLatestVersion(response.data!)
+            }
+        })
+
         try {
-            setBaseDist(base64ToStr(toolData.base.dist.data!))
-            const files = base64ToFiles(toolData.source.data!)
-            init(files, toolData.entryPoint, toolData.entryPoint)
-            setTimeout(() => {
-                setSelectedFileName(toolData.entryPoint)
-            }, 500)
+            processBaseDist(toolData.baseId, toolData.baseVersion, {}).then(({ toolBaseVo }) => {
+                setBaseDist(base64ToStr(toolBaseVo.dist.data!))
+                const files = base64ToFiles(toolData.source.data!)
+                init(files, false, toolData.entryPoint, toolData.entryPoint)
+            })
         } catch (e) {
             console.error(e)
             void message.error('载入工具失败')
@@ -352,7 +383,7 @@ const Edit = () => {
                     ({ getFieldValue }) => ({
                         validator() {
                             if (!getFieldValue('icon')) {
-                                return Promise.reject(new Error('请选择图标'))
+                                return Promise.reject(Error('请选择图标'))
                             }
                             return Promise.resolve()
                         }
@@ -426,72 +457,108 @@ const Edit = () => {
     return (
         <>
             <FitFullscreen className={styles.root}>
-                <Card className={styles.rootBox}>
-                    <FlexBox direction={'horizontal'} className={styles.content}>
-                        <LoadingMask hidden={!isLoading}>
-                            <AntdSplitter>
-                                <AntdSplitter.Panel collapsible>
-                                    <Playground.CodeEditor
-                                        isDarkMode={isDarkMode}
-                                        tsconfig={tsconfig}
-                                        files={files}
-                                        selectedFileName={selectedFileName}
-                                        notRemovableFiles={[entryPoint]}
-                                        extraLibs={editorExtraLibs}
-                                        onEditorDidMount={(_, monaco) =>
-                                            addExtraCssVariables(monaco)
-                                        }
-                                        onSelectedFileChange={setSelectedFileName}
-                                        onChangeFileContent={updateFileContent}
-                                        onAddFile={addFile}
-                                        onRenameFile={renameFile}
-                                        onRemoveFile={removeFile}
-                                        listenOnError={listenOnError}
-                                    />
-                                </AntdSplitter.Panel>
-                                <AntdSplitter.Panel collapsible>
-                                    <Playground.Output
-                                        isDarkMode={isDarkMode}
-                                        files={files}
-                                        selectedFileName={selectedFileName}
-                                        importMap={importMap}
-                                        entryPoint={entryPoint}
-                                        postExpansionCode={baseDist}
-                                        globalJsVariables={{
-                                            OxygenTheme: {
-                                                ...removeUselessAttributes(theme),
-                                                isDarkMode
+                <LoadingMask hidden={!isLoading}>
+                    <FlexBox className={styles.layout} direction={'vertical'}>
+                        <ToolBar
+                            title={`${toolData?.name}${hasEdited ? '*' : ''}`}
+                            subtitle={
+                                <AntdTag color={'blue'}>
+                                    {`${toolData?.platform.slice(0, 1)}${toolData?.platform.slice(1).toLowerCase()}`}
+                                </AntdTag>
+                            }
+                            onBack={() => navigateToRepository(navigate)}
+                        >
+                            <AntdSpace>
+                                <span>版本：{toolData?.ver}</span>
+                                <span>
+                                    基板：
+                                    <AntdBadge dot={hasNewBaseVersion}>
+                                        <AntdPopconfirm
+                                            icon={<></>}
+                                            title={
+                                                hasNewBaseVersion &&
+                                                `新版本：${formatToolBaseVersion(baseLatestVersion)}`
                                             }
-                                        }}
-                                        globalCssVariables={generateThemeCssVariables(theme).styles}
-                                    />
-                                </AntdSplitter.Panel>
-                            </AntdSplitter>
-                        </LoadingMask>
-                        {isDragging && <div className={styles.draggableMask} />}
+                                            okText={'更新'}
+                                            trigger={'hover'}
+                                            showCancel={false}
+                                            disabled={!hasNewBaseVersion}
+                                            onConfirm={handleOnUpgradeBase}
+                                        >
+                                            {toolData &&
+                                                formatToolBaseVersion(toolData?.baseVersion)}
+                                        </AntdPopconfirm>
+                                    </AntdBadge>
+                                </span>
+                                {toolData && (
+                                    <AntdSpace>
+                                        <AntdButton
+                                            size={'small'}
+                                            icon={<Icon component={IconOxygenSetting} />}
+                                            loading={isLoading || isSubmitting}
+                                            onClick={handleOnSetting}
+                                        >
+                                            配置
+                                        </AntdButton>
+                                        <AntdButton
+                                            size={'small'}
+                                            type={'primary'}
+                                            icon={<Icon component={IconOxygenSave} />}
+                                            loading={isLoading || isSubmitting}
+                                            onClick={handleOnSave}
+                                        >
+                                            保存
+                                        </AntdButton>
+                                    </AntdSpace>
+                                )}
+                            </AntdSpace>
+                        </ToolBar>
+                        <Card className={styles.rootBox}>
+                            <FlexBox direction={'horizontal'} className={styles.content}>
+                                <AntdSplitter>
+                                    <AntdSplitter.Panel collapsible>
+                                        <Playground.CodeEditor
+                                            isDarkMode={isDarkMode}
+                                            tsconfig={tsconfig}
+                                            files={files}
+                                            selectedFileName={selectedFileName}
+                                            notRemovableFiles={[entryPoint]}
+                                            extraLibs={editorExtraLibs}
+                                            onEditorDidMount={(_, monaco) =>
+                                                addExtraCssVariables(monaco)
+                                            }
+                                            onSelectedFileChange={setSelectedFileName}
+                                            onChangeFileContent={updateFileContent}
+                                            onAddFile={addFile}
+                                            onRenameFile={renameFile}
+                                            onRemoveFile={removeFile}
+                                            listenOnError={listenOnError}
+                                        />
+                                    </AntdSplitter.Panel>
+                                    <AntdSplitter.Panel collapsible>
+                                        <Playground.Output
+                                            isDarkMode={isDarkMode}
+                                            files={files}
+                                            selectedFileName={selectedFileName}
+                                            importMap={importMap}
+                                            entryPoint={entryPoint}
+                                            postExpansionCode={baseDist}
+                                            globalJsVariables={{
+                                                OxygenTheme: {
+                                                    ...removeUselessAttributes(theme),
+                                                    isDarkMode
+                                                }
+                                            }}
+                                            globalCssVariables={
+                                                generateThemeCssVariables(theme).styles
+                                            }
+                                        />
+                                    </AntdSplitter.Panel>
+                                </AntdSplitter>
+                            </FlexBox>
+                        </Card>
                     </FlexBox>
-                </Card>
-                <Draggable
-                    bounds={'#root'}
-                    onStart={handleOnDragStart}
-                    onDrag={handleOnDragMove}
-                    onStop={handleOnDragStop}
-                >
-                    <div className={styles.draggableContent}>
-                        {hasEdited ? (
-                            <AntdFloatButton
-                                type={'primary'}
-                                icon={<Icon component={IconOxygenSave} />}
-                                onClick={handleOnSave}
-                            />
-                        ) : (
-                            <AntdFloatButton
-                                icon={<Icon component={IconOxygenSetting} />}
-                                onClick={handleOnSetting}
-                            />
-                        )}
-                    </div>
-                </Draggable>
+                </LoadingMask>
             </FitFullscreen>
             <AntdDrawer
                 title={'配置工具'}

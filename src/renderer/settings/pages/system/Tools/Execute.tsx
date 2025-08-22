@@ -1,12 +1,8 @@
 import useStyles from '%/assets/css/pages/system/tools/execute.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
-import {
-    checkDesktop,
-    generateThemeCssVariables,
-    message,
-    removeUselessAttributes
-} from '$/util/common'
+import { checkDesktop, message } from '$/util/common'
 import { navigateToTools } from '$/util/navigation'
+import { generateThemeCssVariables, processBaseDist, removeUselessAttributes } from '$/util/tool'
 import { r_sys_tool_get_one } from '$/services/system'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
@@ -24,7 +20,7 @@ const Execute = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [compiledCode, setCompiledCode] = useState('')
 
-    const render = (toolVo: ToolVo) => {
+    const render = (toolVo: ToolWithSourceVo, toolBaseVo: ToolBaseWithDistVo) => {
         try {
             switch (toolVo.platform) {
                 case 'ANDROID':
@@ -37,7 +33,7 @@ const Execute = () => {
                     }
             }
 
-            const baseDist = base64ToStr(toolVo.base.dist.data!)
+            const baseDist = base64ToStr(toolBaseVo.dist.data!)
             const files = base64ToFiles(toolVo.source.data!)
             const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
 
@@ -70,16 +66,22 @@ const Execute = () => {
                 const response = res.data
                 switch (response.code) {
                     case DATABASE_SELECT_SUCCESS:
-                        render(response.data!)
-                        break
+                        return response.data!
                     case DATABASE_NO_RECORD_FOUND:
                         message.error('未找到指定工具').then(() => {
                             navigateToTools(navigate)
                         })
-                        break
+                        throw Error()
                     default:
-                        void message.error('获取工具信息失败，请稍后重试')
+                        throw Error('获取工具信息失败，请稍后重试')
                 }
+            })
+            .then((toolVo) => processBaseDist(toolVo.baseId, toolVo.baseVersion, { toolVo }))
+            .then(({ toolVo, toolBaseVo }) => {
+                render(toolVo, toolBaseVo)
+            })
+            .catch((reason) => {
+                reason && message.error(reason)
             })
             .finally(() => {
                 setIsLoading(false)

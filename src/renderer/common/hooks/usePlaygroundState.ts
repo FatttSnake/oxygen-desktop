@@ -14,33 +14,50 @@ export const usePlaygroundState = (
 ) => {
     const [files, setFiles] = useState<IFiles>(initialFiles)
     const [selectedFileName, setSelectedFileName] = useState<string>(MAIN_FILE_NAME)
+    const [isReadonly, setIsReadonly] = useState<boolean>(false)
     const [importMap, setImportMap] = useState<IImportMap>({})
     const [tsconfig, setTsconfig] = useState<ITsconfig>({ compilerOptions: {} })
     const [entryPoint, setEntryPoint] = useState(initialEntryPoint)
     const [hasEdited, setHasEdited] = useState(false)
     const [onError, listenOnError] = useState<(message: string) => void>()
 
-    const init = useCallback((files: IFiles, selectedFileName?: string, entryPoint?: string) => {
-        setFiles(files)
-        if (selectedFileName) {
-            setSelectedFileName(selectedFileName)
-        }
-        if (entryPoint) {
-            setEntryPoint(entryPoint)
-        }
-        setHasEdited(false)
-    }, [])
-
-    const updateFileContent = useCallback((fileName: string, content: string) => {
-        setFiles((prev) => ({
-            ...prev,
-            [fileName]: {
-                ...prev[fileName],
-                value: content
+    const init = useCallback(
+        (
+            files: IFiles,
+            isReadonly: boolean = false,
+            selectedFileName?: string,
+            entryPoint?: string
+        ) => {
+            setFiles(files)
+            setIsReadonly(isReadonly)
+            if (selectedFileName) {
+                setSelectedFileName(selectedFileName)
             }
-        }))
-        setHasEdited(true)
-    }, [])
+            if (entryPoint) {
+                setEntryPoint(entryPoint)
+            }
+            setHasEdited(false)
+        },
+        []
+    )
+
+    const updateFileContent = useCallback(
+        (fileName: string, content: string) => {
+            if (isReadonly) {
+                return
+            }
+
+            setFiles((prev) => ({
+                ...prev,
+                [fileName]: {
+                    ...prev[fileName],
+                    value: content
+                }
+            }))
+            setHasEdited(true)
+        },
+        [isReadonly]
+    )
 
     const validateFileName = (fileName: string) => {
         if (files[fileName]) {
@@ -63,6 +80,10 @@ export const usePlaygroundState = (
 
     const addFile = useCallback(
         (fileName: string, content: string = '') => {
+            if (isReadonly) {
+                return false
+            }
+
             if (!validateFileName(fileName)) {
                 return false
             }
@@ -79,11 +100,15 @@ export const usePlaygroundState = (
             setHasEdited(true)
             return true
         },
-        [files]
+        [files, isReadonly]
     )
 
     const renameFile = useCallback(
         (oldFileName: string, newFileName: string) => {
+            if (isReadonly) {
+                return false
+            }
+
             if (!files[oldFileName]) {
                 onError?.(`Cannot rename file "${oldFileName}"`)
                 return false
@@ -117,11 +142,15 @@ export const usePlaygroundState = (
             setHasEdited(true)
             return true
         },
-        [files, selectedFileName, entryPoint]
+        [files, isReadonly, selectedFileName, entryPoint]
     )
 
     const removeFile = useCallback(
         (fileName: string) => {
+            if (isReadonly) {
+                return false
+            }
+
             if (!files[fileName]) {
                 return true
             }
@@ -149,7 +178,7 @@ export const usePlaygroundState = (
             setHasEdited(true)
             return true
         },
-        [files, selectedFileName]
+        [files, isReadonly, selectedFileName]
     )
 
     const setSelectedFileNameSafe = useCallback(
@@ -182,15 +211,14 @@ export const usePlaygroundState = (
 
     useEffect(() => {
         if (!files[entryPoint]) {
-            const defaultEntry = Object.keys(files).find(
-                (f) =>
-                    f === ENTRY_FILE_NAME ||
-                    f === MAIN_FILE_NAME ||
-                    f.endsWith('.tsx') ||
-                    f.endsWith('.ts') ||
-                    f.endsWith('.jsx') ||
-                    f.endsWith('.js')
-            )
+            const defaultEntry =
+                Object.keys(files).find((f) => f === ENTRY_FILE_NAME) ||
+                Object.keys(files).find((f) => f === MAIN_FILE_NAME) ||
+                Object.keys(files).find((f) => f.endsWith('.tsx')) ||
+                Object.keys(files).find((f) => f.endsWith('.ts')) ||
+                Object.keys(files).find((f) => f.endsWith('.jsx')) ||
+                Object.keys(files).find((f) => f.endsWith('.js'))
+
             if (defaultEntry) {
                 setEntryPoint(defaultEntry)
             }
@@ -229,6 +257,8 @@ export const usePlaygroundState = (
         init,
         files,
         selectedFileName,
+        isReadonly,
+        setIsReadonly,
         entryPoint,
         importMap,
         tsconfig,

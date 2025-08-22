@@ -23,7 +23,11 @@ import {
     URL_SYS_TOOL_TEMPLATE,
     URL_SYS_TOOL,
     URL_SYS_SETTINGS_TWO_FACTOR,
-    URL_SYS_TOOL_BASE_LIST
+    URL_SYS_TOOL_BASE_LIST,
+    URL_SYS_TOOL_BASE_SOURCE,
+    URL_SYS_TOOL_BASE_DIST,
+    URL_SYS_TOOL_TEMPLATE_SOURCE,
+    URL_SYS_TOOL_TEMPLATE_UPGRADE
 } from '$/constants/urls.constants'
 import request from '$/services'
 
@@ -154,18 +158,24 @@ export const r_sys_tool_category_delete = (id: string) =>
     request.delete(`${URL_SYS_TOOL_CATEGORY}/${id}`)
 
 export const r_sys_tool_base_get = (param: PageParam) =>
-    request.get<PageVo<ToolBaseVo>>(URL_SYS_TOOL_BASE, param)
+    request.get<PageVo<ToolBaseWithVersionsVo>>(URL_SYS_TOOL_BASE, param)
 
 export const r_sys_tool_base_get_list = () => request.get<ToolBaseVo[]>(URL_SYS_TOOL_BASE_LIST)
 
-export const r_sys_tool_base_get_one = (id: string) =>
-    request.get<ToolBaseVo>(`${URL_SYS_TOOL_BASE}/${id}`)
+export const r_sys_tool_base_get_one = (id: string, version: string) =>
+    request.get<ToolBaseWithSourceVo>(`${URL_SYS_TOOL_BASE}/${id}/${version}`)
 
-export const r_sys_tool_base_add = (param: ToolBaseAddEditParam) =>
-    request.post(URL_SYS_TOOL_BASE, param)
+export const r_sys_tool_base_add = (param: ToolBaseAddParam) =>
+    request.post<ToolBaseVo>(URL_SYS_TOOL_BASE, param)
 
-export const r_sys_tool_base_update = (param: ToolBaseAddEditParam) =>
+export const r_sys_tool_base_update = (param: ToolBaseUpdateParam) =>
     request.put(URL_SYS_TOOL_BASE, param)
+
+export const r_sys_tool_base_update_source = (param: ToolBaseUpdateSourceParam) =>
+    request.patch(URL_SYS_TOOL_BASE_SOURCE, param)
+
+export const r_sys_tool_base_update_dist = (param: ToolBaseUpdateDistParam) =>
+    request.patch<number>(URL_SYS_TOOL_BASE_DIST, param)
 
 export const r_sys_tool_base_delete = (id: string) => request.delete(`${URL_SYS_TOOL_BASE}/${id}`)
 
@@ -173,13 +183,19 @@ export const r_sys_tool_template_get = (param: PageParam) =>
     request.get<PageVo<ToolTemplateVo>>(URL_SYS_TOOL_TEMPLATE, param)
 
 export const r_sys_tool_template_get_one = (id: string) =>
-    request.get<ToolTemplateVo>(`${URL_SYS_TOOL_TEMPLATE}/${id}`)
+    request.get<ToolTemplateWithSourceVo>(`${URL_SYS_TOOL_TEMPLATE}/${id}`)
 
-export const r_sys_tool_template_add = (param: ToolTemplateAddEditParam) =>
-    request.post(URL_SYS_TOOL_TEMPLATE, param)
+export const r_sys_tool_template_add = (param: ToolTemplateAddParam) =>
+    request.post<ToolTemplateWithSourceVo>(URL_SYS_TOOL_TEMPLATE, param)
 
-export const r_sys_tool_template_update = (param: ToolTemplateAddEditParam) =>
+export const r_sys_tool_template_update = (param: ToolTemplateUpdateParam) =>
     request.put(URL_SYS_TOOL_TEMPLATE, param)
+
+export const r_sys_tool_template_update_source = (param: ToolTemplateUpdateSourceParam) =>
+    request.patch(URL_SYS_TOOL_TEMPLATE_SOURCE, param)
+
+export const r_sys_tool_template_upgrade_base = (param: ToolOrTemplateUpgradeBaseParam) =>
+    request.patch(URL_SYS_TOOL_TEMPLATE_UPGRADE, param)
 
 export const r_sys_tool_template_delete = (id: string) =>
     request.delete(`${URL_SYS_TOOL_TEMPLATE}/${id}`)
@@ -187,13 +203,19 @@ export const r_sys_tool_template_delete = (id: string) =>
 export const r_sys_tool_get = (param: ToolManagementGetParam) =>
     request.get<PageVo<ToolVo>>(URL_SYS_TOOL, param)
 
-export const r_sys_tool_get_one = (id: string) => request.get<ToolVo>(`${URL_SYS_TOOL}/${id}`)
+export const r_sys_tool_get_one = (id: string) =>
+    request.get<ToolWithSourceVo>(`${URL_SYS_TOOL}/${id}`)
 
 export const r_sys_tool_pass = (id: string, param: ToolManagementPassParam) =>
-    request.post<ToolVo>(`${URL_SYS_TOOL}/${id}`, param)
+    request.post(`${URL_SYS_TOOL}/${id}`, param)
 
-export const r_sys_tool_reject = (id: string) => request.put<ToolVo>(`${URL_SYS_TOOL}/${id}`)
+export const r_sys_tool_reject = (id: string) => request.patch(`${URL_SYS_TOOL}/${id}/reject`)
 
-export const r_sys_tool_off_shelve = (id: string) => request.patch<ToolVo>(`${URL_SYS_TOOL}/${id}`)
+export const r_sys_tool_delist = (id: string) => request.patch(`${URL_SYS_TOOL}/${id}/delist`)
+
+export const r_sys_tool_delist_all = (id: string) =>
+    request.patch(`${URL_SYS_TOOL}/${id}/delistAll`)
+
+export const r_sys_tool_relist = (id: string) => request.patch(`${URL_SYS_TOOL}/${id}/relist`)
 
 export const r_sys_tool_delete = (id: string) => request.delete(`${URL_SYS_TOOL}/${id}`)

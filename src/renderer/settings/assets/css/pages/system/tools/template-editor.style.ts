@@ -9,16 +9,5 @@ export default createStyles(({ token }) => ({
         gap: token.sizeSM,
         width: '100%',
         height: '100%'
-    },
-
-    rootBox: {
-        width: '100%',
-        height: '100%'
-    },
-
-    content: {
-        position: 'relative',
-        width: '100%',
-        height: '100%'
     }
 }))

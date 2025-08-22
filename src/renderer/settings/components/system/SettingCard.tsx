@@ -28,7 +28,7 @@ export const SettingsCard = (props: PropsWithChildren<SettingsCardProps>) => {
                         <Permission operationCode={props.modifyOperationCode}>
                             {props.expand}
                             <AntdButton onClick={props.onReset} title={'重置'}>
-                                <Icon component={IconOxygenBack} />
+                                <Icon component={IconOxygenReset} />
                             </AntdButton>
                             <AntdButton
                                 className={styles.btSave}

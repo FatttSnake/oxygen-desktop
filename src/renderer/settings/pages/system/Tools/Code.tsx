@@ -2,8 +2,9 @@ import Draggable, { DraggableData, DraggableEvent } from 'react-draggable'
 import Icon from '@ant-design/icons'
 import useStyles from '%/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
-import { message, modal, checkDesktop, addExtraCssVariables } from '$/util/common'
+import { message, modal, checkDesktop } from '$/util/common'
 import { navigateToExecute, navigateToRepository } from '$/util/navigation'
+import { addExtraCssVariables } from '$/util/tool'
 import editorExtraLibs from '$/util/editorExtraLibs'
 import { r_sys_tool_get_one } from '$/services/system'
 import { CommonContext } from '$/CommonFramework'
@@ -64,9 +65,9 @@ const Code = () => {
         }
     }
 
-    const render = (toolVo: ToolVo) => {
+    const render = (toolVo: ToolWithSourceVo) => {
         try {
-            init(base64ToFiles(toolVo.source.data!), toolVo.entryPoint, toolVo.entryPoint)
+            init(base64ToFiles(toolVo.source.data!), true, toolVo.entryPoint, toolVo.entryPoint)
             setPlatform(toolVo.platform)
         } catch (e) {
             void message.error('载入工具失败')

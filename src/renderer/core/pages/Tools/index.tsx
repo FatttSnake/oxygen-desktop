@@ -303,12 +303,8 @@ const Tools = () => {
                                 switch (response.code) {
                                     case DATABASE_UPDATE_SUCCESS:
                                         void message.success('创建新版本成功')
-                                        if (checkDesktop() || response.data!.platform === 'WEB') {
-                                            navigateToEdit(
-                                                navigate,
-                                                response.data!.toolId,
-                                                response.data!.platform
-                                            )
+                                        if (checkDesktop() || tool.platform === 'WEB') {
+                                            navigateToEdit(navigate, tool.toolId, tool.platform)
                                         }
                                         resolve()
                                         break

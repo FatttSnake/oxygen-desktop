@@ -1,4 +1,4 @@
-import { getToolMenuItem } from '$/util/common'
+import { getToolMenuItem } from '$/util/tool'
 import Sidebar from '$/components/Sidebar'
 
 const ToolMenu = () => {

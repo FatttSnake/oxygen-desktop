@@ -68,17 +68,16 @@ const Category = () => {
         },
         {
             title: (
-                <>
+                <AntdSpace>
                     操作
                     <Permission operationCode={['system:tool:add:category']}>
-                        {' '}
                         (
                         <a style={{ color: theme.colorPrimary }} onClick={handleOnAddBtnClick}>
                             新增
                         </a>
                         )
                     </Permission>
-                </>
+                </AntdSpace>
             ),
             width: '15em',
             align: 'center',

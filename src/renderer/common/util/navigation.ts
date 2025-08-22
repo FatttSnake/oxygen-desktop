@@ -112,5 +112,30 @@ export const navigateToTools = (navigate: NavigateFunction, options?: NavigateOp
     navigate('/system/tools', options)
 }
 
+export const navigateToToolTemplate = (navigate: NavigateFunction, options?: NavigateOptions) => {
+    navigate(`/system/tools/template`, options)
+}
+
+export const navigateToToolTemplateEditor = (
+    navigate: NavigateFunction,
+    toolTemplateId: string,
+    options?: NavigateOptions
+) => {
+    navigate(`/system/tools/template/${toolTemplateId}`, options)
+}
+
+export const navigateToToolBase = (navigate: NavigateFunction, options?: NavigateOptions) => {
+    navigate(`/system/tools/base`, options)
+}
+
+export const navigateToToolBaseEditor = (
+    navigate: NavigateFunction,
+    toolBaseId: string,
+    version?: string,
+    options?: NavigateOptions
+) => {
+    navigate(`/system/tools/base/${toolBaseId}${version ? `/${version}` : ''}`, options)
+}
+
 export const getAndroidUrl = (username: string, toolId: string) =>
     `${import.meta.env.VITE_APP_PROTOCOL}://opentool/${username}/${toolId}`

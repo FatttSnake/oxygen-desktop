@@ -1,17 +1,19 @@
 import { useTheme } from 'antd-style'
+import { AxiosResponse } from 'axios'
 import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
 import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { CommonContext } from '$/CommonFramework'
+import { message } from '$/util/common'
+import { getLoginStatus } from '$/util/auth'
 import {
     convertObjToJsLiteral,
     generateThemeCssVariables,
-    message,
+    processBaseDist,
     removeUselessAttributes
-} from '$/util/common'
-import { getLoginStatus } from '$/util/auth'
-import { n_tool_detail } from '$/services/native'
-import { r_tool_detail } from '$/services/tool'
+} from '$/util/tool'
+import { n_tool_get_one } from '$/services/native'
+import { r_tool_get_dist, r_tool_get_source } from '$/services/tool'
 import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '$/components/Playground/files'
 import { IImportMap } from '$/components/Playground/shared'
 import compiler from '$/components/Playground/compiler'
@@ -71,11 +73,16 @@ const ToolLoader = () => {
         oxygenApi.tool.view.render(`(() => {${dist}})();\n(() => {${baseDist}})();`, viewId)
     }
 
-    const compile = (viewId: string, toolVo: ToolVo, needCompile: boolean) => {
+    const compile = (
+        viewId: string,
+        toolVo: ToolWithSourceVo | ToolWithDistVo,
+        toolBaseVo: ToolBaseWithDistVo,
+        needCompile: boolean
+    ) => {
         if (needCompile) {
             try {
-                const baseDist = base64ToStr(toolVo.base.dist.data!)
-                const files = base64ToFiles(toolVo.source.data!)
+                const baseDist = base64ToStr(toolBaseVo.dist.data!)
+                const files = base64ToFiles((toolVo as ToolWithSourceVo).source.data!)
                 const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
                 compiler
                     .compile(files, importMap, toolVo.entryPoint)
@@ -97,8 +104,8 @@ const ToolLoader = () => {
             }
         } else {
             try {
-                const baseDist = base64ToStr(toolVo.base.dist.data!)
-                const dist = base64ToStr(toolVo.dist.data!)
+                const baseDist = base64ToStr(toolBaseVo.dist.data!)
+                const dist = base64ToStr((toolVo as ToolWithDistVo).dist.data!)
                 render(
                     viewId,
                     `data:image/svg+xml;base64,${toolVo.icon}`,
@@ -127,13 +134,13 @@ const ToolLoader = () => {
             style: { transform: 'translateY(40px)' }
         })
         if (source === 'local') {
-            n_tool_detail(username, toolId, platform)
+            n_tool_get_one(username, toolId, platform)
                 .then((tool) => {
                     if (!tool) {
                         errorMessage(viewId, '未找到指定工具')
                         return
                     }
-                    compile(viewId, tool, username === '!')
+                    compile(viewId, tool, tool.base, false)
                 })
                 .finally(() => {
                     setIsLoading(false)
@@ -143,19 +150,29 @@ const ToolLoader = () => {
             return
         }
 
-        r_tool_detail(username, toolId, ver.length ? ver : 'latest', platform)
-            .then((res) => {
+        ;(username === '!' ? r_tool_get_source : r_tool_get_dist)(
+            username,
+            toolId,
+            ver || 'latest',
+            platform
+        )
+            .then((res: AxiosResponse<_Response<ToolWithSourceVo | ToolWithDistVo>>) => {
                 const response = res.data
                 switch (response.code) {
                     case DATABASE_SELECT_SUCCESS:
-                        compile(viewId, response.data!, username === '!')
-                        break
+                        return response.data!
                     case DATABASE_NO_RECORD_FOUND:
-                        errorMessage(viewId, '未找到指定工具')
-                        break
+                        throw Error('未找到指定工具')
                     default:
-                        errorMessage(viewId, '获取工具信息失败，请稍后重试')
+                        throw Error('获取工具信息失败，请稍后重试')
                 }
+            })
+            .then((toolVo) => processBaseDist(toolVo!.baseId, toolVo!.baseVersion, { toolVo }))
+            .then(({ toolVo, toolBaseVo }) => {
+                compile(viewId, toolVo, toolBaseVo, username === '!')
+            })
+            .catch((reason) => {
+                reason && errorMessage(viewId, reason)
             })
             .finally(() => {
                 setIsLoading(false)

@@ -5,8 +5,9 @@ import {
     DATABASE_INSERT_SUCCESS,
     DATABASE_SELECT_SUCCESS
 } from '$/constants/common.constants'
-import { generateThemeCssVariables, message, removeUselessAttributes } from '$/util/common'
+import { message } from '$/util/common'
 import { navigateToEdit } from '$/util/navigation'
+import { generateThemeCssVariables, processBaseDist, removeUselessAttributes } from '$/util/tool'
 import {
     r_tool_category_get,
     r_tool_create,
@@ -31,7 +32,9 @@ const Create = () => {
     const formValues = AntdForm.useWatch([], form)
     const [templateData, setTemplateData] = useState<ToolTemplateVo[]>()
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
-    const [templateDetailData, setTemplateDetailData] = useState<Record<string, ToolTemplateVo>>({})
+    const [templateDetailData, setTemplateDetailData] = useState<
+        Record<string, ToolTemplateWithSourceVo>
+    >({})
     const [previewTemplate, setPreviewTemplate] = useState('')
     const [isLoadingTemplate, setIsLoadingTemplate] = useState(false)
     const [isLoadingCategory, setIsLoadingCategory] = useState(false)
@@ -140,20 +143,22 @@ const Create = () => {
         }
         setCompiledCode('')
         try {
-            const baseDist = base64ToStr(template.base.dist.data!)
-            const files = base64ToFiles(template.source.data!)
-            const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
+            processBaseDist(template.base.id, template.base.version, {}).then(({ toolBaseVo }) => {
+                const baseDist = base64ToStr(toolBaseVo.dist.data!)
+                const files = base64ToFiles(template.source.data!)
+                const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
 
-            compiler
-                .compile(files, importMap, template.entryPoint)
-                .then((result) => {
-                    const output = result.outputFiles[0].text
-                    setCompiledCode(`(() => {${output}})();\n(() => {${baseDist}})();`)
-                })
-                .catch((reason) => {
-                    void message.error(`编译失败：${reason}`)
-                    setCompiledCode(baseDist)
-                })
+                compiler
+                    .compile(files, importMap, template.entryPoint)
+                    .then((result) => {
+                        const output = result.outputFiles[0].text
+                        setCompiledCode(`(() => {${output}})();\n(() => {${baseDist}})();`)
+                    })
+                    .catch((reason) => {
+                        void message.error(`编译失败：${reason}`)
+                        setCompiledCode(baseDist)
+                    })
+            })
         } catch (e) {
             void message.error(`载入模板 ${templateDetailData[previewTemplate].name} 失败`)
         }
@@ -210,9 +215,7 @@ const Create = () => {
                                             ({ getFieldValue }) => ({
                                                 validator() {
                                                     if (!getFieldValue('icon')) {
-                                                        return Promise.reject(
-                                                            new Error('请选择图标')
-                                                        )
+                                                        return Promise.reject(Error('请选择图标'))
                                                     }
                                                     return Promise.resolve()
                                                 }

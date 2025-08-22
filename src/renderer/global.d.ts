@@ -555,43 +555,84 @@ interface ToolDataVo {
 interface ToolBaseVo {
     id: string
     name: string
-    source: ToolDataVo
-    dist: ToolDataVo
     platform: Platform
-    compiled: boolean
+    version: number
     createTime: string
     updateTime: string
 }
 
-interface ToolBaseAddEditParam {
-    id?: string
-    name?: string
-    source?: string
-    dist?: string
-    platform?: Platform
+interface ToolBaseWithDistVo extends ToolBaseVo {
+    dist: ToolDataVo
+}
+
+interface ToolBaseWithSourceVo extends ToolBaseVo {
+    source: ToolDataVo
+}
+
+interface ToolBaseWithVersionsVo extends Omit<ToolBaseVo, 'version'> {
+    versions: number[]
+}
+
+interface ToolBaseAddParam {
+    name: string
+    platform: Platform
+}
+
+interface ToolBaseUpdateParam {
+    id: string
+    name: string
+}
+
+interface ToolBaseUpdateSourceParam {
+    id: string
+    version: number
+    source: string
+}
+
+interface ToolBaseUpdateDistParam {
+    id: string
+    version: number
+    dist: string
 }
 
 interface ToolTemplateVo {
     id: string
     name: string
-    baseId: string
-    source: ToolDataVo
+    base: ToolBaseVo
     platform: Platform
     entryPoint: string
     enable: boolean
     createTime: string
     updateTime: string
-    base: ToolBaseVo
 }
 
-interface ToolTemplateAddEditParam {
-    id?: string
-    name?: string
-    baseId?: string
-    source?: string
-    platform?: Platform
-    entryPoint?: string
+interface ToolTemplateWithSourceVo extends ToolTemplateVo {
+    source: ToolDataVo
+}
+
+interface ToolTemplateAddParam {
+    name: string
+    baseId: string
+    baseVersion: number
+    entryPoint: string
     enable?: boolean
+}
+
+interface ToolTemplateUpdateParam {
+    id: string
+    name: string
+    entryPoint: string
+    enable?: boolean
+}
+
+interface ToolTemplateUpdateSourceParam {
+    id: string
+    source: string
+}
+
+interface ToolOrTemplateUpgradeBaseParam {
+    id: string
+    baseVersion: number
 }
 
 interface ToolVo {
@@ -601,19 +642,26 @@ interface ToolVo {
     icon: string
     platform: Platform
     description: string
-    base: ToolBaseVo
+    baseId: string
+    baseVersion: number
     author: UserWithInfoVo
     ver: string
     keywords: string[]
     categories: ToolCategoryVo[]
-    source: ToolDataVo
-    dist: ToolDataVo
     entryPoint: string
     publish: string
     review: 'NONE' | 'PROCESSING' | 'PASS' | 'REJECT'
     createTime: string
     updateTime: string
     favorite: boolean
+}
+
+interface ToolWithDistVo extends ToolVo {
+    dist: ToolDataVo
+}
+
+interface ToolWithSourceVo extends ToolVo {
+    source: ToolDataVo
 }
 
 interface ToolCreateParam {
@@ -636,12 +684,16 @@ interface ToolUpgradeParam {
 
 interface ToolUpdateParam {
     id: string
-    name?: string
-    icon?: string
+    name: string
+    icon: string
     description?: string
     keywords?: string[]
     categories?: string[]
-    source?: string
+}
+
+interface ToolUpdateSourceParam {
+    id: string
+    source: string
 }
 
 interface ToolManagementGetParam extends PageParam {
@@ -671,4 +723,8 @@ interface ToolMenuItem {
     authorUsername: string
     ver: string
     platform: Platform
+}
+
+interface LocalToolVo extends ToolWithDistVo {
+    base: ToolBaseWithDistVo
 }

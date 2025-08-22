@@ -1,3 +1,4 @@
+import { MouseEvent, ReactNode } from 'react'
 import Icon from '@ant-design/icons'
 import useStyles from '%/assets/css/pages/system/tools/template.style'
 import {
@@ -7,42 +8,28 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '$/constants/common.constants'
-import { addExtraCssVariables, message, modal } from '$/util/common'
+import { checkDesktop, message, modal } from '$/util/common'
 import { utcToLocalTime } from '$/util/datetime'
-import { hasPermission } from '$/util/auth'
-import editorExtraLibs from '$/util/editorExtraLibs'
+import { navigateToToolTemplateEditor } from '$/util/navigation'
+import { formatToolBaseVersion } from '$/util/tool'
 import {
     r_sys_tool_template_update,
     r_sys_tool_template_delete,
     r_sys_tool_template_add,
     r_sys_tool_template_get,
-    r_sys_tool_template_get_one,
     r_sys_tool_base_get_list
 } from '$/services/system'
-import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import FlexBox from '$/components/FlexBox'
 import HideScrollbar from '$/components/HideScrollbar'
 import Card from '$/components/Card'
 import Permission from '$/components/Permission'
-import Playground from '$/components/Playground'
-import { IFile, IFiles, ITsconfig } from '$/components/Playground/shared'
-import {
-    base64ToFiles,
-    EMPTY_FILES,
-    fileNameToLanguage,
-    filesToBase64,
-    getFilesSize,
-    TSCONFIG_FILE_NAME
-} from '$/components/Playground/files'
+
+const { Link } = AntdTypography
 
 const Template = () => {
-    const { styles, theme } = useStyles()
-    const { isDarkMode } = useContext(CommonContext)
-    const blocker = useBlocker(
-        ({ currentLocation, nextLocation }) =>
-            currentLocation.pathname !== nextLocation.pathname && Object.keys(hasEdited).length > 0
-    )
+    const { styles } = useStyles()
+    const navigate = useNavigate()
     const [tableParams, setTableParams] = useState<TableParam>({
         pagination: {
             current: 1,
@@ -54,11 +41,10 @@ const Template = () => {
                 } 项 共 ${total} 项`
         }
     })
-    const [form] = AntdForm.useForm<ToolTemplateAddEditParam>()
-    const formValues = AntdForm.useWatch([], form)
-    const [addFileForm] = AntdForm.useForm<{ fileName: string }>()
-    const [renameFileForm] = AntdForm.useForm<{ fileName: string }>()
-    const [newFormValues, setNewFormValues] = useState<ToolTemplateAddEditParam>()
+    const [addForm] = AntdForm.useForm<ToolTemplateAddParam & { selectedToolBase: string[] }>()
+    const addFormValues = AntdForm.useWatch([], addForm)
+    const [editForm] = AntdForm.useForm<ToolTemplateUpdateParam>()
+    const editFormValues = AntdForm.useWatch([], editForm)
     const [isLoading, setIsLoading] = useState(false)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isDrawerEdit, setIsDrawerEdit] = useState(false)
@@ -66,27 +52,7 @@ const Template = () => {
     const [isLoadingBaseData, setIsLoadingBaseData] = useState(false)
     const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [editingTemplateId, setEditingTemplateId] = useState<string>('')
-    const [editingFiles, setEditingFiles] = useState<Record<string, IFiles>>({})
-    const [editingFileName, setEditingFileName] = useState('')
-    const [hasEdited, setHasEdited] = useState<Record<string, boolean>>({})
     const [templateData, setTemplateData] = useState<ToolTemplateVo[]>([])
-    const [templateDetailData, setTemplateDetailData] = useState<Record<string, ToolTemplateVo>>({})
-    const [templateDetailLoading, setTemplateDetailLoading] = useState<Record<string, boolean>>({})
-    const [tsconfig, setTsconfig] = useState<ITsconfig>()
-
-    useBeforeUnload(
-        useCallback(
-            (event) => {
-                if (Object.keys(hasEdited).length) {
-                    event.preventDefault()
-                    event.returnValue = ''
-                }
-            },
-            [hasEdited]
-        ),
-        { capture: true }
-    )
 
     const handleOnTableChange = (
         pagination: _TablePaginationConfig,
@@ -110,18 +76,27 @@ const Template = () => {
         }
 
         if (pagination.pageSize !== tableParams.pagination?.pageSize) {
-            setBaseData([])
+            setTemplateData([])
+        }
+    }
+
+    const handleOnRowClick = (id: string) => {
+        return () => {
+            if (
+                !checkDesktop() &&
+                templateData.find((item) => item.id === id)?.platform !== 'WEB'
+            ) {
+                void message.warning('此模板需要桌面端环境，请在桌面端编辑')
+                return
+            }
+
+            navigateToToolTemplateEditor(navigate, id)
         }
     }
 
     const handleOnAddBtnClick = () => {
         setIsDrawerEdit(false)
         setIsDrawerOpen(true)
-        form.setFieldValue('id', undefined)
-        form.setFieldValue('name', newFormValues?.name)
-        form.setFieldValue('baseId', newFormValues?.baseId)
-        form.setFieldValue('entryPoint', newFormValues?.entryPoint)
-        form.setFieldValue('enable', newFormValues?.enable ?? true)
         if (!baseData || !baseData.length) {
             getBaseData()
         }
@@ -130,11 +105,7 @@ const Template = () => {
     const templateColumns: _ColumnsType<ToolTemplateVo> = [
         {
             title: '名称',
-            render: (_, record) => (
-                <span className={hasEdited[record.id] ? styles.hasEdited : undefined}>
-                    {record.name}
-                </span>
-            )
+            dataIndex: 'name'
         },
         {
             title: '平台',
@@ -148,7 +119,13 @@ const Template = () => {
         },
         {
             title: '基板',
-            dataIndex: ['base', 'name']
+            dataIndex: ['base', 'name'],
+            render: (value: string, record) => (
+                <AntdSpace>
+                    {value}
+                    <AntdTag>{formatToolBaseVersion(record.base.version)}</AntdTag>
+                </AntdSpace>
+            )
         },
         {
             title: '入口',
@@ -178,104 +155,44 @@ const Template = () => {
         },
         {
             title: (
-                <>
+                <AntdSpace style={{ textWrap: 'nowrap' }}>
                     操作
-                    {!Object.keys(hasEdited).length && (
-                        <Permission operationCode={['system:tool:add:template']}>
-                            {' '}
-                            (
-                            <a style={{ color: theme.colorPrimary }} onClick={handleOnAddBtnClick}>
-                                新增
-                            </a>
-                            )
-                        </Permission>
-                    )}
-                </>
+                    <Permission operationCode={['system:tool:add:template']}>
+                        (<Link onClick={handleOnAddBtnClick}>新增</Link>)
+                    </Permission>
+                </AntdSpace>
             ),
             width: '8em',
             align: 'center',
             render: (_, record) => (
                 <AntdSpace size={'middle'}>
-                    {hasEdited[record.id] && (
-                        <Permission operationCode={['system:tool:modify:template']}>
-                            <a
-                                style={{ color: theme.colorPrimary }}
-                                onClick={handleOnSaveBtnClick(record)}
-                            >
-                                保存
-                            </a>
-                        </Permission>
-                    )}
-                    {!Object.keys(hasEdited).length && (
-                        <Permission operationCode={['system:tool:modify:template']}>
-                            <a
-                                style={{ color: theme.colorPrimary }}
-                                onClick={handleOnEditBtnClick(record)}
-                            >
-                                编辑
-                            </a>
-                        </Permission>
-                    )}
+                    <Permission operationCode={['system:tool:modify:template']}>
+                        <Link onClick={handleOnEditBtnClick(record)}>编辑</Link>
+                    </Permission>
                     <Permission operationCode={['system:tool:delete:template']}>
-                        <a
-                            style={{ color: theme.colorPrimary }}
-                            onClick={handleOnDeleteBtnClick(record)}
-                        >
-                            删除
-                        </a>
+                        <Link onClick={handleOnDeleteBtnClick(record)}>删除</Link>
                     </Permission>
                 </AntdSpace>
             )
         }
     ]
 
-    const handleOnSaveBtnClick = (value: ToolTemplateVo) => {
-        return () => {
-            if (isLoading) {
-                return
-            }
-            setIsLoading(true)
-
-            const source = filesToBase64(editingFiles[value.id])
-
-            r_sys_tool_template_update({ id: value.id, source })
-                .then((res) => {
-                    const response = res.data
-                    switch (response.code) {
-                        case DATABASE_UPDATE_SUCCESS:
-                            void message.success('保存成功')
-                            delete hasEdited[value.id]
-                            setHasEdited({ ...hasEdited })
-                            getTemplateDetail(value)
-                            break
-                        default:
-                            void message.error('出错了，请稍后重试')
-                    }
-                })
-                .finally(() => {
-                    setIsLoading(false)
-                })
-        }
-    }
-
     const handleOnEditBtnClick = (value: ToolTemplateVo) => {
-        return () => {
+        return (e: MouseEvent) => {
+            e.stopPropagation()
             setIsDrawerEdit(true)
             setIsDrawerOpen(true)
-            form.setFieldValue('id', value.id)
-            form.setFieldValue('name', value.name)
-            form.setFieldValue('baseId', value.base.id)
-            form.setFieldValue('entryPoint', value.entryPoint)
-            form.setFieldValue('enable', value.enable)
-            if (!baseData || !baseData.length) {
-                getBaseData()
-            }
-            void form.validateFields()
+            editForm.setFieldValue('id', value.id)
+            editForm.setFieldValue('name', value.name)
+            editForm.setFieldValue('entryPoint', value.entryPoint)
+            editForm.setFieldValue('enable', value.enable)
+            void editForm.validateFields()
         }
     }
 
     const handleOnDeleteBtnClick = (value: ToolTemplateVo) => {
-        return () => {
+        return (e: MouseEvent) => {
+            e.stopPropagation()
             modal
                 .confirm({
                     centered: true,
@@ -293,10 +210,6 @@ const Template = () => {
                                     const response = res.data
                                     if (response.code === DATABASE_DELETE_SUCCESS) {
                                         void message.success('删除成功')
-                                        setHasEdited({})
-                                        setEditingFileName('')
-                                        setEditingFiles({})
-                                        setEditingTemplateId('')
                                         setTimeout(() => {
                                             getTemplate()
                                         })
@@ -321,7 +234,7 @@ const Template = () => {
         setIsSubmitting(true)
 
         if (isDrawerEdit) {
-            r_sys_tool_template_update(formValues)
+            r_sys_tool_template_update(editFormValues)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
@@ -341,11 +254,11 @@ const Template = () => {
                     setIsSubmitting(false)
                 })
         } else {
+            const baseId = addFormValues.selectedToolBase[1]
             r_sys_tool_template_add({
-                ...formValues,
-                baseId: formValues.baseId
-                    ? (formValues.baseId as unknown as string[])[1]
-                    : undefined
+                ...addFormValues,
+                baseId,
+                baseVersion: baseData.find(({ id }) => id === baseId)!.version
             })
                 .then((res) => {
                     const response = res.data
@@ -353,7 +266,7 @@ const Template = () => {
                         case DATABASE_INSERT_SUCCESS:
                             setIsDrawerOpen(false)
                             void message.success('添加成功')
-                            setNewFormValues(undefined)
+                            addForm.resetFields()
                             getTemplate()
                             break
                         case DATABASE_DUPLICATE_KEY:
@@ -367,10 +280,6 @@ const Template = () => {
                     setIsSubmitting(false)
                 })
         }
-    }
-
-    const handleOnCloseBtnClick = () => {
-        setEditingFileName('')
     }
 
     const handleOnDrawerClose = () => {
@@ -414,450 +323,8 @@ const Template = () => {
             })
     }
 
-    const handleOnExpand = (expanded: boolean, record: ToolTemplateVo) => {
-        if (!expanded) {
-            return
-        }
-        getTemplateDetail(record)
-    }
-
-    const getTemplateDetail = (record: ToolTemplateVo) => {
-        if (templateDetailLoading[record.id] || hasEdited[record.id]) {
-            return
-        }
-        setTemplateDetailLoading((prevState) => ({ ...prevState, [record.id]: true }))
-
-        r_sys_tool_template_get_one(record.id)
-            .then((res) => {
-                const response = res.data
-                switch (response.code) {
-                    case DATABASE_SELECT_SUCCESS:
-                        setTemplateDetailData((prevState) => ({
-                            ...prevState,
-                            [record.id]: response.data!
-                        }))
-                        setTemplateData(
-                            templateData.map((value) =>
-                                value.id === response.data!.id
-                                    ? {
-                                          ...response.data!,
-                                          source: { id: response.data!.source.id }
-                                      }
-                                    : value
-                            )
-                        )
-                        break
-                    default:
-                        void message.error(`获取模板 ${record.name} 文件内容失败，请稍后重试`)
-                }
-            })
-            .finally(() => {
-                setTemplateDetailLoading((prevState) => ({ ...prevState, [record.id]: false }))
-            })
-    }
-
-    const expandedRowRender = (record: ToolTemplateVo) => {
-        const templateDetailVo = templateDetailData[record.id]
-        let sourceFiles: IFiles = base64ToFiles('')
-        if (templateDetailVo) {
-            sourceFiles = base64ToFiles(templateDetailVo.source.data!)
-        }
-        const sourceFileList = Object.values(sourceFiles)
-
-        const handleOnAddFile = () => {
-            void modal.confirm({
-                centered: true,
-                maskClosable: true,
-                title: '新建文件',
-                footer: (_, { OkBtn, CancelBtn }) => (
-                    <>
-                        <OkBtn />
-                        <CancelBtn />
-                    </>
-                ),
-                content: (
-                    <AntdForm
-                        form={addFileForm}
-                        ref={() => {
-                            setTimeout(() => {
-                                addFileForm?.getFieldInstance('fileName')?.focus()
-                            }, 50)
-                        }}
-                    >
-                        <AntdForm.Item
-                            name={'fileName'}
-                            label={'文件名'}
-                            style={{ marginTop: 10 }}
-                            rules={[
-                                { required: true },
-                                {
-                                    pattern: /\.(jsx|tsx|js|ts|css|json)$/,
-                                    message: '仅支持 *.jsx, *.tsx, *.js, *.ts, *.css, *.json 文件'
-                                },
-                                ({ getFieldValue }) => ({
-                                    validator() {
-                                        const newFileName = getFieldValue('fileName') as string
-                                        if (
-                                            Object.keys(sourceFiles!)
-                                                .map((item) => item.toLowerCase())
-                                                .includes(newFileName.toLowerCase())
-                                        ) {
-                                            return Promise.reject(new Error('文件已存在'))
-                                        }
-                                        return Promise.resolve()
-                                    }
-                                })
-                            ]}
-                        >
-                            <AntdInput placeholder={'请输入文件名'} />
-                        </AntdForm.Item>
-                    </AntdForm>
-                ),
-                onOk: () =>
-                    addFileForm.validateFields().then(
-                        () => {
-                            return new Promise<void>((resolve) => {
-                                const newFileName = addFileForm.getFieldValue('fileName') as string
-
-                                setTemplateDetailLoading((prevState) => ({
-                                    ...prevState,
-                                    [record.id]: true
-                                }))
-
-                                sourceFiles = {
-                                    ...sourceFiles,
-                                    [newFileName]: {
-                                        name: newFileName,
-                                        language: fileNameToLanguage(newFileName),
-                                        value: ''
-                                    }
-                                }
-
-                                r_sys_tool_template_update({
-                                    id: record.id,
-                                    source: filesToBase64(sourceFiles)
-                                })
-                                    .then((res) => {
-                                        addFileForm.setFieldValue('fileName', '')
-                                        const response = res.data
-                                        switch (response.code) {
-                                            case DATABASE_UPDATE_SUCCESS:
-                                                void message.success('添加成功')
-                                                setTimeout(() => {
-                                                    getTemplateDetail(record)
-                                                })
-                                                resolve()
-                                                break
-                                            default:
-                                                void message.error('添加失败，请稍后重试')
-                                                resolve()
-                                        }
-                                    })
-                                    .finally(() => {
-                                        setTemplateDetailLoading((prevState) => ({
-                                            ...prevState,
-                                            [record.id]: false
-                                        }))
-                                    })
-                            })
-                        },
-                        () => {
-                            return new Promise((_, reject) => {
-                                reject('请输入文件名')
-                            })
-                        }
-                    )
-            })
-        }
-
-        const detailColumns: _ColumnsType<IFile> = [
-            { title: '文件名', dataIndex: 'name' },
-            {
-                title: (
-                    <>
-                        文件总大小
-                        <br />
-                        {sourceFiles ? getFilesSize(sourceFiles) : 'Unknown'}
-                    </>
-                ),
-                width: '10em',
-                align: 'center'
-            },
-            {
-                title: (
-                    <>
-                        操作
-                        {!Object.keys(hasEdited).length && (
-                            <Permission operationCode={['system:tool:modify:template']}>
-                                {' '}
-                                (
-                                <a style={{ color: theme.colorPrimary }} onClick={handleOnAddFile}>
-                                    新增
-                                </a>
-                                )
-                            </Permission>
-                        )}
-                    </>
-                ),
-                width: '12em',
-                align: 'center',
-                render: (_, record) => (
-                    <AntdSpace size={'middle'}>
-                        <Permission
-                            operationCode={[
-                                'system:tool:query:template',
-                                'system:tool:modify:template'
-                            ]}
-                        >
-                            <a
-                                onClick={handleOnEditFile(record.name)}
-                                style={{ color: theme.colorPrimary }}
-                            >
-                                {hasPermission('system:tool:modify:template') ? '编辑' : '查看'}
-                            </a>
-                        </Permission>
-                        {!Object.keys(hasEdited).length &&
-                            !Object.keys(EMPTY_FILES).includes(record.name) && (
-                                <Permission operationCode={['system:tool:modify:template']}>
-                                    <a
-                                        onClick={handleOnRenameFile(record.name)}
-                                        style={{ color: theme.colorPrimary }}
-                                    >
-                                        重命名
-                                    </a>
-                                </Permission>
-                            )}
-                        {!Object.keys(hasEdited).length &&
-                            !Object.keys(EMPTY_FILES).includes(record.name) && (
-                                <Permission operationCode={['system:tool:delete:template']}>
-                                    <a
-                                        onClick={handleOnDeleteFile(record.name)}
-                                        style={{ color: theme.colorPrimary }}
-                                    >
-                                        删除
-                                    </a>
-                                </Permission>
-                            )}
-                    </AntdSpace>
-                )
-            }
-        ]
-
-        const handleOnEditFile = (fileName: string) => {
-            return () => {
-                if (editingTemplateId !== record.id) {
-                    setTsconfig(undefined)
-                }
-                if (!hasEdited[record.id]) {
-                    setEditingFiles((prevState) => ({ ...prevState, [record.id]: sourceFiles! }))
-                }
-                setEditingTemplateId(record.id)
-                setEditingFileName(fileName)
-            }
-        }
-
-        const handleOnRenameFile = (fileName: string) => {
-            return () => {
-                renameFileForm.setFieldValue('fileName', fileName)
-                void modal.confirm({
-                    centered: true,
-                    maskClosable: true,
-                    title: '重命名文件',
-                    footer: (_, { OkBtn, CancelBtn }) => (
-                        <>
-                            <OkBtn />
-                            <CancelBtn />
-                        </>
-                    ),
-                    content: (
-                        <AntdForm
-                            form={renameFileForm}
-                            ref={() => {
-                                setTimeout(() => {
-                                    renameFileForm?.getFieldInstance('fileName')?.focus()
-                                }, 50)
-                            }}
-                        >
-                            <AntdForm.Item
-                                name={'fileName'}
-                                label={'新文件名'}
-                                style={{ marginTop: 10 }}
-                                rules={[
-                                    { required: true },
-                                    {
-                                        pattern: /\.(jsx|tsx|js|ts|css|json)$/,
-                                        message:
-                                            '仅支持 *.jsx, *.tsx, *.js, *.ts, *.css, *.json 文件'
-                                    },
-                                    ({ getFieldValue }) => ({
-                                        validator() {
-                                            const newFileName = getFieldValue('fileName') as string
-                                            if (
-                                                Object.keys(sourceFiles!)
-                                                    .map((item) => item.toLowerCase())
-                                                    .includes(newFileName?.toLowerCase()) &&
-                                                newFileName.toLowerCase() !== fileName.toLowerCase()
-                                            ) {
-                                                return Promise.reject(new Error('文件已存在'))
-                                            }
-
-                                            return Promise.resolve()
-                                        }
-                                    })
-                                ]}
-                            >
-                                <AntdInput placeholder={'请输入新文件名'} />
-                            </AntdForm.Item>
-                        </AntdForm>
-                    ),
-                    onOk: () =>
-                        renameFileForm.validateFields().then(
-                            () => {
-                                return new Promise<void>((resolve) => {
-                                    const newFileName = renameFileForm.getFieldValue(
-                                        'fileName'
-                                    ) as string
-                                    const temp = sourceFiles![fileName].value
-                                    delete sourceFiles![fileName]
-
-                                    sourceFiles = {
-                                        ...sourceFiles,
-                                        [newFileName]: {
-                                            name: newFileName,
-                                            language: fileNameToLanguage(newFileName),
-                                            value: temp
-                                        }
-                                    }
-
-                                    r_sys_tool_template_update({
-                                        id: record.id,
-                                        source: filesToBase64(sourceFiles)
-                                    })
-                                        .then((res) => {
-                                            const response = res.data
-                                            switch (response.code) {
-                                                case DATABASE_UPDATE_SUCCESS:
-                                                    void message.success('重命名成功')
-                                                    if (
-                                                        editingTemplateId === record.id &&
-                                                        editingFileName === fileName
-                                                    ) {
-                                                        setEditingFileName('')
-                                                    }
-                                                    setTimeout(() => {
-                                                        getTemplateDetail(record)
-                                                    })
-                                                    break
-                                                default:
-                                                    void message.error('重命名失败，请稍后重试')
-                                            }
-                                        })
-                                        .finally(() => {
-                                            setTemplateDetailLoading((prevState) => ({
-                                                ...prevState,
-                                                [record.id]: false
-                                            }))
-                                        })
-                                    resolve()
-                                })
-                            },
-                            () => {
-                                return new Promise((_, reject) => {
-                                    reject('请输入文件名')
-                                })
-                            }
-                        )
-                })
-            }
-        }
-
-        const handleOnDeleteFile = (fileName: string) => {
-            return () => {
-                modal
-                    .confirm({
-                        centered: true,
-                        maskClosable: true,
-                        title: '确定删除',
-                        content: `确定删除文件 ${fileName} 吗？`
-                    })
-                    .then(
-                        (confirmed) => {
-                            if (confirmed) {
-                                setTemplateDetailLoading((prevState) => ({
-                                    ...prevState,
-                                    [record.id]: true
-                                }))
-
-                                delete sourceFiles![fileName]
-
-                                r_sys_tool_template_update({
-                                    id: record.id,
-                                    source: filesToBase64(sourceFiles!)
-                                })
-                                    .then((res) => {
-                                        const response = res.data
-                                        switch (response.code) {
-                                            case DATABASE_UPDATE_SUCCESS:
-                                                void message.success('删除成功')
-                                                if (
-                                                    editingTemplateId === record.id &&
-                                                    editingFileName === fileName
-                                                ) {
-                                                    setEditingFileName('')
-                                                }
-                                                setTimeout(() => {
-                                                    getTemplateDetail(record)
-                                                })
-                                                break
-                                            default:
-                                                void message.error('删除失败，请稍后重试')
-                                        }
-                                    })
-                                    .finally(() => {
-                                        setTemplateDetailLoading((prevState) => ({
-                                            ...prevState,
-                                            [record.id]: false
-                                        }))
-                                    })
-                            }
-                        },
-                        () => {}
-                    )
-            }
-        }
-
-        return (
-            <Card>
-                <AntdTable
-                    rowKey={(record) => record.name}
-                    columns={detailColumns}
-                    dataSource={sourceFileList}
-                    loading={templateDetailLoading[record.id]}
-                    pagination={false}
-                />
-            </Card>
-        )
-    }
-
-    const handleOnChangeFileContent = (fileName: string, content: string) => {
-        if (!hasPermission('system:tool:modify:template')) {
-            return
-        }
-
-        setEditingFiles((prevState) => ({
-            ...prevState,
-            [editingTemplateId]: {
-                ...prevState[editingTemplateId],
-                [fileName]: { ...prevState[editingTemplateId][fileName], value: content }
-            }
-        }))
-        if (!hasEdited[editingTemplateId]) {
-            setHasEdited((prevState) => ({ ...prevState, [editingTemplateId]: true }))
-        }
-    }
-
     const getBaseData = () => {
-        if (isLoadingBaseData) {
+        if (isLoadingBaseData && isDrawerEdit) {
             return
         }
         setIsLoadingBaseData(true)
@@ -878,17 +345,66 @@ const Template = () => {
             })
     }
 
-    useEffect(() => {
-        try {
-            const tsconfigStr = editingFiles[editingTemplateId][TSCONFIG_FILE_NAME].value
-            setTsconfig(JSON.parse(tsconfigStr) as ITsconfig)
-        } catch (e) {
-            /* empty */
+    const baseDataGroupByPlatform = () => {
+        interface Node {
+            label: ReactNode
+            value: string
+            children?: Node[]
         }
-    }, [editingFiles, editingTemplateId])
+
+        return baseData.reduce<Node[]>((prev, curr) => {
+            const platformLabel = `${curr.platform.slice(0, 1)}${curr.platform.slice(1).toLowerCase()}`
+            const existingPlatformIndex = prev.findIndex((item) => item.value === curr.platform)
+
+            if (existingPlatformIndex !== -1) {
+                const existingPlatform = prev[existingPlatformIndex]
+                return [
+                    ...prev.slice(0, existingPlatformIndex),
+                    {
+                        ...existingPlatform,
+                        children: [
+                            ...(existingPlatform.children || []),
+                            {
+                                label: (
+                                    <AntdSpace>
+                                        {curr.name}
+                                        <AntdTag color={'blue'}>
+                                            {formatToolBaseVersion(curr.version)}
+                                        </AntdTag>
+                                    </AntdSpace>
+                                ),
+                                value: curr.id
+                            }
+                        ]
+                    },
+                    ...prev.slice(existingPlatformIndex + 1)
+                ]
+            }
+            return [
+                ...prev,
+                {
+                    label: platformLabel,
+                    value: curr.platform,
+                    children: [
+                        {
+                            label: (
+                                <AntdSpace>
+                                    {curr.name}
+                                    <AntdTag color={'blue'}>
+                                        {formatToolBaseVersion(curr.version)}
+                                    </AntdTag>
+                                </AntdSpace>
+                            ),
+                            value: curr.id
+                        }
+                    ]
+                }
+            ]
+        }, [])
+    }
 
     useEffect(() => {
-        form.validateFields({ validateOnly: true }).then(
+        ;(isDrawerEdit ? editForm : addForm).validateFields({ validateOnly: true }).then(
             () => {
                 setIsSubmittable(true)
             },
@@ -896,65 +412,7 @@ const Template = () => {
                 setIsSubmittable(false)
             }
         )
-
-        if (!isDrawerEdit && formValues) {
-            setNewFormValues({
-                name: formValues.name,
-                baseId: formValues.baseId,
-                entryPoint: formValues.entryPoint,
-                enable: formValues.enable
-            })
-        }
-    }, [formValues])
-
-    const baseDataGroupByPlatform = () => {
-        interface Node {
-            label: string
-            value: string
-            children?: Node[]
-        }
-        const temp: Node[] = []
-        baseData.forEach((value) => {
-            if (!temp.length) {
-                temp.push({
-                    label: `${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}`,
-                    value: value.platform,
-                    children: [
-                        {
-                            label: value.name,
-                            value: value.id
-                        }
-                    ]
-                })
-            } else {
-                if (
-                    !temp.some((platform, platformIndex) => {
-                        if (platform.value === value.platform) {
-                            temp[platformIndex].children!.push({
-                                label: value.name,
-                                value: value.id
-                            })
-                            return true
-                        }
-                        return false
-                    })
-                ) {
-                    temp.push({
-                        label: `${value.platform.slice(0, 1)}${value.platform.slice(1).toLowerCase()}`,
-                        value: value.platform,
-                        children: [
-                            {
-                                label: value.name,
-                                value: value.id
-                            }
-                        ]
-                    })
-                }
-            }
-        })
-
-        return temp
-    }
+    }, [isDrawerOpen, isDrawerEdit, addFormValues, editFormValues])
 
     useEffect(() => {
         getTemplate()
@@ -968,11 +426,13 @@ const Template = () => {
 
     const drawerToolbar = (
         <AntdSpace>
-            <AntdTooltip title={'刷新基板列表'}>
-                <AntdButton onClick={getBaseData} disabled={isSubmitting}>
-                    <Icon component={IconOxygenRefresh} />
-                </AntdButton>
-            </AntdTooltip>
+            {!isDrawerEdit && (
+                <AntdTooltip title={'刷新基板列表'}>
+                    <AntdButton onClick={getBaseData} disabled={isSubmitting}>
+                        <Icon component={IconOxygenRefresh} />
+                    </AntdButton>
+                </AntdTooltip>
+            )}
             <AntdButton onClick={handleOnDrawerClose} disabled={isSubmitting}>
                 取消
             </AntdButton>
@@ -987,8 +447,52 @@ const Template = () => {
         </AntdSpace>
     )
 
-    const addAndEditForm = (
-        <AntdForm form={form} disabled={isSubmitting} layout={'vertical'}>
+    const addFormComponent = (
+        <AntdForm
+            key={'addFormComponent'}
+            form={addForm}
+            disabled={isSubmitting}
+            layout={'vertical'}
+        >
+            <AntdForm.Item
+                name={'name'}
+                label={'名称'}
+                rules={[{ required: true, whitespace: true }]}
+            >
+                <AntdInput allowClear placeholder={'请输入名称'} />
+            </AntdForm.Item>
+            <AntdForm.Item name={'selectedToolBase'} label={'基板'} rules={[{ required: true }]}>
+                <AntdCascader
+                    showSearch
+                    allowClear={false}
+                    options={baseDataGroupByPlatform()}
+                    placeholder={'请选择基板'}
+                />
+            </AntdForm.Item>
+            <AntdForm.Item
+                name={'entryPoint'}
+                label={'入口文件'}
+                rules={[{ required: true, whitespace: true }]}
+            >
+                <AntdInput allowClear placeholder={'请输入入口文件'} />
+            </AntdForm.Item>
+            <AntdForm.Item name={'enable'} label={'状态'}>
+                <AntdSwitch
+                    checkedChildren={'启用'}
+                    unCheckedChildren={'禁用'}
+                    defaultChecked={true}
+                />
+            </AntdForm.Item>
+        </AntdForm>
+    )
+
+    const editFormComponent = (
+        <AntdForm
+            key={'editFormComponent'}
+            form={editForm}
+            disabled={isSubmitting}
+            layout={'vertical'}
+        >
             <AntdForm.Item hidden name={'id'} label={'ID'}>
                 <AntdInput disabled />
             </AntdForm.Item>
@@ -998,19 +502,6 @@ const Template = () => {
                 rules={[{ required: true, whitespace: true }]}
             >
                 <AntdInput allowClear placeholder={'请输入名称'} />
-            </AntdForm.Item>
-            <AntdForm.Item
-                hidden={isDrawerEdit}
-                name={'baseId'}
-                label={'基板'}
-                rules={[{ required: true }]}
-            >
-                <AntdCascader
-                    showSearch
-                    allowClear={false}
-                    options={baseDataGroupByPlatform()}
-                    placeholder={'请选择基板'}
-                />
             </AntdForm.Item>
             <AntdForm.Item
                 name={'entryPoint'}
@@ -1038,42 +529,13 @@ const Template = () => {
                                 pagination={tableParams.pagination}
                                 loading={isLoading}
                                 scroll={{ x: true }}
-                                expandable={{
-                                    expandedRowRender,
-                                    onExpand: handleOnExpand
-                                }}
                                 onChange={handleOnTableChange}
+                                onRow={({ id }) => ({
+                                    style: { cursor: 'pointer' },
+                                    onClick: handleOnRowClick(id)
+                                })}
                             />
                         </Card>
-                        {editingFileName && (
-                            <Card>
-                                <Playground.CodeEditor
-                                    isDarkMode={isDarkMode}
-                                    files={editingFiles[editingTemplateId]}
-                                    selectedFileName={editingFileName}
-                                    onSelectedFileChange={(fileName) => {
-                                        setEditingFileName(fileName)
-                                        return true
-                                    }}
-                                    onChangeFileContent={handleOnChangeFileContent}
-                                    showFileSelector={false}
-                                    tsconfig={tsconfig}
-                                    readonly={
-                                        isLoading ||
-                                        templateDetailLoading[editingTemplateId] ||
-                                        !hasPermission('system:tool:modify:template')
-                                    }
-                                    extraLibs={editorExtraLibs}
-                                    onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                                />
-                                <div
-                                    className={styles.closeEditorBtn}
-                                    onClick={handleOnCloseBtnClick}
-                                >
-                                    <Icon component={IconOxygenClose} />
-                                </div>
-                            </Card>
-                        )}
                     </FlexBox>
                 </HideScrollbar>
                 <AntdDrawer
@@ -1084,23 +546,9 @@ const Template = () => {
                     maskClosable={!isSubmitting}
                     extra={drawerToolbar}
                 >
-                    {addAndEditForm}
+                    {isDrawerEdit ? editFormComponent : addFormComponent}
                 </AntdDrawer>
             </FitFullscreen>
-            <AntdModal
-                open={blocker.state === 'blocked'}
-                title={'未保存'}
-                onOk={() => blocker.proceed?.()}
-                onCancel={() => blocker.reset?.()}
-                footer={(_, { OkBtn, CancelBtn }) => (
-                    <>
-                        <OkBtn />
-                        <CancelBtn />
-                    </>
-                )}
-            >
-                离开此页面将丢失所有未保存数据，是否继续？
-            </AntdModal>
         </>
     )
 }

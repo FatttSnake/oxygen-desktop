@@ -195,7 +195,7 @@ const WindowManager = {
         newWindow.webContents.on('did-finish-load', () => {
             newWindow.show()
             if (is.dev) {
-                // newWindow.webContents.openDevTools()
+                newWindow.webContents.openDevTools()
             }
         })
         // HMR for renderer base on electron-vite cli.

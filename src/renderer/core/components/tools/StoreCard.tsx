@@ -7,12 +7,13 @@ import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { message, modal, checkDesktop, omitTextByByte } from '$/util/common'
 import { getLoginStatus, getUserId } from '$/util/auth'
 import { getAndroidUrl, navigateToSource, navigateToStore, navigateToView } from '$/util/navigation'
-import { r_tool_add_favorite, r_tool_detail, r_tool_remove_favorite } from '$/services/tool'
+import { r_tool_add_favorite, r_tool_get_dist, r_tool_remove_favorite } from '$/services/tool'
 import { n_tool_get, n_tool_install } from '$/services/native'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import DragHandle from '$/components/dnd/DragHandle'
 import Draggable from '$/components/dnd/Draggable'
+import { processBaseDist } from '$/util/tool.ts'
 
 interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: string
@@ -148,20 +149,23 @@ const StoreCard = ({
             key: 'INSTALLING',
             duration: 0
         })
-        const newTools = {} as Record<Platform, ToolVo>
+        const newTools = {} as Record<Platform, LocalToolVo>
         const flags: boolean[] = []
         supportPlatform.forEach((platform) => {
-            r_tool_detail(author.username, toolId, 'latest', platform)
+            r_tool_get_dist(author.username, toolId, 'latest', platform)
                 .then((res) => {
                     const response = res.data
                     switch (response.code) {
                         case DATABASE_SELECT_SUCCESS:
-                            newTools[platform] = response.data!
-                            flags.push(true)
-                            break
+                            return response.data!
                         default:
-                            flags.push(false)
+                            throw Error(response.msg)
                     }
+                })
+                .then((toolVo) => processBaseDist(toolVo.baseId, toolVo.baseVersion, { toolVo }))
+                .then(({ toolVo, toolBaseVo }) => {
+                    newTools[platform] = { ...toolVo, base: toolBaseVo }
+                    flags.push(true)
                 })
                 .catch(() => {
                     flags.push(false)

@@ -31,13 +31,21 @@ export const URL_SYS_TOOL = '/system/tool'
 export const URL_SYS_TOOL_CATEGORY = `${URL_SYS_TOOL}/category`
 export const URL_SYS_TOOL_BASE = `${URL_SYS_TOOL}/base`
 export const URL_SYS_TOOL_BASE_LIST = `${URL_SYS_TOOL_BASE}/list`
+export const URL_SYS_TOOL_BASE_SOURCE = `${URL_SYS_TOOL_BASE}/source`
+export const URL_SYS_TOOL_BASE_DIST = `${URL_SYS_TOOL_BASE}/dist`
 export const URL_SYS_TOOL_TEMPLATE = `${URL_SYS_TOOL}/template`
+export const URL_SYS_TOOL_TEMPLATE_SOURCE = `${URL_SYS_TOOL_TEMPLATE}/source`
+export const URL_SYS_TOOL_TEMPLATE_UPGRADE = `${URL_SYS_TOOL_TEMPLATE}/upgradeBase`
 
 export const URL_TOOL = '/tool'
+export const URL_TOOL_SOURCE = `${URL_TOOL}/source`
+export const URL_TOOL_DIST = `${URL_TOOL}/dist`
+export const URL_TOOL_UPGRADE = `${URL_TOOL}/upgrade`
+export const URL_TOOL_UPGRADE_BASE = `${URL_TOOL}/upgradeBase`
 export const URL_TOOL_STORE = `${URL_TOOL}/store`
-export const URL_TOOL_TEMPLATE = `${URL_TOOL}/template`
 export const URL_TOOL_CATEGORY = `${URL_TOOL}/category`
-export const URL_TOOL_DETAIL = `${URL_TOOL}/detail`
+export const URL_TOOL_BASE = `${URL_TOOL}/base`
+export const URL_TOOL_TEMPLATE = `${URL_TOOL}/template`
 export const URL_TOOL_FAVORITE = `${URL_TOOL_STORE}/favorite`
 
 export const URL_API_V1 = '/api/v1'
