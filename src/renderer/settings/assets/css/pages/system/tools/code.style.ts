@@ -1,11 +1,12 @@
 import { createStyles } from 'antd-style'
 
-export default createStyles(() => ({
+export default createStyles(({ token }) => ({
     root: {
         padding: 20
     },
 
-    rootBox: {
+    layout: {
+        gap: token.sizeSM,
         width: '100%',
         height: '100%'
     },

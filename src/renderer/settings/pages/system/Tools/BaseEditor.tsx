@@ -31,6 +31,8 @@ import {
 } from '$/components/Playground/files'
 import ToolBar from '@/components/tools/ToolBar'
 
+const { Text } = AntdTypography
+
 const BaseEditor = () => {
     const { styles } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
@@ -301,7 +303,7 @@ const BaseEditor = () => {
                             onBack={() => navigateToToolBase(navigate)}
                         >
                             <span>
-                                版本：
+                                <Text strong>版本：</Text>
                                 {toolBaseData && formatToolBaseVersion(toolBaseData?.version)}
                             </span>
                             {toolBaseData && !toolBaseData.version && (

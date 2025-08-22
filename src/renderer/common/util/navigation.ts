@@ -49,12 +49,14 @@ export const navigateToSource = (
     toolId: string,
     platform: Platform,
     version?: string,
+    from?: string,
     options?: NavigateOptions
 ) => {
     const searchParams = new URLSearchParams()
     if (platform !== import.meta.env.VITE_PLATFORM) {
         searchParams.append('platform', platform)
     }
+    from && searchParams.append('from', from)
 
     navigate(
         `/source/${username}/${toolId}${version ? `/${version}` : ''}${searchParams.size ? `?${searchParams.toString()}` : ''}`,

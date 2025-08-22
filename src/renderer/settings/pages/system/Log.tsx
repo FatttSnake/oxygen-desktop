@@ -260,7 +260,6 @@ const Log = () => {
                 <AntdDatePicker.RangePicker
                     showTime
                     allowClear
-                    changeOnBlur
                     onChange={handleOnDateRangeChange}
                 />
             </Card>

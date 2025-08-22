@@ -167,7 +167,7 @@ const ToolLoader = () => {
                         throw Error('获取工具信息失败，请稍后重试')
                 }
             })
-            .then((toolVo) => processBaseDist(toolVo!.baseId, toolVo!.baseVersion, { toolVo }))
+            .then((toolVo) => processBaseDist(toolVo.base.id, toolVo.base.version, { toolVo }))
             .then(({ toolVo, toolBaseVo }) => {
                 compile(viewId, toolVo, toolBaseVo, username === '!')
             })

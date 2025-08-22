@@ -35,6 +35,8 @@ import { usePlaygroundState } from '$/hooks/usePlaygroundState'
 import { base64ToFiles, base64ToStr, filesToBase64 } from '$/components/Playground/files'
 import ToolBar from '@/components/tools/ToolBar'
 
+const { Text } = AntdTypography
+
 const Edit = () => {
     const { styles, theme } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
@@ -75,7 +77,7 @@ const Edit = () => {
     const [isLoadingCategory, setIsLoadingCategory] = useState(false)
     const [baseLatestVersion, setBaseLatestVersion] = useState<number>()
     const hasNewBaseVersion =
-        !!toolData && !!baseLatestVersion && baseLatestVersion > toolData.baseVersion
+        !!toolData && !!baseLatestVersion && baseLatestVersion > toolData.base.version
 
     useBeforeUnload(
         useCallback(
@@ -96,7 +98,7 @@ const Edit = () => {
                 centered: true,
                 maskClosable: true,
                 title: '更新',
-                content: `基板将从 ${formatToolBaseVersion(toolData!.baseVersion)} 更新到 ${formatToolBaseVersion(baseLatestVersion!)}`
+                content: `基板将从 ${formatToolBaseVersion(toolData!.base.version)} 更新到 ${formatToolBaseVersion(baseLatestVersion!)}`
             })
             .then(
                 (confirmed) => {
@@ -315,7 +317,7 @@ const Edit = () => {
             return
         }
 
-        r_tool_base_get_latest_version(toolData.baseId).then((res) => {
+        r_tool_base_get_latest_version(toolData.base.id).then((res) => {
             const response = res.data
             if (response.success) {
                 setBaseLatestVersion(response.data!)
@@ -323,7 +325,7 @@ const Edit = () => {
         })
 
         try {
-            processBaseDist(toolData.baseId, toolData.baseVersion, {}).then(({ toolBaseVo }) => {
+            processBaseDist(toolData.base.id, toolData.base.version, {}).then(({ toolBaseVo }) => {
                 setBaseDist(base64ToStr(toolBaseVo.dist.data!))
                 const files = base64ToFiles(toolData.source.data!)
                 init(files, false, toolData.entryPoint, toolData.entryPoint)
@@ -469,9 +471,12 @@ const Edit = () => {
                             onBack={() => navigateToRepository(navigate)}
                         >
                             <AntdSpace>
-                                <span>版本：{toolData?.ver}</span>
                                 <span>
-                                    基板：
+                                    <Text strong>版本：</Text>
+                                    {toolData?.ver}
+                                </span>
+                                <span>
+                                    <Text strong>基板：</Text>
                                     <AntdBadge dot={hasNewBaseVersion}>
                                         <AntdPopconfirm
                                             icon={<></>}
@@ -485,8 +490,11 @@ const Edit = () => {
                                             disabled={!hasNewBaseVersion}
                                             onConfirm={handleOnUpgradeBase}
                                         >
-                                            {toolData &&
-                                                formatToolBaseVersion(toolData?.baseVersion)}
+                                            <AntdSpace>
+                                                {toolData?.base.name}
+                                                {toolData &&
+                                                    formatToolBaseVersion(toolData?.base.version)}
+                                            </AntdSpace>
                                         </AntdPopconfirm>
                                     </AntdBadge>
                                 </span>

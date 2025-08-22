@@ -99,7 +99,7 @@ const StoreCard = ({
 
     const handleOnSourceBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        navigateToSource(navigate, author.username, toolId, platform)
+        navigateToSource(navigate, author.username, toolId, platform, undefined, '/store')
     }
 
     const handleOnStarBtnClick = (e: MouseEvent<HTMLDivElement>) => {
@@ -162,7 +162,7 @@ const StoreCard = ({
                             throw Error(response.msg)
                     }
                 })
-                .then((toolVo) => processBaseDist(toolVo.baseId, toolVo.baseVersion, { toolVo }))
+                .then((toolVo) => processBaseDist(toolVo.base.id, toolVo.base.version, { toolVo }))
                 .then(({ toolVo, toolBaseVo }) => {
                     newTools[platform] = { ...toolVo, base: toolBaseVo }
                     flags.push(true)

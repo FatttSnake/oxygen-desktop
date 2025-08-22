@@ -2,16 +2,21 @@ import useStyles from '@/assets/css/pages/tools/source.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { message } from '$/util/common'
 import { getLoginStatus } from '$/util/auth'
-import { navigateToRepository, navigateToSource } from '$/util/navigation'
-import { addExtraCssVariables } from '$/util/tool'
+import { navigateToRepository, navigateToSource, navigateToStore } from '$/util/navigation'
+import { addExtraCssVariables, formatToolBaseVersion } from '$/util/tool'
 import editorExtraLibs from '$/util/editorExtraLibs'
 import { r_tool_get_source } from '$/services/tool'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
+import LoadingMask from '$/components/LoadingMask'
+import FlexBox from '$/components/FlexBox'
 import Playground from '$/components/Playground'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
 import { base64ToFiles } from '$/components/Playground/files'
+import ToolBar from '@/components/tools/ToolBar'
+
+const { Text } = AntdTypography
 
 const Source = () => {
     const { styles } = useStyles()
@@ -22,7 +27,9 @@ const Source = () => {
         platform: import.meta.env.VITE_PLATFORM
     })
     const { init, tsconfig, files, selectedFileName, setSelectedFileName } = usePlaygroundState()
+    const [toolData, setToolData] = useState<ToolWithSourceVo>()
     const [isLoading, setIsLoading] = useState(false)
+    const fromPath = searchParams.get('from') ?? undefined
 
     const render = (toolVo: ToolWithSourceVo) => {
         try {
@@ -49,6 +56,7 @@ const Source = () => {
                 const response = res.data
                 switch (response.code) {
                     case DATABASE_SELECT_SUCCESS:
+                        setToolData(response.data!)
                         render(response.data!)
                         break
                     case DATABASE_NO_RECORD_FOUND:
@@ -77,11 +85,18 @@ const Source = () => {
             return
         }
         if (username !== '!' && ver) {
-            navigateToSource(navigate, username!, toolId!, platform as Platform)
+            navigateToSource(
+                navigate,
+                username!,
+                toolId!,
+                platform as Platform,
+                undefined,
+                fromPath
+            )
             return
         }
         if (username === '!' && !ver) {
-            navigateToSource(navigate, '!', toolId!, platform as Platform, 'latest')
+            navigateToSource(navigate, '!', toolId!, platform as Platform, 'latest', fromPath)
             return
         }
         getTool()
@@ -89,18 +104,43 @@ const Source = () => {
 
     return (
         <FitFullscreen className={styles.root}>
-            <Card className={styles.content}>
-                <Playground.CodeEditor
-                    isDarkMode={isDarkMode}
-                    tsconfig={tsconfig}
-                    files={files}
-                    selectedFileName={selectedFileName}
-                    readonly
-                    extraLibs={editorExtraLibs}
-                    onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                    onSelectedFileChange={setSelectedFileName}
-                />
-            </Card>
+            <LoadingMask hidden={!isLoading}>
+                <FlexBox className={styles.layout} direction={'vertical'}>
+                    <ToolBar
+                        title={toolData?.name}
+                        subtitle={
+                            <AntdTag color={'blue'}>
+                                {`${toolData?.platform.slice(0, 1)}${toolData?.platform.slice(1).toLowerCase()}`}
+                            </AntdTag>
+                        }
+                        onBack={() => (fromPath ? navigate(fromPath) : navigateToStore(navigate))}
+                    >
+                        <span>
+                            <Text strong>版本：</Text>
+                            {toolData && toolData.ver}
+                        </span>
+                        <span>
+                            <Text strong>基板：</Text>
+                            <AntdSpace>
+                                {toolData?.base.name}
+                                {toolData && formatToolBaseVersion(toolData?.base.version)}
+                            </AntdSpace>
+                        </span>
+                    </ToolBar>
+                    <Card>
+                        <Playground.CodeEditor
+                            isDarkMode={isDarkMode}
+                            tsconfig={tsconfig}
+                            files={files}
+                            selectedFileName={selectedFileName}
+                            readonly
+                            extraLibs={editorExtraLibs}
+                            onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
+                            onSelectedFileChange={setSelectedFileName}
+                        />
+                    </Card>
+                </FlexBox>
+            </LoadingMask>
         </FitFullscreen>
     )
 }
