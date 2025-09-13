@@ -26,10 +26,9 @@ const Code = () => {
     const { init, tsconfig, files, selectedFileName, setSelectedFileName } = usePlaygroundState()
     const [toolData, setToolData] = useState<ToolWithSourceVo>()
     const [isLoading, setIsLoading] = useState(false)
-    const [platform, setPlatform] = useState<Platform>('WEB')
 
     const handleOnRunTool = () => {
-        if (checkDesktop() || platform === 'WEB') {
+        if (checkDesktop() || toolData!.platform === 'WEB') {
             void modal.confirm({
                 centered: true,
                 maskClosable: true,
@@ -44,15 +43,6 @@ const Code = () => {
         }
     }
 
-    const render = (toolVo: ToolWithSourceVo) => {
-        try {
-            init(base64ToFiles(toolVo.source.data!), true, toolVo.entryPoint, toolVo.entryPoint)
-            setPlatform(toolVo.platform)
-        } catch (e) {
-            void message.error('载入工具失败')
-        }
-    }
-
     const getTool = () => {
         if (isLoading) {
             return
@@ -64,10 +54,21 @@ const Code = () => {
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
-                    case DATABASE_SELECT_SUCCESS:
-                        setToolData(response.data!)
-                        render(response.data!)
+                    case DATABASE_SELECT_SUCCESS: {
+                        const toolVo = response.data!
+                        setToolData(toolVo)
+                        try {
+                            init(
+                                base64ToFiles(toolVo.source.data!),
+                                true,
+                                toolVo.entryPoint,
+                                toolVo.entryPoint
+                            )
+                        } catch (e) {
+                            void message.error('载入工具失败')
+                        }
                         break
+                    }
                     case DATABASE_NO_RECORD_FOUND:
                         message.error('未找到指定工具').then(() => {
                             navigateToRepository(navigate)
