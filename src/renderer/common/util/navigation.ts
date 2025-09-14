@@ -80,14 +80,6 @@ export const navigateToRegister = (
     navigate(`/register/${locationSearch}`, options)
 }
 
-export const navigateToExecute = (
-    navigate: NavigateFunction,
-    toolId: string,
-    options?: NavigateOptions
-) => {
-    navigate(`/system/tools/execute/${toolId}`, options)
-}
-
 export const navigateToCode = (
     navigate: NavigateFunction,
     toolId: string,

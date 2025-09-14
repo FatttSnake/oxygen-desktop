@@ -56,14 +56,6 @@ const systemSettings: RouteJsonObject[] = [
                 titlePostfix: ' - 工具源码'
             },
             {
-                path: 'execute/:id',
-                absolutePath: '/system/tools/execute',
-                id: 'tools-system-tools-execute',
-                component: lazy(() => import('%/pages/system/Tools/Execute')),
-                operationCode: 'system:tool:query:tool',
-                titlePostfix: ' - 工具运行'
-            },
-            {
                 path: 'template',
                 absolutePath: '/system/tools/template',
                 id: 'tools-system-tools-template',

@@ -19,10 +19,10 @@ import { IImportMap } from '$/components/Playground/shared'
 import compiler from '$/components/Playground/compiler'
 
 const ToolLoader = () => {
-    const _theme = useTheme()
-    const { isDarkMode: _isDarkMode } = useContext(CommonContext)
-    const themeRef = useRef(_theme)
-    const isDarkModeRef = useRef(_isDarkMode)
+    const theme = useTheme()
+    const { isDarkMode } = useContext(CommonContext)
+    const themeRef = useRef(theme)
+    const isDarkModeRef = useRef(isDarkMode)
     const [isLoading, setIsLoading] = useState(false)
 
     const errorMessage = (viewId: string, content: string) => {
@@ -181,10 +181,10 @@ const ToolLoader = () => {
     }
 
     useEffect(() => {
-        themeRef.current = _theme
-        isDarkModeRef.current = _isDarkMode
+        themeRef.current = theme
+        isDarkModeRef.current = isDarkMode
         refreshGlobalVariables()
-    }, [_theme, _isDarkMode])
+    }, [theme, isDarkMode])
 
     useEffect(() => {
         oxygenApi.tool.view.onLoad(
