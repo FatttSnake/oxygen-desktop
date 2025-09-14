@@ -11,7 +11,12 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
 import useStyles from '@/assets/css/pages/tools-framework.style'
 import { tools } from '@/router/tools'
-import { navigateToView } from '$/util/navigation'
+import {
+    navigateToInstall,
+    navigateToRepository,
+    navigateToStore,
+    navigateToView
+} from '$/util/navigation'
 import { getToolMenuItem, saveToolMenuItem } from '$/util/tool'
 import FitFullscreen from '$/components/FitFullscreen'
 import Sidebar from '$/components/Sidebar'
@@ -136,19 +141,19 @@ const ToolsFramework = () => {
                                     icon={tools[0].icon}
                                     text={tools[0].name}
                                     active={location.pathname === '/store'}
-                                    onClick={() => navigate('/store')}
+                                    onClick={() => navigateToStore(navigate)}
                                 />
                                 <Sidebar.Item
                                     icon={tools[1].icon}
                                     text={tools[1].name}
                                     active={location.pathname === '/repository'}
-                                    onClick={() => navigate('/repository')}
+                                    onClick={() => navigateToRepository(navigate)}
                                 />
                                 <Sidebar.Item
                                     icon={tools[2].icon}
                                     text={tools[2].name}
                                     active={location.pathname === '/install'}
-                                    onClick={() => navigate('/install')}
+                                    onClick={() => navigateToInstall(navigate)}
                                 />
                             </Sidebar.ItemList>
                             <Sidebar.Separate />
