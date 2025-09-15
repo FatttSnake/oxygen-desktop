@@ -20,12 +20,12 @@ export const afterLoadFrame = (key: string) => {
         windowInfo.forEachViews(({ view }) => view.setVisible(true))
 
         const { width, height } = windowInfo.window.getContentBounds()
-        windowInfo.forEachViews(({ view }) => {
+        windowInfo.forEachViews(({ view, padding }) => {
             view.setBounds({
-                x: 0,
-                y: WindowConstants.TITLE_BAR_HEIGHT,
-                width: width,
-                height: height - WindowConstants.TITLE_BAR_HEIGHT
+                x: padding,
+                y: WindowConstants.TITLE_BAR_HEIGHT + padding,
+                width: width - padding * 2,
+                height: height - WindowConstants.TITLE_BAR_HEIGHT - padding * 2
             })
         })
     }
