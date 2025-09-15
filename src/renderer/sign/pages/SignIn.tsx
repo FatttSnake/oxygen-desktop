@@ -94,10 +94,10 @@ const SignIn = () => {
                                         : '无'
                                 }`
                             })
-                        })
-                        message.success('登录成功', 1).then(() => {
-                            void oxygenApi.window.tab.switch('coreView')
-                            oxygenApi.window.tab.close('signView')
+                            message.success('登录成功', 1).then(() => {
+                                void oxygenApi.window.tab.switch('coreView')
+                                oxygenApi.window.tab.close('signView')
+                            })
                         })
                         break
                     case PERMISSION_NEED_TWO_FACTOR:
