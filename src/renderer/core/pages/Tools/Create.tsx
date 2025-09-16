@@ -1,4 +1,7 @@
 import Icon from '@ant-design/icons'
+import logo from '$/assets/logo.svg?raw'
+import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
+import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '@/assets/css/pages/tools/create.style'
 import {
     DATABASE_DUPLICATE_KEY,
@@ -7,7 +10,12 @@ import {
 } from '$/constants/common.constants'
 import { message } from '$/util/common'
 import { navigateToEdit } from '$/util/navigation'
-import { generateThemeCssVariables, processBaseDist, removeUselessAttributes } from '$/util/tool'
+import {
+    convertObjToJsLiteral,
+    generateThemeCssVariables,
+    processBaseDist,
+    removeUselessAttributes
+} from '$/util/tool'
 import {
     r_tool_category_get,
     r_tool_create,
@@ -20,9 +28,10 @@ import Card from '$/components/Card'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
 import { IImportMap } from '$/components/Playground/shared'
-import Playground from '$/components/Playground'
 import compiler from '$/components/Playground/compiler'
 import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '$/components/Playground/files'
+
+const { Link } = AntdTypography
 
 const Create = () => {
     const { styles, theme } = useStyles()
@@ -30,6 +39,8 @@ const Create = () => {
     const navigate = useNavigate()
     const [form] = AntdForm.useForm<ToolCreateParam>()
     const formValues = AntdForm.useWatch([], form)
+    const themeRef = useRef(theme)
+    const isDarkModeRef = useRef(isDarkMode)
     const [templateData, setTemplateData] = useState<ToolTemplateVo[]>()
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
     const [templateDetailData, setTemplateDetailData] = useState<
@@ -38,8 +49,8 @@ const Create = () => {
     const [previewTemplate, setPreviewTemplate] = useState('')
     const [isLoadingTemplate, setIsLoadingTemplate] = useState(false)
     const [isLoadingCategory, setIsLoadingCategory] = useState(false)
+    const [isCompiling, setIsCompiling] = useState(false)
     const [isCreating, setIsCreating] = useState(false)
-    const [compiledCode, setCompiledCode] = useState('')
 
     const handleOnFinish = (toolAddParam: ToolCreateParam) => {
         setIsCreating(true)
@@ -136,33 +147,65 @@ const Create = () => {
             })
     }
 
-    useEffect(() => {
+    const handleOnPreview = () => {
         const template = templateDetailData[previewTemplate]
-        if (!template) {
+        if (isCompiling || !template) {
             return
         }
-        setCompiledCode('')
-        try {
-            processBaseDist(template.base.id, template.base.version, {}).then(({ toolBaseVo }) => {
-                const baseDist = base64ToStr(toolBaseVo.dist.data!)
-                const files = base64ToFiles(template.source.data!)
-                const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
+        setIsCompiling(true)
 
-                compiler
-                    .compile(files, importMap, template.entryPoint)
-                    .then((result) => {
-                        const output = result.outputFiles[0].text
-                        setCompiledCode(`(() => {${output}})();\n(() => {${baseDist}})();`)
-                    })
-                    .catch((reason) => {
-                        void message.error(`编译失败：${reason}`)
-                        setCompiledCode(baseDist)
-                    })
+        void message.loading({ content: '编译中……', key: 'LOADING', duration: 0 })
+        processBaseDist(template.base.id, template.base.version, { templateVo: template })
+            .then(({ templateVo, toolBaseVo }) =>
+                oxygenApi.window.tab
+                    .create('tool')
+                    .then((viewId) => ({ viewId, templateVo, toolBaseVo }))
+            )
+            .then(async ({ viewId, templateVo, toolBaseVo }) => {
+                const baseDist = base64ToStr(toolBaseVo.dist.data!)
+                const files = base64ToFiles(templateVo.source.data!)
+                const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
+                const result = await compiler.compile(files, importMap, templateVo.entryPoint)
+                return {
+                    viewId,
+                    templateVo,
+                    baseDist,
+                    dist: result.outputFiles[0].text
+                }
             })
-        } catch (e) {
-            void message.error(`载入模板 ${templateDetailData[previewTemplate].name} 失败`)
-        }
-    }, [templateDetailData, previewTemplate])
+            .then(({ viewId, templateVo, baseDist, dist }) => {
+                oxygenApi.window.tab.icon(viewId, `data:image/svg+xml;base64,${btoa(logo)}`)
+                oxygenApi.window.tab.title(viewId, `[预览] ${templateVo.name}`)
+
+                oxygenApi.tool.view.render(
+                    setupGlobalJsVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral({
+                            OxygenTheme: {
+                                ...removeUselessAttributes(themeRef.current),
+                                isDarkMode: isDarkModeRef.current
+                            }
+                        })
+                    ),
+                    viewId
+                )
+                oxygenApi.tool.view.render(
+                    setupGlobalCssVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
+                    ),
+                    viewId
+                )
+                oxygenApi.tool.view.render(`(() => {${dist}})();\n(() => {${baseDist}})();`, viewId)
+            })
+            .catch((reason) => {
+                reason && message.error(reason)
+            })
+            .finally(() => {
+                setIsCompiling(false)
+                message.destroy('LOADING')
+            })
+    }
 
     useEffect(() => {
         const temp: string[] = []
@@ -173,6 +216,11 @@ const Create = () => {
         })
         form.setFieldValue('keywords', temp)
     }, [form, formValues?.keywords])
+
+    useEffect(() => {
+        themeRef.current = theme
+        isDarkModeRef.current = isDarkMode
+    }, [theme, isDarkMode])
 
     useEffect(() => {
         setIsLoadingCategory(true)
@@ -194,206 +242,195 @@ const Create = () => {
 
     return (
         <FitFullscreen>
-            <FlexBox direction={'horizontal'} className={styles.root}>
-                <FlexBox>
-                    <Card className={styles.title}>
-                        <FlexBox>配置</FlexBox>
-                    </Card>
-                    <Card>
-                        <HideScrollbar>
-                            <div className={styles.config}>
-                                <AntdForm
-                                    form={form}
-                                    layout={'vertical'}
-                                    onFinish={handleOnFinish}
-                                    disabled={isCreating}
-                                >
-                                    <AntdForm.Item
-                                        label={'图标'}
-                                        name={'icon'}
-                                        rules={[
-                                            ({ getFieldValue }) => ({
-                                                validator() {
-                                                    if (!getFieldValue('icon')) {
-                                                        return Promise.reject(Error('请选择图标'))
-                                                    }
-                                                    return Promise.resolve()
+            <FlexBox className={styles.root}>
+                <Card className={styles.title}>
+                    <FlexBox>配置</FlexBox>
+                </Card>
+                <Card>
+                    <HideScrollbar>
+                        <div className={styles.config}>
+                            <AntdForm
+                                form={form}
+                                layout={'vertical'}
+                                onFinish={handleOnFinish}
+                                disabled={isCreating}
+                            >
+                                <AntdForm.Item
+                                    label={'图标'}
+                                    name={'icon'}
+                                    rules={[
+                                        ({ getFieldValue }) => ({
+                                            validator() {
+                                                if (!getFieldValue('icon')) {
+                                                    return Promise.reject(Error('请选择图标'))
                                                 }
-                                            })
-                                        ]}
-                                        getValueFromEvent={() => {}}
+                                                return Promise.resolve()
+                                            }
+                                        })
+                                    ]}
+                                    getValueFromEvent={() => {}}
+                                >
+                                    <AntdUpload
+                                        listType={'picture-card'}
+                                        showUploadList={false}
+                                        beforeUpload={handleOnIconBeforeUpload}
+                                        accept={'image/svg+xml'}
                                     >
-                                        <AntdUpload
-                                            listType={'picture-card'}
-                                            showUploadList={false}
-                                            beforeUpload={handleOnIconBeforeUpload}
-                                            accept={'image/svg+xml'}
-                                        >
-                                            {formValues?.icon ? (
-                                                <img
-                                                    src={`data:image/svg+xml;base64,${formValues.icon}`}
-                                                    alt={''}
-                                                    style={{ width: '100%' }}
-                                                />
-                                            ) : (
-                                                <Icon component={IconOxygenPlus} />
+                                        {formValues?.icon ? (
+                                            <img
+                                                src={`data:image/svg+xml;base64,${formValues.icon}`}
+                                                alt={''}
+                                                style={{ width: '100%' }}
+                                            />
+                                        ) : (
+                                            <Icon component={IconOxygenPlus} />
+                                        )}
+                                    </AntdUpload>
+                                </AntdForm.Item>
+                                <AntdForm.Item name={'icon'} hidden>
+                                    <AntdInput />
+                                </AntdForm.Item>
+                                <AntdForm.Item
+                                    label={'名称'}
+                                    name={'name'}
+                                    rules={[{ required: true, whitespace: true }]}
+                                >
+                                    <AntdInput
+                                        maxLength={20}
+                                        showCount
+                                        placeholder={'请输入名称'}
+                                    />
+                                </AntdForm.Item>
+                                <AntdForm.Item
+                                    label={'工具 ID'}
+                                    name={'toolId'}
+                                    rules={[
+                                        { required: true, whitespace: true },
+                                        {
+                                            pattern: /^[a-zA-Z-_][0-9a-zA-Z-_]{2,19}$/,
+                                            message:
+                                                '只能包含字母、数字、连字符和下划线，不能以数字开头'
+                                        }
+                                    ]}
+                                >
+                                    <AntdInput
+                                        maxLength={20}
+                                        showCount
+                                        placeholder={'请输入工具 ID'}
+                                    />
+                                </AntdForm.Item>
+                                <AntdForm.Item
+                                    label={'平台'}
+                                    name={'platform'}
+                                    rules={[{ required: true, whitespace: true }]}
+                                >
+                                    <AntdSelect
+                                        onChange={handleOnPlatformChange}
+                                        placeholder={'请选择平台'}
+                                    >
+                                        <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
+                                        <AntdSelect.Option key={'DESKTOP'}>
+                                            Desktop
+                                        </AntdSelect.Option>
+                                        <AntdSelect.Option key={'ANDROID'}>
+                                            Android
+                                        </AntdSelect.Option>
+                                    </AntdSelect>
+                                </AntdForm.Item>
+                                <AntdForm.Item label={'简介'} name={'description'}>
+                                    <AntdInput.TextArea
+                                        autoSize={{ minRows: 6, maxRows: 6 }}
+                                        maxLength={200}
+                                        showCount
+                                        placeholder={'请输入简介'}
+                                    />
+                                </AntdForm.Item>
+                                <AntdForm.Item
+                                    label={'版本'}
+                                    name={'ver'}
+                                    rules={[
+                                        { required: true, whitespace: true },
+                                        {
+                                            pattern: /^\d+\.\d+\.\d+$/,
+                                            message: `格式必须为 '<数字>.<数字>.<数字>', eg. 1.0.3`
+                                        }
+                                    ]}
+                                >
+                                    <AntdInput
+                                        maxLength={10}
+                                        showCount
+                                        placeholder={'请输入版本'}
+                                    />
+                                </AntdForm.Item>
+                                <AntdForm.Item
+                                    label={
+                                        <AntdSpace>
+                                            模板
+                                            {templateDetailData[previewTemplate] && (
+                                                <Link onClick={handleOnPreview}>
+                                                    <Icon component={IconOxygenExecute} />
+                                                    预览
+                                                </Link>
                                             )}
-                                        </AntdUpload>
-                                    </AntdForm.Item>
-                                    <AntdForm.Item name={'icon'} hidden>
-                                        <AntdInput />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item
-                                        label={'名称'}
-                                        name={'name'}
-                                        rules={[{ required: true, whitespace: true }]}
+                                        </AntdSpace>
+                                    }
+                                    name={'templateId'}
+                                    rules={[{ required: true, whitespace: true }]}
+                                >
+                                    <AntdSelect
+                                        options={templateData?.map((value) => ({
+                                            value: value.id,
+                                            label: value.name
+                                        }))}
+                                        loading={isLoadingTemplate}
+                                        disabled={isLoadingTemplate}
+                                        onChange={handleOnTemplateChange}
+                                        placeholder={'请选择模板'}
+                                    />
+                                </AntdForm.Item>
+                                <AntdForm.Item
+                                    label={'关键字'}
+                                    tooltip={'工具搜索（每个不超过10个字符）'}
+                                    name={'keywords'}
+                                    rules={[{ required: true }]}
+                                >
+                                    <AntdSelect
+                                        mode={'tags'}
+                                        maxCount={20}
+                                        placeholder={'请输入关键字'}
+                                    />
+                                </AntdForm.Item>
+                                <AntdForm.Item
+                                    label={'类别'}
+                                    tooltip={'工具分类'}
+                                    name={'categories'}
+                                    rules={[{ required: true }]}
+                                >
+                                    <AntdSelect
+                                        mode={'multiple'}
+                                        options={categoryData?.map((value) => ({
+                                            value: value.id,
+                                            label: value.name
+                                        }))}
+                                        loading={isLoadingCategory}
+                                        disabled={isLoadingCategory}
+                                        placeholder={'请选择类别'}
+                                    />
+                                </AntdForm.Item>
+                                <AntdForm.Item>
+                                    <AntdButton
+                                        className={styles.createBt}
+                                        type={'primary'}
+                                        htmlType={'submit'}
+                                        loading={isCreating}
                                     >
-                                        <AntdInput
-                                            maxLength={20}
-                                            showCount
-                                            placeholder={'请输入名称'}
-                                        />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item
-                                        label={'工具 ID'}
-                                        name={'toolId'}
-                                        rules={[
-                                            { required: true, whitespace: true },
-                                            {
-                                                pattern: /^[a-zA-Z-_][0-9a-zA-Z-_]{2,19}$/,
-                                                message:
-                                                    '只能包含字母、数字、连字符和下划线，不能以数字开头'
-                                            }
-                                        ]}
-                                    >
-                                        <AntdInput
-                                            maxLength={20}
-                                            showCount
-                                            placeholder={'请输入工具 ID'}
-                                        />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item
-                                        label={'平台'}
-                                        name={'platform'}
-                                        rules={[{ required: true, whitespace: true }]}
-                                    >
-                                        <AntdSelect
-                                            onChange={handleOnPlatformChange}
-                                            placeholder={'请选择平台'}
-                                        >
-                                            <AntdSelect.Option key={'WEB'}>Web</AntdSelect.Option>
-                                            <AntdSelect.Option key={'DESKTOP'}>
-                                                Desktop
-                                            </AntdSelect.Option>
-                                            <AntdSelect.Option key={'ANDROID'}>
-                                                Android
-                                            </AntdSelect.Option>
-                                        </AntdSelect>
-                                    </AntdForm.Item>
-                                    <AntdForm.Item label={'简介'} name={'description'}>
-                                        <AntdInput.TextArea
-                                            autoSize={{ minRows: 6, maxRows: 6 }}
-                                            maxLength={200}
-                                            showCount
-                                            placeholder={'请输入简介'}
-                                        />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item
-                                        label={'版本'}
-                                        name={'ver'}
-                                        rules={[
-                                            { required: true, whitespace: true },
-                                            {
-                                                pattern: /^\d+\.\d+\.\d+$/,
-                                                message: `格式必须为 '<数字>.<数字>.<数字>', eg. 1.0.3`
-                                            }
-                                        ]}
-                                    >
-                                        <AntdInput
-                                            maxLength={10}
-                                            showCount
-                                            placeholder={'请输入版本'}
-                                        />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item
-                                        label={'模板'}
-                                        name={'templateId'}
-                                        rules={[{ required: true, whitespace: true }]}
-                                    >
-                                        <AntdSelect
-                                            options={templateData?.map((value) => ({
-                                                value: value.id,
-                                                label: value.name
-                                            }))}
-                                            loading={isLoadingTemplate}
-                                            disabled={isLoadingTemplate}
-                                            onChange={handleOnTemplateChange}
-                                            placeholder={'请选择模板'}
-                                        />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item
-                                        label={'关键字'}
-                                        tooltip={'工具搜索（每个不超过10个字符）'}
-                                        name={'keywords'}
-                                        rules={[{ required: true }]}
-                                    >
-                                        <AntdSelect
-                                            mode={'tags'}
-                                            maxCount={20}
-                                            placeholder={'请输入关键字'}
-                                        />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item
-                                        label={'类别'}
-                                        tooltip={'工具分类'}
-                                        name={'categories'}
-                                        rules={[{ required: true }]}
-                                    >
-                                        <AntdSelect
-                                            mode={'multiple'}
-                                            options={categoryData?.map((value) => ({
-                                                value: value.id,
-                                                label: value.name
-                                            }))}
-                                            loading={isLoadingCategory}
-                                            disabled={isLoadingCategory}
-                                            placeholder={'请选择类别'}
-                                        />
-                                    </AntdForm.Item>
-                                    <AntdForm.Item>
-                                        <AntdButton
-                                            className={styles.createBt}
-                                            type={'primary'}
-                                            htmlType={'submit'}
-                                            loading={isCreating}
-                                        >
-                                            创建
-                                        </AntdButton>
-                                    </AntdForm.Item>
-                                </AntdForm>
-                            </div>
-                        </HideScrollbar>
-                    </Card>
-                </FlexBox>
-                <FlexBox>
-                    <Card className={styles.title}>
-                        <FlexBox>预览</FlexBox>
-                    </Card>
-                    <Card className={styles.preview}>
-                        {compiledCode ? (
-                            <Playground.Output.Preview.Render
-                                iframeKey={previewTemplate}
-                                compiledCode={compiledCode}
-                                globalJsVariables={{
-                                    OxygenTheme: { ...removeUselessAttributes(theme), isDarkMode }
-                                }}
-                                globalCssVariables={generateThemeCssVariables(theme).styles}
-                            />
-                        ) : (
-                            <span className={styles.noPreview}>暂无预览</span>
-                        )}
-                    </Card>
-                </FlexBox>
+                                        创建
+                                    </AntdButton>
+                                </AntdForm.Item>
+                            </AntdForm>
+                        </div>
+                    </HideScrollbar>
+                </Card>
             </FlexBox>
         </FitFullscreen>
     )

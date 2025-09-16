@@ -5,12 +5,7 @@ export default createStyles(({ token }) => ({
         padding: 20,
         gap: 20,
         height: '100%',
-        width: '100%',
-
-        '> *': {
-            gap: 10,
-            width: 0
-        }
+        width: '100%'
     },
 
     title: {
@@ -35,18 +30,5 @@ export default createStyles(({ token }) => ({
     createBt: {
         width: '100%',
         fontWeight: 'bold'
-    },
-
-    preview: {
-        display: 'flex',
-        position: 'relative',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-
-    noPreview: {
-        color: token.colorTextSecondary,
-        fontSize: token.fontSizeLG,
-        fontWeight: 'bolder'
     }
 }))

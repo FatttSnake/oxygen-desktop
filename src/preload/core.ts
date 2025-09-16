@@ -17,6 +17,11 @@ const IpcEvents = {
         },
         navigate: {
             goto: 'window:navigate:goto'
+        },
+        tab: {
+            create: 'window:tab:create',
+            icon: 'window:tab:icon',
+            title: 'window:tab:title'
         }
     },
     sidebar: {
@@ -47,7 +52,8 @@ const IpcEvents = {
     },
     tool: {
         view: {
-            load: 'tool:view:load'
+            load: 'tool:view:load',
+            render: 'tool:view:render'
         }
     }
 }
@@ -89,6 +95,14 @@ const oxygenApi = {
                     IpcEvents.window.navigate.goto,
                     listeners[IpcEvents.window.navigate.goto]
                 )
+        },
+        tab: {
+            create: (type: TabType, args?: Record<string, string | number | boolean>) =>
+                ipcRenderer.invoke(IpcEvents.window.tab.create, type, args),
+            icon: (key: string, icon: string) =>
+                ipcRenderer.send(IpcEvents.window.tab.icon, key, icon),
+            title: (key: string, title: string) =>
+                ipcRenderer.send(IpcEvents.window.tab.title, key, title)
         }
     },
     sidebar: {
@@ -196,7 +210,10 @@ const oxygenApi = {
                 ver?: string,
                 platform?: Platform,
                 source?: string
-            ) => ipcRenderer.send(IpcEvents.tool.view.load, username, toolId, ver, platform, source)
+            ) =>
+                ipcRenderer.send(IpcEvents.tool.view.load, username, toolId, ver, platform, source),
+            render: (dist: string, key?: string) =>
+                ipcRenderer.send(IpcEvents.tool.view.render, dist, key)
         }
     }
 }

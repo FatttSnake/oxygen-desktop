@@ -1,7 +1,7 @@
 import Icon from '@ant-design/icons'
-import useStyles from '%/assets/css/pages/system/tools/code.style'
 import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
 import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
+import useStyles from '%/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { message, modal, checkDesktop } from '$/util/common'
 import { navigateToRepository, navigateToTools } from '$/util/navigation'
