@@ -60,7 +60,7 @@ const Transform = ({ isDarkMode, file }: OutputProps) => {
     return (
         <div className={styles.root}>
             <MonacoEditor
-                key={file.name}
+                key={file.value}
                 theme={isDarkMode ? 'vitesse-dark' : 'vitesse-light'}
                 language={'javascript'}
                 value={compiledCode}
