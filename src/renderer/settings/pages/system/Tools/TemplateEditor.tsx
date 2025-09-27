@@ -1,4 +1,7 @@
 import Icon from '@ant-design/icons'
+import logo from '$/assets/logo.svg?raw'
+import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
+import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '%/assets/css/pages/system/tools/template-editor.style'
 import {
     DATABASE_NO_RECORD_FOUND,
@@ -9,6 +12,7 @@ import { checkDesktop, message, modal } from '$/util/common'
 import { navigateToToolTemplate } from '$/util/navigation'
 import {
     addExtraCssVariables,
+    convertObjToJsLiteral,
     formatToolBaseVersion,
     generateThemeCssVariables,
     processBaseDist,
@@ -29,6 +33,7 @@ import Card from '$/components/Card'
 import Playground from '$/components/Playground'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
 import { base64ToFiles, base64ToStr, filesToBase64 } from '$/components/Playground/files'
+import Compiler from '$/components/Playground/compiler'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -58,6 +63,8 @@ const TemplateEditor = () => {
         saveFiles,
         listenOnError
     } = usePlaygroundState()
+    const themeRef = useRef(theme)
+    const isDarkModeRef = useRef(isDarkMode)
     const [isLoading, setIsLoading] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
     const [toolTemplateData, setToolTemplateData] = useState<ToolTemplateWithSourceVo>()
@@ -67,6 +74,7 @@ const TemplateEditor = () => {
         !!toolTemplateData &&
         !!baseLatestVersion &&
         baseLatestVersion > toolTemplateData.base.version
+    const [previewViewId, setPreviewViewId] = useState<string>()
 
     useBeforeUnload(
         useCallback(
@@ -117,6 +125,14 @@ const TemplateEditor = () => {
                 },
                 () => {}
             )
+    }
+
+    const handleOnPreview = () => {
+        if (previewViewId) {
+            void oxygenApi.window.tab.switch(previewViewId)
+            return
+        }
+        oxygenApi.window.tab.create('tool').then(setPreviewViewId)
     }
 
     const handleOnSave = () => {
@@ -182,6 +198,51 @@ const TemplateEditor = () => {
     }
 
     useEffect(() => {
+        if (
+            !previewViewId ||
+            !Object.keys(files).length ||
+            !importMap ||
+            !entryPoint.length ||
+            !baseDist.length
+        ) {
+            return
+        }
+        Compiler.compile(files, importMap, entryPoint)
+            .then((result) => {
+                message.destroy('COMPILE')
+                const dist = result.outputFiles[0].text
+                oxygenApi.window.tab.icon(previewViewId, `data:image/svg+xml;base64,${btoa(logo)}`)
+                oxygenApi.window.tab.title(previewViewId, `[预览] ${toolTemplateData!.name}`)
+                oxygenApi.tool.view.render(
+                    setupGlobalJsVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral({
+                            OxygenTheme: {
+                                ...removeUselessAttributes(themeRef.current),
+                                isDarkMode: isDarkModeRef.current
+                            }
+                        })
+                    ),
+                    previewViewId
+                )
+                oxygenApi.tool.view.render(
+                    setupGlobalCssVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
+                    ),
+                    previewViewId
+                )
+                oxygenApi.tool.view.render(
+                    `(() => {${dist}})();\n(() => {${baseDist}})();`,
+                    previewViewId
+                )
+            })
+            .catch((reason: Error) => {
+                void message.error({ key: 'COMPILE', content: reason.message, duration: 0 })
+            })
+    }, [previewViewId, files, baseDist])
+
+    useEffect(() => {
         if (!toolTemplateData) {
             return
         }
@@ -214,6 +275,20 @@ const TemplateEditor = () => {
     useEffect(() => {
         getToolTemplate()
     }, [id])
+
+    useEffect(() => {
+        themeRef.current = theme
+        isDarkModeRef.current = isDarkMode
+    }, [theme, isDarkMode])
+
+    useEffect(() => {
+        oxygenApi.window.tab.onClosed((viewId) => {
+            setPreviewViewId((prevState) => (viewId === prevState ? undefined : prevState))
+        })
+        return () => {
+            oxygenApi.window.tab.offClosed()
+        }
+    }, [])
 
     return (
         <>
@@ -258,6 +333,15 @@ const TemplateEditor = () => {
                                 <AntdSpace>
                                     <AntdButton
                                         size={'small'}
+                                        type={'dashed'}
+                                        icon={<Icon component={IconOxygenExecute} />}
+                                        loading={isLoading || isSaving}
+                                        onClick={handleOnPreview}
+                                    >
+                                        预览
+                                    </AntdButton>
+                                    <AntdButton
+                                        size={'small'}
                                         type={'primary'}
                                         icon={<Icon component={IconOxygenSave} />}
                                         loading={isLoading || isSaving}
@@ -289,21 +373,11 @@ const TemplateEditor = () => {
                                         listenOnError={listenOnError}
                                     />
                                 </AntdSplitter.Panel>
-                                <AntdSplitter.Panel collapsible>
+                                <AntdSplitter.Panel collapsible defaultSize={0}>
                                     <Playground.Output
                                         isDarkMode={isDarkMode}
                                         files={files}
                                         selectedFileName={selectedFileName}
-                                        importMap={importMap}
-                                        entryPoint={entryPoint}
-                                        postExpansionCode={baseDist}
-                                        globalJsVariables={{
-                                            OxygenTheme: {
-                                                ...removeUselessAttributes(theme),
-                                                isDarkMode
-                                            }
-                                        }}
-                                        globalCssVariables={generateThemeCssVariables(theme).styles}
                                     />
                                 </AntdSplitter.Panel>
                             </AntdSplitter>

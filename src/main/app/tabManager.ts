@@ -181,6 +181,14 @@ const TabManager = {
                 newView.webContents.openDevTools()
             }
         })
+        newView.webContents.on('destroyed', () => {
+            mainWindow
+                .getView('coreView')
+                ?.view.webContents.send(IpcEvents.window.tab.closed, viewId)
+            mainWindow
+                .getView('settingsView')
+                ?.view.webContents.send(IpcEvents.window.tab.closed, viewId)
+        })
 
         // HMR for renderer base on electron-vite cli.
         // Load the remote URL for development or the local html file for production.
@@ -220,6 +228,10 @@ const TabManager = {
         handleUpdateTabs()
     },
     switchTab: (key: string): boolean => {
+        if (windowManager.windows.exists(key)) {
+            windowManager.windows.get(key)?.window.show()
+            return true
+        }
         if (!getMainWindowViews()?.some((item) => item.key === key)) {
             return false
         }

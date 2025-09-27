@@ -53,6 +53,8 @@ interface OxygenAPI {
             offSwitch: () => void
             switch: (key: string) => Promise<boolean>
             close: (key: string) => void
+            onClosed: (callback: (key: string) => void) => void
+            offClosed: () => void
             independent: (key: string) => void
             icon: (key: string, icon: string) => void
             title: (key: string, title: string) => void

@@ -1,41 +1,23 @@
 import useStyles from '$/assets/css/components/playground/output/index.style'
 import FlexBox from '$/components/FlexBox'
-import { IFiles, IImportMap } from '$/components/Playground/shared'
+import { IFiles } from '$/components/Playground/shared'
 import Playground from '$/components/Playground'
 import Transform from '$/components/Playground/Output/Transform'
-import Preview from '$/components/Playground/Output/Preview'
 
 interface OutputProps {
     isDarkMode?: boolean
     files: IFiles
     selectedFileName: string
-    importMap: IImportMap
-    entryPoint: string
-    preExpansionCode?: string
-    postExpansionCode?: string
-    globalJsVariables?: Record<string, unknown>
-    globalCssVariables?: string
 }
 
-const Output = ({
-    isDarkMode,
-    files,
-    selectedFileName,
-    importMap,
-    entryPoint,
-    preExpansionCode,
-    postExpansionCode,
-    globalJsVariables,
-    globalCssVariables
-}: OutputProps) => {
+const Output = ({ isDarkMode, files, selectedFileName }: OutputProps) => {
     const { styles } = useStyles()
-    const [selectedTab, setSelectedTab] = useState('Preview')
+    const [selectedTab, setSelectedTab] = useState('Transform')
 
     return (
         <FlexBox className={styles.root}>
             <Playground.CodeEditor.FileSelector
                 files={{
-                    Preview: { name: 'Preview', language: 'json', value: '' },
                     Transform: { name: 'Transform', language: 'json', value: '' }
                 }}
                 selectedFileName={selectedTab}
@@ -45,18 +27,6 @@ const Output = ({
                 }}
                 readonly
             />
-            {selectedTab === 'Preview' && (
-                <Preview
-                    iframeKey={JSON.stringify(importMap)}
-                    files={files}
-                    importMap={importMap}
-                    entryPoint={entryPoint}
-                    preExpansionCode={preExpansionCode}
-                    postExpansionCode={postExpansionCode}
-                    globalJsVariables={globalJsVariables}
-                    globalCssVariables={globalCssVariables}
-                />
-            )}
             {selectedTab === 'Transform' && (
                 <Transform isDarkMode={isDarkMode} file={files[selectedFileName]} />
             )}
@@ -64,7 +34,6 @@ const Output = ({
     )
 }
 
-Output.Preview = Preview
 Output.Transform = Transform
 
 export default Output

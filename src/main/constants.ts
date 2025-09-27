@@ -24,6 +24,7 @@ export const IpcEvents = {
             update: 'window:tab:update',
             switch: 'window:tab:switch',
             close: 'window:tab:close',
+            closed: 'window:tab:closed',
             independent: 'window:tab:independent',
             icon: 'window:tab:icon',
             title: 'window:tab:title'

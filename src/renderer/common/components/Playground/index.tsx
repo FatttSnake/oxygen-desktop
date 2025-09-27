@@ -21,8 +21,6 @@ const Playground = ({
     const {
         files,
         selectedFileName,
-        entryPoint,
-        importMap,
         tsconfig,
         setSelectedFileName,
         updateFileContent,
@@ -46,13 +44,7 @@ const Playground = ({
                 onRemoveFile={removeFile}
                 listenOnError={(listener) => listenOnError(() => listener)}
             />
-            <Output
-                isDarkMode={isDarkMode}
-                files={files}
-                selectedFileName={selectedFileName}
-                importMap={importMap}
-                entryPoint={entryPoint}
-            />
+            <Output isDarkMode={isDarkMode} files={files} selectedFileName={selectedFileName} />
         </FlexBox>
     )
 }
