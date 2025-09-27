@@ -12,6 +12,7 @@ export const usePlaygroundState = (
     initialFiles: IFiles = EMPTY_FILES,
     initialEntryPoint: string = ENTRY_FILE_NAME
 ) => {
+    const handleErrorRef = useRef<(message: string) => void>()
     const [files, setFiles] = useState<IFiles>(initialFiles)
     const [selectedFileName, setSelectedFileName] = useState<string>(MAIN_FILE_NAME)
     const [isReadonly, setIsReadonly] = useState<boolean>(false)
@@ -19,7 +20,6 @@ export const usePlaygroundState = (
     const [tsconfig, setTsconfig] = useState<ITsconfig>({ compilerOptions: {} })
     const [entryPoint, setEntryPoint] = useState(initialEntryPoint)
     const [hasEdited, setHasEdited] = useState(false)
-    const [onError, listenOnError] = useState<(message: string) => void>()
 
     const init = useCallback(
         (
@@ -61,17 +61,17 @@ export const usePlaygroundState = (
 
     const validateFileName = (fileName: string) => {
         if (files[fileName]) {
-            onError?.(`File "${fileName}" already exists`)
+            onError(`File "${fileName}" already exists`)
             return false
         }
 
         if (fileName.length > 40) {
-            onError?.('File name is too long, maximum 40 characters.')
+            onError('File name is too long, maximum 40 characters.')
             return false
         }
 
         if (!/\.(jsx|tsx|js|ts|css|json)$/.test(fileName)) {
-            onError?.('Playground only supports *.jsx, *.tsx, *.js, *.ts, *.css, *.json files.')
+            onError('Playground only supports *.jsx, *.tsx, *.js, *.ts, *.css, *.json files.')
             return false
         }
 
@@ -110,11 +110,11 @@ export const usePlaygroundState = (
             }
 
             if (!files[oldFileName]) {
-                onError?.(`Cannot rename file "${oldFileName}"`)
+                onError(`Cannot rename file "${oldFileName}"`)
                 return false
             }
             if (oldFileName === entryPoint) {
-                onError?.(`Cannot rename entry file "${oldFileName}"`)
+                onError(`Cannot rename entry file "${oldFileName}"`)
                 return false
             }
             if (!validateFileName(newFileName)) {
@@ -155,7 +155,7 @@ export const usePlaygroundState = (
                 return true
             }
             if (fileName === entryPoint) {
-                onError?.(`Cannot delete entry file "${fileName}"`)
+                onError(`Cannot delete entry file "${fileName}"`)
                 return false
             }
 
@@ -195,7 +195,7 @@ export const usePlaygroundState = (
     const setEntryPointSafe = useCallback(
         (newEntryPoint: string) => {
             if (!files[newEntryPoint]) {
-                onError?.(`File "${newEntryPoint}" does not exist`)
+                onError(`File "${newEntryPoint}" does not exist`)
                 return false
             }
 
@@ -207,6 +207,14 @@ export const usePlaygroundState = (
 
     const saveFiles = useCallback(() => {
         setHasEdited(false)
+    }, [])
+
+    const onError = useCallback((message: string) => {
+        handleErrorRef.current?.(message)
+    }, [])
+
+    const listenOnError = useCallback((callback: ((message: string) => void) | undefined) => {
+        handleErrorRef.current = callback
     }, [])
 
     useEffect(() => {
