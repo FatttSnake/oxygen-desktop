@@ -15,14 +15,6 @@ export default createStyles(({ token }) => ({
     },
 
     sortable: {
-        height: '100%',
-
-        '&.dnd-over-mask': {
-            '> div': {
-                background: 'transparent !important',
-                border: `1px dashed ${token.colorBorder}`,
-                color: token.colorBorder
-            }
-        }
+        height: '100%'
     }
 }))

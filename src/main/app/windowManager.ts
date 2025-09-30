@@ -51,6 +51,15 @@ export class WindowInfo {
         this.listViews().push(viewInfo)
     }
     public existsView = (key: string) => this.listViews().some((view) => view.key === key)
+    public sortViews = (keys: string[]) => {
+        this.setViews(
+            this.listViews().sort((a, b) => {
+                const indexA = keys.indexOf(a.key)
+                const indexB = keys.indexOf(b.key)
+                return indexA - indexB
+            })
+        )
+    }
     public clearViews = () => {
         this.forEachViews(({ key }) => {
             this.closeView(key)

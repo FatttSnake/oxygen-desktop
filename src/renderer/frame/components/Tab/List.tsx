@@ -1,7 +1,6 @@
 import {
     DndContext,
     DragOverEvent,
-    DragStartEvent,
     MouseSensor,
     TouchSensor,
     useSensor,
@@ -9,11 +8,11 @@ import {
 } from '@dnd-kit/core'
 import { DragEndEvent } from '@dnd-kit/core/dist/types'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
+import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
 import useStyles from '#/assets/css/components/tab/list.style'
 import HideScrollbar from '$/components/HideScrollbar'
 import Droppable from '$/components/dnd/Droppable'
 import Sortable from '$/components/dnd/Sortable'
-import DraggableOverlay from '$/components/dnd/DraggableOverlay'
 import Item from '#/components/Tab/Item'
 import Separate from '#/components/Tab/Separate'
 
@@ -36,7 +35,6 @@ const List = ({
 }: TabListProps) => {
     const { styles } = useStyles()
     const [independentItem, setIndependentItem] = useState<string>()
-    const [activeItem, setActiveItem] = useState<TabInstance>()
     const sensors = useSensors(
         useSensor(MouseSensor, {
             activationConstraint: {
@@ -50,10 +48,6 @@ const List = ({
             }
         })
     )
-
-    const handleOnDragStart = ({ active }: DragStartEvent) => {
-        setActiveItem(active.data.current as TabInstance)
-    }
 
     const handleOnDragOver = ({ active, over }: DragOverEvent) => {
         setIndependentItem(over === null ? (active.id as string) : undefined)
@@ -70,12 +64,10 @@ const List = ({
             onIndependentTab?.(active.data.current as TabInstance)
         }
 
-        setActiveItem(undefined)
         setIndependentItem(undefined)
     }
 
     const handleOnDragCancel = () => {
-        setActiveItem(undefined)
         setIndependentItem(undefined)
     }
 
@@ -88,35 +80,35 @@ const List = ({
     return (
         <HideScrollbar isShowVerticalScrollbar={false}>
             <div className={styles.root}>
+                <Separate key={'-'} />
+                {tabs
+                    .filter(({ pin }) => pin)
+                    ?.map((tab) => (
+                        <>
+                            <Item
+                                key={tab.key}
+                                icon={tab.icon}
+                                persistent={tab.persistent}
+                                active={tab.key === activeTab}
+                                onClick={() => {
+                                    onActiveTabChange?.(tab)
+                                }}
+                                onClose={() => {
+                                    onTabClose?.(tab)
+                                }}
+                            >
+                                {tab.title}
+                            </Item>
+                            <Separate key={`${tab.key}-`} />
+                        </>
+                    ))}
                 <DndContext
                     sensors={sensors}
-                    onDragStart={handleOnDragStart}
                     onDragOver={handleOnDragOver}
                     onDragEnd={handleOnDragEnd}
                     onDragCancel={handleOnDragCancel}
+                    modifiers={[restrictToHorizontalAxis]}
                 >
-                    <Separate key={'-'} />
-                    {tabs
-                        .filter(({ pin }) => pin)
-                        ?.map((tab) => (
-                            <>
-                                <Item
-                                    key={tab.key}
-                                    icon={tab.icon}
-                                    persistent={tab.persistent}
-                                    active={tab.key === activeTab}
-                                    onClick={() => {
-                                        onActiveTabChange?.(tab)
-                                    }}
-                                    onClose={() => {
-                                        onTabClose?.(tab)
-                                    }}
-                                >
-                                    {tab.title}
-                                </Item>
-                                <Separate key={`${tab.key}-`} />
-                            </>
-                        ))}
                     <Droppable key={'tab'} id={'tab'} className={styles.droppable}>
                         <SortableContext
                             items={tabs.filter(({ pin }) => !pin).map((tab) => tab.key)}
@@ -151,9 +143,6 @@ const List = ({
                                     </>
                                 ))}
                         </SortableContext>
-                        <DraggableOverlay>
-                            {activeItem && <Item>{activeItem.title}</Item>}
-                        </DraggableOverlay>
                     </Droppable>
                 </DndContext>
             </div>

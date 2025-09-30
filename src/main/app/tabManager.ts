@@ -220,11 +220,17 @@ const TabManager = {
                 }) as Tab
         ) ?? [],
     updateTab: (tabs: Tab[]) => {
-        getMainWindowViews()?.forEach(({ key }) => {
+        const mainWindow = getMainWindow()
+        if (!mainWindow) {
+            return
+        }
+
+        mainWindow.listViews().forEach(({ key }) => {
             if (!tabs.some((tab) => tab.key === key)) {
                 getMainWindow()?.closeView(key)
             }
         })
+        mainWindow.sortViews(tabs.map((tab) => tab.key))
         handleUpdateTabs()
     },
     switchTab: (key: string): boolean => {
