@@ -7,14 +7,6 @@ export default createStyles(({ token }) => ({
         height: 16,
         marginTop: token.paddingXS,
         marginLeft: -1,
-        backgroundColor: token.colorBorder,
-
-        ':has(+ :hover)': {
-            opacity: 0
-        },
-
-        ':has(+ .active)': {
-            opacity: 0
-        }
+        backgroundColor: token.colorBorder
     }
 }))

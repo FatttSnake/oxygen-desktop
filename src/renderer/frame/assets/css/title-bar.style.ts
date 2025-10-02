@@ -73,7 +73,7 @@ export default createStyles(({ token }) => ({
             top: 0,
             height: '100%',
             width: token.sizeSM,
-            zIndex: token.zIndexPopupBase * 2
+            zIndex: 1e7
         },
 
         '::before': {

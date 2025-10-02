@@ -186,7 +186,7 @@ const ToolsFramework = () => {
                                                             ver,
                                                             platform
                                                         }}
-                                                        isOver={
+                                                        isOutOfOver={
                                                             deleteItem ===
                                                             `${authorUsername}:${toolId}:${ver}:${platform}`
                                                         }

@@ -2,19 +2,19 @@ import {
     DndContext,
     DragOverEvent,
     MouseSensor,
+    pointerWithin,
     TouchSensor,
     useSensor,
     useSensors
 } from '@dnd-kit/core'
 import { DragEndEvent } from '@dnd-kit/core/dist/types'
-import { arrayMove, SortableContext } from '@dnd-kit/sortable'
+import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToHorizontalAxis } from '@dnd-kit/modifiers'
 import useStyles from '#/assets/css/components/tab/list.style'
 import HideScrollbar from '$/components/HideScrollbar'
 import Droppable from '$/components/dnd/Droppable'
 import Sortable from '$/components/dnd/Sortable'
 import Item from '#/components/Tab/Item'
-import Separate from '#/components/Tab/Separate'
 
 interface TabListProps {
     tabs: TabInstance[]
@@ -34,7 +34,6 @@ const List = ({
     onIndependentTab
 }: TabListProps) => {
     const { styles } = useStyles()
-    const [independentItem, setIndependentItem] = useState<string>()
     const sensors = useSensors(
         useSensor(MouseSensor, {
             activationConstraint: {
@@ -48,6 +47,7 @@ const List = ({
             }
         })
     )
+    const [independentItem, setIndependentItem] = useState<string>()
 
     const handleOnDragOver = ({ active, over }: DragOverEvent) => {
         setIndependentItem(over === null ? (active.id as string) : undefined)
@@ -80,7 +80,6 @@ const List = ({
     return (
         <HideScrollbar isShowVerticalScrollbar={false}>
             <div className={styles.root}>
-                <Separate key={'-'} />
                 {tabs
                     .filter(({ pin }) => pin)
                     ?.map((tab) => (
@@ -99,7 +98,6 @@ const List = ({
                             >
                                 {tab.title}
                             </Item>
-                            <Separate key={`${tab.key}-`} />
                         </>
                     ))}
                 <DndContext
@@ -108,10 +106,12 @@ const List = ({
                     onDragEnd={handleOnDragEnd}
                     onDragCancel={handleOnDragCancel}
                     modifiers={[restrictToHorizontalAxis]}
+                    collisionDetection={pointerWithin}
                 >
                     <Droppable key={'tab'} id={'tab'} className={styles.droppable}>
                         <SortableContext
                             items={tabs.filter(({ pin }) => !pin).map((tab) => tab.key)}
+                            strategy={horizontalListSortingStrategy}
                         >
                             {tabs
                                 .filter(({ pin }) => !pin)
@@ -121,8 +121,11 @@ const List = ({
                                             key={tab.key}
                                             id={tab.key}
                                             data={tab}
-                                            isOver={independentItem === tab.key}
+                                            isOutOfOver={independentItem === tab.key}
                                             className={styles.sortable}
+                                            style={
+                                                tab.key === activeTab ? { zIndex: 1e5 } : undefined
+                                            }
                                             removeTabIndex
                                         >
                                             <Item
@@ -139,7 +142,6 @@ const List = ({
                                                 {tab.title}
                                             </Item>
                                         </Sortable>
-                                        <Separate key={`${tab.key}-`} />
                                     </>
                                 ))}
                         </SortableContext>

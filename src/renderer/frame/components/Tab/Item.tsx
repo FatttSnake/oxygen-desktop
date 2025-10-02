@@ -21,29 +21,33 @@ const Item = ({
     const { styles, cx } = useStyles()
 
     return (
-        <div
-            className={cx(
-                styles.root,
-                active ? styles.active : undefined,
-                active ? 'active' : undefined
-            )}
-            onClick={onClick}
-        >
-            <div className={styles.icon}>
-                {icon ? (
-                    <div className={'img'} style={{ maskImage: `url(${icon})` }} />
-                ) : (
-                    <Icon component={IconOxygenLoading} spin />
+        <>
+            <div
+                className={cx(
+                    styles.root,
+                    active ? styles.active : undefined,
+                    active ? 'active' : undefined
                 )}
-            </div>
-            <span className={styles.title}>{children}</span>
-
-            {!persistent && (
-                <div className={styles.close} onClick={onClose}>
-                    <Icon component={IconOxygenClose} />
+                onClick={onClick}
+            >
+                <div className={styles.separateLeft} />
+                <div className={styles.icon}>
+                    {icon ? (
+                        <div className={'img'} style={{ maskImage: `url(${icon})` }} />
+                    ) : (
+                        <Icon component={IconOxygenLoading} spin />
+                    )}
                 </div>
-            )}
-        </div>
+                <span className={styles.title}>{children}</span>
+
+                {!persistent && (
+                    <div className={styles.close} onClick={onClose}>
+                        <Icon component={IconOxygenClose} />
+                    </div>
+                )}
+                <div className={styles.separateRight} />
+            </div>
+        </>
     )
 }
 

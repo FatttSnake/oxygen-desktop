@@ -20,6 +20,25 @@ export default createStyles(({ cx, css, token }) => {
         }
     `)
 
+    const separateLeft = cx(css`
+        position: absolute;
+        width: 1px;
+        min-width: 1px;
+        height: 16px;
+        left: 0;
+        background-color: ${token.colorBorder};
+    `)
+
+    const separateRight = cx(css`
+        position: absolute;
+        width: 1px;
+        min-width: 1px;
+        height: 16px;
+        left: 100%;
+        margin-left: -1px;
+        background-color: ${token.colorBorder};
+    `)
+
     return {
         root: {
             display: 'flex',
@@ -32,7 +51,6 @@ export default createStyles(({ cx, css, token }) => {
             gap: token.sizeXS,
             borderRadius: `${token.borderRadius}px ${token.borderRadius}px 0 0`,
             backgroundColor: 'transparent',
-            transition: '0.2s',
             '-webkit-app-region': 'no-drag',
 
             '::before, ::after': {
@@ -42,8 +60,7 @@ export default createStyles(({ cx, css, token }) => {
                 width: 16,
                 height: 16,
                 borderRadius: '100%',
-                boxShadow: '0 0 0 3px transparent',
-                transition: '0.2s'
+                boxShadow: '0 0 0 3px transparent'
             },
 
             '::before': {
@@ -58,36 +75,45 @@ export default createStyles(({ cx, css, token }) => {
 
             ':hover': css`
                 background-color: ${rgbaBlackToHex(token.colorBgTextHover)};
+                z-index: 1;
 
                 ::before,
                 ::after {
                     box-shadow: 0 0 0 3px ${rgbaBlackToHex(token.colorBgTextHover)};
                 }
 
-                + div {
+                .${close} {
+                    opacity: 1;
+                }
+
+                .${separateLeft} {
                     opacity: 0;
                 }
 
-                .${close} {
-                    opacity: 1;
+                .${separateRight} {
+                    opacity: 0;
                 }
             `
         },
 
         active: {
             backgroundColor: `${token.colorBgLayout} !important`,
-            zIndex: token.zIndexPopupBase,
+            zIndex: 1,
 
             '::before, ::after': {
                 boxShadow: `0 0 0 3px ${token.colorBgLayout} !important`
             },
 
-            '+ div': {
+            [`.${close}`]: {
+                opacity: 1
+            },
+
+            [`.${separateLeft}`]: {
                 opacity: 0
             },
 
-            [`.${close}`]: {
-                opacity: 1
+            [`.${separateRight}`]: {
+                opacity: 0
             }
         },
 
@@ -108,6 +134,10 @@ export default createStyles(({ cx, css, token }) => {
             whiteSpace: 'nowrap'
         },
 
-        close
+        close,
+
+        separateLeft,
+
+        separateRight
     }
 })
