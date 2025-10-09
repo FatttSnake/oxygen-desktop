@@ -1,6 +1,7 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
 import { getAvatar, getLoginStatus, getNickname, getVerifyStatus } from '$/util/auth'
+import { HideScrollbarElement } from '$/components/HideScrollbar'
 import Tab from '#/components/Tab'
 
 interface TitleBarProps {
@@ -10,12 +11,12 @@ interface TitleBarProps {
 const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
     const { styles, cx, theme } = useStyles()
     const { x } = navigator.windowControlsOverlay!.getTitlebarAreaRect()
+    const tabListRef = useRef<HideScrollbarElement>(null)
     const [isCollapse, setIsCollapse] = useState(false)
     const [activeTab, setActiveTab] = useState<string>()
     const [isLogin, setIsLogin] = useState(getLoginStatus)
     const [nickname, setNickname] = useState('')
     const [avatar, setAvatar] = useState('')
-
     const [tabs, setTabs] = useState<TabInstance[]>([])
 
     const handleOnClickExpand = () => {
@@ -71,7 +72,14 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
         oxygenApi.sidebar.collapse.get().then((value) => setIsCollapse(value))
         oxygenApi.window.tab.list().then((tabs) => setTabs(tabs))
         oxygenApi.window.tab.onUpdate((tabs) => {
-            setTabs(tabs)
+            setTabs((prevState) => {
+                if (tabs.length > prevState.length) {
+                    setTimeout(() => {
+                        tabListRef.current?.scrollX(1e16)
+                    }, 500)
+                }
+                return tabs
+            })
         })
         oxygenApi.window.tab.onSwitch((key) => setActiveTab(key))
         if (!tabs.some(({ key }) => key === 'coreView')) {
@@ -114,6 +122,7 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
                 </div>
                 <div className={styles.tabs}>
                     <Tab.List
+                        ref={tabListRef}
                         tabs={tabs}
                         activeTab={activeTab}
                         onActiveTabChange={handleOnActiveTabChange}
