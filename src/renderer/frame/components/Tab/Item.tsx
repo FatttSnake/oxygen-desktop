@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react'
+import { MouseEvent, PropsWithChildren } from 'react'
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/components/tab/item.style'
 
@@ -19,6 +19,11 @@ const Item = ({
     onClose
 }: PropsWithChildren<TabItemProps>) => {
     const { styles, cx } = useStyles()
+
+    const handleOnClose = (e: MouseEvent) => {
+        e.stopPropagation()
+        onClose && onClose()
+    }
 
     return (
         <>
@@ -41,7 +46,7 @@ const Item = ({
                 <span className={styles.title}>{children}</span>
 
                 {!persistent && (
-                    <div className={styles.close} onClick={onClose}>
+                    <div className={styles.close} onClick={handleOnClose}>
                         <Icon component={IconOxygenClose} />
                     </div>
                 )}

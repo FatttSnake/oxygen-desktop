@@ -29,6 +29,12 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
     }
 
     const handleOnTabClose = (tab: TabInstance) => {
+        if (activeTab === tab.key) {
+            const tabIndex = tabs.findIndex(({ key }) => key === tab.key)
+            if (tabIndex > 0) {
+                void oxygenApi.window.tab.switch(tabs[tabIndex - 1].key)
+            }
+        }
         oxygenApi.window.tab.close(tab.key)
     }
 
