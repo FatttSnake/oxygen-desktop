@@ -21,6 +21,7 @@ const IpcEvents = {
         tab: {
             create: 'window:tab:create',
             switch: 'window:tab:switch',
+            close: 'window:tab:close',
             closed: 'window:tab:closed',
             icon: 'window:tab:icon',
             title: 'window:tab:title'
@@ -103,6 +104,7 @@ const oxygenApi = {
                 ipcRenderer.invoke(IpcEvents.window.tab.create, type, args),
             switch: (key: string): Promise<boolean> =>
                 ipcRenderer.invoke(IpcEvents.window.tab.switch, key),
+            close: (key: string) => ipcRenderer.send(IpcEvents.window.tab.close, key),
             onClosed: (callback: (value: string) => void) => {
                 listeners[IpcEvents.window.tab.closed] = (_, value: string) => callback(value)
                 ipcRenderer.on(IpcEvents.window.tab.closed, listeners[IpcEvents.window.tab.closed])

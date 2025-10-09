@@ -73,6 +73,7 @@ const Edit = () => {
     } = usePlaygroundState()
     const themeRef = useRef(theme)
     const isDarkModeRef = useRef(isDarkMode)
+    const previewViewIdRef = useRef<string>()
     const [isLoading, setIsLoading] = useState(false)
     const [toolData, setToolData] = useState<ToolWithSourceVo>()
     const [baseDist, setBaseDist] = useState('')
@@ -424,11 +425,17 @@ const Edit = () => {
     }, [theme, isDarkMode])
 
     useEffect(() => {
+        previewViewIdRef.current = previewViewId
+    }, [previewViewId])
+
+    useEffect(() => {
         oxygenApi.window.tab.onClosed((viewId) => {
             setPreviewViewId((prevState) => (viewId === prevState ? undefined : prevState))
         })
         return () => {
             oxygenApi.window.tab.offClosed()
+            const previewViewId = previewViewIdRef.current
+            previewViewId && oxygenApi.window.tab.close(previewViewId)
         }
     }, [])
 

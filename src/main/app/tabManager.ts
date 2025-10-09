@@ -251,6 +251,12 @@ const TabManager = {
         return true
     },
     removeTab: (key: string) => {
+        const window = windowManager.windows.get(key)
+        if (window) {
+            window.window.close()
+            return
+        }
+
         getMainWindow()?.closeView(key)
         handleUpdateTabs()
     },
