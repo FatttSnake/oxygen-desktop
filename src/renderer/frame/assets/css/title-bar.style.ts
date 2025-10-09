@@ -52,6 +52,15 @@ export default createStyles(({ token }) => ({
         }
     },
 
+    icon: {
+        width: token.sizeLG,
+        height: token.sizeLG
+    },
+
+    title: {
+        fontSize: token.fontSize
+    },
+
     expandIcon: {
         transform: 'rotateZ(180deg)',
         transition: 'all 0.3s'

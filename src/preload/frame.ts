@@ -10,11 +10,15 @@ const getArgv = (key: string) => {
 const windowType = getArgv('windowType')
 const windowId = getArgv('windowId')
 const viewId = getArgv('viewId')
+const windowIcon = getArgv('windowIcon')
+const windowTitle = getArgv('windowTitle')
 
 const IpcEvents = {
     window: {
         common: {
-            afterLoad: 'window:common:afterLoad'
+            afterLoad: 'window:common:afterLoad',
+            icon: 'window:common:icon',
+            title: 'window:common:title'
         },
         theme: {
             get: 'window:theme:get',
@@ -79,10 +83,36 @@ const oxygenApi = {
     windowType,
     windowId,
     viewId,
+    windowIcon,
+    windowTitle,
 
     window: {
         common: {
-            afterLoad: () => ipcRenderer.send(IpcEvents.window.common.afterLoad, windowId)
+            afterLoad: () => ipcRenderer.send(IpcEvents.window.common.afterLoad, windowId),
+            onIcon: (callback: (icon: string) => void) => {
+                listeners[IpcEvents.window.common.icon] = (_, icon: string) => callback(icon)
+                ipcRenderer.on(
+                    IpcEvents.window.common.icon,
+                    listeners[IpcEvents.window.common.icon]
+                )
+            },
+            offIcon: () =>
+                ipcRenderer.off(
+                    IpcEvents.window.common.icon,
+                    listeners[IpcEvents.window.common.icon]
+                ),
+            onTitle: (callback: (title: string) => void) => {
+                listeners[IpcEvents.window.common.title] = (_, title: string) => callback(title)
+                ipcRenderer.on(
+                    IpcEvents.window.common.title,
+                    listeners[IpcEvents.window.common.title]
+                )
+            },
+            offTitle: () =>
+                ipcRenderer.off(
+                    IpcEvents.window.common.title,
+                    listeners[IpcEvents.window.common.title]
+                )
         },
         theme: {
             get: (): Promise<WindowTheme> => ipcRenderer.invoke(IpcEvents.window.theme.get),

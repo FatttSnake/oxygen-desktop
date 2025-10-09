@@ -5,6 +5,7 @@ import { kebabCase } from 'lodash'
 import { is } from '@electron-toolkit/utils'
 import { IpcEvents, WindowConstants } from '#/constants'
 import windowManager from '#/app/windowManager'
+import { svgToNativeImage } from '#/util/asset'
 
 const getMainWindow = () => windowManager.getMainWindow()
 const getMainWindowViews = () => getMainWindow()?.listViews()
@@ -267,6 +268,13 @@ const TabManager = {
         windowManager.windows.get(key)?.addView(targetView)
     },
     updateTabIcon: (key: string, icon: string) => {
+        const window = windowManager.windows.get(key)
+        if (window) {
+            window.window.setIcon(svgToNativeImage(icon))
+            window.window.webContents.send(IpcEvents.window.common.icon, icon)
+            return
+        }
+
         const view = getMainWindow()?.getView(key)
         if (!view) {
             return
@@ -275,6 +283,13 @@ const TabManager = {
         handleUpdateTabs()
     },
     updateTabTitle: (key: string, title: string) => {
+        const window = windowManager.windows.get(key)
+        if (window) {
+            window.window.setTitle(title)
+            window.window.webContents.send(IpcEvents.window.common.title, title)
+            return
+        }
+
         const view = getMainWindow()?.getView(key)
         if (!view) {
             return

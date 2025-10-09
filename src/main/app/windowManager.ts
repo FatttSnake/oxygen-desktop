@@ -151,7 +151,9 @@ const WindowManager = {
                 additionalArguments: [
                     `--window-type=${type}`,
                     `--window-id=${key}`,
-                    '--view-id=frameView'
+                    '--view-id=frameView',
+                    icon ? `--window-icon=${icon}` : '',
+                    title ? `--window-title=${title}` : ''
                 ]
             }
         })

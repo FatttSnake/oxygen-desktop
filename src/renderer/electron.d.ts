@@ -18,6 +18,8 @@ interface OxygenAPI {
     renderer: Renderer
     windowType: WindowType
     viewId: string
+    windowIcon?: string
+    windowTitle?: string
     navigateTo?: string
     app: {
         url: {
@@ -30,6 +32,10 @@ interface OxygenAPI {
     window: {
         common: {
             afterLoad: () => void
+            onIcon: (callback: (icon: string) => void) => void
+            offIcon: () => void
+            onTitle: (callback: (title: string) => void) => void
+            offTitle: () => void
         }
         theme: {
             get: () => Promise<WindowTheme>
