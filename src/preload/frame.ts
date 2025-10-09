@@ -281,6 +281,14 @@ const oxygenApi = {
     },
     tool: {
         view: {
+            load: (
+                username: string,
+                toolId: string,
+                ver?: string,
+                platform?: Platform,
+                source?: string
+            ) =>
+                ipcRenderer.send(IpcEvents.tool.view.load, username, toolId, ver, platform, source),
             onLoad: (
                 callback: (
                     username: string,

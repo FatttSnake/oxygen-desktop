@@ -1,12 +1,19 @@
 import { getToolMenuItem } from '$/util/tool'
+import { navigateToView } from '$/util/navigation'
 import Sidebar from '$/components/Sidebar'
 
 const ToolMenu = () => {
     const [toolMenuItem, setToolMenuItem] = useState<ToolMenuItem[]>(getToolMenuItem)
 
-    const handleOnClick = (menuItem: ToolMenuItem) => {
+    const handleOnClick = ({ authorUsername, toolId, platform, ver }: ToolMenuItem) => {
         return () => {
-            console.log(menuItem)
+            navigateToView(
+                authorUsername,
+                toolId,
+                platform,
+                ver === 'local' ? '' : ver,
+                ver === 'local'
+            )
         }
     }
 
