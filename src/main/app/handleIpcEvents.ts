@@ -3,6 +3,7 @@ import { IpcEvents } from '#/constants'
 import TabManager from '#/app/tabManager'
 import {
     afterLoadFrame,
+    closeWindow,
     getAccessToken,
     getAppVersion,
     getLoginAccount,
@@ -29,6 +30,8 @@ export default () => {
     ipcMain.on(IpcEvents.app.url.open, (_, url: string) => openUrlWithDefaultApp(url))
 
     ipcMain.handle(IpcEvents.app.version.get, getAppVersion)
+
+    ipcMain.on(IpcEvents.window.common.close, (_, key: string) => closeWindow(key))
 
     ipcMain.on(IpcEvents.window.common.afterLoad, (_, key: string) => afterLoadFrame(key))
 

@@ -12,10 +12,12 @@ const windowId = getArgv('windowId')
 const viewId = getArgv('viewId')
 const windowIcon = getArgv('windowIcon')
 const windowTitle = getArgv('windowTitle')
+const toolInfo = getArgv('toolInfo')
 
 const IpcEvents = {
     window: {
         common: {
+            close: 'window:common:close',
             afterLoad: 'window:common:afterLoad',
             icon: 'window:common:icon',
             title: 'window:common:title'
@@ -85,9 +87,11 @@ const oxygenApi = {
     viewId,
     windowIcon,
     windowTitle,
+    toolInfo,
 
     window: {
         common: {
+            close: (key: string) => ipcRenderer.send(IpcEvents.window.common.close, key),
             afterLoad: () => ipcRenderer.send(IpcEvents.window.common.afterLoad, windowId),
             onIcon: (callback: (icon: string) => void) => {
                 listeners[IpcEvents.window.common.icon] = (_, icon: string) => callback(icon)

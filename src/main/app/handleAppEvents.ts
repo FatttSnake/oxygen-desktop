@@ -2,6 +2,7 @@ import path from 'node:path'
 import { app, BrowserWindow } from 'electron'
 import { optimizer } from '@electron-toolkit/utils'
 import WindowManager from '#/app/windowManager'
+import { loadTool } from '#/app/services'
 
 const handleProtocol = () => {
     // Register protocol client
@@ -9,38 +10,59 @@ const handleProtocol = () => {
     if (!app.isPackaged) {
         args.push(path.resolve(process.argv[1]))
     }
-    args.push('--')
+    // Debug Use
+    // args.push('--inspect-brk', '--sourcemap')
     app.setAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
     // app.removeAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
 
     const handleUrl = (url: string) => {
-        const { hostname } = new URL(url)
-        if (hostname === 'openurl' && WindowManager.existsMainWindow()) {
-            // mainView.webContents.send(IpcEvents.mainView.url.open, pathname)
-            WindowManager.showMainWindow()
+        try {
+            const { hostname, pathname } = new URL(url)
+            switch (hostname) {
+                case 'open-tool': {
+                    const toolInfo: ToolInfo = JSON.parse(atob(pathname.slice(1)))
+                    const { username, toolId, platform, version } = toolInfo
+                    if (WindowManager.existsMainWindow()) {
+                        WindowManager.showMainWindow()
+                        loadTool(username, toolId, version, platform)
+                    } else {
+                        WindowManager.createIndependentWindow(toolInfo)
+                    }
+                }
+            }
+        } catch (_) {
+            /* empty */
         }
     }
 
-    // macOS
-    app.on('open-url', (_, argv) => {
-        handleUrl(argv)
-    })
-
-    // Windows
     const handleArgv = (argv: string[]) => {
         const prefix = `${import.meta.env.VITE_DESKTOP_PROTOCOL}:`
         const offset = app.isPackaged ? 1 : 2
         const url = argv.find((arg, index) => index >= offset && arg.startsWith(prefix))
         if (url) {
             handleUrl(url)
+        } else {
+            if (WindowManager.existsMainWindow()) {
+                WindowManager.showMainWindow()
+            } else {
+                WindowManager.createMainWindow()
+            }
         }
     }
-    handleArgv(process.argv)
+
+    // macOS
+    app.on('open-url', (_, url) => {
+        handleUrl(url)
+    })
+
+    // Windows
     app.on('second-instance', (_, argv) => {
         if (process.platform === 'win32') {
             handleArgv(argv)
         }
     })
+
+    handleArgv(process.argv)
 }
 
 export default () => {

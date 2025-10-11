@@ -24,6 +24,8 @@ const ToolLoader = () => {
     const themeRef = useRef(theme)
     const isDarkModeRef = useRef(isDarkMode)
     const [isLoading, setIsLoading] = useState(false)
+    const isCompiled = useRef(false)
+    const isMainWindow = oxygenApi.windowType === 'main'
 
     const errorMessage = (viewId: string, content: string) => {
         message
@@ -33,12 +35,19 @@ const ToolLoader = () => {
             })
             .then(() => {
                 setTimeout(() => {
-                    oxygenApi.window.tab.close(viewId)
+                    if (isMainWindow) {
+                        oxygenApi.window.tab.close(viewId)
+                    } else {
+                        oxygenApi.window.common.close(viewId)
+                    }
                 }, 300)
             })
     }
 
     const refreshGlobalVariables = (key?: string) => {
+        if (!isCompiled.current) {
+            return
+        }
         oxygenApi.tool.view.render(
             setupGlobalJsVariablesCode.replace(
                 "'${replace_with_code}'",
@@ -67,6 +76,7 @@ const ToolLoader = () => {
         dist: string,
         baseDist: string
     ) => {
+        isCompiled.current = true
         oxygenApi.window.tab.icon(viewId, icon)
         oxygenApi.window.tab.title(viewId, title)
         refreshGlobalVariables(viewId)
@@ -171,8 +181,8 @@ const ToolLoader = () => {
             .then(({ toolVo, toolBaseVo }) => {
                 compile(viewId, toolVo, toolBaseVo, username === '!')
             })
-            .catch((reason) => {
-                reason && errorMessage(viewId, reason)
+            .catch((reason: Error) => {
+                reason && errorMessage(viewId, reason.message)
             })
             .finally(() => {
                 setIsLoading(false)
@@ -183,41 +193,69 @@ const ToolLoader = () => {
     useEffect(() => {
         themeRef.current = theme
         isDarkModeRef.current = isDarkMode
-        refreshGlobalVariables()
+        refreshGlobalVariables(isMainWindow ? undefined : oxygenApi.windowId)
     }, [theme, isDarkMode])
 
-    useEffect(() => {
-        oxygenApi.tool.view.onLoad(
-            (
-                username,
-                toolId,
-                ver = 'latest',
-                platform = import.meta.env.VITE_PLATFORM,
-                source
-            ) => {
-                if (isLoading) {
-                    return
-                }
-                setIsLoading(true)
+    useEffect(
+        isMainWindow
+            ? () => {
+                  oxygenApi.tool.view.onLoad(
+                      (
+                          username,
+                          toolId,
+                          ver = 'latest',
+                          platform = import.meta.env.VITE_PLATFORM,
+                          source
+                      ) => {
+                          if (isLoading) {
+                              return
+                          }
+                          setIsLoading(true)
 
-                oxygenApi.window.tab.create('tool').then((viewId) => {
-                    if (!['WEB', 'DESKTOP'].includes(platform)) {
-                        errorMessage(viewId, `不支持的平台：${platform}`)
-                        return
-                    }
-                    if (username === '!' && !getLoginStatus()) {
-                        errorMessage(viewId, '未登录')
-                        return
-                    }
-                    username && toolId && loadTool(viewId, username, toolId, ver, platform, source)
-                })
-            }
-        )
+                          oxygenApi.window.tab.create('tool').then((viewId) => {
+                              if (!['WEB', 'DESKTOP'].includes(platform)) {
+                                  errorMessage(viewId, `不支持的平台：${platform}`)
+                                  return
+                              }
+                              if (username === '!' && !getLoginStatus()) {
+                                  errorMessage(viewId, '未登录')
+                                  return
+                              }
+                              username &&
+                                  toolId &&
+                                  loadTool(viewId, username, toolId, ver, platform, source)
+                          })
+                      }
+                  )
 
-        return () => {
-            oxygenApi.tool.view.offLoad()
-        }
-    }, [])
+                  return () => {
+                      oxygenApi.tool.view.offLoad()
+                  }
+              }
+            : () => {
+                  if (!oxygenApi.toolInfo) {
+                      isCompiled.current = true
+                      return
+                  }
+                  if (isLoading) {
+                      return
+                  }
+                  setIsLoading(true)
+
+                  try {
+                      const {
+                          username,
+                          toolId,
+                          platform,
+                          version = 'latest'
+                      }: ToolInfo = JSON.parse(atob(oxygenApi.toolInfo))
+                      loadTool(oxygenApi.windowId!, username, toolId, version, platform)
+                  } catch (_) {
+                      errorMessage(oxygenApi.windowId!, '解析工具信息失败')
+                  }
+              },
+        []
+    )
 
     return <></>
 }

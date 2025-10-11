@@ -125,3 +125,10 @@ interface StoreSchema {
     account_refreshToken?: string
     account_userInfo?: UserWithPowerInfoVo
 }
+
+interface ToolInfo {
+    username: string
+    toolId: string
+    platform: Platform
+    version?: string
+}

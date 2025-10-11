@@ -9,6 +9,7 @@ export const IpcEvents = {
     },
     window: {
         common: {
+            close: 'window:common:close',
             afterLoad: 'window:common:afterLoad',
             icon: 'window:common:icon',
             title: 'window:common:title'

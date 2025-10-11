@@ -7,6 +7,10 @@ export const openUrlWithDefaultApp = shell.openExternal
 
 export const getAppVersion = app.getVersion
 
+export const closeWindow = (key: string) => {
+    WindowManager.windows.get(key)?.window.close()
+}
+
 export const afterLoadFrame = (key: string) => {
     const windowInfo = WindowManager.windows.get(key)
     if (!windowInfo) {
@@ -164,10 +168,8 @@ export const renderTool = (dist: string, key?: string) =>
         ? WindowManager.windows.forEach((windowInfo) => {
               windowInfo.getView(key)?.view.webContents.executeJavaScript(dist)
           })
-        : WindowManager.windows.forEach((windowInfo) => {
-              windowInfo.forEachViews(({ type, view }) => {
-                  if (type === 'tool') {
-                      void view.webContents.executeJavaScript(dist)
-                  }
-              })
+        : WindowManager.getMainWindow()?.forEachViews(({ type, view }) => {
+              if (type === 'tool') {
+                  void view.webContents.executeJavaScript(dist)
+              }
           })

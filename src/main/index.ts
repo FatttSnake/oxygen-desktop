@@ -3,7 +3,6 @@ import fs from 'fs'
 import url from 'node:url'
 import { app, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
-import WindowManager from '#/app/windowManager'
 import handleAppEvents from '#/app/handleAppEvents'
 import handleIpcEvents from '#/app/handleIpcEvents'
 
@@ -11,8 +10,6 @@ import handleIpcEvents from '#/app/handleIpcEvents'
 if (!app.requestSingleInstanceLock()) {
     app.quit()
 }
-
-handleAppEvents()
 
 protocol.registerSchemesAsPrivileged([
     {
@@ -55,5 +52,5 @@ app.whenReady().then(() => {
     electronApp.setAppUserModelId('top.fatweb')
 
     handleIpcEvents()
-    WindowManager.createMainWindow()
+    handleAppEvents()
 })

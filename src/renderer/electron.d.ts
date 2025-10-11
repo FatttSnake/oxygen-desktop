@@ -11,16 +11,18 @@ type Renderer = 'frame' | 'core' | 'settings' | 'sign' | 'tool'
 
 type TabType = 'core' | 'settings' | 'sign' | 'tool'
 
-type WindowType = 'main' | 'message' | 'independent'
+type WindowType = 'main' | 'independent'
 
 interface OxygenAPI {
     platform: NodeJS.Platform
     renderer: Renderer
-    windowType: WindowType
+    windowType?: WindowType
+    windowId?: string
     viewId: string
     windowIcon?: string
     windowTitle?: string
     navigateTo?: string
+    toolInfo?: string
     app: {
         url: {
             open: (url: string) => void
@@ -31,6 +33,7 @@ interface OxygenAPI {
     }
     window: {
         common: {
+            close: (key: string) => void
             afterLoad: () => void
             onIcon: (callback: (icon: string) => void) => void
             offIcon: () => void

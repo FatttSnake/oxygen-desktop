@@ -1,10 +1,11 @@
 import { join } from 'path'
-import { BrowserWindow, nativeTheme, shell, WebContents } from 'electron'
+import { BrowserWindow, nativeTheme, shell, WebContents, WebContentsView } from 'electron'
 import { is } from '@electron-toolkit/utils'
 import appIcon from '^/build/icon.ico?asset'
 import { settings } from '#/dataStore'
 import { WindowConstants } from '#/constants'
 import { svgToNativeImage } from '#/util/asset'
+import { randomUUID } from 'node:crypto'
 
 const getGlobalObject = (): SharedObject => global.sharedObject
 const setGlobalObject = (newGlobalObject: SharedObject) => (global.sharedObject = newGlobalObject)
@@ -128,7 +129,8 @@ const WindowManager = {
         key: string,
         type: WindowType,
         icon?: string,
-        title = WindowConstants.DEFAULT_TITLE
+        title = WindowConstants.DEFAULT_TITLE,
+        toolInfo?: ToolInfo
     ) => {
         const { width, height } = settings.window.getBounds()
         const newWindow = new BrowserWindow({
@@ -153,7 +155,8 @@ const WindowManager = {
                     `--window-id=${key}`,
                     '--view-id=frameView',
                     icon ? `--window-icon=${icon}` : '',
-                    title ? `--window-title=${title}` : ''
+                    title ? `--window-title=${title}` : '',
+                    toolInfo ? `--tool-info=${btoa(JSON.stringify(toolInfo))}` : ''
                 ]
             }
         })
@@ -219,7 +222,10 @@ const WindowManager = {
                 `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
             )
         }
-        WindowManager.windows.add(new WindowInfo(key, type, newWindow))
+        const windowInfo = new WindowInfo(key, type, newWindow)
+        WindowManager.windows.add(windowInfo)
+
+        return windowInfo
     },
 
     getMainWindow: () => WindowManager.windows.get('mainWindow'),
@@ -231,6 +237,58 @@ const WindowManager = {
     },
     showMainWindow: () => {
         WindowManager.getMainWindow()?.window.show()
+    },
+    createIndependentWindow: (toolInfo: ToolInfo) => {
+        const viewId = randomUUID()
+        const { width, height } = settings.window.getBounds()
+        const preload = 'tool.js'
+        const menuWidth = WindowManager.menuWidth.get()
+        const padding = 20
+
+        const windowInfo = WindowManager.createWindow(
+            viewId,
+            'independent',
+            undefined,
+            undefined,
+            toolInfo
+        )
+
+        const newView = new WebContentsView({
+            webPreferences: {
+                preload: join(__dirname, `../preload/${preload}`),
+                additionalArguments: [`--view-id=${viewId}`]
+            }
+        })
+        newView.setBounds({
+            x: menuWidth + padding,
+            y: WindowConstants.TITLE_BAR_HEIGHT + padding,
+            width: width - menuWidth - padding * 2,
+            height: height - WindowConstants.TITLE_BAR_HEIGHT - padding * 2
+        })
+        newView.setBackgroundColor('rgba(0, 0, 0, 0)')
+        newView.webContents.setWindowOpenHandler((details) => {
+            void shell.openExternal(details.url)
+            return { action: 'deny' }
+        })
+        newView.webContents.on('did-finish-load', () => {
+            if (is.dev) {
+                newView.webContents.openDevTools()
+            }
+        })
+
+        // HMR for renderer base on electron-vite cli.
+        // Load the remote URL for development or the local html file for production.
+        if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+            void newView.webContents.loadURL(process.env['ELECTRON_RENDERER_URL'])
+        } else {
+            // void mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+            void newView.webContents.loadURL(
+                `local://oxygen.fatweb.top/${join(__dirname, '../renderer/index.html')}`
+            )
+        }
+
+        windowInfo.window.contentView.addChildView(newView)
+        windowInfo.addView({ key: viewId, type: 'tool', view: newView, padding, title: '' })
     }
 }
 
