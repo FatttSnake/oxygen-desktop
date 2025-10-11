@@ -388,3 +388,7 @@ export const formatToolBaseVersion = (version: number) =>
               .toString(16)
               .toUpperCase()}`
         : '草稿'
+
+export const generateDesktopProtocolUrl = (toolInfo: ToolInfo) => {
+    return `${import.meta.env.VITE_DESKTOP_PROTOCOL}://open-tool/${btoa(JSON.stringify(toolInfo))}`
+}

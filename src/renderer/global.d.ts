@@ -724,6 +724,13 @@ interface ToolMenuItem {
     platform: Platform
 }
 
+interface ToolInfo {
+    username: string
+    toolId: string
+    platform: Platform
+    version?: string
+}
+
 interface LocalToolVo extends ToolWithDistVo {
     base: ToolBaseWithDistVo
 }

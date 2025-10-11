@@ -7,13 +7,13 @@ import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { message, modal, checkDesktop, omitTextByByte } from '$/util/common'
 import { getLoginStatus, getUserId } from '$/util/auth'
 import { getAndroidUrl, navigateToSource, navigateToStore, navigateToView } from '$/util/navigation'
+import { generateDesktopProtocolUrl, processBaseDist } from '$/util/tool'
 import { r_tool_add_favorite, r_tool_get_dist, r_tool_remove_favorite } from '$/services/tool'
 import { n_tool_get, n_tool_install } from '$/services/native'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import DragHandle from '$/components/dnd/DragHandle'
 import Draggable from '$/components/dnd/Draggable'
-import { processBaseDist } from '$/util/tool.ts'
 
 interface StoreCardProps extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
     icon: string
@@ -212,7 +212,11 @@ const StoreCard = ({
         if (!checkDesktop()) {
             void message.loading({ content: '启动桌面端中……', key: 'LOADING', duration: 0 })
             protocolCheck(
-                `${import.meta.env.VITE_DESKTOP_PROTOCOL}://openurl/view/${author.username}/${toolId}`,
+                generateDesktopProtocolUrl({
+                    username: author.username,
+                    toolId,
+                    platform
+                }),
                 () => {
                     void message.warning('打开失败,此应用需要桌面端环境,请安装桌面端后重试')
                     void message.destroy('LOADING')
