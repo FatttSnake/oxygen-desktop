@@ -4,55 +4,66 @@ import { optimizer } from '@electron-toolkit/utils'
 import WindowManager from '#/app/windowManager'
 import { loadTool } from '#/app/services'
 
-const handleProtocol = () => {
-    // Register protocol client
-    const args: string[] = []
-    if (!app.isPackaged) {
-        args.push(path.resolve(process.argv[1]))
-    }
-    // Debug Use
-    // args.push('--inspect-brk', '--sourcemap')
-    app.setAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
-    // app.removeAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL, process.execPath, args)
+let isLoadingUrl = false
 
-    const handleUrl = (url: string) => {
-        try {
-            const { hostname, pathname } = new URL(url)
-            switch (hostname) {
-                case 'open-tool': {
-                    const toolInfo: ToolInfo = JSON.parse(atob(pathname.slice(1)))
-                    const { username, toolId, platform, version } = toolInfo
-                    if (WindowManager.existsMainWindow()) {
-                        WindowManager.showMainWindow()
-                        loadTool(username, toolId, version, platform)
-                    } else {
-                        WindowManager.createIndependentWindow(toolInfo)
-                    }
+const handleUrl = (url: string) => {
+    try {
+        const { hostname, pathname } = new URL(url)
+        switch (hostname) {
+            case 'open-tool': {
+                const toolInfo: ToolInfo = JSON.parse(atob(pathname.slice(1)))
+                const { username, toolId, platform, version } = toolInfo
+                if (WindowManager.existsMainWindow()) {
+                    WindowManager.showMainWindow()
+                    loadTool(username, toolId, version, platform)
+                } else {
+                    WindowManager.createIndependentWindow(toolInfo)
                 }
             }
-        } catch (_) {
-            /* empty */
+        }
+    } catch (reason) {
+        /* empty */
+    }
+}
+
+const handleArgv = (argv: string[]) => {
+    const prefix = `${import.meta.env.VITE_DESKTOP_PROTOCOL}:`
+    const offset = app.isPackaged ? 1 : 2
+    const url = argv.find((arg, index) => index >= offset && arg.startsWith(prefix))
+    if (url) {
+        handleUrl(url)
+    } else {
+        if (WindowManager.existsMainWindow()) {
+            WindowManager.showMainWindow()
+        } else {
+            WindowManager.createMainWindow()
         }
     }
+}
 
-    const handleArgv = (argv: string[]) => {
-        const prefix = `${import.meta.env.VITE_DESKTOP_PROTOCOL}:`
-        const offset = app.isPackaged ? 1 : 2
-        const url = argv.find((arg, index) => index >= offset && arg.startsWith(prefix))
-        if (url) {
-            handleUrl(url)
-        } else {
-            if (WindowManager.existsMainWindow()) {
-                WindowManager.showMainWindow()
-            } else {
-                WindowManager.createMainWindow()
-            }
-        }
+const handleProtocol = () => {
+    // Register protocol client
+    if (!app.isPackaged) {
+        const args: string[] = []
+        args.push(path.resolve(process.argv[1]))
+        // Debug Use
+        // args.push('--inspect-brk', '--sourcemap')
+        app.setAsDefaultProtocolClient(
+            import.meta.env.VITE_DESKTOP_PROTOCOL,
+            process.execPath,
+            args
+        )
+    } else {
+        app.setAsDefaultProtocolClient(import.meta.env.VITE_DESKTOP_PROTOCOL)
     }
 
     // macOS
     app.on('open-url', (_, url) => {
-        handleUrl(url)
+        isLoadingUrl = true
+        app.whenReady().then(() => {
+            handleUrl(url)
+            isLoadingUrl = false
+        })
     })
 
     // Windows
@@ -61,6 +72,12 @@ const handleProtocol = () => {
             handleArgv(argv)
         }
     })
+}
+
+export const initializeApplication = () => {
+    if (isLoadingUrl) {
+        return
+    }
 
     handleArgv(process.argv)
 }

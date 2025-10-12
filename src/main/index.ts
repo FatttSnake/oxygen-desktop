@@ -3,7 +3,7 @@ import fs from 'fs'
 import url from 'node:url'
 import { app, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
-import handleAppEvents from '#/app/handleAppEvents'
+import handleAppEvents, { initializeApplication } from '#/app/handleAppEvents'
 import handleIpcEvents from '#/app/handleIpcEvents'
 
 // Application singleton execution
@@ -21,6 +21,8 @@ protocol.registerSchemesAsPrivileged([
         }
     }
 ])
+
+handleAppEvents()
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
@@ -52,5 +54,6 @@ app.whenReady().then(() => {
     electronApp.setAppUserModelId('top.fatweb')
 
     handleIpcEvents()
-    handleAppEvents()
+
+    initializeApplication()
 })
