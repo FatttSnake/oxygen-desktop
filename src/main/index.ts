@@ -4,7 +4,6 @@ import url from 'node:url'
 import { app, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
 import handleAppEvents, { initializeApplication } from '#/app/handleAppEvents'
-import handleIpcEvents from '#/app/handleIpcEvents'
 
 // Application singleton execution
 if (!app.requestSingleInstanceLock()) {
@@ -52,8 +51,6 @@ app.whenReady().then(() => {
 
     // Set app user model id for windows
     electronApp.setAppUserModelId('top.fatweb')
-
-    handleIpcEvents()
 
     initializeApplication()
 })

@@ -236,7 +236,16 @@ const WindowManager = {
         }
     },
     showMainWindow: () => {
-        WindowManager.getMainWindow()?.window.show()
+        const mainWindow = WindowManager.getMainWindow()?.window
+        if (!mainWindow) {
+            return
+        }
+
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore()
+        } else {
+            mainWindow.focus()
+        }
     },
     createIndependentWindow: (toolInfo: ToolInfo) => {
         const viewId = randomUUID()

@@ -3,6 +3,8 @@ import { app, BrowserWindow } from 'electron'
 import { optimizer } from '@electron-toolkit/utils'
 import WindowManager from '#/app/windowManager'
 import { loadTool } from '#/app/services'
+import handleIpcEvents from '#/app/handleIpcEvents'
+import handleAppMenu from '#/app/handleAppMenu'
 
 let isLoadingUrl = false
 
@@ -75,11 +77,12 @@ const handleProtocol = () => {
 }
 
 export const initializeApplication = () => {
-    if (isLoadingUrl) {
-        return
-    }
+    handleIpcEvents()
+    handleAppMenu()
 
-    handleArgv(process.argv)
+    if (!isLoadingUrl) {
+        handleArgv(process.argv)
+    }
 }
 
 export default () => {

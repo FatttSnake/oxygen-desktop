@@ -236,7 +236,12 @@ const TabManager = {
     },
     switchTab: (key: string): boolean => {
         if (windowManager.windows.exists(key)) {
-            windowManager.windows.get(key)?.window.show()
+            const targetWindow = windowManager.windows.get(key)!.window
+            if (targetWindow.isMinimized()) {
+                targetWindow.restore()
+            } else {
+                targetWindow.restore()
+            }
             return true
         }
         if (!getMainWindowViews()?.some((item) => item.key === key)) {
