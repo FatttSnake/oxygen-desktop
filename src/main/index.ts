@@ -3,7 +3,10 @@ import fs from 'fs'
 import url from 'node:url'
 import { app, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
+import { WindowConstants } from '#/constants'
 import handleAppEvents, { initializeApplication } from '#/app/handleAppEvents'
+
+app.setName(WindowConstants.APPLICATION_NAME)
 
 // Application singleton execution
 if (!app.requestSingleInstanceLock()) {

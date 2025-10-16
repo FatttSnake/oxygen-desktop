@@ -80,6 +80,6 @@ export const IpcEvents = {
 export const WindowConstants = {
     WINDOW_MIN_WIDTH: 600,
     WINDOW_MIN_HEIGHT: 400,
-    DEFAULT_TITLE: 'Oxygen Toolbox',
+    APPLICATION_NAME: 'Oxygen Toolbox',
     TITLE_BAR_HEIGHT: 40
 }

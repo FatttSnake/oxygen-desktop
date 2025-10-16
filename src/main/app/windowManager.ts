@@ -129,7 +129,7 @@ const WindowManager = {
         key: string,
         type: WindowType,
         icon?: string,
-        title = WindowConstants.DEFAULT_TITLE,
+        title = WindowConstants.APPLICATION_NAME,
         toolInfo?: ToolInfo
     ) => {
         const { width, height } = settings.window.getBounds()
