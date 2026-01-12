@@ -178,6 +178,9 @@ const WindowManager = {
         })
         newWindow.on('resize', () => {
             const { width, height } = newWindow.getContentBounds()
+            if (!width || !height) {
+                return
+            }
             const menuWidth = (() => {
                 switch (type) {
                     case 'main':
@@ -197,6 +200,9 @@ const WindowManager = {
         })
         newWindow.on('resized', () => {
             const { width, height } = newWindow.getBounds()
+            if (!width || !height) {
+                return
+            }
             settings.window.saveBounds({ width, height })
         })
         newWindow.on('maximize', () => settings.window.saveIsMaximize(true))
