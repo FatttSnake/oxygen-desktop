@@ -372,7 +372,12 @@ const Edit = () => {
                 )
             })
             .catch((reason: Error) => {
-                void message.error({ key: 'COMPILE', content: reason.message, duration: 0 })
+                void message.error({
+                    key: 'COMPILE',
+                    content: reason.message,
+                    duration: 0,
+                    style: { maxWidth: 400, margin: '0 auto' }
+                })
             })
     }, [previewViewId, files, baseDist])
 
