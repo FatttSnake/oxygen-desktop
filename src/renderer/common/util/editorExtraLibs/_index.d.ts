@@ -1,9 +1,9 @@
 interface Window {
     /**
-     * Initialization tool.\
-     * This method must be implemented to run the tool.
+     * Initialization app.\
+     * This method must be implemented to run the app.
      */
-    initOxygenTool: (id: string) => void
+    initOxygenApp: (id: string) => void
 }
 
 /**
