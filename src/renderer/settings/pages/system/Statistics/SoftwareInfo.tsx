@@ -28,28 +28,28 @@ const SoftwareInfo = () => {
         >
             <FlexBox className={styles.content} direction={'horizontal'}>
                 <FlexBox className={styles.key}>
+                    <div>客 户 端</div>
+                    <div>后端服务</div>
                     <div>操作系统</div>
-                    <div>位数</div>
                     <div>Java</div>
                     <div>Java 供应商</div>
-                    <div>Runtime</div>
                     <div>JVM</div>
                     <div>JVM 供应商</div>
                     <div>操作系统启动时间</div>
-                    <div>后端服务器启动时间</div>
+                    <div>后端服务启动时间</div>
                 </FlexBox>
                 <FlexBox className={styles.value}>
-                    <div title={softwareInfoData?.os}>{softwareInfoData?.os}</div>
-                    <div title={softwareInfoData?.bitness.toString()}>
-                        {softwareInfoData?.bitness}
+                    <div title={__APP_VERSION__}>{__APP_VERSION__}</div>
+                    <div title={softwareInfoData?.serviceVersion}>
+                        {softwareInfoData?.serviceVersion}
+                    </div>
+                    <div title={`${softwareInfoData?.os} (${softwareInfoData?.bitness}位)`}>
+                        {`${softwareInfoData?.os} (${softwareInfoData?.bitness}位)`}
                     </div>
                     <div
                         title={`${softwareInfoData?.javaVersion} (${softwareInfoData?.javaVersionDate})`}
                     >{`${softwareInfoData?.javaVersion} (${softwareInfoData?.javaVersionDate})`}</div>
                     <div title={softwareInfoData?.javaVendor}>{softwareInfoData?.javaVendor}</div>
-                    <div
-                        title={`${softwareInfoData?.javaRuntime} (build ${softwareInfoData?.javaRuntimeVersion})`}
-                    >{`${softwareInfoData?.javaRuntime} (build ${softwareInfoData?.javaRuntimeVersion})`}</div>
                     <div
                         title={`${softwareInfoData?.jvm} (build ${softwareInfoData?.jvmVersion}, ${softwareInfoData?.jvmInfo})`}
                     >{`${softwareInfoData?.jvm} (build ${softwareInfoData?.jvmVersion}, ${softwareInfoData?.jvmInfo})`}</div>

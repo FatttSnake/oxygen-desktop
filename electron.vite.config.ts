@@ -106,6 +106,9 @@ export default defineConfig({
                 '+': fileURLToPath(new URL('./src/renderer/sign', import.meta.url)),
                 '@': fileURLToPath(new URL('./src/renderer/core', import.meta.url))
             }
+        },
+        define: {
+            __APP_VERSION__: JSON.stringify(process.env.npm_package_version)
         }
     }
 })

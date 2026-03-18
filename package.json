@@ -19,15 +19,20 @@
     "start": "electron-vite preview",
     "build": "electron-vite build && npm run typecheck",
     "build-test": "electron-vite build --mode testing && npm run typecheck",
+    "build-dev": "electron-vite build --mode development",
     "postinstall": "electron-builder install-app-deps",
     "build:unpack": "npm run build && electron-builder --dir",
     "build-test:unpack": "npm run build-test && electron-builder --dir",
+    "build-dev:unpack": "npm run build-dev && electron-builder --dir",
     "build:win": "npm run build && electron-builder --win",
     "build-test:win": "npm run build-test && electron-builder --win",
+    "build-dev:win": "npm run build-dev && electron-builder --win",
     "build:mac": "npm run build && electron-builder --mac",
     "build-test:mac": "npm run build-test && electron-builder --mac",
+    "build-dev:mac": "npm run build-dev && electron-builder --mac",
     "build:linux": "npm run build && electron-builder --linux",
-    "build-test:linux": "npm run build-test && electron-builder --linux"
+    "build-test:linux": "npm run build-test && electron-builder --linux",
+    "build-dev:linux": "npm run build-dev && electron-builder --linux"
   },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
