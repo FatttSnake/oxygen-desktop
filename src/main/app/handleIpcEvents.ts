@@ -31,9 +31,9 @@ export default () => {
 
     ipcMain.handle(IpcEvents.app.version.get, getAppVersion)
 
-    ipcMain.on(IpcEvents.window.common.close, (_, key: string) => closeWindow(key))
+    ipcMain.on(IpcEvents.window.base.close, (_, key: string) => closeWindow(key))
 
-    ipcMain.on(IpcEvents.window.common.afterLoad, (_, key: string) => afterLoadFrame(key))
+    ipcMain.on(IpcEvents.window.base.afterLoad, (_, key: string) => afterLoadFrame(key))
 
     ipcMain.handle(IpcEvents.window.theme.get, getTheme)
 

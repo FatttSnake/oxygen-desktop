@@ -38,7 +38,7 @@ const ToolLoader = () => {
                     if (isMainWindow) {
                         oxygenApi.window.tab.close(viewId)
                     } else {
-                        oxygenApi.window.common.close(viewId)
+                        oxygenApi.window.base.close(viewId)
                     }
                 }, 300)
             })

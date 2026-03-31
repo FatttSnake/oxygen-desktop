@@ -1,11 +1,5 @@
 import { contextBridge } from 'electron'
-
-const kebabCase = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
-
-const getArgv = (key: string) => {
-    const value = process.argv.find((arg) => arg.startsWith(`--${kebabCase(key)}=`))?.split('=')[1]
-    return value ? decodeURIComponent(value) : undefined
-}
+import { getArgv } from '%/functions'
 
 const viewId = getArgv('viewId')
 const url = getArgv('url')

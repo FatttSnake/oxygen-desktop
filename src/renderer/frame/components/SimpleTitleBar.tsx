@@ -12,12 +12,12 @@ const SimpleTitleBar = () => {
     }, [theme])
 
     useEffect(() => {
-        oxygenApi.window.common.onIcon(setWindowIcon)
-        oxygenApi.window.common.onTitle(setWindowTitle)
+        oxygenApi.window.base.onIcon(setWindowIcon)
+        oxygenApi.window.base.onTitle(setWindowTitle)
 
         return () => {
-            oxygenApi.window.common.offIcon()
-            oxygenApi.window.common.offTitle()
+            oxygenApi.window.base.offIcon()
+            oxygenApi.window.base.offTitle()
         }
     }, [])
 

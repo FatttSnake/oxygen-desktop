@@ -1,5 +1,8 @@
 export const IpcEvents = {
     app: {
+        logger: {
+            write: 'app:logger:write'
+        },
         url: {
             open: 'app:url:open'
         },
@@ -75,11 +78,4 @@ export const IpcEvents = {
             render: 'tool:view:render'
         }
     }
-}
-
-export const WindowConstants = {
-    WINDOW_MIN_WIDTH: 600,
-    WINDOW_MIN_HEIGHT: 400,
-    APPLICATION_NAME: 'Oxygen Toolbox',
-    TITLE_BAR_HEIGHT: 40
 }

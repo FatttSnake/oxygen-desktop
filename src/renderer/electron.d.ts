@@ -32,7 +32,7 @@ interface OxygenAPI {
         }
     }
     window: {
-        common: {
+        base: {
             close: (key: string) => void
             afterLoad: () => void
             onIcon: (callback: (icon: string) => void) => void

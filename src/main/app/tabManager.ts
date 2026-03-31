@@ -282,7 +282,7 @@ const TabManager = {
         const window = windowManager.windows.get(key)
         if (window) {
             window.window.setIcon(svgToNativeImage(icon))
-            window.window.webContents.send(IpcEvents.window.common.icon, icon)
+            window.window.webContents.send(IpcEvents.window.base.icon, icon)
             return
         }
 
@@ -297,7 +297,7 @@ const TabManager = {
         const window = windowManager.windows.get(key)
         if (window) {
             window.window.setTitle(title)
-            window.window.webContents.send(IpcEvents.window.common.title, title)
+            window.window.webContents.send(IpcEvents.window.base.title, title)
             return
         }
 

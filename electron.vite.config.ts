@@ -1,5 +1,5 @@
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { defineConfig } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 import AutoImport from 'unplugin-auto-import/vite'
 import IconsResolver from 'unplugin-icons/resolver'
@@ -10,7 +10,9 @@ import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 
 export default defineConfig({
     main: {
-        plugins: [externalizeDepsPlugin({ exclude: ['electron-store'] })],
+        build: {
+            externalizeDeps: { exclude: ['electron-store'] }
+        },
         resolve: {
             alias: {
                 '^': fileURLToPath(new URL('./', import.meta.url)),
@@ -20,17 +22,26 @@ export default defineConfig({
     },
     preload: {
         build: {
-            lib: {
-                entry: [
-                    'src/preload/frame.ts',
-                    'src/preload/core.ts',
-                    'src/preload/settings.ts',
-                    'src/preload/sign.ts',
-                    'src/preload/tool.ts'
-                ]
+            isolatedEntries: true,
+            rolldownOptions: {
+                input: {
+                    frame: 'src/preload/frame.ts',
+                    core: 'src/preload/core.ts',
+                    settings: 'src/preload/settings.ts',
+                    sign: 'src/preload/sign.ts',
+                    tool: 'src/preload/tool.ts'
+                },
+                output: {
+                    format: 'cjs'
+                },
+                external: ['electron', /^electron\//]
             }
         },
-        plugins: [externalizeDepsPlugin()]
+        resolve: {
+            alias: {
+                '%': fileURLToPath(new URL('./src/preload', import.meta.url))
+            }
+        }
     },
     renderer: {
         plugins: [

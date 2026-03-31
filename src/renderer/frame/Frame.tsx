@@ -10,7 +10,7 @@ const Frame = () => {
     const [isShowMenu, setIsShowMenu] = useState(false)
 
     useEffect(() => {
-        oxygenApi.window.common.afterLoad()
+        oxygenApi.window.base.afterLoad()
     }, [])
 
     return (
