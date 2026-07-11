@@ -4,7 +4,10 @@ import url from 'node:url'
 import { app, protocol, net } from 'electron'
 import { electronApp } from '@electron-toolkit/utils'
 import { WindowConstants } from '#/constants'
+import { initializeLogger } from '#/util/logger'
 import handleAppEvents, { initializeApplication } from '#/app/handleAppEvents'
+
+initializeLogger()
 
 app.setName(WindowConstants.APPLICATION_NAME)
 

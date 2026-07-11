@@ -1,5 +1,5 @@
 productName: OxygenDesktop
-copyright: Copyright © 2017-2024 FatWeb. All rights reserved.
+copyright: Copyright © 2017-2026 FatWeb. All rights reserved.
 appId: top.fatweb.oxygen.desktop
 artifactName: ${name}-${version}-${os}-${arch}.${ext}
 directories:
@@ -10,9 +10,7 @@ files:
   - '!doc/*'
   - '!resources/*'
   - '!electron.vite.config.{js,ts,mjs,cjs}'
-  - '!{.eslintignore,.eslint.config.mjs,.prettierignore,.prettierrc.json,dev-app-update.yml,README.md,README_zh.md}'
-  - '!.eslintrc-auto-import.json'
-  - '!src/renderer/auto-import'
+  - '!{.eslintcache,.eslintignore,.eslintrc-auto-import.json,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,README.md,README_zh.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json}'
 asarUnpack:
@@ -84,8 +82,9 @@ linux:
         - armv7l
   category: Utility
   desktop:
-    Name: Oxygen Desktop
-    Comment: Oxygen Toolbox multi-platform desktop version
+    entry:
+      Name: Oxygen Desktop
+      Comment: Oxygen Toolbox multi-platform desktop version
 npmRebuild: false
 publish:
   provider: generic

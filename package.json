@@ -62,7 +62,7 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@typescript/ata": "^0.9.7",
-    "@vitejs/plugin-react": "^4.3.3",
+    "@vitejs/plugin-react": "^6.0.1",
     "antd": "^5.21.6",
     "antd-style": "^3.7.1",
     "axios": "^1.7.7",
@@ -72,7 +72,7 @@
     "echarts": "^5.5.1",
     "electron": "^41.1.0",
     "electron-builder": "^26.8.2",
-    "electron-vite": "^5.0.0",
+    "electron-vite": "^6.0.0-beta.1",
     "esbuild-wasm": "0.24.0",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
@@ -101,6 +101,6 @@
     "unplugin-auto-import": "^0.18.3",
     "unplugin-icons": "^0.19.3",
     "vanilla-tilt": "^1.8.1",
-    "vite": "^8.0.3"
+    "vite": "^8.0.8"
   }
 }
