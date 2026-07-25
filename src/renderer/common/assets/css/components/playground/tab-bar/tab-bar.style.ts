@@ -30,12 +30,5 @@ export default createStyles(() => ({
             height: '100%',
             width: 10
         }
-    },
-
-    sticky: {
-        display: 'flex',
-        flex: '0 0 auto',
-        alignItems: 'flex-end',
-        marginRight: 10
     }
 }))

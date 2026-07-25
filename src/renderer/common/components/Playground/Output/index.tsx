@@ -1,34 +1,36 @@
 import useStyles from '$/assets/css/components/playground/output/index.style'
 import FlexBox from '$/components/FlexBox'
-import { IFiles } from '$/components/Playground/shared'
-import Playground from '$/components/Playground'
+import { IFileTree } from '$/components/Playground/shared'
+import { findNodeByKey } from '$/components/Playground/files'
 import Transform from '$/components/Playground/Output/Transform'
+import TabBar from '$/components/Playground/TabBar'
 
 interface OutputProps {
     isDarkMode?: boolean
-    files: IFiles
-    selectedFileName: string
+    fileTree: IFileTree
+    selectedFileKey: string
 }
 
-const Output = ({ isDarkMode, files, selectedFileName }: OutputProps) => {
+const Output = ({ isDarkMode, fileTree, selectedFileKey }: OutputProps) => {
     const { styles } = useStyles()
-    const [selectedTab, setSelectedTab] = useState('Transform')
+    const [selectedTabKey, setSelectedTabKey] = useState('Transform')
 
     return (
         <FlexBox className={styles.root}>
-            <Playground.CodeEditor.FileSelector
-                files={{
-                    Transform: { name: 'Transform', language: 'json', value: '' }
-                }}
-                selectedFileName={selectedTab}
+            <TabBar
+                tabs={[{ key: 'Transform', name: 'Transform', closable: false, editable: false }]}
+                creatable={false}
+                selectedTabKey={selectedTabKey}
                 onChange={(tabName) => {
-                    setSelectedTab(tabName)
+                    setSelectedTabKey(tabName)
                     return true
                 }}
-                readonly
             />
-            {selectedTab === 'Transform' && (
-                <Transform isDarkMode={isDarkMode} file={files[selectedFileName]} />
+            {selectedTabKey === 'Transform' && (
+                <Transform
+                    isDarkMode={isDarkMode}
+                    file={findNodeByKey(fileTree, selectedFileKey)?.node}
+                />
             )}
         </FlexBox>
     )

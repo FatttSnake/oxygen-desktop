@@ -159,28 +159,48 @@ service.interceptors.response.use(
 )
 
 const request = {
-    async get<T>(url: string, data?: object): Promise<AxiosResponse<_Response<T>>> {
-        return await request.request('GET', url, { params: data })
+    async get<T>(
+        url: string,
+        data?: object,
+        config?: AxiosRequestConfig
+    ): Promise<AxiosResponse<_Response<T>>> {
+        return await request.request('GET', url, { ...config, params: data })
     },
-    async post<T>(url: string, data?: object): Promise<AxiosResponse<_Response<T>>> {
-        return await request.request('POST', url, { data })
+    async post<T>(
+        url: string,
+        data?: object | string,
+        config?: AxiosRequestConfig
+    ): Promise<AxiosResponse<_Response<T>>> {
+        return await request.request('POST', url, { ...config, data })
     },
-    async put<T>(url: string, data?: object): Promise<AxiosResponse<_Response<T>>> {
-        return await request.request('PUT', url, { data })
+    async put<T>(
+        url: string,
+        data?: object | string,
+        config?: AxiosRequestConfig
+    ): Promise<AxiosResponse<_Response<T>>> {
+        return await request.request('PUT', url, { ...config, data })
     },
-    async patch<T>(url: string, data?: object): Promise<AxiosResponse<_Response<T>>> {
-        return await request.request('PATCH', url, { data })
+    async patch<T>(
+        url: string,
+        data?: object | string,
+        config?: AxiosRequestConfig
+    ): Promise<AxiosResponse<_Response<T>>> {
+        return await request.request('PATCH', url, { ...config, data })
     },
-    async delete<T>(url: string, data?: object): Promise<AxiosResponse<_Response<T>>> {
-        return await request.request('DELETE', url, { data })
+    async delete<T>(
+        url: string,
+        data?: object | string,
+        config?: AxiosRequestConfig
+    ): Promise<AxiosResponse<_Response<T>>> {
+        return await request.request('DELETE', url, { ...config, data })
     },
     async request<T>(
         method = 'GET',
         url: string,
-        data?: AxiosRequestConfig
+        config?: AxiosRequestConfig
     ): Promise<AxiosResponse<_Response<T>>> {
         return await new Promise((resolve, reject) => {
-            service({ method, url, ...data })
+            service({ method, url, ...config })
                 .then((res) => {
                     resolve(res as unknown as Promise<AxiosResponse<_Response<T>>>)
                 })

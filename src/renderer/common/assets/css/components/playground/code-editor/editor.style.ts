@@ -13,7 +13,7 @@ const rotate = keyframes`
 export default createStyles(() => ({
     root: {
         position: 'relative',
-        height: 0
+        height: '100%'
     },
 
     loading: {

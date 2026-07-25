@@ -1,42 +1,43 @@
 import { KeyboardEvent, ChangeEvent, MouseEvent } from 'react'
-import useStyles from '$/assets/css/components/playground/code-editor/file-selector-item.style'
-import { modal } from '$/util/common'
+import useStyles from '$/assets/css/components/playground/tab-bar/tab-item.style'
 
-interface ItemProps {
+interface TabProps {
     className?: string
     value: string
     active?: boolean
-    readonly?: boolean
+    closable?: boolean
+    editable?: boolean
     editing?: boolean
     onClick?: () => void
+    onClose?: () => void
     onEditing?: () => void
-    onChange?: (newValue: string) => boolean
+    onRename?: (newValue: string) => boolean
     onCancel?: () => void
-    onRemove?: () => void
 }
 
-const Item = ({
+const Tab = ({
     className,
     value,
     active = false,
-    readonly = false,
+    closable = true,
+    editable = false,
     editing = false,
     onClick,
+    onClose,
     onEditing,
-    onChange,
-    onCancel,
-    onRemove
-}: ItemProps) => {
+    onRename,
+    onCancel
+}: TabProps) => {
     const { styles, cx } = useStyles()
     const inputRef = useRef<HTMLInputElement>(null)
-    const [fileName, setFileName] = useState(value)
+    const [tabName, setTabName] = useState(value)
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setFileName(e.target.value)
+        setTabName(e.target.value)
     }
 
     const handleOnFinish = () => {
-        if (onChange?.(fileName) ?? true) {
+        if (onRename?.(tabName) ?? true) {
             return
         }
 
@@ -46,44 +47,33 @@ const Item = ({
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter') {
             event.preventDefault()
-            onChange?.(fileName)
+            onRename?.(tabName)
         } else if (event.key === 'Escape') {
             event.preventDefault()
-            setFileName(value)
+            setTabName(value)
             onCancel?.()
         }
     }
 
     const handleOnDoubleClick = () => {
-        if (readonly || editing) {
+        if (!editable || editing) {
             return
         }
 
         onEditing?.()
-        setFileName(value)
         setTimeout(() => {
             inputRef.current?.focus()
-            inputRef.current?.setSelectionRange(0, inputRef.current?.value.lastIndexOf('.'))
+            inputRef.current?.setSelectionRange(0, inputRef.current?.value.length)
         })
     }
 
-    const handleOnDelete = (e: MouseEvent<HTMLDivElement>) => {
+    const handleOnClose = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
-        modal
-            .confirm({
-                centered: true,
-                maskClosable: true,
-                title: '确定删除',
-                content: `确定删除文件 ${value} 吗？`
-            })
-            .then(
-                (confirmed) => {
-                    if (confirmed) {
-                        onRemove?.()
-                    }
-                },
-                () => {}
-            )
+        if (!closable) {
+            return
+        }
+
+        onClose?.()
     }
 
     useEffect(() => {
@@ -98,19 +88,19 @@ const Item = ({
                 <div className={styles.tabItemInput}>
                     <input
                         ref={inputRef}
-                        value={fileName}
+                        value={tabName}
                         onChange={handleOnChange}
                         onBlur={handleOnFinish}
                         onKeyDown={handleKeyDown}
                         spellCheck={'false'}
                     />
-                    <span className={styles.tabItemInputMask}>{fileName}</span>
+                    <span className={styles.tabItemInputMask}>{tabName}</span>
                 </div>
             ) : (
                 <>
                     <div onDoubleClick={handleOnDoubleClick}>{value}</div>
-                    {!readonly && (
-                        <div className={styles.tabItemClose} onClick={handleOnDelete}>
+                    {closable && (
+                        <div className={styles.tabItemClose} onClick={handleOnClose}>
                             <IconOxygenClose />
                         </div>
                     )}
@@ -120,4 +110,4 @@ const Item = ({
     )
 }
 
-export default Item
+export default Tab

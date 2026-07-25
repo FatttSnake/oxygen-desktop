@@ -3,8 +3,16 @@ import MonacoEditor, { Monaco } from '@monaco-editor/react'
 import { shikiToMonaco } from '@shikijs/monaco'
 import { createHighlighter } from 'shiki'
 import useStyles from '$/assets/css/components/playground/code-editor/editor.style'
-import { IEditorOptions, IFile, ITsconfig } from '$/components/Playground/shared'
-import { fileNameToLanguage, tsconfigJsonDiagnosticsOptions } from '$/components/Playground/files'
+import { IEditorOptions, IFile, IFileTree } from '$/components/Playground/shared'
+import {
+    findNodeByKey,
+    findNodeByPath,
+    flattenFileTree,
+    getPathByKey,
+    getTsconfig,
+    TSCONFIG_FILE_NAME,
+    tsconfigJsonDiagnosticsOptions
+} from '$/components/Playground/files'
 import { useEditor, useTypesProgress } from '$/components/Playground/CodeEditor/Editor/hooks'
 import { MonacoEditorConfig } from '$/components/Playground/CodeEditor/Editor/monacoConfig'
 
@@ -15,23 +23,21 @@ export interface ExtraLib {
 
 interface EditorProps {
     isDarkMode?: boolean
-    tsconfig?: ITsconfig
-    files?: Record<string, IFile>
-    selectedFileName?: string
+    fileTree: IFileTree
+    selectedFileKey: string
     readonly?: boolean
     extraLibs?: ExtraLib[]
     options?: IEditorOptions
     onEditorDidMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void
-    onChange?: (fileName: string, code: string) => void
-    onJumpFile?: (fileName: string) => boolean
+    onChange?: (fileKey: string, content: string) => void
+    onJumpFile?: (fileKey: string) => boolean
 }
 
 const Editor = ({
-    isDarkMode,
-    tsconfig,
-    files = {},
-    selectedFileName = '',
-    readonly,
+    isDarkMode = false,
+    fileTree,
+    selectedFileKey,
+    readonly = false,
     extraLibs = [],
     options,
     onEditorDidMount,
@@ -50,24 +56,28 @@ const Editor = ({
         >()
     const { doOpenEditor, autoLoadExtraLib } = useEditor()
     const { total, finished, onWatch } = useTypesProgress()
-    const file = files[selectedFileName] || { name: 'Untitled' }
+    const file: IFile = findNodeByKey(fileTree, selectedFileKey)?.node || {
+        key: 'Unknown',
+        fileName: 'Untitled',
+        content: '',
+        language: 'none'
+    }
+    const selectedFilePath = getPathByKey(fileTree, selectedFileKey)
 
     const handleOnEditorWillMount = (monaco: Monaco) => {
         loadModel(monaco)
 
         createHighlighter({
             themes: ['vitesse-light', 'vitesse-dark'],
-            langs: ['javascript', 'jsx', 'typescript', 'tsx', 'css', 'json', 'xml']
+            langs: ['javascript', 'jsx', 'typescript', 'tsx', 'css', 'json']
         }).then((highlighter) => {
             shikiToMonaco(highlighter, monaco)
             monaco.editor.setTheme(isDarkMode ? 'vitesse-dark' : 'vitesse-light')
         })
 
         monaco.languages.json.jsonDefaults.setDiagnosticsOptions(tsconfigJsonDiagnosticsOptions)
-        tsconfig &&
-            monaco.languages.typescript.typescriptDefaults.setCompilerOptions(
-                tsconfig.compilerOptions
-            )
+        const tsconfig = getTsconfig(fileTree)
+        monaco.languages.typescript.typescriptDefaults.setCompilerOptions(tsconfig.compilerOptions)
     }
 
     const handleOnEditorDidMount = (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => {
@@ -91,23 +101,23 @@ const Editor = ({
 
         onEditorDidMount?.(editor, monaco)
 
-        void autoLoadExtraLib(editor, monaco, file.value, onWatch)
+        void autoLoadExtraLib(editor, monaco, file.content, onWatch)
     }
 
     const loadModel = (monaco: Monaco) => {
         const currentModels = new Set<string>()
-
-        Object.entries(files).forEach(([key, file]) => {
+        const fileMap = flattenFileTree(fileTree)
+        fileMap.forEach((file, key) => {
             const uri = monaco.Uri.parse(`file:///${key}`)
             currentModels.add(uri.toString())
 
             const model = monaco.editor.getModel(uri)
             if (model) {
-                if (model.getValue() !== file.value) {
-                    model.setValue(file.value)
+                if (model.getValue() !== file.content) {
+                    model.setValue(file.content)
                 }
             } else {
-                monaco.editor.createModel(file.value, fileNameToLanguage(key), uri)
+                monaco.editor.createModel(file.content, file.language, uri)
             }
         })
 
@@ -124,28 +134,37 @@ const Editor = ({
 
     useEffect(() => {
         editorRef.current?.focus()
-    }, [file.name])
+    }, [selectedFileKey])
 
+    const tsconfigRaw = fileTree.children?.find(
+        (item) => item.fileName === TSCONFIG_FILE_NAME
+    )?.content
     useEffect(() => {
-        tsconfig &&
+        try {
             monacoRef.current?.languages.typescript.typescriptDefaults.setCompilerOptions(
-                tsconfig.compilerOptions
+                getTsconfig(fileTree).compilerOptions
             )
-    }, [tsconfig])
+        } catch {
+            // invalid JSON — keep previous options
+        }
+    }, [tsconfigRaw])
 
     useEffect(() => {
         const monaco = monacoRef.current
         if (monaco) {
             loadModel(monaco)
         }
-    }, [files, selectedFileName])
+    }, [fileTree, selectedFileKey])
 
     useEffect(() => {
         customDoOpenEditorRef.current = (editor, input) => {
             const path = input.resource.path
             if (!['/lib.dom.d.ts', '/node_modules/'].some((item) => path.startsWith(item))) {
-                const targetFile = path.replace('/', '')
-                if (targetFile === selectedFileName || onJumpFile?.(targetFile)) {
+                const targetFile = path.replace(/^\//, '')
+                if (
+                    targetFile === selectedFilePath ||
+                    onJumpFile?.(findNodeByPath(fileTree, targetFile)?.key ?? '')
+                ) {
                     setTimeout(() => doOpenEditor(editor, input))
                 }
             }
@@ -156,16 +175,16 @@ const Editor = ({
         <div className={styles.root}>
             <MonacoEditor
                 theme={isDarkMode ? 'vitesse-dark' : 'vitesse-light'}
-                path={file.name}
+                path={selectedFilePath}
                 language={file.language}
-                value={file.value}
+                value={file.content}
                 options={{
                     ...MonacoEditorConfig,
                     ...options,
                     theme: undefined,
                     readOnly: readonly
                 }}
-                onChange={(value) => onChange?.(selectedFileName, value ?? '')}
+                onChange={(value) => onChange?.(selectedFileKey, value ?? '')}
                 beforeMount={handleOnEditorWillMount}
                 onMount={handleOnEditorDidMount}
             />

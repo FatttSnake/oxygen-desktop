@@ -47,8 +47,26 @@ export const r_tool_create = (param: ToolCreateParam) =>
 
 export const r_tool_update = (param: ToolUpdateParam) => request.put(URL_TOOL, param)
 
-export const r_tool_update_source = (param: ToolUpdateSourceParam) =>
-    request.patch(URL_TOOL_SOURCE, param)
+export const r_tool_update_source_add = (id: string, param: ToolCommonUpdateSourceAddParam) =>
+    request.patch<string>(`${URL_TOOL_SOURCE}/${id}/add`, param)
+
+export const r_tool_update_source_rename = (id: string, nodeId: string, fileName: string) =>
+    request.patch(`${URL_TOOL_SOURCE}/${id}/rename/${nodeId}`, fileName, {
+        headers: { 'Content-Type': 'text/plain' }
+    })
+
+export const r_tool_update_source_move = (id: string, nodeId: string, newParentId: string) =>
+    request.patch(`${URL_TOOL_SOURCE}/${id}/move/${nodeId}`, newParentId, {
+        headers: { 'Content-Type': 'application/json' }
+    })
+
+export const r_tool_update_source_content = (id: string, nodeId: string, content: string) =>
+    request.patch(`${URL_TOOL_SOURCE}/${id}/content/${nodeId}`, content, {
+        headers: { 'Content-Type': 'text/plain' }
+    })
+
+export const r_tool_update_source_remove = (id: string, nodeId: string) =>
+    request.patch(`${URL_TOOL_SOURCE}/${id}/remove/${nodeId}`)
 
 export const r_tool_upgrade = (param: ToolUpgradeParam) => request.patch(URL_TOOL_UPGRADE, param)
 

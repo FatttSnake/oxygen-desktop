@@ -27,9 +27,8 @@ import FlexBox from '$/components/FlexBox'
 import Card from '$/components/Card'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
-import { IImportMap } from '$/components/Playground/shared'
-import compiler from '$/components/Playground/compiler'
-import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '$/components/Playground/files'
+import Compiler from '$/components/Playground/compiler'
+import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
 
 const { Link } = AntdTypography
 
@@ -162,10 +161,10 @@ const Create = () => {
                     .then((viewId) => ({ viewId, templateVo, toolBaseVo }))
             )
             .then(async ({ viewId, templateVo, toolBaseVo }) => {
-                const baseDist = base64ToStr(toolBaseVo.dist.data!)
-                const files = base64ToFiles(templateVo.source.data!)
-                const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
-                const result = await compiler.compile(files, importMap, templateVo.entryPoint)
+                const baseDist = toolBaseVo.dist.fileContent
+                const fileTree = sourceListToFileTree(templateVo.sources)
+                const importMap = getImportMap(fileTree)
+                const result = await Compiler.compile(fileTree, importMap, templateVo.entryPoint)
                 return {
                     viewId,
                     templateVo,

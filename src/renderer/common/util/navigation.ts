@@ -40,7 +40,7 @@ export const navigateToView = (
     version?: string,
     local?: boolean
 ) => {
-    oxygenApi.tool.view.load(username, toolId, version, platform, local ? 'local' : undefined)
+    oxygenApi.tool.view.load(username, toolId, platform, version, local ? 'local' : undefined)
 }
 
 export const navigateToSource = (

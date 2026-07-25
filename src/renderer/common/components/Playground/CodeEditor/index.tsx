@@ -2,39 +2,35 @@ import { Monaco } from '@monaco-editor/react'
 import { editor } from 'monaco-editor'
 import useStyles from '$/assets/css/components/playground/code-editor/index.style'
 import FlexBox from '$/components/FlexBox'
-import { IEditorOptions, IFiles, ITsconfig } from '$/components/Playground/shared'
-import FileSelector from '$/components/Playground/CodeEditor/FileSelector'
+import { IEditorOptions, IFileTree } from '$/components/Playground/shared'
+import { findNodeByKey } from '$/components/Playground/files'
+import FileExplorer from '$/components/Playground/CodeEditor/FileExplorer'
 import Editor, { ExtraLib } from '$/components/Playground/CodeEditor/Editor'
 
 interface CodeEditorProps {
     isDarkMode?: boolean
-    showFileSelector?: boolean
-    tsconfig?: ITsconfig
-    files: IFiles
-    selectedFileName: string
+    showFileExplorer?: boolean
+    fileTree: IFileTree
+    selectedFileKey: string
     readonly?: boolean
-    readonlyFiles?: string[]
-    notRemovableFiles?: string[]
     options?: IEditorOptions
     extraLibs?: ExtraLib[]
     onEditorDidMount?: (editor: editor.IStandaloneCodeEditor, monaco: Monaco) => void
-    onSelectedFileChange?: (fileName: string) => boolean
-    onChangeFileContent?: (content: string, fileName: string) => void
-    onAddFile?: (fileName: string) => boolean
-    onRenameFile?: (newFileName: string, oldFileName: string) => boolean
-    onRemoveFile?: (fileName: string) => boolean
+    onSelectedFileChange?: (fileKey: string) => boolean
+    onChangeFileContent?: (fileKey: string, content: string) => void
+    onAddFile?: (fileName: string, isDir: boolean, parentKey: string) => boolean
+    onRenameFile?: (fileKey: string, newFileName: string) => boolean
+    onMoveFile?: (fileKey: string, newParentKey: string) => boolean
+    onRemoveFile?: (fileKey: string) => boolean
     listenOnError?: (listener: ((message: string) => void) | undefined) => void
 }
 
 const CodeEditor = ({
     isDarkMode,
-    showFileSelector = true,
-    tsconfig,
-    files,
-    selectedFileName,
+    showFileExplorer = true,
+    fileTree,
+    selectedFileKey,
     readonly,
-    readonlyFiles,
-    notRemovableFiles,
     options,
     extraLibs,
     onEditorDidMount,
@@ -42,6 +38,7 @@ const CodeEditor = ({
     onChangeFileContent,
     onAddFile,
     onRenameFile,
+    onMoveFile,
     onRemoveFile,
     listenOnError
 }: CodeEditorProps) => {
@@ -66,40 +63,40 @@ const CodeEditor = ({
 
     return (
         <FlexBox className={styles.root}>
-            {showFileSelector && (
-                <FileSelector
-                    files={files}
-                    readonly={readonly}
-                    notRemovableFiles={notRemovableFiles}
-                    selectedFileName={selectedFileName}
-                    onChange={onSelectedFileChange}
-                    onAddFile={onAddFile}
-                    onUpdateFileName={onRenameFile}
-                    onRemoveFile={onRemoveFile}
-                />
-            )}
-            <Editor
-                isDarkMode={isDarkMode}
-                tsconfig={tsconfig}
-                selectedFileName={selectedFileName}
-                files={files}
-                readonly={
-                    readonly ||
-                    readonlyFiles?.includes(selectedFileName) ||
-                    !files[selectedFileName]
-                }
-                extraLibs={extraLibs}
-                options={options}
-                onEditorDidMount={onEditorDidMount}
-                onChange={onChangeFileContent}
-                onJumpFile={onSelectedFileChange}
-            />
-            {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
+            <AntdSplitter>
+                {showFileExplorer && (
+                    <AntdSplitter.Panel collapsible defaultSize={280}>
+                        <FileExplorer
+                            fileTree={fileTree}
+                            selectedKey={selectedFileKey}
+                            onSelect={onSelectedFileChange}
+                            onAdd={onAddFile}
+                            onRename={onRenameFile}
+                            onMove={onMoveFile}
+                            onRemove={onRemoveFile}
+                        />
+                    </AntdSplitter.Panel>
+                )}
+                <AntdSplitter.Panel>
+                    <Editor
+                        isDarkMode={isDarkMode}
+                        fileTree={fileTree}
+                        selectedFileKey={selectedFileKey}
+                        readonly={readonly || !findNodeByKey(fileTree, selectedFileKey)}
+                        extraLibs={extraLibs}
+                        options={options}
+                        onEditorDidMount={onEditorDidMount}
+                        onChange={onChangeFileContent}
+                        onJumpFile={onSelectedFileChange}
+                    />
+                    {errorMsg && <div className={styles.errorMessage}>{errorMsg}</div>}
+                </AntdSplitter.Panel>
+            </AntdSplitter>
         </FlexBox>
     )
 }
 
 CodeEditor.Editor = Editor
-CodeEditor.FileSelector = FileSelector
+CodeEditor.FileExplorer = FileExplorer
 
 export default CodeEditor

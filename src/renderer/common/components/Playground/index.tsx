@@ -1,50 +1,50 @@
 import useStyles from '$/assets/css/components/playground/index.style'
-import { IFiles } from '$/components/Playground/shared'
-import { usePlaygroundState } from '$/hooks/usePlaygroundState'
-import { ENTRY_FILE_NAME } from '$/components/Playground/files'
 import FlexBox from '$/components/FlexBox'
+import { IFileTree } from '$/components/Playground/shared'
+import { ENTRY_FILE_NAME } from '$/components/Playground/files'
 import CodeEditor from '$/components/Playground/CodeEditor'
 import Output from '$/components/Playground/Output'
+import { usePlaygroundState } from '$/hooks/usePlaygroundState'
 
 interface PlaygroundProps {
     isDarkMode?: boolean
-    initialFiles: IFiles
+    initialFileTree: IFileTree
     initialEntryPoint?: string
 }
 
 const Playground = ({
     isDarkMode,
-    initialFiles,
+    initialFileTree,
     initialEntryPoint = ENTRY_FILE_NAME
 }: PlaygroundProps) => {
     const { styles } = useStyles()
     const {
-        files,
-        selectedFileName,
-        tsconfig,
-        setSelectedFileName,
+        fileTree,
+        selectedFileKey,
+        setSelectedFileKey,
         updateFileContent,
         addFile,
-        removeFile,
         renameFile,
+        moveFile,
+        removeFile,
         listenOnError
-    } = usePlaygroundState(initialFiles, initialEntryPoint)
+    } = usePlaygroundState(initialFileTree, initialEntryPoint)
 
     return (
         <FlexBox className={styles.root} direction={'horizontal'}>
             <CodeEditor
                 isDarkMode={isDarkMode}
-                tsconfig={tsconfig}
-                files={files}
-                selectedFileName={selectedFileName}
-                onSelectedFileChange={setSelectedFileName}
+                fileTree={fileTree}
+                selectedFileKey={selectedFileKey}
+                onSelectedFileChange={setSelectedFileKey}
                 onChangeFileContent={updateFileContent}
                 onAddFile={addFile}
                 onRenameFile={renameFile}
+                onMoveFile={moveFile}
                 onRemoveFile={removeFile}
-                listenOnError={(listener) => listenOnError(() => listener)}
+                listenOnError={listenOnError}
             />
-            <Output isDarkMode={isDarkMode} files={files} selectedFileName={selectedFileName} />
+            <Output isDarkMode={isDarkMode} fileTree={fileTree} selectedFileKey={selectedFileKey} />
         </FlexBox>
     )
 }

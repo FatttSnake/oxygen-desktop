@@ -62,7 +62,10 @@ export const getCookie = (name: string) => {
 }
 
 export const parseCookie = (cookies: string[] | undefined, name: string) => {
-    if (!cookies) return null
+    if (!cookies) {
+        return null
+    }
+
     const target = cookies.find((c) => c.startsWith(`${name}=`))
     return target ? decodeURIComponent(target.split(';')[0].split('=')[1]) : null
 }

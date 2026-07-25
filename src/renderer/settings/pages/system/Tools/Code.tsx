@@ -20,11 +20,10 @@ import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import LoadingMask from '$/components/LoadingMask'
-import Playground from '$/components/Playground'
+import Compiler from '$/components/Playground/compiler'
+import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
+import CodeEditor from '$/components/Playground/CodeEditor'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
-import { IImportMap } from '$/components/Playground/shared'
-import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '$/components/Playground/files'
-import compiler from '$/components/Playground/compiler'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -34,7 +33,7 @@ const Code = () => {
     const { isDarkMode } = useContext(CommonContext)
     const navigate = useNavigate()
     const { id } = useParams()
-    const { init, tsconfig, files, selectedFileName, setSelectedFileName } = usePlaygroundState()
+    const { init, fileTree, selectedFileKey, setSelectedFileKey } = usePlaygroundState()
     const themeRef = useRef(theme)
     const isDarkModeRef = useRef(isDarkMode)
     const [toolData, setToolData] = useState<ToolWithSourceVo>()
@@ -55,10 +54,10 @@ const Code = () => {
                     .then((viewId) => ({ viewId, toolVo, toolBaseVo }))
             )
             .then(async ({ viewId, toolVo, toolBaseVo }) => {
-                const baseDist = base64ToStr(toolBaseVo.dist.data!)
-                const files = base64ToFiles(toolVo.source.data!)
-                const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
-                const result = await compiler.compile(files, importMap, toolVo.entryPoint)
+                const baseDist = toolBaseVo.dist.fileContent
+                const fileTree = sourceListToFileTree(toolVo.sources)
+                const importMap = getImportMap(fileTree)
+                const result = await Compiler.compile(fileTree, importMap, toolVo.entryPoint)
                 return {
                     viewId,
                     toolVo,
@@ -131,12 +130,8 @@ const Code = () => {
                         const toolVo = response.data!
                         setToolData(toolVo)
                         try {
-                            init(
-                                base64ToFiles(toolVo.source.data!),
-                                true,
-                                toolVo.entryPoint,
-                                toolVo.entryPoint
-                            )
+                            const fileTree = sourceListToFileTree(toolVo.sources)
+                            init(fileTree, true, toolVo.entryPoint)
                         } catch (e) {
                             void message.error('载入工具失败')
                         }
@@ -204,15 +199,14 @@ const Code = () => {
                         )}
                     </ToolBar>
                     <Card>
-                        <Playground.CodeEditor
+                        <CodeEditor
                             isDarkMode={isDarkMode}
-                            tsconfig={tsconfig}
-                            files={files}
-                            selectedFileName={selectedFileName}
+                            fileTree={fileTree}
+                            selectedFileKey={selectedFileKey}
                             readonly
                             extraLibs={editorExtraLibs}
                             onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                            onSelectedFileChange={setSelectedFileName}
+                            onSelectedFileChange={setSelectedFileKey}
                         />
                     </Card>
                 </FlexBox>

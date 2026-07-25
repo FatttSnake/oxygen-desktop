@@ -150,16 +150,16 @@ export const updateLoginStatus = (isLogin: boolean) =>
 export const loadTool = (
     username: string,
     toolId: string,
-    ver?: string,
     platform?: Platform,
+    ver?: string,
     source?: string
 ) =>
     WindowManager.getMainWindow()?.window.webContents.send(
         IpcEvents.tool.view.load,
         username,
         toolId,
-        ver,
         platform,
+        ver,
         source
     )
 

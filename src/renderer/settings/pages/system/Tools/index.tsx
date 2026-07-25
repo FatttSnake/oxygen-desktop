@@ -24,9 +24,8 @@ import Card from '$/components/Card'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
 import Permission from '$/components/Permission'
-import compiler from '$/components/Playground/compiler'
-import { IImportMap } from '$/components/Playground/shared'
-import { base64ToFiles, IMPORT_MAP_FILE_NAME, strToBase64 } from '$/components/Playground/files'
+import Compiler from '$/components/Playground/compiler'
+import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
 
 const Tools = () => {
     const theme = useTheme()
@@ -252,58 +251,53 @@ const Tools = () => {
                                                     })
                                                     try {
                                                         const toolVo = response.data!
-                                                        const files = base64ToFiles(
-                                                            toolVo.source.data!
+                                                        const fileTree = sourceListToFileTree(
+                                                            toolVo.sources
                                                         )
-                                                        const importMap = JSON.parse(
-                                                            files[IMPORT_MAP_FILE_NAME].value
-                                                        ) as IImportMap
-                                                        compiler
-                                                            .compile(
-                                                                files,
-                                                                importMap,
-                                                                toolVo.entryPoint
-                                                            )
-                                                            .then((result) => {
-                                                                message.destroy('COMPILING')
-                                                                void message.loading({
-                                                                    content: '发布中……',
-                                                                    key: 'UPLOADING',
-                                                                    duration: 0
-                                                                })
-                                                                r_sys_tool_pass(value.id, {
-                                                                    dist: strToBase64(
-                                                                        result.outputFiles[0].text
-                                                                    )
-                                                                })
-                                                                    .then((res) => {
-                                                                        message.destroy('UPLOADING')
-                                                                        const response = res.data
-                                                                        switch (response.code) {
-                                                                            case DATABASE_UPDATE_SUCCESS:
-                                                                                void message.success(
-                                                                                    '发布成功'
-                                                                                )
-                                                                                getTool()
-                                                                                break
-                                                                            case TOOL_NOT_UNDER_REVIEW:
-                                                                                void message.warning(
-                                                                                    '工具处于非审核状态'
-                                                                                )
-                                                                                break
-                                                                            default:
-                                                                                void message.error(
-                                                                                    '发布失败，请稍后重试'
-                                                                                )
-                                                                        }
-                                                                    })
-                                                                    .catch(() => {
-                                                                        message.destroy('UPLOADING')
-                                                                    })
-                                                                    .finally(() => {
-                                                                        resolve()
-                                                                    })
+                                                        const importMap = getImportMap(fileTree)
+                                                        Compiler.compile(
+                                                            fileTree,
+                                                            importMap,
+                                                            toolVo.entryPoint
+                                                        ).then((result) => {
+                                                            message.destroy('COMPILING')
+                                                            void message.loading({
+                                                                content: '发布中……',
+                                                                key: 'UPLOADING',
+                                                                duration: 0
                                                             })
+                                                            r_sys_tool_pass(
+                                                                value.id,
+                                                                result.outputFiles[0].text
+                                                            )
+                                                                .then((res) => {
+                                                                    message.destroy('UPLOADING')
+                                                                    const response = res.data
+                                                                    switch (response.code) {
+                                                                        case DATABASE_UPDATE_SUCCESS:
+                                                                            void message.success(
+                                                                                '发布成功'
+                                                                            )
+                                                                            getTool()
+                                                                            break
+                                                                        case TOOL_NOT_UNDER_REVIEW:
+                                                                            void message.warning(
+                                                                                '工具处于非审核状态'
+                                                                            )
+                                                                            break
+                                                                        default:
+                                                                            void message.error(
+                                                                                '发布失败，请稍后重试'
+                                                                            )
+                                                                    }
+                                                                })
+                                                                .catch(() => {
+                                                                    message.destroy('UPLOADING')
+                                                                })
+                                                                .finally(() => {
+                                                                    resolve()
+                                                                })
+                                                        })
                                                     } catch (e) {
                                                         resolve()
                                                         message.destroy('COMPILING')

@@ -11,9 +11,9 @@ import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
 import LoadingMask from '$/components/LoadingMask'
 import FlexBox from '$/components/FlexBox'
-import Playground from '$/components/Playground'
+import { sourceListToFileTree } from '$/components/Playground/files'
+import CodeEditor from '$/components/Playground/CodeEditor'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
-import { base64ToFiles } from '$/components/Playground/files'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -26,14 +26,15 @@ const Source = () => {
     const [searchParams] = useSearchParams({
         platform: import.meta.env.VITE_PLATFORM
     })
-    const { init, tsconfig, files, selectedFileName, setSelectedFileName } = usePlaygroundState()
+    const { init, fileTree, selectedFileKey, setSelectedFileKey } = usePlaygroundState()
     const [toolData, setToolData] = useState<ToolWithSourceVo>()
     const [isLoading, setIsLoading] = useState(false)
     const fromPath = searchParams.get('from') ?? undefined
 
     const render = (toolVo: ToolWithSourceVo) => {
         try {
-            init(base64ToFiles(toolVo.source.data!), true, toolVo.entryPoint, toolVo.entryPoint)
+            const fileTree = sourceListToFileTree(toolVo.sources)
+            init(fileTree, true, toolVo.entryPoint)
         } catch (e) {
             void message.error('载入工具失败')
         }
@@ -128,15 +129,14 @@ const Source = () => {
                         </span>
                     </ToolBar>
                     <Card>
-                        <Playground.CodeEditor
+                        <CodeEditor
                             isDarkMode={isDarkMode}
-                            tsconfig={tsconfig}
-                            files={files}
-                            selectedFileName={selectedFileName}
+                            fileTree={fileTree}
+                            selectedFileKey={selectedFileKey}
                             readonly
                             extraLibs={editorExtraLibs}
                             onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                            onSelectedFileChange={setSelectedFileName}
+                            onSelectedFileChange={setSelectedFileKey}
                         />
                     </Card>
                 </FlexBox>

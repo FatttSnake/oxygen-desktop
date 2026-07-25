@@ -109,8 +109,8 @@ export default () => {
 
     ipcMain.on(
         IpcEvents.tool.view.load,
-        (_, username: string, toolId: string, ver?: string, platform?: Platform, source?: string) =>
-            loadTool(username, toolId, ver, platform, source)
+        (_, username: string, toolId: string, platform?: Platform, ver?: string, source?: string) =>
+            loadTool(username, toolId, platform, ver, source)
     )
 
     ipcMain.on(IpcEvents.tool.view.render, (_, dist: string, key?: string) => renderTool(dist, key))

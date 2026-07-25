@@ -2,7 +2,7 @@ import MonacoEditor from '@monaco-editor/react'
 import { Loader } from 'esbuild-wasm'
 import useStyles from '$/assets/css/components/playground/output/transform.style'
 import { IFile } from '$/components/Playground/shared'
-import { cssToJsFromFile, jsonToJsFromFile } from '$/components/Playground/files'
+import { cssToJs, jsonToJs } from '$/components/Playground/files'
 import Compiler from '$/components/Playground/compiler'
 import { MonacoEditorConfig } from '$/components/Playground/CodeEditor/Editor/monacoConfig'
 
@@ -23,6 +23,7 @@ const Transform = ({ isDarkMode, file }: OutputProps) => {
                 setErrorMsg('')
             })
             .catch((e: Error) => {
+                console.error(e)
                 setErrorMsg(`编译失败：${e.message}`)
             })
     }
@@ -30,7 +31,7 @@ const Transform = ({ isDarkMode, file }: OutputProps) => {
     useEffect(() => {
         if (file) {
             try {
-                const code = file.value
+                const code = file.content
 
                 switch (file.language) {
                     case 'typescript':
@@ -40,13 +41,11 @@ const Transform = ({ isDarkMode, file }: OutputProps) => {
                         compile(code, 'jsx')
                         break
                     case 'css':
-                        setCompiledCode(cssToJsFromFile(file))
+                        setCompiledCode(cssToJs(file.content))
                         break
                     case 'json':
-                        setCompiledCode(jsonToJsFromFile(file))
+                        setCompiledCode(jsonToJs(file.content))
                         break
-                    case 'xml':
-                        setCompiledCode(code)
                 }
             } catch (e) {
                 console.error(e)

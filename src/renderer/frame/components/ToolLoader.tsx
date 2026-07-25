@@ -14,9 +14,8 @@ import {
 } from '$/util/tool'
 import { n_tool_get_one } from '$/services/native'
 import { r_tool_get_dist, r_tool_get_source } from '$/services/tool'
-import { base64ToFiles, base64ToStr, IMPORT_MAP_FILE_NAME } from '$/components/Playground/files'
-import { IImportMap } from '$/components/Playground/shared'
-import compiler from '$/components/Playground/compiler'
+import Compiler from '$/components/Playground/compiler'
+import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
 
 const ToolLoader = () => {
     const theme = useTheme()
@@ -91,11 +90,10 @@ const ToolLoader = () => {
     ) => {
         if (needCompile) {
             try {
-                const baseDist = base64ToStr(toolBaseVo.dist.data!)
-                const files = base64ToFiles((toolVo as ToolWithSourceVo).source.data!)
-                const importMap = JSON.parse(files[IMPORT_MAP_FILE_NAME].value) as IImportMap
-                compiler
-                    .compile(files, importMap, toolVo.entryPoint)
+                const baseDist = toolBaseVo.dist.fileContent
+                const fileTree = sourceListToFileTree((toolVo as ToolWithSourceVo).sources)
+                const importMap = getImportMap(fileTree)
+                Compiler.compile(fileTree, importMap, toolVo.entryPoint)
                     .then((result) => {
                         const output = result.outputFiles[0].text
                         render(
@@ -114,8 +112,8 @@ const ToolLoader = () => {
             }
         } else {
             try {
-                const baseDist = base64ToStr(toolBaseVo.dist.data!)
-                const dist = base64ToStr((toolVo as ToolWithDistVo).dist.data!)
+                const baseDist = toolBaseVo.dist.fileContent
+                const dist = (toolVo as ToolWithDistVo).dist.fileContent
                 render(
                     viewId,
                     `data:image/svg+xml;base64,${toolVo.icon}`,
@@ -203,8 +201,8 @@ const ToolLoader = () => {
                       (
                           username,
                           toolId,
-                          ver = 'latest',
                           platform = import.meta.env.VITE_PLATFORM,
+                          ver = 'latest',
                           source
                       ) => {
                           if (isLoading) {

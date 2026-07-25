@@ -62,7 +62,8 @@ const CommonFramework = ({ children }: PropsWithChildren) => {
                     colorPrimary: COLOR_PRIMARY,
                     colorLink: COLOR_PRIMARY,
                     colorLinkHover: COLOR_HOVER,
-                    colorLinkActive: COLOR_ACTIVE
+                    colorLinkActive: COLOR_ACTIVE,
+                    colorInfo: COLOR_PRIMARY
                 },
                 components: {
                     Tree: {

@@ -8,27 +8,31 @@ import {
 import { message, modal } from '$/util/common'
 import { navigateToToolBase, navigateToToolBaseEditor } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
-import { formatToolBaseVersion } from '$/util/tool'
+import { addExtraCssVariables, formatToolBaseVersion } from '$/util/tool'
 import {
     r_sys_tool_base_get_one,
     r_sys_tool_base_update_dist,
-    r_sys_tool_base_update_source
+    r_sys_tool_base_update_source_add,
+    r_sys_tool_base_update_source_content,
+    r_sys_tool_base_update_source_move,
+    r_sys_tool_base_update_source_remove,
+    r_sys_tool_base_update_source_rename
 } from '$/services/system'
 import { CommonContext } from '$/CommonFramework'
 import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import LoadingMask from '$/components/LoadingMask'
-import Playground from '$/components/Playground'
-import { usePlaygroundState } from '$/hooks/usePlaygroundState'
-import compiler from '$/components/Playground/compiler'
+import Compiler from '$/components/Playground/compiler'
+import { IFileTree } from '$/components/Playground/shared'
+import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
+import CodeEditor from '$/components/Playground/CodeEditor'
 import {
-    base64ToFiles,
-    filesToBase64,
-    IMPORT_MAP_FILE_NAME,
-    strToBase64,
-    TSCONFIG_FILE_NAME
-} from '$/components/Playground/files'
+    computeTreeDiff,
+    convertDiffToStepTitle,
+    TreeDiffOperation,
+    usePlaygroundState
+} from '$/hooks/usePlaygroundState'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -38,195 +42,212 @@ const BaseEditor = () => {
     const { isDarkMode } = useContext(CommonContext)
     const blocker = useBlocker(
         ({ currentLocation, nextLocation }) =>
-            currentLocation.pathname !== nextLocation.pathname && hasEdited
+            currentLocation.pathname !== nextLocation.pathname && hasUnsavedChanges
     )
     const navigate = useNavigate()
     const { id, version } = useParams()
-    const [compileForm] = AntdForm.useForm<{ entryFileName: string }>()
+    const [compileForm] = AntdForm.useForm<{ entryFilePath: string }>()
     const {
         init,
-        files,
-        selectedFileName,
+        fileTree,
+        originalFileTree,
+        selectedFileKey,
         isReadonly,
-        importMap,
-        tsconfig,
-        hasEdited,
-        setSelectedFileName,
+        hasUnsavedChanges,
+        setSelectedFileKey,
         updateFileContent,
         addFile,
         renameFile,
+        moveFile,
         removeFile,
-        saveFiles,
+        markAsSaved,
         listenOnError
     } = usePlaygroundState()
+    const diffRef = useRef<TreeDiffOperation[]>([])
+    const nodeIdMapRef = useRef<Map<string, string>>(new Map())
     const [isLoading, setIsLoading] = useState(false)
-    const [isSaving, setIsSaving] = useState(false)
-    const [isCompiling, setIsCompiling] = useState(false)
     const [toolBaseData, setToolBaseData] = useState<ToolBaseWithSourceVo>()
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isCompiling, setIsCompiling] = useState(false)
+    const [updateSourceSteps, setUpdateSourceSteps] = useState<_StepProps[]>([])
+    const [updateSourceCurrentStep, setUpdateSourceCurrentStep] = useState(0)
+    const [isShowSavingModal, setIsShowSavingModal] = useState(false)
+    const [savingStatus, setSavingStatus] = useState<'process' | 'error'>('process')
 
     useBeforeUnload(
         useCallback(
             (event) => {
-                if (hasEdited) {
+                if (hasUnsavedChanges) {
                     event.preventDefault()
                     event.returnValue = ''
                 }
             },
-            [hasEdited]
+            [hasUnsavedChanges]
         ),
         { capture: true }
     )
 
-    const saveToolBase = async (toolBaseData: ToolBaseWithSourceVo) => {
-        message.loading({ content: '保存中', key: 'SAVING', duration: 0 })
-        setIsSaving(true)
-
-        const source = filesToBase64(files)
-        const res = await r_sys_tool_base_update_source({
-            id: toolBaseData.id,
-            version: toolBaseData.version,
-            source
-        }).finally(() => {
-            message.destroy('SAVING')
-            setIsSaving(false)
-        })
-
-        const response = res.data
-        switch (response.code) {
-            case DATABASE_UPDATE_SUCCESS:
-                saveFiles()
-                message.success('保存成功')
-                return true
-            case DATABASE_NO_RECORD_FOUND:
-                message.error('未找到对应记录')
-                navigateToToolBase(navigate)
-                return false
-            default:
-                message.error('保存失败请稍后重试')
-                return false
-        }
-    }
-
     const handleOnSave = () => {
-        if (isLoading || isSaving || !toolBaseData) {
+        if (isSubmitting || !toolBaseData) {
+            return
+        }
+        setIsSubmitting(true)
+
+        diffRef.current = computeTreeDiff(fileTree, originalFileTree)
+        if (diffRef.current.length === 0) {
+            markAsSaved()
+            void message.success('保存成功')
+            setIsSubmitting(false)
             return
         }
 
-        saveToolBase(toolBaseData).then(() => {
-            getToolBase()
-        })
+        nodeIdMapRef.current.clear()
+        setUpdateSourceSteps(
+            diffRef.current.map((item) => ({ title: convertDiffToStepTitle(item) }))
+        )
+        setSavingStatus('process')
+        setUpdateSourceCurrentStep(0)
+        setIsShowSavingModal(true)
+
+        void sequenceProcessingSave()
+    }
+
+    const SUPPORTED_EXTENSIONS = ['.tsx', '.ts', '.jsx', '.js']
+
+    const toTreeDataNode = (tree: IFileTree, parentPath = ''): _DataNode | null => {
+        const currentPath = parentPath ? `${parentPath}/${tree.fileName}` : tree.fileName || '/'
+        const isLeaf = tree.children === undefined
+
+        if (isLeaf) {
+            const ext = tree.fileName.slice(tree.fileName.lastIndexOf('.'))
+            if (!SUPPORTED_EXTENSIONS.includes(ext)) {
+                return null
+            }
+            return {
+                key: currentPath,
+                value: currentPath,
+                title: tree.fileName,
+                selectable: true
+            }
+        }
+
+        const filteredChildren = tree
+            .children!.map((child) => toTreeDataNode(child, currentPath))
+            .filter(Boolean) as _DataNode[]
+
+        if (filteredChildren.length === 0) {
+            return null
+        }
+
+        return {
+            key: currentPath,
+            value: currentPath,
+            title: tree.fileName || '/',
+            children: filteredChildren,
+            selectable: false
+        }
     }
 
     const handleOnPublish = () => {
-        if (isLoading || isSaving || isCompiling || !toolBaseData) {
+        if (isSubmitting || isCompiling || !toolBaseData || hasUnsavedChanges) {
             return
         }
 
-        saveToolBase(toolBaseData)
-            .then((saveSuccess) => {
-                if (!saveSuccess) {
-                    return
-                }
+        const treeData: _DataNode[] = [toTreeDataNode(fileTree)].filter(Boolean) as _DataNode[]
 
-                void modal.confirm({
-                    centered: true,
-                    maskClosable: true,
-                    title: '编译',
-                    content: (
-                        <AntdForm form={compileForm}>
-                            <AntdForm.Item
-                                name={'entryFileName'}
-                                label={'入口文件'}
-                                style={{ marginTop: 10 }}
-                                rules={[{ required: true }]}
-                            >
-                                <AntdSelect
-                                    options={Object.keys(files)
-                                        .filter(
-                                            (value) =>
-                                                ![
-                                                    IMPORT_MAP_FILE_NAME,
-                                                    TSCONFIG_FILE_NAME
-                                                ].includes(value) &&
-                                                !value.endsWith('.d.ts') &&
-                                                !value.endsWith('.css') &&
-                                                !value.endsWith('.json')
-                                        )
-                                        .map((value) => ({ label: value, value }))}
-                                    placeholder={'请选择入口文件'}
-                                />
-                            </AntdForm.Item>
-                        </AntdForm>
-                    ),
-                    onOk: () =>
-                        compileForm.validateFields().then(
-                            () => {
-                                return new Promise<void>((resolve) => {
-                                    resolve()
-                                    setIsCompiling(true)
+        compileForm.resetFields()
+        void modal.confirm({
+            centered: true,
+            maskClosable: true,
+            title: '编译',
+            content: (
+                <AntdForm form={compileForm}>
+                    <AntdForm.Item
+                        name={'entryFilePath'}
+                        label={'入口文件'}
+                        style={{ marginTop: 10 }}
+                        rules={[{ required: true }]}
+                    >
+                        <AntdTreeSelect
+                            treeData={treeData}
+                            treeDefaultExpandedKeys={[treeData[0]?.value]}
+                            showSearch
+                            placeholder={'请选择入口文件'}
+                        />
+                    </AntdForm.Item>
+                </AntdForm>
+            ),
+            onOk: () =>
+                compileForm.validateFields().then(
+                    () => {
+                        return new Promise<void>((resolve) => {
+                            resolve()
+                            const entryFilePath: string = compileForm.getFieldValue('entryFilePath')
+                            const entryPointPath = entryFilePath.replace(/^\/+/, '')
+                            setIsCompiling(true)
+                            void message.loading({
+                                content: '编译中',
+                                key: 'COMPILING',
+                                duration: 0
+                            })
+                            const importMap = getImportMap(fileTree)
+                            Compiler.compile(fileTree, importMap, entryPointPath)
+                                .then((result) => {
+                                    message.destroy('COMPILING')
                                     void message.loading({
-                                        content: '编译中',
-                                        key: 'COMPILING',
+                                        content: '上传中',
+                                        key: 'UPLOADING',
                                         duration: 0
                                     })
-                                    compiler
-                                        .compile(
-                                            files,
-                                            importMap,
-                                            compileForm.getFieldValue('entryFileName')
-                                        )
-                                        .then((result) => {
-                                            message.destroy('COMPILING')
-                                            void message.loading({
-                                                content: '上传中',
-                                                key: 'UPLOADING',
-                                                duration: 0
-                                            })
-                                            return r_sys_tool_base_update_dist({
-                                                id: toolBaseData.id,
-                                                version: toolBaseData.version,
-                                                dist: strToBase64(result.outputFiles[0].text)
-                                            })
-                                        })
-                                        .then(async (res) => {
-                                            const response = res.data
-                                            switch (response.code) {
-                                                case DATABASE_UPDATE_SUCCESS:
-                                                    message.destroy('UPLOADING')
-                                                    await message.success('编译成功')
-                                                    navigateToToolBaseEditor(
-                                                        navigate,
-                                                        toolBaseData.id,
-                                                        Number(response.data).toString()
-                                                    )
-                                                    break
-                                                default:
-                                                    throw Error(response.msg)
-                                            }
-                                        })
-                                        .catch((e) => {
-                                            void message.error(
-                                                `编译失败：${e.message ? e.message : e}`
-                                            )
-                                        })
-                                        .finally(() => {
-                                            message.destroy('COMPILING')
+                                    return r_sys_tool_base_update_dist(
+                                        toolBaseData.id,
+                                        result.outputFiles[0].text
+                                    )
+                                })
+                                .then(async (res) => {
+                                    const response = res.data
+                                    switch (response.code) {
+                                        case DATABASE_UPDATE_SUCCESS:
                                             message.destroy('UPLOADING')
-                                            setIsCompiling(false)
-                                        })
+                                            await message.success('编译成功')
+                                            navigateToToolBaseEditor(
+                                                navigate,
+                                                toolBaseData.id,
+                                                Number(response.data).toString()
+                                            )
+                                            break
+                                        default:
+                                            throw Error(response.msg)
+                                    }
                                 })
-                            },
-                            () => {
-                                return new Promise((_, reject) => {
-                                    reject('请选择入口文件')
+                                .catch((e) => {
+                                    void message.error(`编译失败：${e.message ? e.message : e}`)
                                 })
-                            }
-                        )
-                })
-            })
-            .catch(() => {
-                void message.error('发布失败，请稍后重试')
-            })
+                                .finally(() => {
+                                    message.destroy('COMPILING')
+                                    message.destroy('UPLOADING')
+                                    setIsCompiling(false)
+                                })
+                        })
+                    },
+                    () => {
+                        return new Promise((_, reject) => {
+                            reject('请选择入口文件')
+                        })
+                    }
+                )
+        })
+    }
+
+    const handleOnReload = () => {
+        getToolBase()
+        setIsSubmitting(false)
+        setIsShowSavingModal(false)
+    }
+
+    const handleOnRetry = () => {
+        setSavingStatus('process')
+        void sequenceProcessingSave(updateSourceCurrentStep)
     }
 
     const getToolBase = () => {
@@ -241,17 +262,24 @@ const BaseEditor = () => {
                 const response = res.data
                 switch (response.code) {
                     case DATABASE_SELECT_SUCCESS:
-                        setToolBaseData(response.data!)
-                        saveFiles()
-                        break
+                        return response.data!
                     case DATABASE_NO_RECORD_FOUND:
                         message.error('未找到指定工具基板').then(() => {
                             navigateToToolBase(navigate)
                         })
-                        break
+                        throw Error()
                     default:
-                        void message.error('获取工具基板失败，请稍后重试')
+                        throw Error('载入工具基板失败，请稍后重试')
                 }
+            })
+            .then((toolBaseVo) => {
+                setToolBaseData(toolBaseVo)
+                const fileTree = sourceListToFileTree(toolBaseVo.sources)
+                init(fileTree, !!version, undefined, selectedFileKey)
+            })
+            .catch((e: Error) => {
+                console.error(e)
+                e?.message && message.error(e.message)
             })
             .finally(() => {
                 setIsLoading(false)
@@ -259,24 +287,99 @@ const BaseEditor = () => {
             })
     }
 
-    useEffect(() => {
-        if (!toolBaseData) {
-            return
-        }
+    const sequenceProcessingSave = async (start: number = 0) => {
+        for (let i = start; i < diffRef.current.length; i++) {
+            setUpdateSourceCurrentStep(i)
+            const operation = diffRef.current[i]
+            const { type, fileName, nodeId, dirNode, payload } = operation
 
-        try {
-            const files = base64ToFiles(toolBaseData.source.data!)
-            const selectedFileName =
-                Object.keys(files).find((fileName) => fileName.endsWith('.tsx')) ||
-                Object.keys(files).find((fileName) => fileName.endsWith('.ts')) ||
-                Object.keys(files).find((fileName) => fileName.endsWith('.jsx')) ||
-                Object.keys(files).find((fileName) => fileName.endsWith('.js'))
-            init(files, !!version, selectedFileName)
-        } catch (e) {
-            console.error(e)
-            void message.error('载入工具基板失败')
+            try {
+                switch (type) {
+                    case 'add': {
+                        const parentNode = payload.parentNode as string
+                        const resolvedParentNode =
+                            nodeIdMapRef.current.get(parentNode) || parentNode
+                        const response = await r_sys_tool_base_update_source_add(toolBaseData!.id, {
+                            parentNode: resolvedParentNode,
+                            fileName,
+                            dirNode: dirNode
+                        })
+                        const res = response.data
+                        if (res.code !== DATABASE_UPDATE_SUCCESS) {
+                            setSavingStatus('error')
+                            return
+                        }
+                        nodeIdMapRef.current.set(nodeId, res.data!)
+                        break
+                    }
+                    case 'content': {
+                        const resolvedNodeId = nodeIdMapRef.current.get(nodeId) || nodeId
+                        const response = await r_sys_tool_base_update_source_content(
+                            toolBaseData!.id,
+                            resolvedNodeId,
+                            payload.content as string
+                        )
+                        const res = response.data
+                        if (res.code !== DATABASE_UPDATE_SUCCESS) {
+                            setSavingStatus('error')
+                            return
+                        }
+                        break
+                    }
+                    case 'rename': {
+                        const resolvedNodeId = nodeIdMapRef.current.get(nodeId) || nodeId
+                        const response = await r_sys_tool_base_update_source_rename(
+                            toolBaseData!.id,
+                            resolvedNodeId,
+                            fileName
+                        )
+                        const res = response.data
+                        if (res.code !== DATABASE_UPDATE_SUCCESS) {
+                            setSavingStatus('error')
+                            return
+                        }
+                        break
+                    }
+                    case 'move': {
+                        const newParentId = payload.newParentId as string
+                        const resolvedNewParentId =
+                            nodeIdMapRef.current.get(newParentId) || newParentId
+                        const response = await r_sys_tool_base_update_source_move(
+                            toolBaseData!.id,
+                            nodeId,
+                            resolvedNewParentId
+                        )
+                        const res = response.data
+                        if (res.code !== DATABASE_UPDATE_SUCCESS) {
+                            setSavingStatus('error')
+                            return
+                        }
+                        break
+                    }
+                    case 'remove': {
+                        const response = await r_sys_tool_base_update_source_remove(
+                            toolBaseData!.id,
+                            nodeId
+                        )
+                        const res = response.data
+                        if (res.code !== DATABASE_UPDATE_SUCCESS) {
+                            setSavingStatus('error')
+                            return
+                        }
+                        break
+                    }
+                }
+            } catch (e) {
+                console.error(e)
+                setSavingStatus('error')
+                return
+            }
         }
-    }, [toolBaseData])
+        void message.success('保存成功')
+        getToolBase()
+        setIsSubmitting(false)
+        setIsShowSavingModal(false)
+    }
 
     useEffect(() => {
         getToolBase()
@@ -288,7 +391,7 @@ const BaseEditor = () => {
                 <LoadingMask hidden={!isLoading}>
                     <FlexBox className={styles.layout} direction={'vertical'}>
                         <ToolBar
-                            title={toolBaseData?.name}
+                            title={`${toolBaseData?.name}${hasUnsavedChanges ? '*' : ''}`}
                             subtitle={
                                 <AntdTag color={'blue'}>
                                     {`${toolBaseData?.platform.slice(0, 1)}${toolBaseData?.platform.slice(1).toLowerCase()}`}
@@ -305,7 +408,8 @@ const BaseEditor = () => {
                                     <AntdButton
                                         size={'small'}
                                         icon={<Icon component={IconOxygenSave} />}
-                                        loading={isLoading || isSaving || isCompiling}
+                                        disabled={!hasUnsavedChanges}
+                                        loading={isLoading || isSubmitting}
                                         onClick={handleOnSave}
                                     >
                                         保存
@@ -314,7 +418,8 @@ const BaseEditor = () => {
                                         size={'small'}
                                         type={'primary'}
                                         icon={<Icon component={IconOxygenCompile} />}
-                                        loading={isLoading || isSaving || isCompiling}
+                                        disabled={!toolBaseData || hasUnsavedChanges}
+                                        loading={isLoading || isCompiling}
                                         onClick={handleOnPublish}
                                     >
                                         发布
@@ -323,17 +428,18 @@ const BaseEditor = () => {
                             )}
                         </ToolBar>
                         <Card>
-                            <Playground.CodeEditor
+                            <CodeEditor
                                 isDarkMode={isDarkMode}
-                                tsconfig={tsconfig}
-                                files={files}
-                                selectedFileName={selectedFileName}
+                                fileTree={fileTree}
+                                selectedFileKey={selectedFileKey}
                                 readonly={isReadonly}
                                 extraLibs={editorExtraLibs}
-                                onSelectedFileChange={setSelectedFileName}
+                                onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
+                                onSelectedFileChange={setSelectedFileKey}
                                 onChangeFileContent={updateFileContent}
                                 onAddFile={addFile}
                                 onRenameFile={renameFile}
+                                onMoveFile={moveFile}
                                 onRemoveFile={removeFile}
                                 listenOnError={listenOnError}
                             />
@@ -341,6 +447,39 @@ const BaseEditor = () => {
                     </FlexBox>
                 </LoadingMask>
             </FitFullscreen>
+            <AntdModal
+                title={
+                    <AntdSpace>
+                        <Icon component={IconOxygenSave} />
+                        {savingStatus === 'process' ? '保存中' : '保存失败'}
+                    </AntdSpace>
+                }
+                footer={
+                    savingStatus === 'process' ? (
+                        <></>
+                    ) : (
+                        <AntdSpace>
+                            <AntdButton onClick={handleOnReload}>重新加载</AntdButton>
+                            <AntdButton type={'primary'} onClick={handleOnRetry}>
+                                重试
+                            </AntdButton>
+                        </AntdSpace>
+                    )
+                }
+                closable={false}
+                open={isShowSavingModal}
+            >
+                <AntdSteps
+                    direction={'vertical'}
+                    size={'small'}
+                    progressDot={(iconDot, { status }) =>
+                        status === 'process' ? <Icon component={IconOxygenLoading} spin /> : iconDot
+                    }
+                    items={updateSourceSteps}
+                    current={updateSourceCurrentStep}
+                    status={savingStatus}
+                />
+            </AntdModal>
             <AntdModal
                 open={blocker.state === 'blocked'}
                 title={'未保存'}

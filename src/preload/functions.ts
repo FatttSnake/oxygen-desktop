@@ -239,8 +239,8 @@ export const createApi = (
                 callback: (
                     username: string,
                     toolId: string,
-                    ver?: string,
                     platform?: Platform,
+                    ver?: string,
                     source?: string
                 ) => void
             ) => {
@@ -248,10 +248,10 @@ export const createApi = (
                     _,
                     username: string,
                     toolId: string,
-                    ver?: string,
                     platform?: Platform,
+                    ver?: string,
                     source?: string
-                ) => callback(username, toolId, ver, platform, source)
+                ) => callback(username, toolId, platform, ver, source)
                 ipcRenderer.on(IpcEvents.tool.view.load, listeners[IpcEvents.tool.view.load])
             },
             offLoad: () =>
@@ -259,11 +259,11 @@ export const createApi = (
             load: (
                 username: string,
                 toolId: string,
-                ver?: string,
                 platform?: Platform,
+                ver?: string,
                 source?: string
             ) =>
-                ipcRenderer.send(IpcEvents.tool.view.load, username, toolId, ver, platform, source),
+                ipcRenderer.send(IpcEvents.tool.view.load, username, toolId, platform, ver, source),
             render: (dist: string, key?: string) =>
                 ipcRenderer.send(IpcEvents.tool.view.render, dist, key)
         }

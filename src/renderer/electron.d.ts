@@ -124,8 +124,8 @@ interface OxygenAPI {
                 callback: (
                     username: string,
                     toolId: string,
-                    ver?: string,
                     platform?: Platform,
+                    ver?: string,
                     source?: string
                 ) => void
             ) => void
@@ -133,8 +133,8 @@ interface OxygenAPI {
             load: (
                 username: string,
                 toolId: string,
-                ver?: string,
                 platform?: Platform,
+                ver?: string,
                 source?: string
             ) => void
             render: (dist: string, key?: string) => void

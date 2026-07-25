@@ -10,72 +10,144 @@ import esbuild, {
 import wasmURL from 'esbuild-wasm/esbuild.wasm?url'
 import localforage from 'localforage'
 import axios from 'axios'
-import { IFile, IFiles, IImportMap } from '$/components/Playground/shared'
-import {
-    addReactImport,
-    cssToJs,
-    cssToJsFromFile,
-    jsonToJs,
-    jsonToJsFromFile
-} from '$/components/Playground/files'
+import { IFile, IFileTree, IImportMap } from '$/components/Playground/shared'
+import { addReactImport, cssToJs, flattenFileTree, jsonToJs } from '$/components/Playground/files'
+
+const NAMESPACE_OXYGEN = 'oxygen'
+const NAMESPACE_DEFAULT = 'default'
+const FILE_SUFFIXES = ['.tsx', '.jsx', '.ts', '.js', '.css', '.json', '']
+const INDEX_FILE_NAMES = ['/index.tsx', '/index.jsx', '/index.ts', '/index.js']
+
+/**
+ * Extract the directory portion from a file path.
+ * Returns empty string for root-level files.
+ */
+const dirname = (path: string): string => {
+    const idx = path.lastIndexOf('/')
+    return idx >= 0 ? path.slice(0, idx) : ''
+}
+
+/**
+ * Resolve a relative import path (./foo or ../foo) against a base directory.
+ * Returns the resolved path WITHOUT extension checks.
+ */
+const resolveRelative = (importPath: string, resolveDir: string): string => {
+    const base = resolveDir.endsWith('/') ? resolveDir : `${resolveDir}/`
+    const url = new URL(importPath, `file:///${base}`)
+    // Strip leading / and trailing /
+    return url.pathname.replace(/^\/+|\/+$/g, '')
+}
+
+/**
+ * Try to find a file entry by path, appending common suffixes if needed.
+ */
+const findFileEntry = (
+    fileMap: Map<string, IFile>,
+    path: string
+): { fullPath: string; file: IFile } | null => {
+    // Try direct match first
+    if (fileMap.has(path)) {
+        return { fullPath: path, file: fileMap.get(path)! }
+    }
+
+    // Try appending suffixes
+    for (const suffix of FILE_SUFFIXES) {
+        const candidate = `${path}${suffix}`
+        if (fileMap.has(candidate)) {
+            return { fullPath: candidate, file: fileMap.get(candidate)! }
+        }
+    }
+
+    // Try as directory with index file
+    for (const indexName of INDEX_FILE_NAMES) {
+        const candidate = `${path}${indexName}`
+        if (fileMap.has(candidate)) {
+            return { fullPath: candidate, file: fileMap.get(candidate)! }
+        }
+    }
+
+    return null
+}
+
+/**
+ * Find the entry point path in the file map.
+ * Tries: exact match → with suffix dedup → search by basename.
+ */
+const resolveEntryPath = (fileMap: Map<string, IFile>, entryPoint: string): string => {
+    const found = findFileEntry(fileMap, entryPoint)
+    if (found) {
+        return found.fullPath
+    }
+
+    // Search by basename (file name without directory)
+    for (const [path] of fileMap) {
+        const basename = path.split('/').pop()!
+        if (basename === entryPoint) {
+            return path
+        }
+        for (const suffix of FILE_SUFFIXES) {
+            if (`${basename}${suffix}` === entryPoint) {
+                return path
+            }
+        }
+    }
+
+    throw new Error(`Entry point "${entryPoint}" not found in file tree`)
+}
 
 class Compiler {
-    private init = false
+    private initPromise: Promise<void> | null = null
+    private initialized = false
 
     compileCache = localforage.createInstance({
         name: 'compileCache'
     })
 
     constructor() {
-        try {
-            esbuild
-                .initialize({
-                    worker: true,
-                    wasmURL
-                })
-                .finally(() => {
-                    this.init = true
-                })
-        } catch (e) {
-            this.init = true
-        }
+        this.initPromise = esbuild
+            .initialize({
+                worker: true,
+                wasmURL
+            })
+            .catch(() => {
+                // esbuild may already be initialized by another instance;
+                // treat as success since subsequent calls will use the shared state.
+            })
+            .finally(() => {
+                this.initialized = true
+            })
     }
 
-    private waitInit = async () => {
-        if (!this.init) {
-            await new Promise<void>((resolve) => {
-                const checkInit = () => {
-                    if (this.init) {
-                        resolve()
-                    } else {
-                        setTimeout(checkInit, 100)
-                    }
-                }
-                checkInit()
-            })
+    private ensureInitialized = async () => {
+        if (!this.initialized) {
+            await this.initPromise
         }
     }
 
     transform = async (code: string, loader: Loader) => {
-        await this.waitInit()
+        await this.ensureInitialized()
         return esbuild.transform(code, { loader, target: 'es2015' })
     }
 
-    compile = async (files: IFiles, importMap: IImportMap, entryPoint: string) => {
-        await this.waitInit()
+    compile = async (fileTree: IFileTree, importMap: IImportMap, entryPointPath: string) => {
+        await this.ensureInitialized()
+
+        const fileMap = flattenFileTree(fileTree)
+        const entryPath = resolveEntryPath(fileMap, entryPointPath)
+
         return esbuild.build({
             bundle: true,
-            entryPoints: [entryPoint],
+            entryPoints: [entryPath],
             format: 'esm',
             target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
             metafile: true,
             write: false,
-            plugins: [this.fileResolverPlugin(files, importMap)]
+            plugins: [this.fileResolverPlugin(fileMap, importMap)]
         })
     }
 
     compileCss = async (cssCode: string, basePath: string) => {
-        await this.waitInit()
+        await this.ensureInitialized()
         return esbuild.build({
             bundle: true,
             entryPoints: [basePath],
@@ -84,118 +156,124 @@ class Compiler {
         })
     }
 
+    /**
+     * Dispose the esbuild instance.
+     * After calling this, create a new Compiler to compile again.
+     */
     stop = () => {
         void esbuild.stop()
+        this.initialized = false
+        this.initPromise = null
     }
 
-    private fileResolverPlugin = (files: IFiles, importMap: IImportMap): Plugin => ({
+    // ──────────────────────────── file resolver ────────────────────────────
+
+    private fileResolverPlugin = (fileMap: Map<string, IFile>, importMap: IImportMap): Plugin => ({
         name: 'file-resolver-plugin',
         setup: (build: PluginBuild) => {
             build.onResolve({ filter: /.*/ }, (args: OnResolveArgs): OnResolveResult => {
+                // 1. Entry point — passthrough to oxygen namespace
                 if (args.kind === 'entry-point') {
-                    return {
-                        namespace: 'oxygen',
-                        path: args.path
-                    }
-                }
-                if (/^https?:\/\/.*/.test(args.path)) {
-                    return {
-                        namespace: 'default',
-                        path: args.path
-                    }
+                    return { namespace: NAMESPACE_OXYGEN, path: args.path }
                 }
 
-                if (
-                    args.path.startsWith('./') &&
-                    (!args.resolveDir.length || args.resolveDir in files)
-                ) {
-                    const suffix = ['', '.tsx', '.jsx', '.ts', '.js'].find((suffix) => {
-                        return files[`${args.path.substring(2)}${suffix}`]
-                    })
-                    if (suffix !== undefined) {
-                        return {
-                            namespace: 'oxygen',
-                            path: `${args.path.substring(2)}${suffix}`
+                // 2. Absolute URL — fetch from network
+                if (/^https?:\/\//.test(args.path)) {
+                    return { namespace: NAMESPACE_DEFAULT, path: args.path }
+                }
+
+                // 3. Relative import — try file tree first, then via importer URL
+                if (args.path.startsWith('./') || args.path.startsWith('../')) {
+                    if (args.namespace === NAMESPACE_OXYGEN || !args.importer) {
+                        const resolvedDir = resolveRelative(args.path, args.resolveDir || '')
+                        const found = findFileEntry(fileMap, resolvedDir)
+                        if (found) {
+                            return { namespace: NAMESPACE_OXYGEN, path: found.fullPath }
+                        }
+                        if (!args.importer) {
+                            throw new Error(`Cannot resolve import '${args.path}'`)
                         }
                     }
-                }
-                if (['./', '../', '/'].some((prefix) => args.path.startsWith(prefix))) {
+                    // default namespace files: resolve via importer URL (preserves scheme)
                     return {
-                        namespace: 'default',
-                        path: new URL(args.path, args.resolveDir.substring(1)).href
+                        namespace: NAMESPACE_DEFAULT,
+                        path: new URL(args.path, getImporterBaseUrl(args.importer)).href
                     }
                 }
 
-                let path = importMap[args.path]
-                let tempPath = args.path
-                while (!path && tempPath.includes('/')) {
-                    tempPath = tempPath.substring(0, tempPath.lastIndexOf('/'))
-                    if (importMap[tempPath]) {
-                        const suffix = args.path.replace(tempPath, '')
-                        const importUrl = new URL(importMap[tempPath])
-                        path = `${importUrl.origin}${importUrl.pathname}${suffix}${importUrl.search}`
-                    }
-                }
-                if (!path) {
-                    throw Error(`Import '${args.path}' not found in Import Map`)
-                }
-                const pathUrl = new URL(path)
-                const externals = pathUrl.searchParams.get('external')?.split(',') ?? []
-                Object.keys(importMap).forEach((item) => {
-                    if (!(item in externals)) {
-                        externals.push(item)
-                    }
-                })
-                pathUrl.searchParams.set('external', externals.join(','))
-                return {
-                    namespace: 'default',
-                    path: pathUrl.href
-                }
-            })
-
-            build.onLoad({ filter: /.*\.css$/ }, (args: OnLoadArgs): OnLoadResult => {
-                const contents = cssToJsFromFile(files[args.path])
-                return {
-                    loader: 'js',
-                    contents
-                }
-            })
-
-            build.onLoad({ filter: /.*\.json$/ }, (args: OnLoadArgs): OnLoadResult => {
-                const contents = jsonToJsFromFile(files[args.path])
-                return {
-                    loader: 'js',
-                    contents
-                }
-            })
-
-            build.onLoad(
-                { namespace: 'oxygen', filter: /.*/ },
-                (args: OnLoadArgs): OnLoadResult | undefined => {
-                    let file: IFile | undefined
-                    ;['', '.tsx', '.jsx', '.ts', '.js'].forEach((suffix) => {
-                        file = file || files[`${args.path}${suffix}`]
-                    })
-                    if (file) {
+                // 4. Root-relative path (/foo) — resolve via importer's origin
+                if (args.path.startsWith('/')) {
+                    const origin = getImporterOrigin(args.importer)
+                    if (origin) {
                         return {
-                            loader: (() => {
-                                switch (file.language) {
-                                    case 'javascript':
-                                        return 'jsx'
-                                    default:
-                                        return 'tsx'
-                                }
-                            })(),
-                            contents: addReactImport(file.value)
+                            namespace: NAMESPACE_DEFAULT,
+                            path: new URL(args.path, origin).href
+                        }
+                    }
+                    // Fallback: try resolveDir as a local path
+                    if (args.resolveDir && !/^https?:\/\//.test(args.resolveDir)) {
+                        return {
+                            namespace: NAMESPACE_DEFAULT,
+                            path: new URL(args.path, `file:///${appendSlash(args.resolveDir)}`).href
+                        }
+                    }
+                    throw new Error(`Cannot resolve absolute import '${args.path}' without a base`)
+                }
+
+                // 5. Bare import (e.g. 'react', 'lodash') — resolve via import map
+                return this.resolveBareImport(args.path, importMap)
+            })
+
+            // ── onLoad: oxygen namespace (in-memory files) ──
+            // CSS files: wrap in a style-injection script
+            build.onLoad(
+                { namespace: NAMESPACE_OXYGEN, filter: /.*\.css$/ },
+                (args: OnLoadArgs): OnLoadResult | undefined => {
+                    const found = findFileEntry(fileMap, args.path)
+                    if (found) {
+                        return {
+                            loader: 'js',
+                            contents: cssToJs(found.file.content, found.file.fileName),
+                            resolveDir: dirname(found.fullPath)
+                        }
+                    }
+                    return undefined
+                }
+            )
+            // JSON files: wrap in export default
+            build.onLoad(
+                { namespace: NAMESPACE_OXYGEN, filter: /.*\.json$/ },
+                (args: OnLoadArgs): OnLoadResult | undefined => {
+                    const found = findFileEntry(fileMap, args.path)
+                    if (found) {
+                        return {
+                            loader: 'js',
+                            contents: jsonToJs(found.file.content),
+                            resolveDir: dirname(found.fullPath)
+                        }
+                    }
+                    return undefined
+                }
+            )
+            // TSX / JSX / TS / JS files: inject React import if missing
+            build.onLoad(
+                { namespace: NAMESPACE_OXYGEN, filter: /.*/ },
+                (args: OnLoadArgs): OnLoadResult | undefined => {
+                    const found = findFileEntry(fileMap, args.path)
+                    if (found) {
+                        return {
+                            loader: found.file.language === 'javascript' ? 'jsx' : 'tsx',
+                            contents: addReactImport(found.file.content),
+                            resolveDir: dirname(found.fullPath)
                         }
                     }
                     return undefined
                 }
             )
 
+            // ── onLoad: default namespace (remote / CDN files) ──
             build.onLoad({ filter: /.*/ }, async (args: OnLoadArgs): Promise<OnLoadResult> => {
                 const cached = await this.compileCache.getItem<OnLoadResult>(args.path)
-
                 if (cached) {
                     return cached
                 }
@@ -203,60 +281,92 @@ class Compiler {
                 const axiosResponse = await axios.get<ArrayBuffer>(args.path, {
                     responseType: 'arraybuffer'
                 })
-                const contentType = axiosResponse.headers['content-type'] as string
+                const contentType = (axiosResponse.headers['content-type'] as string) || ''
+                const isCSS = contentType.includes('css')
+                const isJSON = contentType.includes('json')
                 const utf8Decoder = new TextDecoder('utf-8')
+
                 const result: OnLoadResult = {
                     loader: (() => {
-                        if (
-                            contentType.includes('javascript') ||
-                            contentType.includes('css') ||
-                            contentType.includes('json')
-                        ) {
+                        if (isCSS || isJSON || contentType.includes('javascript')) {
                             return 'js'
                         }
                         return 'base64'
                     })(),
                     contents: await (async () => {
-                        if (contentType.includes('css')) {
-                            return cssToJs(
-                                (
-                                    await this.compileCss(
-                                        utf8Decoder.decode(axiosResponse.data),
-                                        args.path
-                                    )
-                                ).outputFiles[0].text
+                        if (isCSS) {
+                            const compiled = await this.compileCss(
+                                utf8Decoder.decode(axiosResponse.data),
+                                args.path
                             )
+                            return cssToJs(compiled.outputFiles[0].text)
                         }
-                        if (contentType.includes('json')) {
+                        if (isJSON) {
                             return jsonToJs(utf8Decoder.decode(axiosResponse.data))
                         }
                         return new Uint8Array(axiosResponse.data)
                     })(),
-                    resolveDir: args.path
+                    resolveDir: ''
                 }
 
                 await this.compileCache.setItem(args.path, result)
-
                 return result
             })
         }
     })
+
+    // ── bare import resolution ──
+
+    private resolveBareImport = (importPath: string, importMap: IImportMap): OnResolveResult => {
+        // Look up the import path directly in the import map
+        let url = importMap[importPath]
+
+        // Walk up the path segments to find a prefix match
+        if (!url) {
+            let prefix = importPath
+            while (!url && prefix.includes('/')) {
+                prefix = prefix.slice(0, prefix.lastIndexOf('/'))
+                if (importMap[prefix]) {
+                    const suffix = importPath.slice(prefix.length)
+                    const baseUrl = new URL(importMap[prefix])
+                    url = `${baseUrl.origin}${baseUrl.pathname}${suffix}${baseUrl.search}`
+                }
+            }
+        }
+
+        if (!url) {
+            throw new Error(`Import '${importPath}' not found in import map`)
+        }
+
+        // Mark all import-map keys as external so esbuild preserves bare
+        // imports for those modules (they'll be resolved again later).
+        const urlObj = new URL(url)
+        const declaredExternal =
+            urlObj.searchParams.get('external')?.split(',').filter(Boolean) ?? []
+        const externals = Object.keys(importMap).filter((item) => !declaredExternal.includes(item))
+        if (externals.length > 0) {
+            urlObj.searchParams.set('external', externals.join(','))
+        }
+
+        return {
+            namespace: NAMESPACE_DEFAULT,
+            path: urlObj.href
+        }
+    }
+
+    // ──────────────────────────── CSS resolver ─────────────────────────────
 
     private cssCodeResolverPlugin = (cssCode: string, basePath: string): Plugin => ({
         name: 'css-code-resolver-plugin',
         setup: (build: PluginBuild) => {
             build.onResolve({ filter: /.*/ }, (args: OnResolveArgs): OnResolveResult => {
                 if (args.kind === 'entry-point') {
-                    return {
-                        namespace: 'default',
-                        path: basePath
-                    }
+                    return { namespace: NAMESPACE_DEFAULT, path: basePath }
                 }
+                const baseUrl = getImporterBaseUrl(args.importer || basePath)
                 return {
-                    namespace: 'default',
-                    path: args.resolveDir.length
-                        ? new URL(args.path, args.resolveDir.substring(1)).href
-                        : new URL(args.path, basePath).href
+                    namespace: NAMESPACE_DEFAULT,
+                    path: new URL(args.path, baseUrl).href
                 }
             })
 
@@ -265,11 +375,11 @@ class Compiler {
                     return {
                         loader: 'css',
                         contents: cssCode,
-                        resolveDir: basePath
+                        resolveDir: ''
                     }
                 }
-                const cached = await this.compileCache.getItem<OnLoadResult>(args.path)
 
+                const cached = await this.compileCache.getItem<OnLoadResult>(args.path)
                 if (cached) {
                     return cached
                 }
@@ -277,37 +387,52 @@ class Compiler {
                 const axiosResponse = await axios.get<ArrayBuffer>(args.path, {
                     responseType: 'arraybuffer'
                 })
-                const contentType = axiosResponse.headers['content-type'] as string
+                const contentType = (axiosResponse.headers['content-type'] as string) || ''
                 const utf8Decoder = new TextDecoder('utf-8')
+
+                const isCSS = contentType.includes('css')
                 const result: OnLoadResult = {
-                    loader: (() => {
-                        if (contentType.includes('css')) {
-                            return 'js'
-                        }
-                        return 'dataurl'
-                    })(),
-                    contents: await (async () => {
-                        if (contentType.includes('css')) {
-                            return cssToJs(
-                                (
-                                    await this.compileCss(
-                                        utf8Decoder.decode(axiosResponse.data),
-                                        args.path
-                                    )
-                                ).outputFiles[0].text
-                            )
-                        }
-                        return new Uint8Array(axiosResponse.data)
-                    })(),
-                    resolveDir: args.path
+                    loader: isCSS ? 'js' : 'dataurl',
+                    contents: isCSS
+                        ? cssToJs(
+                              (
+                                  await this.compileCss(
+                                      utf8Decoder.decode(axiosResponse.data),
+                                      args.path
+                                  )
+                              ).outputFiles[0].text
+                          )
+                        : new Uint8Array(axiosResponse.data),
+                    resolveDir: ''
                 }
 
                 await this.compileCache.setItem(args.path, result)
-
                 return result
             })
         }
     })
+}
+
+// ──────────────────────────── helpers ─────────────────────────────
+
+/** Ensure a URL/path ends with / so `new URL(rel, base)` treats base as directory. */
+const appendSlash = (url: string): string => {
+    return url.endsWith('/') ? url : `${url}/`
+}
+
+/** Get the directory URL of the importer file (e.g. `https://esm.sh/foo/` for `https://esm.sh/foo/bar`). */
+const getImporterBaseUrl = (importer: string): string => {
+    const idx = importer.lastIndexOf('/')
+    return idx >= 0 ? importer.slice(0, idx + 1) : `${importer}/`
+}
+
+/** Get the origin from an importer URL, or empty string if it's not a valid URL. */
+const getImporterOrigin = (importer: string): string => {
+    try {
+        return new URL(importer).origin
+    } catch {
+        return ''
+    }
 }
 
 export default new Compiler()
