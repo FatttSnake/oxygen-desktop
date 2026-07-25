@@ -290,6 +290,7 @@ interface UserUpdatePasswordParam {
 }
 
 interface SysLogGetParam extends PageParam {
+    searchTraceId?: string
     searchRequestUrl?: string
     searchStartTime?: string
     searchEndTime?: string
@@ -298,20 +299,21 @@ interface SysLogGetParam extends PageParam {
 interface SysLogGetVo {
     id: string
     logType: string
+    traceId?: string
     operateUserId: string
     operateTime: string
-    requestUri: string
-    requestMethod: string
-    requestParams: string
+    requestUri?: string
+    requestMethod?: string
+    requestParams?: string
     requestIp: string
     requestServerAddress: string
     exception: boolean
-    exceptionInfo: string
+    exceptionInfo?: string
     startTime: string
     endTime: string
-    executeTime: number
-    userAgent: string
-    operateUsername: string
+    executeTime?: number
+    userAgent?: string
+    operateUsername?: string
 }
 
 interface RoleGetParam extends PageParam {

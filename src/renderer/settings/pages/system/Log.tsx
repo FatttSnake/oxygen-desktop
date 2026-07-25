@@ -17,7 +17,8 @@ const Log = () => {
     const [tableParams, setTableParams] = useState<TableParam>({
         pagination: {
             current: 1,
-            pageSize: 20,
+            pageSize: 50,
+            pageSizeOptions: [50, 100, 200, 500],
             position: ['bottomCenter'],
             showTotal: (total, range) =>
                 `第 ${
@@ -25,6 +26,7 @@ const Log = () => {
                 } 项 共 ${total} 项`
         }
     })
+    const [searchTraceId, setSearchTraceId] = useState('')
     const [searchRequestUrl, setSearchRequestUrl] = useState('')
     const [timeRange, setTimeRange] = useState<[string, string]>()
 
@@ -39,6 +41,7 @@ const Log = () => {
                     <AntdTag>{value}</AntdTag>
                 ),
             align: 'center',
+            fixed: 'left',
             filters: [
                 { text: 'Info', value: 'INFO' },
                 { text: 'Login', value: 'LOGIN' },
@@ -48,6 +51,12 @@ const Log = () => {
                 { text: 'API', value: 'API' },
                 { text: 'Error', value: 'ERROR' }
             ]
+        },
+        {
+            title: 'Trace ID',
+            dataIndex: 'traceId',
+            align: 'center',
+            fixed: 'left'
         },
         {
             title: '操作者',
@@ -79,12 +88,7 @@ const Log = () => {
             render: (_value, record) =>
                 `${record.requestServerAddress}${record.requestUri}${
                     record.requestParams ? `?${record.requestParams}` : ''
-                }`,
-            onCell: () => ({
-                style: {
-                    wordBreak: 'break-word'
-                }
-            })
+                }`
         },
         {
             title: '请求 IP',
@@ -116,22 +120,11 @@ const Log = () => {
         {
             title: '异常',
             dataIndex: 'exception',
-            render: (value: boolean, record) => (value ? record.exceptionInfo : '无'),
-            align: 'center',
-            onCell: () => ({
-                style: {
-                    wordBreak: 'break-word'
-                }
-            })
+            render: (value: boolean, record) => (value ? record.exceptionInfo : '无')
         },
         {
             title: '用户代理',
-            dataIndex: 'userAgent',
-            onCell: () => ({
-                style: {
-                    wordBreak: 'break-word'
-                }
-            })
+            dataIndex: 'userAgent'
         }
     ]
 
@@ -158,6 +151,16 @@ const Log = () => {
 
         if (pagination.pageSize !== tableParams.pagination?.pageSize) {
             setLogData([])
+        }
+    }
+
+    const handleOnSearchTraceIdChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setSearchTraceId(e.target.value)
+    }
+
+    const handleOnSearchTraceIdKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            getLog()
         }
     }
 
@@ -199,6 +202,7 @@ const Log = () => {
                     : undefined,
             sortOrder:
                 tableParams.sortField && tableParams.sortOrder ? tableParams.sortOrder : undefined,
+            searchTraceId: searchTraceId.length ? searchTraceId : undefined,
             searchRequestUrl: searchRequestUrl.trim().length ? searchRequestUrl : undefined,
             searchStartTime: timeRange && timeRange[0],
             searchEndTime: timeRange && timeRange[1],
@@ -246,6 +250,25 @@ const Log = () => {
                                 color: theme.colorTextSecondary
                             }}
                         >
+                            Trace ID
+                        </span>
+                    }
+                    allowClear
+                    value={searchTraceId}
+                    onChange={handleOnSearchTraceIdChange}
+                    onKeyDown={handleOnSearchTraceIdKeyDown}
+                    placeholder={'请输入搜索内容'}
+                />
+            </Card>
+            <Card style={{ overflow: 'inherit' }}>
+                <AntdInput
+                    addonBefore={
+                        <span
+                            style={{
+                                fontSize: '0.9em',
+                                color: theme.colorTextSecondary
+                            }}
+                        >
                             请求 Url
                         </span>
                     }
@@ -280,6 +303,7 @@ const Log = () => {
                 pagination={tableParams.pagination}
                 loading={isLoading}
                 onChange={handleOnTableChange}
+                scroll={{ x: 'max-content' }}
             />
         </Card>
     )
