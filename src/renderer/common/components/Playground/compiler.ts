@@ -130,11 +130,18 @@ class Compiler {
         return esbuild.transform(code, { loader, target: 'es2015' })
     }
 
-    compile = async (fileTree: IFileTree, importMap: IImportMap, entryPointPath: string) => {
+    compile = async (
+        fileTree: IFileTree,
+        importMap: IImportMap,
+        entryPointPath: string,
+        onStatus?: (state: 'processing' | 'finish', message: string) => void
+    ) => {
         await this.ensureInitialized()
+        onStatus?.('processing', 'Resolving file tree…')
 
         const fileMap = flattenFileTree(fileTree)
         const entryPath = resolveEntryPath(fileMap, entryPointPath)
+        onStatus?.('processing', `Compiling ${entryPath}…`)
 
         return esbuild.build({
             bundle: true,
@@ -143,7 +150,7 @@ class Compiler {
             target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
             metafile: true,
             write: false,
-            plugins: [this.fileResolverPlugin(fileMap, importMap)]
+            plugins: [this.fileResolverPlugin(fileMap, importMap, onStatus)]
         })
     }
 
@@ -169,12 +176,25 @@ class Compiler {
 
     // ──────────────────────────── file resolver ────────────────────────────
 
-    private fileResolverPlugin = (fileMap: Map<string, IFile>, importMap: IImportMap): Plugin => ({
+    private fileResolverPlugin = (
+        fileMap: Map<string, IFile>,
+        importMap: IImportMap,
+        onStatus?: (state: 'processing' | 'finish', message: string) => void
+    ): Plugin => ({
         name: 'file-resolver-plugin',
         setup: (build: PluginBuild) => {
+            build.onStart(() => {
+                onStatus?.('processing', 'Processing imports…')
+            })
+
+            build.onEnd(() => {
+                onStatus?.('finish', 'Compilation completed')
+            })
+
             build.onResolve({ filter: /.*/ }, (args: OnResolveArgs): OnResolveResult => {
                 // 1. Entry point — passthrough to oxygen namespace
                 if (args.kind === 'entry-point') {
+                    onStatus?.('processing', `  resolve ${args.path}`)
                     return { namespace: NAMESPACE_OXYGEN, path: args.path }
                 }
 
@@ -189,6 +209,7 @@ class Compiler {
                         const resolvedDir = resolveRelative(args.path, args.resolveDir || '')
                         const found = findFileEntry(fileMap, resolvedDir)
                         if (found) {
+                            onStatus?.('processing', `  resolve ${found.fullPath}`)
                             return { namespace: NAMESPACE_OXYGEN, path: found.fullPath }
                         }
                         if (!args.importer) {
@@ -196,33 +217,33 @@ class Compiler {
                         }
                     }
                     // default namespace files: resolve via importer URL (preserves scheme)
-                    return {
-                        namespace: NAMESPACE_DEFAULT,
-                        path: new URL(args.path, getImporterBaseUrl(args.importer)).href
-                    }
+                    const url = new URL(args.path, getImporterBaseUrl(args.importer)).href
+                    onStatus?.('processing', `Resolve ${url}`)
+                    return { namespace: NAMESPACE_DEFAULT, path: url }
                 }
 
                 // 4. Root-relative path (/foo) — resolve via importer's origin
                 if (args.path.startsWith('/')) {
                     const origin = getImporterOrigin(args.importer)
                     if (origin) {
-                        return {
-                            namespace: NAMESPACE_DEFAULT,
-                            path: new URL(args.path, origin).href
-                        }
+                        const url = new URL(args.path, origin).href
+                        onStatus?.('processing', `Resolve ${url}`)
+                        return { namespace: NAMESPACE_DEFAULT, path: url }
                     }
                     // Fallback: try resolveDir as a local path
                     if (args.resolveDir && !/^https?:\/\//.test(args.resolveDir)) {
-                        return {
-                            namespace: NAMESPACE_DEFAULT,
-                            path: new URL(args.path, `file:///${appendSlash(args.resolveDir)}`).href
-                        }
+                        const url = new URL(args.path, `file:///${appendSlash(args.resolveDir)}`)
+                            .href
+                        onStatus?.('processing', `Resolve ${url}`)
+                        return { namespace: NAMESPACE_DEFAULT, path: url }
                     }
                     throw new Error(`Cannot resolve absolute import '${args.path}' without a base`)
                 }
 
                 // 5. Bare import (e.g. 'react', 'lodash') — resolve via import map
-                return this.resolveBareImport(args.path, importMap)
+                const result = this.resolveBareImport(args.path, importMap)
+                onStatus?.('processing', `Resolve ${args.path} → ${result.path}`)
+                return result
             })
 
             // ── onLoad: oxygen namespace (in-memory files) ──
@@ -232,6 +253,7 @@ class Compiler {
                 (args: OnLoadArgs): OnLoadResult | undefined => {
                     const found = findFileEntry(fileMap, args.path)
                     if (found) {
+                        onStatus?.('processing', `Compile ${found.fullPath}`)
                         return {
                             loader: 'js',
                             contents: cssToJs(found.file.content, found.file.fileName),
@@ -247,6 +269,7 @@ class Compiler {
                 (args: OnLoadArgs): OnLoadResult | undefined => {
                     const found = findFileEntry(fileMap, args.path)
                     if (found) {
+                        onStatus?.('processing', `Compile ${found.fullPath}`)
                         return {
                             loader: 'js',
                             contents: jsonToJs(found.file.content),
@@ -262,6 +285,7 @@ class Compiler {
                 (args: OnLoadArgs): OnLoadResult | undefined => {
                     const found = findFileEntry(fileMap, args.path)
                     if (found) {
+                        onStatus?.('processing', `Compile ${found.fullPath}`)
                         return {
                             loader: found.file.language === 'javascript' ? 'jsx' : 'tsx',
                             contents: addReactImport(found.file.content),
@@ -276,8 +300,11 @@ class Compiler {
             build.onLoad({ filter: /.*/ }, async (args: OnLoadArgs): Promise<OnLoadResult> => {
                 const cached = await this.compileCache.getItem<OnLoadResult>(args.path)
                 if (cached) {
+                    onStatus?.('processing', `Cached ${args.path}`)
                     return cached
                 }
+
+                onStatus?.('processing', `Fetch ${args.path}`)
 
                 const axiosResponse = await axios.get<ArrayBuffer>(args.path, {
                     responseType: 'arraybuffer'
