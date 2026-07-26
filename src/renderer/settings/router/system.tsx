@@ -89,13 +89,22 @@ const systemSettings: RouteJsonObject[] = [
                 titlePostfix: ' - 工具基板'
             },
             {
-                path: 'base/:id/:version?',
+                path: 'base/:id',
                 absolutePath: '/system/tools/base',
                 id: 'tools-system-tools-base-editor',
                 component: lazy(() => import('%/pages/system/Tools/BaseEditor')),
                 name: '基板编辑器',
                 operationCode: 'system:tool:query:base',
                 titlePostfix: ' - 工具基板编辑器'
+            },
+            {
+                path: 'base/:id/:version',
+                absolutePath: '/system/tools/base',
+                id: 'tools-system-tools-base-preview',
+                component: lazy(() => import('%/pages/system/Tools/BasePreview')),
+                name: '基板预览',
+                operationCode: 'system:tool:query:base',
+                titlePostfix: ' - 工具基板预览'
             },
             {
                 path: 'category',

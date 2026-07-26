@@ -162,7 +162,7 @@ export const r_sys_tool_base_get = (param: PageParam) =>
 
 export const r_sys_tool_base_get_list = () => request.get<ToolBaseVo[]>(URL_SYS_TOOL_BASE_LIST)
 
-export const r_sys_tool_base_get_one = (id: string, version: string) =>
+export const r_sys_tool_base_get_one = (id: string, version: number) =>
     request.get<ToolBaseWithSourceVo>(`${URL_SYS_TOOL_BASE}/${id}/${version}`)
 
 export const r_sys_tool_base_add = (param: ToolBaseAddParam) =>
