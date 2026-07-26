@@ -1,4 +1,7 @@
 import Icon from '@ant-design/icons'
+import logo from '$/assets/logo.svg?raw'
+import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
+import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '%/assets/css/pages/system/tools/base-editor.style'
 import {
     DATABASE_NO_RECORD_FOUND,
@@ -8,7 +11,13 @@ import {
 import { message, modal } from '$/util/common'
 import { navigateToToolBase, navigateToToolBaseEditor } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
-import { addExtraCssVariables, formatToolBaseVersion } from '$/util/tool'
+import {
+    addExtraCssVariables,
+    convertObjToJsLiteral,
+    formatToolBaseVersion,
+    generateThemeCssVariables,
+    removeUselessAttributes
+} from '$/util/tool'
 import {
     r_sys_tool_base_get_one,
     r_sys_tool_base_update_dist,
@@ -27,6 +36,7 @@ import Compiler from '$/components/Playground/compiler'
 import { IFileTree } from '$/components/Playground/shared'
 import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
 import CodeEditor from '$/components/Playground/CodeEditor'
+import Output from '$/components/Playground/Output'
 import {
     computeTreeDiff,
     convertDiffToStepTitle,
@@ -38,7 +48,7 @@ import ToolBar from '@/components/tools/ToolBar'
 const { Text } = AntdTypography
 
 const BaseEditor = () => {
-    const { styles } = useStyles()
+    const { styles, theme } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
     const blocker = useBlocker(
         ({ currentLocation, nextLocation }) =>
@@ -52,9 +62,12 @@ const BaseEditor = () => {
         fileTree,
         originalFileTree,
         selectedFileKey,
+        entryPoint,
+        entryPointPath,
         isReadonly,
         hasUnsavedChanges,
         setSelectedFileKey,
+        setEntryPoint,
         updateFileContent,
         addFile,
         renameFile,
@@ -63,8 +76,14 @@ const BaseEditor = () => {
         markAsSaved,
         listenOnError
     } = usePlaygroundState()
+    const themeRef = useRef(theme)
+    const isDarkModeRef = useRef(isDarkMode)
+    const previewViewIdRef = useRef<string>()
     const diffRef = useRef<TreeDiffOperation[]>([])
     const nodeIdMapRef = useRef<Map<string, string>>(new Map())
+    const [layout, setLayout] = useState<'horizontal' | 'vertical'>(
+        window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical'
+    )
     const [isLoading, setIsLoading] = useState(false)
     const [toolBaseData, setToolBaseData] = useState<ToolBaseWithSourceVo>()
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -73,6 +92,7 @@ const BaseEditor = () => {
     const [submitStatus, setSubmitStatus] = useState<'process' | 'error'>('process')
     const [isShowSubmittingModal, setIsShowSubmittingModal] = useState(false)
     const [processPercent, setProcessPercent] = useState<number>(0)
+    const [previewViewId, setPreviewViewId] = useState<string>()
 
     useBeforeUnload(
         useCallback(
@@ -86,6 +106,14 @@ const BaseEditor = () => {
         ),
         { capture: true }
     )
+
+    const handleOnPreview = () => {
+        if (previewViewId) {
+            void oxygenApi.window.tab.switch(previewViewId)
+            return
+        }
+        oxygenApi.window.tab.create('tool').then(setPreviewViewId)
+    }
 
     const handleOnSave = () => {
         if (isSubmitting || !toolBaseData) {
@@ -122,8 +150,8 @@ const BaseEditor = () => {
                 return null
             }
             return {
-                key: currentPath,
-                value: currentPath,
+                key: tree.key,
+                value: tree.key,
                 title: tree.fileName,
                 selectable: true
             }
@@ -138,8 +166,8 @@ const BaseEditor = () => {
         }
 
         return {
-            key: currentPath,
-            value: currentPath,
+            key: tree.key,
+            value: tree.key,
             title: tree.fileName || '/',
             children: filteredChildren,
             selectable: false
@@ -380,8 +408,104 @@ const BaseEditor = () => {
     }
 
     useEffect(() => {
+        if (!previewViewId || !entryPointPath) {
+            return
+        }
+
+        const importMap = getImportMap(fileTree)
+        oxygenApi.window.tab.title(previewViewId, `[编译中] ${toolBaseData!.name}`)
+        Compiler.compile(fileTree, importMap, entryPointPath)
+            .then((result) => {
+                const dist = result.outputFiles[0].text
+                oxygenApi.window.tab.icon(previewViewId, `data:image/svg+xml;base64,${btoa(logo)}`)
+                oxygenApi.window.tab.title(previewViewId, `[预览] ${toolBaseData!.name}`)
+                oxygenApi.tool.view.render(
+                    setupGlobalJsVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral({
+                            OxygenTheme: {
+                                ...removeUselessAttributes(themeRef.current),
+                                isDarkMode: isDarkModeRef.current
+                            }
+                        })
+                    ),
+                    previewViewId
+                )
+                oxygenApi.tool.view.render(
+                    setupGlobalCssVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
+                    ),
+                    previewViewId
+                )
+                oxygenApi.tool.view.render(`(() => {${dist}})();`, previewViewId)
+            })
+            .catch((reason: Error) => {
+                oxygenApi.window.tab.icon(previewViewId, `data:image/svg+xml;base64,${btoa(logo)}`)
+                oxygenApi.window.tab.title(previewViewId, `[编译异常] ${toolBaseData!.name}`)
+                oxygenApi.tool.view.render(
+                    setupGlobalJsVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral({
+                            OxygenTheme: {
+                                ...removeUselessAttributes(themeRef.current),
+                                isDarkMode: isDarkModeRef.current
+                            }
+                        })
+                    ),
+                    previewViewId
+                )
+                oxygenApi.tool.view.render(
+                    setupGlobalCssVariablesCode.replace(
+                        "'${replace_with_code}'",
+                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
+                    ),
+                    previewViewId
+                )
+                oxygenApi.tool.view.render(
+                    `(() => {
+                const element = document.createElement('div')
+                element.style.display = 'flex'
+                element.style.justifyContent = 'center'
+                element.style.alignItems = 'center'
+                element.style.color = '#dc4446'
+                element.innerText = ${JSON.stringify(reason.stack)}
+                document.getElementById('root')?.replaceChildren(element)
+                })();`,
+                    previewViewId
+                )
+            })
+    }, [previewViewId, fileTree, entryPointPath])
+
+    useEffect(() => {
         getToolBase()
     }, [id, version])
+
+    useEffect(() => {
+        themeRef.current = theme
+        isDarkModeRef.current = isDarkMode
+    }, [theme, isDarkMode])
+
+    useEffect(() => {
+        previewViewIdRef.current = previewViewId
+    }, [previewViewId])
+
+    useEffect(() => {
+        oxygenApi.window.tab.onClosed((viewId) => {
+            setPreviewViewId((prevState) => (viewId === prevState ? undefined : prevState))
+        })
+        const resizeListener = () => {
+            setLayout(window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical')
+        }
+        window.addEventListener('resize', resizeListener)
+
+        return () => {
+            oxygenApi.window.tab.offClosed()
+            const previewViewId = previewViewIdRef.current
+            previewViewId && oxygenApi.window.tab.close(previewViewId)
+            window.removeEventListener('resize', resizeListener)
+        }
+    }, [])
 
     return (
         <>
@@ -391,9 +515,23 @@ const BaseEditor = () => {
                         <ToolBar
                             title={`${toolBaseData?.name}${hasUnsavedChanges ? '*' : ''}`}
                             subtitle={
-                                <AntdTag color={'blue'}>
-                                    {`${toolBaseData?.platform.slice(0, 1)}${toolBaseData?.platform.slice(1).toLowerCase()}`}
-                                </AntdTag>
+                                <>
+                                    <AntdTag color={'blue'}>
+                                        {`${toolBaseData?.platform.slice(0, 1)}${toolBaseData?.platform.slice(1).toLowerCase()}`}
+                                    </AntdTag>
+                                    <AntdTreeSelect
+                                        treeData={
+                                            [toTreeDataNode(fileTree)].filter(
+                                                Boolean
+                                            ) as _DataNode[]
+                                        }
+                                        value={entryPoint?.length ? entryPoint : undefined}
+                                        showSearch
+                                        placeholder={'请选择入口文件进行预览'}
+                                        style={{ minWidth: 200 }}
+                                        onSelect={setEntryPoint}
+                                    />
+                                </>
                             }
                             onBack={() => navigateToToolBase(navigate)}
                         >
@@ -403,6 +541,16 @@ const BaseEditor = () => {
                             </span>
                             {toolBaseData && !toolBaseData.version && (
                                 <AntdSpace>
+                                    <AntdButton
+                                        size={'small'}
+                                        type={'dashed'}
+                                        icon={<Icon component={IconOxygenExecute} />}
+                                        loading={isLoading || isSubmitting}
+                                        disabled={!entryPointPath}
+                                        onClick={handleOnPreview}
+                                    >
+                                        预览
+                                    </AntdButton>
                                     <AntdButton
                                         size={'small'}
                                         icon={<Icon component={IconOxygenSave} />}
@@ -426,21 +574,34 @@ const BaseEditor = () => {
                             )}
                         </ToolBar>
                         <Card>
-                            <CodeEditor
-                                isDarkMode={isDarkMode}
-                                fileTree={fileTree}
-                                selectedFileKey={selectedFileKey}
-                                readonly={isReadonly}
-                                extraLibs={editorExtraLibs}
-                                onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                                onSelectedFileChange={setSelectedFileKey}
-                                onChangeFileContent={updateFileContent}
-                                onAddFile={addFile}
-                                onRenameFile={renameFile}
-                                onMoveFile={moveFile}
-                                onRemoveFile={removeFile}
-                                listenOnError={listenOnError}
-                            />
+                            <AntdSplitter layout={layout}>
+                                <AntdSplitter.Panel collapsible>
+                                    <CodeEditor
+                                        isDarkMode={isDarkMode}
+                                        fileTree={fileTree}
+                                        selectedFileKey={selectedFileKey}
+                                        readonly={isReadonly}
+                                        extraLibs={editorExtraLibs}
+                                        onEditorDidMount={(_, monaco) =>
+                                            addExtraCssVariables(monaco)
+                                        }
+                                        onSelectedFileChange={setSelectedFileKey}
+                                        onChangeFileContent={updateFileContent}
+                                        onAddFile={addFile}
+                                        onRenameFile={renameFile}
+                                        onMoveFile={moveFile}
+                                        onRemoveFile={removeFile}
+                                        listenOnError={listenOnError}
+                                    />
+                                </AntdSplitter.Panel>
+                                <AntdSplitter.Panel collapsible defaultSize={0}>
+                                    <Output
+                                        isDarkMode={isDarkMode}
+                                        fileTree={fileTree}
+                                        selectedFileKey={selectedFileKey}
+                                    />
+                                </AntdSplitter.Panel>
+                            </AntdSplitter>
                         </Card>
                     </FlexBox>
                 </LoadingMask>
