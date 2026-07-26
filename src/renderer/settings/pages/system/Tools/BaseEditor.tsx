@@ -68,11 +68,11 @@ const BaseEditor = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [toolBaseData, setToolBaseData] = useState<ToolBaseWithSourceVo>()
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [isCompiling, setIsCompiling] = useState(false)
-    const [updateSourceSteps, setUpdateSourceSteps] = useState<_StepProps[]>([])
-    const [updateSourceCurrentStep, setUpdateSourceCurrentStep] = useState(0)
-    const [isShowSavingModal, setIsShowSavingModal] = useState(false)
-    const [savingStatus, setSavingStatus] = useState<'process' | 'error'>('process')
+    const [submitSteps, setSubmitSteps] = useState<_StepProps[]>([])
+    const [submitCurrentStep, setSubmitCurrentStep] = useState(0)
+    const [submitStatus, setSubmitStatus] = useState<'process' | 'error'>('process')
+    const [isShowSubmittingModal, setIsShowSubmittingModal] = useState(false)
+    const [processPercent, setProcessPercent] = useState<number>(0)
 
     useBeforeUnload(
         useCallback(
@@ -102,12 +102,10 @@ const BaseEditor = () => {
         }
 
         nodeIdMapRef.current.clear()
-        setUpdateSourceSteps(
-            diffRef.current.map((item) => ({ title: convertDiffToStepTitle(item) }))
-        )
-        setSavingStatus('process')
-        setUpdateSourceCurrentStep(0)
-        setIsShowSavingModal(true)
+        setSubmitSteps(diffRef.current.map((item) => ({ title: convertDiffToStepTitle(item) })))
+        setSubmitCurrentStep(0)
+        setSubmitStatus('process')
+        setIsShowSubmittingModal(true)
 
         void sequenceProcessingSave()
     }
@@ -149,9 +147,10 @@ const BaseEditor = () => {
     }
 
     const handleOnPublish = () => {
-        if (isSubmitting || isCompiling || !toolBaseData || hasUnsavedChanges) {
+        if (isSubmitting || !toolBaseData || hasUnsavedChanges) {
             return
         }
+        setIsSubmitting(true)
 
         const treeData: _DataNode[] = [toTreeDataNode(fileTree)].filter(Boolean) as _DataNode[]
 
@@ -182,34 +181,28 @@ const BaseEditor = () => {
                     () => {
                         return new Promise<void>((resolve) => {
                             resolve()
+                            setSubmitSteps([{ title: '编译' }, { title: '上传' }])
+                            setSubmitCurrentStep(0)
+                            setSubmitStatus('process')
+                            setIsShowSubmittingModal(true)
                             const entryFilePath: string = compileForm.getFieldValue('entryFilePath')
                             const entryPointPath = entryFilePath.replace(/^\/+/, '')
-                            setIsCompiling(true)
-                            void message.loading({
-                                content: '编译中',
-                                key: 'COMPILING',
-                                duration: 0
-                            })
                             const importMap = getImportMap(fileTree)
                             Compiler.compile(fileTree, importMap, entryPointPath)
                                 .then((result) => {
-                                    message.destroy('COMPILING')
-                                    void message.loading({
-                                        content: '上传中',
-                                        key: 'UPLOADING',
-                                        duration: 0
-                                    })
+                                    setSubmitCurrentStep(1)
                                     return r_sys_tool_base_update_dist(
                                         toolBaseData.id,
-                                        result.outputFiles[0].text
+                                        result.outputFiles[0].text,
+                                        setProcessPercent
                                     )
                                 })
                                 .then(async (res) => {
                                     const response = res.data
                                     switch (response.code) {
                                         case DATABASE_UPDATE_SUCCESS:
-                                            message.destroy('UPLOADING')
-                                            await message.success('编译成功')
+                                            setIsShowSubmittingModal(false)
+                                            await message.success('发布成功')
                                             navigateToToolBaseEditor(
                                                 navigate,
                                                 toolBaseData.id,
@@ -221,12 +214,11 @@ const BaseEditor = () => {
                                     }
                                 })
                                 .catch((e) => {
+                                    setIsShowSubmittingModal(false)
                                     void message.error(`编译失败：${e.message ? e.message : e}`)
                                 })
                                 .finally(() => {
-                                    message.destroy('COMPILING')
-                                    message.destroy('UPLOADING')
-                                    setIsCompiling(false)
+                                    setIsSubmitting(false)
                                 })
                         })
                     },
@@ -235,19 +227,22 @@ const BaseEditor = () => {
                             reject('请选择入口文件')
                         })
                     }
-                )
+                ),
+            onCancel: () => {
+                setIsSubmitting(false)
+            }
         })
     }
 
     const handleOnReload = () => {
         getToolBase()
         setIsSubmitting(false)
-        setIsShowSavingModal(false)
+        setIsShowSubmittingModal(false)
     }
 
     const handleOnRetry = () => {
-        setSavingStatus('process')
-        void sequenceProcessingSave(updateSourceCurrentStep)
+        setSubmitStatus('process')
+        void sequenceProcessingSave(submitCurrentStep)
     }
 
     const getToolBase = () => {
@@ -289,11 +284,12 @@ const BaseEditor = () => {
 
     const sequenceProcessingSave = async (start: number = 0) => {
         for (let i = start; i < diffRef.current.length; i++) {
-            setUpdateSourceCurrentStep(i)
+            setSubmitCurrentStep(i)
             const operation = diffRef.current[i]
             const { type, fileName, nodeId, dirNode, payload } = operation
 
             try {
+                setProcessPercent(0)
                 switch (type) {
                     case 'add': {
                         const parentNode = payload.parentNode as string
@@ -306,7 +302,7 @@ const BaseEditor = () => {
                         })
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         nodeIdMapRef.current.set(nodeId, res.data!)
@@ -317,11 +313,12 @@ const BaseEditor = () => {
                         const response = await r_sys_tool_base_update_source_content(
                             toolBaseData!.id,
                             resolvedNodeId,
-                            payload.content as string
+                            payload.content as string,
+                            setProcessPercent
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -335,7 +332,7 @@ const BaseEditor = () => {
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -351,7 +348,7 @@ const BaseEditor = () => {
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -363,7 +360,7 @@ const BaseEditor = () => {
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -371,14 +368,14 @@ const BaseEditor = () => {
                 }
             } catch (e) {
                 console.error(e)
-                setSavingStatus('error')
+                setSubmitStatus('error')
                 return
             }
         }
         void message.success('保存成功')
         getToolBase()
         setIsSubmitting(false)
-        setIsShowSavingModal(false)
+        setIsShowSubmittingModal(false)
     }
 
     useEffect(() => {
@@ -419,7 +416,7 @@ const BaseEditor = () => {
                                         type={'primary'}
                                         icon={<Icon component={IconOxygenCompile} />}
                                         disabled={!toolBaseData || hasUnsavedChanges}
-                                        loading={isLoading || isCompiling}
+                                        loading={isLoading || isSubmitting}
                                         onClick={handleOnPublish}
                                     >
                                         发布
@@ -451,11 +448,11 @@ const BaseEditor = () => {
                 title={
                     <AntdSpace>
                         <Icon component={IconOxygenSave} />
-                        {savingStatus === 'process' ? '保存中' : '保存失败'}
+                        {submitStatus === 'process' ? '保存中' : '保存失败'}
                     </AntdSpace>
                 }
                 footer={
-                    savingStatus === 'process' ? (
+                    submitStatus === 'process' ? (
                         <></>
                     ) : (
                         <AntdSpace>
@@ -467,17 +464,25 @@ const BaseEditor = () => {
                     )
                 }
                 closable={false}
-                open={isShowSavingModal}
+                open={isShowSubmittingModal}
             >
                 <AntdSteps
                     direction={'vertical'}
                     size={'small'}
                     progressDot={(iconDot, { status }) =>
-                        status === 'process' ? <Icon component={IconOxygenLoading} spin /> : iconDot
+                        status === 'process' ? (
+                            processPercent ? (
+                                <AntdProgress percent={processPercent} size={12} type={'circle'} />
+                            ) : (
+                                <Icon component={IconOxygenLoading} spin />
+                            )
+                        ) : (
+                            iconDot
+                        )
                     }
-                    items={updateSourceSteps}
-                    current={updateSourceCurrentStep}
-                    status={savingStatus}
+                    items={submitSteps}
+                    current={submitCurrentStep}
+                    status={submitStatus}
                 />
             </AntdModal>
             <AntdModal

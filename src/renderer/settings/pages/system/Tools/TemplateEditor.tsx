@@ -86,10 +86,11 @@ const TemplateEditor = () => {
     const [baseDist, setBaseDist] = useState('')
     const [baseLatestVersion, setBaseLatestVersion] = useState<number>()
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [updateSourceSteps, setUpdateSourceSteps] = useState<_StepProps[]>([])
-    const [updateSourceCurrentStep, setUpdateSourceCurrentStep] = useState(0)
-    const [isShowSavingModal, setIsShowSavingModal] = useState(false)
-    const [savingStatus, setSavingStatus] = useState<'process' | 'error'>('process')
+    const [submitSteps, setSubmitSteps] = useState<_StepProps[]>([])
+    const [submitCurrentStep, setSubmitCurrentStep] = useState(0)
+    const [submitStatus, setSubmitStatus] = useState<'process' | 'error'>('process')
+    const [isShowSubmittingModal, setIsShowSubmittingModal] = useState(false)
+    const [processPercent, setProcessPercent] = useState<number>(0)
     const hasNewBaseVersion =
         !!toolTemplateData &&
         !!baseLatestVersion &&
@@ -170,12 +171,10 @@ const TemplateEditor = () => {
         }
 
         nodeIdMapRef.current.clear()
-        setUpdateSourceSteps(
-            diffRef.current.map((item) => ({ title: convertDiffToStepTitle(item) }))
-        )
-        setSavingStatus('process')
-        setUpdateSourceCurrentStep(0)
-        setIsShowSavingModal(true)
+        setSubmitSteps(diffRef.current.map((item) => ({ title: convertDiffToStepTitle(item) })))
+        setSubmitCurrentStep(0)
+        setSubmitStatus('process')
+        setIsShowSubmittingModal(true)
 
         void sequenceProcessingSave()
     }
@@ -183,12 +182,12 @@ const TemplateEditor = () => {
     const handleOnReload = () => {
         getToolTemplate()
         setIsSubmitting(false)
-        setIsShowSavingModal(false)
+        setIsShowSubmittingModal(false)
     }
 
     const handleOnRetry = () => {
-        setSavingStatus('process')
-        void sequenceProcessingSave(updateSourceCurrentStep)
+        setSubmitStatus('process')
+        void sequenceProcessingSave(submitCurrentStep)
     }
 
     const getToolTemplate = () => {
@@ -250,11 +249,12 @@ const TemplateEditor = () => {
 
     const sequenceProcessingSave = async (start: number = 0) => {
         for (let i = start; i < diffRef.current.length; i++) {
-            setUpdateSourceCurrentStep(i)
+            setSubmitCurrentStep(i)
             const operation = diffRef.current[i]
             const { type, fileName, nodeId, dirNode, payload } = operation
 
             try {
+                setProcessPercent(0)
                 switch (type) {
                     case 'add': {
                         const parentNode = payload.parentNode as string
@@ -270,7 +270,7 @@ const TemplateEditor = () => {
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         nodeIdMapRef.current.set(nodeId, res.data!)
@@ -281,11 +281,12 @@ const TemplateEditor = () => {
                         const response = await r_sys_tool_template_update_source_content(
                             toolTemplateData!.id,
                             resolvedNodeId,
-                            payload.content as string
+                            payload.content as string,
+                            setProcessPercent
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -299,7 +300,7 @@ const TemplateEditor = () => {
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -315,7 +316,7 @@ const TemplateEditor = () => {
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -327,7 +328,7 @@ const TemplateEditor = () => {
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
-                            setSavingStatus('error')
+                            setSubmitStatus('error')
                             return
                         }
                         break
@@ -335,14 +336,14 @@ const TemplateEditor = () => {
                 }
             } catch (e) {
                 console.error(e)
-                setSavingStatus('error')
+                setSubmitStatus('error')
                 return
             }
         }
         void message.success('保存成功')
         getToolTemplate()
         setIsSubmitting(false)
-        setIsShowSavingModal(false)
+        setIsShowSubmittingModal(false)
     }
 
     useEffect(() => {
@@ -520,11 +521,11 @@ const TemplateEditor = () => {
                 title={
                     <AntdSpace>
                         <Icon component={IconOxygenSave} />
-                        {savingStatus === 'process' ? '保存中' : '保存失败'}
+                        {submitStatus === 'process' ? '保存中' : '保存失败'}
                     </AntdSpace>
                 }
                 footer={
-                    savingStatus === 'process' ? (
+                    submitStatus === 'process' ? (
                         <></>
                     ) : (
                         <AntdSpace>
@@ -536,17 +537,25 @@ const TemplateEditor = () => {
                     )
                 }
                 closable={false}
-                open={isShowSavingModal}
+                open={isShowSubmittingModal}
             >
                 <AntdSteps
                     direction={'vertical'}
                     size={'small'}
                     progressDot={(iconDot, { status }) =>
-                        status === 'process' ? <Icon component={IconOxygenLoading} spin /> : iconDot
+                        status === 'process' ? (
+                            processPercent ? (
+                                <AntdProgress percent={processPercent} size={12} type={'circle'} />
+                            ) : (
+                                <Icon component={IconOxygenLoading} spin />
+                            )
+                        ) : (
+                            iconDot
+                        )
                     }
-                    items={updateSourceSteps}
-                    current={updateSourceCurrentStep}
-                    status={savingStatus}
+                    items={submitSteps}
+                    current={submitCurrentStep}
+                    status={submitStatus}
                 />
             </AntdModal>
             <AntdModal

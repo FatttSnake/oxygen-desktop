@@ -98,10 +98,11 @@ const Edit = () => {
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
     const [isLoadingCategory, setIsLoadingCategory] = useState(false)
     const [baseLatestVersion, setBaseLatestVersion] = useState<number>()
-    const [updateSourceSteps, setUpdateSourceSteps] = useState<_StepProps[]>([])
-    const [updateSourceCurrentStep, setUpdateSourceCurrentStep] = useState(0)
-    const [isShowSavingModal, setIsShowSavingModal] = useState(false)
-    const [savingStatus, setSavingStatus] = useState<'process' | 'error'>('process')
+    const [submitSteps, setSubmitSteps] = useState<_StepProps[]>([])
+    const [submitCurrentStep, setSubmitCurrentStep] = useState(0)
+    const [submitStatus, setSubmitStatus] = useState<'process' | 'error'>('process')
+    const [isShowSubmittingModal, setIsShowSubmittingModal] = useState(false)
+    const [processPercent, setProcessPercent] = useState<number>(0)
     const hasNewBaseVersion =
         !!toolData && !!baseLatestVersion && baseLatestVersion > toolData.base.version
     const [previewViewId, setPreviewViewId] = useState<string>()
@@ -196,12 +197,10 @@ const Edit = () => {
         }
 
         nodeIdMapRef.current.clear()
-        setUpdateSourceSteps(
-            diffRef.current.map((item) => ({ title: convertDiffToStepTitle(item) }))
-        )
-        setSavingStatus('process')
-        setUpdateSourceCurrentStep(0)
-        setIsShowSavingModal(true)
+        setSubmitSteps(diffRef.current.map((item) => ({ title: convertDiffToStepTitle(item) })))
+        setSubmitCurrentStep(0)
+        setSubmitStatus('process')
+        setIsShowSubmittingModal(true)
 
         void sequenceProcessingSave()
     }
@@ -209,12 +208,12 @@ const Edit = () => {
     const handleOnReload = () => {
         getTool()
         setIsSubmitting(false)
-        setIsShowSavingModal(false)
+        setIsShowSubmittingModal(false)
     }
 
     const handleOnRetry = () => {
-        setSavingStatus('process')
-        void sequenceProcessingSave(updateSourceCurrentStep)
+        setSubmitStatus('process')
+        void sequenceProcessingSave(submitCurrentStep)
     }
 
     const handleOnDrawerClose = () => {
@@ -376,16 +375,17 @@ const Edit = () => {
                     })
                     break
                 default:
-                    setSavingStatus('error')
+                    setSubmitStatus('error')
             }
         }
 
         for (let i = start; i < diffRef.current.length; i++) {
-            setUpdateSourceCurrentStep(i)
+            setSubmitCurrentStep(i)
             const operation = diffRef.current[i]
             const { type, fileName, nodeId, dirNode, payload } = operation
 
             try {
+                setProcessPercent(0)
                 switch (type) {
                     case 'add': {
                         const parentNode = payload.parentNode as string
@@ -409,7 +409,8 @@ const Edit = () => {
                         const response = await r_tool_update_source_content(
                             toolData!.id,
                             resolvedNodeId,
-                            payload.content as string
+                            payload.content as string,
+                            setProcessPercent
                         )
                         const res = response.data
                         if (res.code !== DATABASE_UPDATE_SUCCESS) {
@@ -467,7 +468,7 @@ const Edit = () => {
         void message.success('保存成功')
         getTool()
         setIsSubmitting(false)
-        setIsShowSavingModal(false)
+        setIsShowSubmittingModal(false)
     }
 
     useEffect(() => {
@@ -786,11 +787,11 @@ const Edit = () => {
                 title={
                     <AntdSpace>
                         <Icon component={IconOxygenSave} />
-                        {savingStatus === 'process' ? '保存中' : '保存失败'}
+                        {submitStatus === 'process' ? '保存中' : '保存失败'}
                     </AntdSpace>
                 }
                 footer={
-                    savingStatus === 'process' ? (
+                    submitStatus === 'process' ? (
                         <></>
                     ) : (
                         <AntdSpace>
@@ -802,17 +803,25 @@ const Edit = () => {
                     )
                 }
                 closable={false}
-                open={isShowSavingModal}
+                open={isShowSubmittingModal}
             >
                 <AntdSteps
                     direction={'vertical'}
                     size={'small'}
                     progressDot={(iconDot, { status }) =>
-                        status === 'process' ? <Icon component={IconOxygenLoading} spin /> : iconDot
+                        status === 'process' ? (
+                            processPercent ? (
+                                <AntdProgress percent={processPercent} size={12} type={'circle'} />
+                            ) : (
+                                <Icon component={IconOxygenLoading} spin />
+                            )
+                        ) : (
+                            iconDot
+                        )
                     }
-                    items={updateSourceSteps}
-                    current={updateSourceCurrentStep}
-                    status={savingStatus}
+                    items={submitSteps}
+                    current={submitCurrentStep}
+                    status={submitStatus}
                 />
             </AntdModal>
             <AntdModal

@@ -60,9 +60,20 @@ export const r_tool_update_source_move = (id: string, nodeId: string, newParentI
         headers: { 'Content-Type': 'application/json' }
     })
 
-export const r_tool_update_source_content = (id: string, nodeId: string, content: string) =>
+export const r_tool_update_source_content = (
+    id: string,
+    nodeId: string,
+    content: string,
+    onProgress?: (percent: number) => void
+) =>
     request.patch(`${URL_TOOL_SOURCE}/${id}/content/${nodeId}`, content, {
-        headers: { 'Content-Type': 'text/plain' }
+        headers: { 'Content-Type': 'text/plain' },
+        timeout: 6e5,
+        onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+                onProgress?.(Math.round((progressEvent.loaded / progressEvent.total) * 100))
+            }
+        }
     })
 
 export const r_tool_update_source_remove = (id: string, nodeId: string) =>
