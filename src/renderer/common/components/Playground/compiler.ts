@@ -134,9 +134,11 @@ class Compiler {
         fileTree: IFileTree,
         importMap: IImportMap,
         entryPointPath: string,
-        onStatus?: (state: 'processing' | 'finish', message: string) => void
+        onStatus?: (state: 'processing' | 'finish', message: string) => void,
+        signal?: AbortSignal
     ) => {
         await this.ensureInitialized()
+        signal?.throwIfAborted()
         onStatus?.('processing', 'Resolving file tree…')
 
         const fileMap = flattenFileTree(fileTree)
@@ -150,7 +152,7 @@ class Compiler {
             target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
             metafile: true,
             write: false,
-            plugins: [this.fileResolverPlugin(fileMap, importMap, onStatus)]
+            plugins: [this.fileResolverPlugin(fileMap, importMap, onStatus, signal)]
         })
     }
 
@@ -179,19 +181,24 @@ class Compiler {
     private fileResolverPlugin = (
         fileMap: Map<string, IFile>,
         importMap: IImportMap,
-        onStatus?: (state: 'processing' | 'finish', message: string) => void
+        onStatus?: (state: 'processing' | 'finish', message: string) => void,
+        signal?: AbortSignal
     ): Plugin => ({
         name: 'file-resolver-plugin',
         setup: (build: PluginBuild) => {
             build.onStart(() => {
+                signal?.throwIfAborted()
                 onStatus?.('processing', 'Processing imports…')
             })
 
             build.onEnd(() => {
+                signal?.throwIfAborted()
                 onStatus?.('finish', 'Compilation completed')
             })
 
             build.onResolve({ filter: /.*/ }, (args: OnResolveArgs): OnResolveResult => {
+                signal?.throwIfAborted()
+
                 // 1. Entry point — passthrough to oxygen namespace
                 if (args.kind === 'entry-point') {
                     onStatus?.('processing', `  resolve ${args.path}`)
@@ -251,6 +258,7 @@ class Compiler {
             build.onLoad(
                 { namespace: NAMESPACE_OXYGEN, filter: /.*\.css$/ },
                 (args: OnLoadArgs): OnLoadResult | undefined => {
+                    signal?.throwIfAborted()
                     const found = findFileEntry(fileMap, args.path)
                     if (found) {
                         onStatus?.('processing', `Compile ${found.fullPath}`)
@@ -267,6 +275,7 @@ class Compiler {
             build.onLoad(
                 { namespace: NAMESPACE_OXYGEN, filter: /.*\.json$/ },
                 (args: OnLoadArgs): OnLoadResult | undefined => {
+                    signal?.throwIfAborted()
                     const found = findFileEntry(fileMap, args.path)
                     if (found) {
                         onStatus?.('processing', `Compile ${found.fullPath}`)
@@ -283,6 +292,7 @@ class Compiler {
             build.onLoad(
                 { namespace: NAMESPACE_OXYGEN, filter: /.*/ },
                 (args: OnLoadArgs): OnLoadResult | undefined => {
+                    signal?.throwIfAborted()
                     const found = findFileEntry(fileMap, args.path)
                     if (found) {
                         onStatus?.('processing', `Compile ${found.fullPath}`)
@@ -298,6 +308,8 @@ class Compiler {
 
             // ── onLoad: default namespace (remote / CDN files) ──
             build.onLoad({ filter: /.*/ }, async (args: OnLoadArgs): Promise<OnLoadResult> => {
+                signal?.throwIfAborted()
+
                 const cached = await this.compileCache.getItem<OnLoadResult>(args.path)
                 if (cached) {
                     onStatus?.('processing', `Cached ${args.path}`)
@@ -307,7 +319,8 @@ class Compiler {
                 onStatus?.('processing', `Fetch ${args.path}`)
 
                 const axiosResponse = await axios.get<ArrayBuffer>(args.path, {
-                    responseType: 'arraybuffer'
+                    responseType: 'arraybuffer',
+                    signal
                 })
                 const contentType = (axiosResponse.headers['content-type'] as string) || ''
                 const isCSS = contentType.includes('css')

@@ -81,6 +81,7 @@ const BaseEditor = () => {
     const previewViewIdRef = useRef<string>()
     const diffRef = useRef<TreeDiffOperation[]>([])
     const nodeIdMapRef = useRef<Map<string, string>>(new Map())
+    const abortRef = useRef<AbortController | null>(null)
     const [layout, setLayout] = useState<'horizontal' | 'vertical'>(
         window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical'
     )
@@ -412,63 +413,91 @@ const BaseEditor = () => {
             return
         }
 
-        const importMap = getImportMap(fileTree)
-        oxygenApi.window.tab.title(previewViewId, `[编译中] ${toolBaseData!.name}`)
-        Compiler.compile(fileTree, importMap, entryPointPath, (state, message) =>
-            oxygenApi.window.tab.title(
-                previewViewId,
-                `[编译中] ${state === 'processing' ? omitText(message, 30) : toolBaseData!.name}`
+        abortRef.current?.abort()
+        const controller = new AbortController()
+        abortRef.current = controller
+
+        const timer = setTimeout(() => {
+            const importMap = getImportMap(fileTree)
+            oxygenApi.window.tab.title(previewViewId, `[编译中] ${toolBaseData!.name}`)
+            Compiler.compile(
+                fileTree,
+                importMap,
+                entryPointPath,
+                (state, message) =>
+                    oxygenApi.window.tab.title(
+                        previewViewId,
+                        `[编译中] ${state === 'processing' ? omitText(message, 30) : toolBaseData!.name}`
+                    ),
+                controller.signal
             )
-        )
-            .then((result) => {
-                const dist = result.outputFiles[0].text
-                oxygenApi.window.tab.icon(previewViewId, `data:image/svg+xml;base64,${btoa(logo)}`)
-                oxygenApi.window.tab.title(previewViewId, `[预览] ${toolBaseData!.name}`)
-                oxygenApi.tool.view.render(
-                    setupGlobalJsVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral({
-                            OxygenTheme: {
-                                ...removeUselessAttributes(themeRef.current),
-                                isDarkMode: isDarkModeRef.current
-                            }
-                        })
-                    ),
-                    previewViewId
-                )
-                oxygenApi.tool.view.render(
-                    setupGlobalCssVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
-                    ),
-                    previewViewId
-                )
-                oxygenApi.tool.view.render(`(() => {${dist}})();`, previewViewId)
-            })
-            .catch((reason: Error) => {
-                oxygenApi.window.tab.icon(previewViewId, `data:image/svg+xml;base64,${btoa(logo)}`)
-                oxygenApi.window.tab.title(previewViewId, `[编译异常] ${toolBaseData!.name}`)
-                oxygenApi.tool.view.render(
-                    setupGlobalJsVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral({
-                            OxygenTheme: {
-                                ...removeUselessAttributes(themeRef.current),
-                                isDarkMode: isDarkModeRef.current
-                            }
-                        })
-                    ),
-                    previewViewId
-                )
-                oxygenApi.tool.view.render(
-                    setupGlobalCssVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
-                    ),
-                    previewViewId
-                )
-                oxygenApi.tool.view.render(
-                    `(() => {
+                .then((result) => {
+                    if (controller.signal.aborted) {
+                        return
+                    }
+
+                    const dist = result.outputFiles[0].text
+                    oxygenApi.window.tab.icon(
+                        previewViewId,
+                        `data:image/svg+xml;base64,${btoa(logo)}`
+                    )
+                    oxygenApi.window.tab.title(previewViewId, `[预览] ${toolBaseData!.name}`)
+                    oxygenApi.tool.view.render(
+                        setupGlobalJsVariablesCode.replace(
+                            "'${replace_with_code}'",
+                            convertObjToJsLiteral({
+                                OxygenTheme: {
+                                    ...removeUselessAttributes(themeRef.current),
+                                    isDarkMode: isDarkModeRef.current
+                                }
+                            })
+                        ),
+                        previewViewId
+                    )
+                    oxygenApi.tool.view.render(
+                        setupGlobalCssVariablesCode.replace(
+                            "'${replace_with_code}'",
+                            convertObjToJsLiteral(
+                                generateThemeCssVariables(themeRef.current).styles
+                            )
+                        ),
+                        previewViewId
+                    )
+                    oxygenApi.tool.view.render(`(() => {${dist}})();`, previewViewId)
+                })
+                .catch((reason: Error) => {
+                    if (controller.signal.aborted) {
+                        return
+                    }
+
+                    oxygenApi.window.tab.icon(
+                        previewViewId,
+                        `data:image/svg+xml;base64,${btoa(logo)}`
+                    )
+                    oxygenApi.window.tab.title(previewViewId, `[编译异常] ${toolBaseData!.name}`)
+                    oxygenApi.tool.view.render(
+                        setupGlobalJsVariablesCode.replace(
+                            "'${replace_with_code}'",
+                            convertObjToJsLiteral({
+                                OxygenTheme: {
+                                    ...removeUselessAttributes(themeRef.current),
+                                    isDarkMode: isDarkModeRef.current
+                                }
+                            })
+                        ),
+                        previewViewId
+                    )
+                    oxygenApi.tool.view.render(
+                        setupGlobalCssVariablesCode.replace(
+                            "'${replace_with_code}'",
+                            convertObjToJsLiteral(
+                                generateThemeCssVariables(themeRef.current).styles
+                            )
+                        ),
+                        previewViewId
+                    )
+                    oxygenApi.tool.view.render(
+                        `(() => {
                 const element = document.createElement('div')
                 element.style.display = 'flex'
                 element.style.justifyContent = 'center'
@@ -477,9 +506,15 @@ const BaseEditor = () => {
                 element.innerText = ${JSON.stringify(reason.stack)}
                 document.getElementById('root')?.replaceChildren(element)
                 })();`,
-                    previewViewId
-                )
-            })
+                        previewViewId
+                    )
+                })
+        }, 500)
+
+        return () => {
+            clearTimeout(timer)
+            controller.abort()
+        }
     }, [previewViewId, fileTree, entryPointPath])
 
     useEffect(() => {
