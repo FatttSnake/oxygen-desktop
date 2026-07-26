@@ -71,6 +71,7 @@ interface _Response<T> {
 interface TokenVo {
     refreshToken: string
     accessToken: string
+    csrfToken: string
 }
 
 interface UserInfoUpdateParam {

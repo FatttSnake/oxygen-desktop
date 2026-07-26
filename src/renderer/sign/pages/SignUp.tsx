@@ -9,7 +9,7 @@ import {
     SYSTEM_MATCH_SENSITIVE_WORD
 } from '$/constants/common.constants'
 import { message } from '$/util/common'
-import { getLoginStatus, setAccessToken, setRefreshToken } from '$/util/auth'
+import { getLoginStatus, setAccessToken, setCsrfToken, setRefreshToken } from '$/util/auth'
 import { navigateToLogin } from '$/util/navigation'
 import { r_auth_register, r_auth_resend } from '$/services/auth'
 import { CommonContext } from '$/CommonFramework'
@@ -84,6 +84,7 @@ const SignUp = () => {
                         oxygenApi.account.loginAccount.update(registerParam.username)
                         setRefreshToken(response.data!.refreshToken)
                         setAccessToken(response.data!.accessToken)
+                        setCsrfToken(response.data!.csrfToken)
                         oxygenApi.account.loginStatus.update(true)
                         void message.success('恭喜，您快要完成注册了')
                         setIsFinish(true)

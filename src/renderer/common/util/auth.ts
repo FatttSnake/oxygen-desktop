@@ -11,6 +11,8 @@ let accessToken = await oxygenApi.account.accessToken.get()
 oxygenApi.account.accessToken.onUpdate((value) => (accessToken = value))
 let refreshToken = await oxygenApi.account.refreshToken.get()
 oxygenApi.account.refreshToken.onUpdate((value) => (refreshToken = value))
+let csrfToken = await oxygenApi.account.csrfToken.get()
+oxygenApi.account.csrfToken.onUpdate((value) => (csrfToken = value))
 let userInfo = await oxygenApi.account.userInfo.get()
 oxygenApi.account.userInfo.onUpdate((value) => (userInfo = value))
 
@@ -26,6 +28,13 @@ export const getRefreshToken = () => refreshToken
 export const setRefreshToken = (value: string) => {
     oxygenApi.account.refreshToken.update(value)
     refreshToken = value
+}
+
+export const getCsrfToken = () => csrfToken
+
+export const setCsrfToken = (value: string) => {
+    oxygenApi.account.csrfToken.update(value)
+    csrfToken = value
 }
 
 export const requestUserInfo = async () => {
@@ -60,6 +69,8 @@ export const removeAllToken = () => {
     accessToken = undefined
     oxygenApi.account.refreshToken.update()
     refreshToken = undefined
+    oxygenApi.account.csrfToken.update()
+    csrfToken = undefined
     oxygenApi.account.userInfo.update()
     userInfo = undefined
     oxygenApi.account.loginStatus.update(false)

@@ -129,6 +129,17 @@ export const updateAccessToken = (accessToken?: string) => {
     })
 }
 
+export const getCsrfToken = settings.account.getCsrfToken
+
+export const updateCsrfToken = (csrfToken?: string) => {
+    settings.account.saveCsrfToken(csrfToken)
+    WindowManager.windows.forEach((windowInfo) => {
+        windowInfo.forEachPinWebContents((item) =>
+            item.send(IpcEvents.account.csrfToken.update, csrfToken)
+        )
+    })
+}
+
 export const getUserInfo = settings.account.getUserInfo
 
 export const updateUserInfo = (userInfo?: UserWithPowerInfoVo) => {

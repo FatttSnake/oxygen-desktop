@@ -13,7 +13,7 @@ import {
 } from '$/constants/common.constants'
 import { message, modal } from '$/util/common'
 import { utcToLocalTime } from '$/util/datetime'
-import { getUserInfo, setAccessToken, setRefreshToken } from '$/util/auth'
+import { getUserInfo, setAccessToken, setCsrfToken, setRefreshToken } from '$/util/auth'
 import { navigateToForget, navigateToRegister } from '$/util/navigation'
 import { r_auth_login } from '$/services/auth'
 import { CommonContext } from '$/CommonFramework'
@@ -82,6 +82,7 @@ const SignIn = () => {
                         oxygenApi.account.loginAccount.update(loginParam.account)
                         setRefreshToken(data!.refreshToken)
                         setAccessToken(data!.accessToken)
+                        setCsrfToken(data!.csrfToken)
                         getUserInfo().then((user) => {
                             oxygenApi.account.loginStatus.update(true)
                             new Notification(`欢迎回来，${user.userInfo.nickname}`, {

@@ -60,6 +60,12 @@ const oxygenApi = {
             offUpdate: api.account.refreshToken.offUpdate,
             update: api.account.refreshToken.update
         },
+        csrfToken: {
+            get: api.account.csrfToken.get,
+            onUpdate: api.account.csrfToken.onUpdate,
+            offUpdate: api.account.csrfToken.offUpdate,
+            update: api.account.csrfToken.update
+        },
         userInfo: {
             get: api.account.userInfo.get,
             onUpdate: api.account.userInfo.onUpdate,

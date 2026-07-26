@@ -106,6 +106,12 @@ interface OxygenAPI {
             offUpdate: () => void
             update: (value?: string) => void
         }
+        csrfToken: {
+            get: () => Promise<string | undefined>
+            onUpdate: (callback: (value?: string) => void) => void
+            offUpdate: () => void
+            update: (value?: string) => void
+        }
         userInfo: {
             get: () => Promise<UserWithPowerInfoVo | undefined>
             onUpdate: (callback: (value?: UserWithPowerInfoVo) => void) => void

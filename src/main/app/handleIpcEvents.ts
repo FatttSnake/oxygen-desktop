@@ -6,6 +6,7 @@ import {
     closeWindow,
     getAccessToken,
     getAppVersion,
+    getCsrfToken,
     getLoginAccount,
     getRefreshToken,
     getSidebarIsCollapse,
@@ -15,6 +16,7 @@ import {
     openUrlWithDefaultApp,
     renderTool,
     updateAccessToken,
+    updateCsrfToken,
     updateLoginAccount,
     updateLoginStatus,
     updateRefreshToken,
@@ -96,6 +98,10 @@ export default () => {
     ipcMain.on(IpcEvents.account.accessToken.update, (_, value?: string) =>
         updateAccessToken(value)
     )
+
+    ipcMain.handle(IpcEvents.account.csrfToken.get, getCsrfToken)
+
+    ipcMain.on(IpcEvents.account.csrfToken.update, (_, value?: string) => updateCsrfToken(value))
 
     ipcMain.handle(IpcEvents.account.userInfo.get, getUserInfo)
 

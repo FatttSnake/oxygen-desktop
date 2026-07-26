@@ -1,5 +1,6 @@
 export const PRODUCTION_NAME = 'Oxygen Toolbox'
 export const STORAGE_TOOL_MENU_ITEM_KEY = 'TOOL_MENU_ITEM'
+export const HEADER_CSRF_TOKEN_KEY = 'X-CSRF-TOKEN'
 export const COLOR_PRODUCTION = '#4E47BB'
 export const COLOR_PRIMARY = COLOR_PRODUCTION
 export const COLOR_HOVER = '#635DC8'

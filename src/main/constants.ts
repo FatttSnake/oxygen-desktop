@@ -61,6 +61,10 @@ export const IpcEvents = {
             get: 'account:refreshToken:get',
             update: 'account:refreshToken:update'
         },
+        csrfToken: {
+            get: 'account:csrfToken:get',
+            update: 'account:csrfToken:update'
+        },
         userInfo: {
             get: 'account:userInfo:get',
             update: 'account:userInfo:update'

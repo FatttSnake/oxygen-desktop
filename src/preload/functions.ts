@@ -196,6 +196,24 @@ export const createApi = (
             update: (value?: string) =>
                 ipcRenderer.send(IpcEvents.account.refreshToken.update, value)
         },
+        csrfToken: {
+            get: (): Promise<string | undefined> =>
+                ipcRenderer.invoke(IpcEvents.account.csrfToken.get),
+            onUpdate: (callback: (value?: string) => void) => {
+                listeners[IpcEvents.account.csrfToken.update] = (_, value?: string) =>
+                    callback(value)
+                ipcRenderer.on(
+                    IpcEvents.account.csrfToken.update,
+                    listeners[IpcEvents.account.csrfToken.update]
+                )
+            },
+            offUpdate: () =>
+                ipcRenderer.off(
+                    IpcEvents.account.csrfToken.update,
+                    listeners[IpcEvents.account.csrfToken.update]
+                ),
+            update: (value?: string) => ipcRenderer.send(IpcEvents.account.csrfToken.update, value)
+        },
         userInfo: {
             get: (): Promise<UserWithPowerInfoVo | undefined> =>
                 ipcRenderer.invoke(IpcEvents.account.userInfo.get),

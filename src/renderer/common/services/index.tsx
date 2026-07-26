@@ -1,6 +1,7 @@
 import axios, { type AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { jwtDecode, JwtPayload } from 'jwt-decode'
 import {
+    HEADER_CSRF_TOKEN_KEY,
     PERMISSION_ACCESS_DENIED,
     PERMISSION_TOKEN_HAS_EXPIRED,
     PERMISSION_TOKEN_ILLEGAL,
@@ -12,6 +13,8 @@ import { message } from '$/util/common'
 import {
     getAccessToken,
     setAccessToken,
+    getCsrfToken,
+    setCsrfToken,
     removeAllToken,
     getRefreshToken,
     setRefreshToken
@@ -29,7 +32,7 @@ const checkTokenIsExpired = (token?: string) => {
         return true
     }
 
-    return jwt.exp * 1e3 - new Date().getTime() < 1e5
+    return jwt.exp * 1e3 - new Date().getTime() < 3e4
 }
 
 const service: AxiosInstance = axios.create({
@@ -49,37 +52,54 @@ service.defaults.paramsSerializer = (params: Record<string, string>) => {
         }, '')
 }
 
+const refreshAccessToken = async (): Promise<void> => {
+    if (refreshTokenPromise) {
+        return refreshTokenPromise
+    }
+
+    refreshTokenPromise = (async () => {
+        const csrfToken = getCsrfToken()
+        const headers: Record<string, string> = {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'text/plain'
+        }
+        if (csrfToken) {
+            headers[HEADER_CSRF_TOKEN_KEY] = csrfToken
+        }
+
+        const res = await axios.post<_Response<TokenVo>>(
+            import.meta.env.VITE_API_TOKEN_URL,
+            getRefreshToken(),
+            {
+                headers
+            }
+        )
+        const response = res.data
+        if (response.code === PERMISSION_TOKEN_REFRESH_SUCCESS && response.data) {
+            setRefreshToken(response.data.refreshToken)
+            setAccessToken(response.data.accessToken)
+            setCsrfToken(response.data.csrfToken)
+        }
+    })().finally(() => {
+        refreshTokenPromise = undefined
+    })
+
+    return refreshTokenPromise
+}
+
 service.interceptors.request.use(
     async (config) => {
         if (checkTokenIsExpired(getRefreshToken())) {
             return config
         }
         if (checkTokenIsExpired(getAccessToken())) {
-            try {
-                if (!refreshTokenPromise) {
-                    refreshTokenPromise = axios
-                        .post<_Response<TokenVo>>(
-                            `${import.meta.env.VITE_API_TOKEN_URL}?refreshToken=${getRefreshToken()}`
-                        )
-                        .then((res) => {
-                            const response = res.data
-                            if (response.code === PERMISSION_TOKEN_REFRESH_SUCCESS) {
-                                setAccessToken(response.data!.accessToken)
-                                setRefreshToken(response.data!.refreshToken)
-                            }
-                        })
-                        .finally(() => {
-                            refreshTokenPromise = undefined
-                        })
-                }
-                await refreshTokenPromise
-            } catch (error) {
-                return Promise.reject(error)
-            }
+            await refreshAccessToken()
         }
 
-        const accessToken = getAccessToken()
-        config.headers.set('Authorization', `Bearer ${accessToken}`)
+        const token = getAccessToken()
+        if (token) {
+            config.headers.set('Authorization', `Bearer ${token}`)
+        }
 
         return config
     },
@@ -154,7 +174,7 @@ service.interceptors.response.use(
                 key: 'SERVER_ERROR'
             })
         }
-        return await Promise.reject(error?.response?.data)
+        throw error?.response?.data
     }
 )
 
