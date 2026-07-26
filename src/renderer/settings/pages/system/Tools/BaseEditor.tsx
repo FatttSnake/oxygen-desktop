@@ -181,6 +181,7 @@ const BaseEditor = () => {
                     () => {
                         return new Promise<void>((resolve) => {
                             resolve()
+                            setProcessPercent(0)
                             setSubmitSteps([{ title: '编译' }, { title: '上传' }])
                             setSubmitCurrentStep(0)
                             setSubmitStatus('process')
