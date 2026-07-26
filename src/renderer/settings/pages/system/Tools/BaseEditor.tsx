@@ -34,7 +34,7 @@ import FlexBox from '$/components/FlexBox'
 import LoadingMask from '$/components/LoadingMask'
 import Compiler from '$/components/Playground/compiler'
 import { IFileTree } from '$/components/Playground/shared'
-import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
+import { getImportMap, getPathByKey, sourceListToFileTree } from '$/components/Playground/files'
 import CodeEditor from '$/components/Playground/CodeEditor'
 import Output from '$/components/Playground/Output'
 import {
@@ -56,7 +56,7 @@ const BaseEditor = () => {
     )
     const navigate = useNavigate()
     const { id, version } = useParams()
-    const [compileForm] = AntdForm.useForm<{ entryFilePath: string }>()
+    const [compileForm] = AntdForm.useForm<{ entryFile: string }>()
     const {
         init,
         fileTree,
@@ -141,11 +141,8 @@ const BaseEditor = () => {
 
     const SUPPORTED_EXTENSIONS = ['.tsx', '.ts', '.jsx', '.js']
 
-    const toTreeDataNode = (tree: IFileTree, parentPath = ''): _DataNode | null => {
-        const currentPath = parentPath ? `${parentPath}/${tree.fileName}` : tree.fileName || '/'
-        const isLeaf = tree.children === undefined
-
-        if (isLeaf) {
+    const toTreeDataNode = (tree: IFileTree): _DataNode | null => {
+        if (tree.children === undefined) {
             const ext = tree.fileName.slice(tree.fileName.lastIndexOf('.'))
             if (!SUPPORTED_EXTENSIONS.includes(ext)) {
                 return null
@@ -159,7 +156,7 @@ const BaseEditor = () => {
         }
 
         const filteredChildren = tree
-            .children!.map((child) => toTreeDataNode(child, currentPath))
+            .children!.map((child) => toTreeDataNode(child))
             .filter(Boolean) as _DataNode[]
 
         if (filteredChildren.length === 0) {
@@ -191,7 +188,7 @@ const BaseEditor = () => {
             content: (
                 <AntdForm form={compileForm}>
                     <AntdForm.Item
-                        name={'entryFilePath'}
+                        name={'entryFile'}
                         label={'入口文件'}
                         style={{ marginTop: 10 }}
                         rules={[{ required: true }]}
@@ -215,8 +212,12 @@ const BaseEditor = () => {
                             setSubmitCurrentStep(0)
                             setSubmitStatus('process')
                             setIsShowSubmittingModal(true)
-                            const entryFilePath: string = compileForm.getFieldValue('entryFilePath')
-                            const entryPointPath = entryFilePath.replace(/^\/+/, '')
+                            const entryFile: string = compileForm.getFieldValue('entryFile')
+                            const entryPointPath = getPathByKey(fileTree, entryFile)
+                            if (!entryPointPath) {
+                                void message.error(`Entry point not found: ${entryFile}`)
+                                return
+                            }
                             const importMap = getImportMap(fileTree)
                             Compiler.compile(fileTree, importMap, entryPointPath)
                                 .then((result) => {
