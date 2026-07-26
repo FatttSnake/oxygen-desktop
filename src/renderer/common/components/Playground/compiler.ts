@@ -32,8 +32,9 @@ const dirname = (path: string): string => {
  * Returns the resolved path WITHOUT extension checks.
  */
 const resolveRelative = (importPath: string, resolveDir: string): string => {
-    const base = resolveDir.endsWith('/') ? resolveDir : `${resolveDir}/`
-    const url = new URL(importPath, `file:///${base}`)
+    // Strip leading / and trailing /
+    const base = resolveDir.replace(/^\/+|\/+$/g, '')
+    const url = new URL(importPath, `file:///${base}/`)
     // Strip leading / and trailing /
     return url.pathname.replace(/^\/+|\/+$/g, '')
 }
