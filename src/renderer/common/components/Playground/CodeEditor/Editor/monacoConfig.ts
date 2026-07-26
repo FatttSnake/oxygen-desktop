@@ -24,11 +24,10 @@ export const MonacoEditorConfig: editor.IStandaloneEditorConstructionOptions = {
         selectLeadingAndTrailingWhitespace: true
     },
     tabSize: 2,
-    overviewRulerBorder: false, // 不要滚动条的边框
-    // 滚动条设置
+    overviewRulerBorder: false,
     scrollbar: {
-        verticalScrollbarSize: 6, // 竖滚动条
-        horizontalScrollbarSize: 6 // 横滚动条
+        verticalScrollbarSize: 6,
+        horizontalScrollbarSize: 6
     }
-    // lineNumbers: 'off', // 隐藏控制行号
+    // lineNumbers: 'off'
 }

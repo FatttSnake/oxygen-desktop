@@ -32,7 +32,54 @@ export interface TypeHelper {
     ) => void
 }
 
-export const createATA = async (): Promise<TypeHelper> => {
+/**
+ * Intercept JSDelivr resolve API calls and replace `@latest` with the version
+ * pinned in the importMap, so ATA downloads type definitions matching the
+ * runtime versions rather than the latest npm release.
+ *
+ * ATA's resolution chain:
+ *   1. data.jsdelivr.com/v1/package/resolve/npm/{pkg}@latest  ←  intercept here
+ *   2. data.jsdelivr.com/v1/package/npm/{pkg}@{version}/flat
+ *   3. cdn.jsdelivr.net/npm/{pkg}@{version}/package.json
+ *   4. cdn.jsdelivr.net/npm/{pkg}@{version}/.d.ts files
+ *
+ * By rewriting step 1, all subsequent requests automatically use the pinned version.
+ *
+ * URL patterns:
+ *   data.jsdelivr.com/v1/package/resolve/npm/react@latest
+ *   data.jsdelivr.com/v1/package/resolve/npm/@mui/material@latest
+ *   data.jsdelivr.com/v1/package/resolve/npm/@types/react@latest
+ */
+const rewriteResolveUrl = (urlStr: string, versionMap: Record<string, string>): string | null => {
+    try {
+        const url = new URL(urlStr)
+        if (url.hostname !== 'data.jsdelivr.com') return null
+
+        // Match the resolve API path and extract the package name.
+        // Groups:
+        //   1 — full package name (react / @mui/material / @types/react)
+        const pathMatch = url.pathname.match(
+            /^\/v1\/package\/resolve\/npm\/((?:@[^/]+\/)?[^@]+)@latest/
+        )
+        if (!pathMatch) return null
+
+        const packageName = pathMatch[1]
+
+        // Strip @types/ prefix so a versionMap entry for "react" also catches
+        // DefinitelyTyped resolve calls for "@types/react".
+        const lookupName = packageName.replace(/^@types\//, '')
+        const pinnedVersion = versionMap[lookupName]
+        if (!pinnedVersion) return null
+
+        // Replace @latest with the pinned version
+        url.pathname = url.pathname.replace(/((?:@[^/]+\/)?[^@]+)@latest/, `$1@${pinnedVersion}`)
+        return url.toString()
+    } catch {
+        return null
+    }
+}
+
+export const createATA = async (versionMap?: Record<string, string>): Promise<TypeHelper> => {
     const maxConcurrentRequests = 50
     let activeRequests = 0
     const requestQueue: Array<() => void> = []
@@ -66,6 +113,20 @@ export const createATA = async (): Promise<TypeHelper> => {
             init: RequestInit | undefined
         ): Promise<Response> => {
             try {
+                // Rewrite the resolve URL if the package is in the importMap's
+                // version map, so ATA fetches the pinned version's types.
+                if (versionMap && Object.keys(versionMap).length > 0) {
+                    const urlStr =
+                        typeof input === 'string'
+                            ? input
+                            : input instanceof URL
+                              ? input.href
+                              : input.url
+                    const rewritten = rewriteResolveUrl(urlStr, versionMap)
+                    if (rewritten && rewritten !== urlStr) {
+                        return fetchWithQueue(rewritten, init)
+                    }
+                }
                 return fetchWithQueue(input, init)
             } catch (error) {
                 console.error('Error fetching data:', error)
