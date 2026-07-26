@@ -8,7 +8,7 @@ import {
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '$/constants/common.constants'
-import { message, modal } from '$/util/common'
+import { message, modal, omitText } from '$/util/common'
 import { navigateToToolBase, navigateToToolBaseEditor } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
 import {
@@ -414,7 +414,12 @@ const BaseEditor = () => {
 
         const importMap = getImportMap(fileTree)
         oxygenApi.window.tab.title(previewViewId, `[编译中] ${toolBaseData!.name}`)
-        Compiler.compile(fileTree, importMap, entryPointPath)
+        Compiler.compile(fileTree, importMap, entryPointPath, (state, message) =>
+            oxygenApi.window.tab.title(
+                previewViewId,
+                `[编译中] ${state === 'processing' ? omitText(message, 30) : toolBaseData!.name}`
+            )
+        )
             .then((result) => {
                 const dist = result.outputFiles[0].text
                 oxygenApi.window.tab.icon(previewViewId, `data:image/svg+xml;base64,${btoa(logo)}`)
