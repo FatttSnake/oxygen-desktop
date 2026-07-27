@@ -3,7 +3,7 @@ import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables
 import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '%/assets/css/pages/system/tools/base-preview.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
-import { message } from '$/util/common'
+import { checkDesktop, message } from '$/util/common'
 import { navigateToToolBase } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
 import {
@@ -85,8 +85,16 @@ const BasePreview = () => {
             .then((res) => {
                 const response = res.data
                 switch (response.code) {
-                    case DATABASE_SELECT_SUCCESS:
-                        return response.data!
+                    case DATABASE_SELECT_SUCCESS: {
+                        const toolBaseVo = response.data!
+                        if (!checkDesktop() && toolBaseVo.platform !== 'WEB') {
+                            message.error('此基板需要桌面端环境，请在桌面端打开').then(() => {
+                                navigateToToolBase(navigate)
+                            })
+                            throw Error()
+                        }
+                        return toolBaseVo
+                    }
                     case DATABASE_NO_RECORD_FOUND:
                         message.error('未找到指定工具基板').then(() => {
                             navigateToToolBase(navigate)

@@ -204,7 +204,7 @@ const TemplateEditor = () => {
                     case DATABASE_SELECT_SUCCESS: {
                         const toolTemplateVo = response.data!
                         if (!checkDesktop() && toolTemplateVo.platform !== 'WEB') {
-                            message.error('此应用需要桌面端环境，请在桌面端打开').then(() => {
+                            message.error('此模板需要桌面端环境，请在桌面端打开').then(() => {
                                 navigateToToolTemplate(navigate)
                             })
                             throw Error()
