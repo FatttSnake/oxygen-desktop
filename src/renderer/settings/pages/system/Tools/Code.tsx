@@ -15,6 +15,7 @@ import { sourceListToFileTree } from '$/components/Playground/files'
 import CodeEditor from '$/components/Playground/CodeEditor'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
 import { useCompilePreview } from '$/hooks/useCompilePreview'
+import Output from '$/components/Playground/Output'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -154,6 +155,13 @@ const Code = () => {
                                     extraLibs={editorExtraLibs}
                                     onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
                                     onSelectedFileChange={setSelectedFileKey}
+                                />
+                            </AntdSplitter.Panel>
+                            <AntdSplitter.Panel collapsible defaultSize={0}>
+                                <Output
+                                    isDarkMode={isDarkMode}
+                                    fileTree={fileTree}
+                                    selectedFileKey={selectedFileKey}
                                 />
                             </AntdSplitter.Panel>
                         </AntdSplitter>
