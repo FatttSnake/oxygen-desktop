@@ -16,6 +16,7 @@ const fileTreeToTreeData = (fileTree: IFileTree): _TreeDataNode => ({
 interface FileExplorerProps {
     fileTree: IFileTree
     selectedKey: string
+    readonly?: boolean
     onSelect?: (fileKey: string) => void
     onAdd?: (fileName: string, isDir: boolean, parentKey: string) => void
     onRename?: (fileKey: string, newFileName: string) => void
@@ -26,6 +27,7 @@ interface FileExplorerProps {
 const FileExplorer = ({
     fileTree,
     selectedKey,
+    readonly,
     onSelect,
     onAdd,
     onRename,
@@ -82,7 +84,7 @@ const FileExplorer = ({
         const node = findNodeByKey(fileTree, key)
         setRightClickNode(node)
 
-        if (!node) {
+        if (!node || readonly) {
             setIsAbleToNewFile(false)
             setIsAbleToRename(false)
             setIsAbleToDelete(false)

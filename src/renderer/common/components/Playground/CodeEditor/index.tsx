@@ -69,6 +69,7 @@ const CodeEditor = ({
                         <FileExplorer
                             fileTree={fileTree}
                             selectedKey={selectedFileKey}
+                            readonly={readonly}
                             onSelect={onSelectedFileChange}
                             onAdd={onAddFile}
                             onRename={onRenameFile}
