@@ -1,18 +1,10 @@
-import logo from '$/assets/logo.svg?raw'
-import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
-import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
+import Icon from '@ant-design/icons'
 import useStyles from '%/assets/css/pages/system/tools/base-preview.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { checkDesktop, message } from '$/util/common'
 import { navigateToToolBase } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
-import {
-    addExtraCssVariables,
-    convertObjToJsLiteral,
-    formatToolBaseVersion,
-    generateThemeCssVariables,
-    removeUselessAttributes
-} from '$/util/tool'
+import { addExtraCssVariables, formatToolBaseVersion } from '$/util/tool'
 import { r_sys_tool_base_get_one } from '$/services/system'
 import { r_tool_base_get_dist } from '$/services/tool'
 import { CommonContext } from '$/CommonFramework'
@@ -23,8 +15,8 @@ import LoadingMask from '$/components/LoadingMask'
 import { sourceListToFileTree } from '$/components/Playground/files'
 import CodeEditor from '$/components/Playground/CodeEditor'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
+import { usePreview } from '$/hooks/usePreview'
 import ToolBar from '@/components/tools/ToolBar'
-import Icon from '@ant-design/icons'
 
 const { Text } = AntdTypography
 
@@ -33,46 +25,18 @@ const BasePreview = () => {
     const { isDarkMode } = useContext(CommonContext)
     const navigate = useNavigate()
     const { id, version } = useParams()
-    const {
-        init,
-        fileTree,
-        selectedFileKey,
-        isReadonly,
-        hasUnsavedChanges,
-        setSelectedFileKey,
-        listenOnError
-    } = usePlaygroundState()
-    const themeRef = useRef(theme)
-    const isDarkModeRef = useRef(isDarkMode)
-    const previewViewIdRef = useRef<string>()
-    const [layout, setLayout] = useState<'horizontal' | 'vertical'>(
-        window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical'
-    )
+    const { init, fileTree, selectedFileKey, setSelectedFileKey } = usePlaygroundState()
     const [isLoading, setIsLoading] = useState(false)
     const [toolBaseData, setToolBaseData] = useState<ToolBaseWithSourceVo>()
     const [toolBaseWithDistData, setToolBaseWithDistData] = useState<ToolBaseWithDistVo>()
-    const [previewViewId, setPreviewViewId] = useState<string>()
-
-    useBeforeUnload(
-        useCallback(
-            (event) => {
-                if (hasUnsavedChanges) {
-                    event.preventDefault()
-                    event.returnValue = ''
-                }
-            },
-            [hasUnsavedChanges]
-        ),
-        { capture: true }
+    const { openPreview } = usePreview(
+        theme,
+        isDarkMode,
+        toolBaseData?.name,
+        undefined,
+        toolBaseWithDistData?.dist.fileContent,
+        undefined
     )
-
-    const handleOnPreview = () => {
-        if (previewViewId) {
-            void oxygenApi.window.tab.switch(previewViewId)
-            return
-        }
-        oxygenApi.window.tab.create('tool').then(setPreviewViewId)
-    }
 
     const getToolBase = () => {
         if (isLoading) {
@@ -138,66 +102,8 @@ const BasePreview = () => {
     }
 
     useEffect(() => {
-        if (!previewViewId || !toolBaseWithDistData) {
-            return
-        }
-
-        oxygenApi.window.tab.icon(previewViewId, `data:image/svg+xml;base64,${btoa(logo)}`)
-        oxygenApi.window.tab.title(previewViewId, `[预览] ${toolBaseData!.name}`)
-        oxygenApi.tool.view.render(
-            setupGlobalJsVariablesCode.replace(
-                "'${replace_with_code}'",
-                convertObjToJsLiteral({
-                    OxygenTheme: {
-                        ...removeUselessAttributes(themeRef.current),
-                        isDarkMode: isDarkModeRef.current
-                    }
-                })
-            ),
-            previewViewId
-        )
-        oxygenApi.tool.view.render(
-            setupGlobalCssVariablesCode.replace(
-                "'${replace_with_code}'",
-                convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
-            ),
-            previewViewId
-        )
-        oxygenApi.tool.view.render(
-            `(() => {${toolBaseWithDistData.dist.fileContent}})();`,
-            previewViewId
-        )
-    }, [previewViewId, toolBaseWithDistData])
-
-    useEffect(() => {
         getToolBase()
     }, [id, version])
-
-    useEffect(() => {
-        themeRef.current = theme
-        isDarkModeRef.current = isDarkMode
-    }, [theme, isDarkMode])
-
-    useEffect(() => {
-        previewViewIdRef.current = previewViewId
-    }, [previewViewId])
-
-    useEffect(() => {
-        oxygenApi.window.tab.onClosed((viewId) => {
-            setPreviewViewId((prevState) => (viewId === prevState ? undefined : prevState))
-        })
-        const resizeListener = () => {
-            setLayout(window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical')
-        }
-        window.addEventListener('resize', resizeListener)
-
-        return () => {
-            oxygenApi.window.tab.offClosed()
-            const previewViewId = previewViewIdRef.current
-            previewViewId && oxygenApi.window.tab.close(previewViewId)
-            window.removeEventListener('resize', resizeListener)
-        }
-    }, [])
 
     return (
         <>
@@ -205,7 +111,7 @@ const BasePreview = () => {
                 <LoadingMask hidden={!isLoading}>
                     <FlexBox className={styles.layout} direction={'vertical'}>
                         <ToolBar
-                            title={`${toolBaseData?.name}${hasUnsavedChanges ? '*' : ''}`}
+                            title={toolBaseData?.name}
                             subtitle={
                                 <>
                                     <AntdTag color={'blue'}>
@@ -225,29 +131,22 @@ const BasePreview = () => {
                                     type={'dashed'}
                                     icon={<Icon component={IconOxygenExecute} />}
                                     loading={isLoading}
-                                    onClick={handleOnPreview}
+                                    onClick={openPreview}
                                 >
                                     预览
                                 </AntdButton>
                             )}
                         </ToolBar>
                         <Card>
-                            <AntdSplitter layout={layout}>
-                                <AntdSplitter.Panel collapsible>
-                                    <CodeEditor
-                                        isDarkMode={isDarkMode}
-                                        fileTree={fileTree}
-                                        selectedFileKey={selectedFileKey}
-                                        readonly={isReadonly}
-                                        extraLibs={editorExtraLibs}
-                                        onEditorDidMount={(_, monaco) =>
-                                            addExtraCssVariables(monaco)
-                                        }
-                                        onSelectedFileChange={setSelectedFileKey}
-                                        listenOnError={listenOnError}
-                                    />
-                                </AntdSplitter.Panel>
-                            </AntdSplitter>
+                            <CodeEditor
+                                isDarkMode={isDarkMode}
+                                fileTree={fileTree}
+                                selectedFileKey={selectedFileKey}
+                                readonly
+                                extraLibs={editorExtraLibs}
+                                onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
+                                onSelectedFileChange={setSelectedFileKey}
+                            />
                         </Card>
                     </FlexBox>
                 </LoadingMask>

@@ -1,6 +1,4 @@
 import Icon from '@ant-design/icons'
-import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
-import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '@/assets/css/pages/tools/edit.style'
 import {
     DATABASE_NO_RECORD_FOUND,
@@ -12,14 +10,7 @@ import {
 import { message, modal } from '$/util/common'
 import { navigateToRepository } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
-import {
-    addExtraCssVariables,
-    convertObjToJsLiteral,
-    formatToolBaseVersion,
-    generateThemeCssVariables,
-    processBaseDist,
-    removeUselessAttributes
-} from '$/util/tool'
+import { addExtraCssVariables, formatToolBaseVersion } from '$/util/tool'
 import {
     r_tool_base_get_latest_version,
     r_tool_category_get,
@@ -37,8 +28,7 @@ import FitFullscreen from '$/components/FitFullscreen'
 import FlexBox from '$/components/FlexBox'
 import LoadingMask from '$/components/LoadingMask'
 import Card from '$/components/Card'
-import Compiler from '$/components/Playground/compiler'
-import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
+import { sourceListToFileTree } from '$/components/Playground/files'
 import CodeEditor from '$/components/Playground/CodeEditor'
 import Output from '$/components/Playground/Output'
 import {
@@ -47,6 +37,7 @@ import {
     TreeDiffOperation,
     usePlaygroundState
 } from '$/hooks/usePlaygroundState'
+import { useCompilePreview } from '$/hooks/useCompilePreview'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -70,7 +61,6 @@ const Edit = () => {
         fileTree,
         originalFileTree,
         selectedFileKey,
-        entryPointPath,
         hasUnsavedChanges,
         setSelectedFileKey,
         updateFileContent,
@@ -81,9 +71,6 @@ const Edit = () => {
         markAsSaved,
         listenOnError
     } = usePlaygroundState()
-    const themeRef = useRef(theme)
-    const isDarkModeRef = useRef(isDarkMode)
-    const previewViewIdRef = useRef<string>()
     const diffRef = useRef<TreeDiffOperation[]>([])
     const nodeIdMapRef = useRef<Map<string, string>>(new Map())
     const [layout, setLayout] = useState<'horizontal' | 'vertical'>(
@@ -91,7 +78,6 @@ const Edit = () => {
     )
     const [isLoading, setIsLoading] = useState(false)
     const [toolData, setToolData] = useState<ToolWithSourceVo>()
-    const [baseDist, setBaseDist] = useState('')
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isSubmittable, setIsSubmittable] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -105,7 +91,15 @@ const Edit = () => {
     const [processPercent, setProcessPercent] = useState<number>(0)
     const hasNewBaseVersion =
         !!toolData && !!baseLatestVersion && baseLatestVersion > toolData.base.version
-    const [previewViewId, setPreviewViewId] = useState<string>()
+    const { openPreview } = useCompilePreview(
+        theme,
+        isDarkMode,
+        toolData?.name,
+        toolData?.sources,
+        fileTree,
+        toolData?.entryPoint,
+        toolData?.base
+    )
 
     useBeforeUnload(
         useCallback(
@@ -172,14 +166,6 @@ const Edit = () => {
             getCategory()
         }
         void form.validateFields()
-    }
-
-    const handleOnPreview = () => {
-        if (previewViewId) {
-            void oxygenApi.window.tab.switch(previewViewId)
-            return
-        }
-        oxygenApi.window.tab.create('tool').then(setPreviewViewId)
     }
 
     const handleOnSave = () => {
@@ -336,10 +322,8 @@ const Edit = () => {
                         throw Error('载入工具失败，请稍后重试')
                 }
             })
-            .then((toolVo) => processBaseDist(toolVo.base.id, toolVo.base.version, { toolVo }))
-            .then(({ toolVo, toolBaseVo }) => {
+            .then((toolVo) => {
                 setToolData(toolVo)
-                setBaseDist(toolBaseVo.dist.fileContent)
                 const fileTree = sourceListToFileTree(toolVo.sources)
                 init(fileTree, false, toolVo.entryPoint, selectedFileKey)
                 r_tool_base_get_latest_version(toolVo.base.id).then((res) => {
@@ -472,55 +456,6 @@ const Edit = () => {
     }
 
     useEffect(() => {
-        if (!previewViewId || !baseDist.length || !entryPointPath) {
-            return
-        }
-
-        const importMap = getImportMap(fileTree)
-        Compiler.compile(fileTree, importMap, entryPointPath)
-            .then((result) => {
-                message.destroy('COMPILE')
-                const dist = result.outputFiles[0].text
-                oxygenApi.window.tab.icon(
-                    previewViewId,
-                    `data:image/svg+xml;base64,${toolData!.icon}`
-                )
-                oxygenApi.window.tab.title(previewViewId, `[预览] ${toolData!.name}`)
-                oxygenApi.tool.view.render(
-                    setupGlobalJsVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral({
-                            OxygenTheme: {
-                                ...removeUselessAttributes(themeRef.current),
-                                isDarkMode: isDarkModeRef.current
-                            }
-                        })
-                    ),
-                    previewViewId
-                )
-                oxygenApi.tool.view.render(
-                    setupGlobalCssVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
-                    ),
-                    previewViewId
-                )
-                oxygenApi.tool.view.render(
-                    `(() => {${dist}})();\n(() => {${baseDist}})();`,
-                    previewViewId
-                )
-            })
-            .catch((reason: Error) => {
-                void message.error({
-                    key: 'COMPILE',
-                    content: reason.message,
-                    duration: 0,
-                    style: { maxWidth: 400, margin: '0 auto' }
-                })
-            })
-    }, [previewViewId, fileTree, baseDist])
-
-    useEffect(() => {
         form.validateFields({ validateOnly: true }).then(
             () => {
                 setIsSubmittable(true)
@@ -540,27 +475,12 @@ const Edit = () => {
     }, [toolId, searchParams])
 
     useEffect(() => {
-        themeRef.current = theme
-        isDarkModeRef.current = isDarkMode
-    }, [theme, isDarkMode])
-
-    useEffect(() => {
-        previewViewIdRef.current = previewViewId
-    }, [previewViewId])
-
-    useEffect(() => {
-        oxygenApi.window.tab.onClosed((viewId) => {
-            setPreviewViewId((prevState) => (viewId === prevState ? undefined : prevState))
-        })
         const resizeListener = () => {
             setLayout(window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical')
         }
         window.addEventListener('resize', resizeListener)
 
         return () => {
-            oxygenApi.window.tab.offClosed()
-            const previewViewId = previewViewIdRef.current
-            previewViewId && oxygenApi.window.tab.close(previewViewId)
             window.removeEventListener('resize', resizeListener)
         }
     }, [])
@@ -723,7 +643,7 @@ const Edit = () => {
                                             type={'dashed'}
                                             icon={<Icon component={IconOxygenExecute} />}
                                             loading={isLoading || isSubmitting}
-                                            onClick={handleOnPreview}
+                                            onClick={openPreview}
                                         >
                                             预览
                                         </AntdButton>

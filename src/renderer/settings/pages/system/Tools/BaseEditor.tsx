@@ -1,23 +1,14 @@
 import Icon from '@ant-design/icons'
-import logo from '$/assets/logo.svg?raw'
-import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
-import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '%/assets/css/pages/system/tools/base-editor.style'
 import {
     DATABASE_NO_RECORD_FOUND,
     DATABASE_SELECT_SUCCESS,
     DATABASE_UPDATE_SUCCESS
 } from '$/constants/common.constants'
-import { checkDesktop, message, modal, omitText } from '$/util/common'
+import { checkDesktop, message, modal } from '$/util/common'
 import { navigateToToolBase, navigateToToolBaseEditor } from '$/util/navigation'
 import editorExtraLibs from '$/util/editorExtraLibs'
-import {
-    addExtraCssVariables,
-    convertObjToJsLiteral,
-    formatToolBaseVersion,
-    generateThemeCssVariables,
-    removeUselessAttributes
-} from '$/util/tool'
+import { addExtraCssVariables, formatToolBaseVersion } from '$/util/tool'
 import {
     r_sys_tool_base_get_one,
     r_sys_tool_base_update_dist,
@@ -43,6 +34,7 @@ import {
     TreeDiffOperation,
     usePlaygroundState
 } from '$/hooks/usePlaygroundState'
+import { useCompilePreview } from '$/hooks/useCompilePreview'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -76,12 +68,8 @@ const BaseEditor = () => {
         markAsSaved,
         listenOnError
     } = usePlaygroundState()
-    const themeRef = useRef(theme)
-    const isDarkModeRef = useRef(isDarkMode)
-    const previewViewIdRef = useRef<string>()
     const diffRef = useRef<TreeDiffOperation[]>([])
     const nodeIdMapRef = useRef<Map<string, string>>(new Map())
-    const abortRef = useRef<AbortController | null>(null)
     const [layout, setLayout] = useState<'horizontal' | 'vertical'>(
         window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical'
     )
@@ -93,7 +81,14 @@ const BaseEditor = () => {
     const [submitStatus, setSubmitStatus] = useState<'process' | 'error'>('process')
     const [isShowSubmittingModal, setIsShowSubmittingModal] = useState(false)
     const [processPercent, setProcessPercent] = useState<number>(0)
-    const [previewViewId, setPreviewViewId] = useState<string>()
+    const { openPreview } = useCompilePreview(
+        theme,
+        isDarkMode,
+        toolBaseData?.name,
+        toolBaseData?.sources,
+        fileTree,
+        entryPointPath
+    )
 
     useBeforeUnload(
         useCallback(
@@ -107,14 +102,6 @@ const BaseEditor = () => {
         ),
         { capture: true }
     )
-
-    const handleOnPreview = () => {
-        if (previewViewId) {
-            void oxygenApi.window.tab.switch(previewViewId)
-            return
-        }
-        oxygenApi.window.tab.create('tool').then(setPreviewViewId)
-    }
 
     const handleOnSave = () => {
         if (isSubmitting || !toolBaseData) {
@@ -418,140 +405,16 @@ const BaseEditor = () => {
     }
 
     useEffect(() => {
-        if (!previewViewId || !entryPointPath) {
-            return
-        }
-
-        abortRef.current?.abort()
-        const controller = new AbortController()
-        abortRef.current = controller
-
-        const timer = setTimeout(() => {
-            const importMap = getImportMap(fileTree)
-            oxygenApi.window.tab.title(previewViewId, `[编译中] ${toolBaseData!.name}`)
-            Compiler.compile(
-                fileTree,
-                importMap,
-                entryPointPath,
-                (state, message) =>
-                    oxygenApi.window.tab.title(
-                        previewViewId,
-                        `[编译中] ${state === 'processing' ? omitText(message, 30) : toolBaseData!.name}`
-                    ),
-                controller.signal
-            )
-                .then((result) => {
-                    if (controller.signal.aborted) {
-                        return
-                    }
-
-                    const dist = result.outputFiles[0].text
-                    oxygenApi.window.tab.icon(
-                        previewViewId,
-                        `data:image/svg+xml;base64,${btoa(logo)}`
-                    )
-                    oxygenApi.window.tab.title(previewViewId, `[预览] ${toolBaseData!.name}`)
-                    oxygenApi.tool.view.render(
-                        setupGlobalJsVariablesCode.replace(
-                            "'${replace_with_code}'",
-                            convertObjToJsLiteral({
-                                OxygenTheme: {
-                                    ...removeUselessAttributes(themeRef.current),
-                                    isDarkMode: isDarkModeRef.current
-                                }
-                            })
-                        ),
-                        previewViewId
-                    )
-                    oxygenApi.tool.view.render(
-                        setupGlobalCssVariablesCode.replace(
-                            "'${replace_with_code}'",
-                            convertObjToJsLiteral(
-                                generateThemeCssVariables(themeRef.current).styles
-                            )
-                        ),
-                        previewViewId
-                    )
-                    oxygenApi.tool.view.render(`(() => {${dist}})();`, previewViewId)
-                })
-                .catch((reason: Error) => {
-                    if (controller.signal.aborted) {
-                        return
-                    }
-
-                    oxygenApi.window.tab.icon(
-                        previewViewId,
-                        `data:image/svg+xml;base64,${btoa(logo)}`
-                    )
-                    oxygenApi.window.tab.title(previewViewId, `[编译异常] ${toolBaseData!.name}`)
-                    oxygenApi.tool.view.render(
-                        setupGlobalJsVariablesCode.replace(
-                            "'${replace_with_code}'",
-                            convertObjToJsLiteral({
-                                OxygenTheme: {
-                                    ...removeUselessAttributes(themeRef.current),
-                                    isDarkMode: isDarkModeRef.current
-                                }
-                            })
-                        ),
-                        previewViewId
-                    )
-                    oxygenApi.tool.view.render(
-                        setupGlobalCssVariablesCode.replace(
-                            "'${replace_with_code}'",
-                            convertObjToJsLiteral(
-                                generateThemeCssVariables(themeRef.current).styles
-                            )
-                        ),
-                        previewViewId
-                    )
-                    oxygenApi.tool.view.render(
-                        `(() => {
-                const element = document.createElement('div')
-                element.style.display = 'flex'
-                element.style.justifyContent = 'center'
-                element.style.alignItems = 'center'
-                element.style.color = '#dc4446'
-                element.innerText = ${JSON.stringify(reason.stack)}
-                document.getElementById('root')?.replaceChildren(element)
-                })();`,
-                        previewViewId
-                    )
-                })
-        }, 500)
-
-        return () => {
-            clearTimeout(timer)
-            controller.abort()
-        }
-    }, [previewViewId, fileTree, entryPointPath])
-
-    useEffect(() => {
         getToolBase()
     }, [id])
 
     useEffect(() => {
-        themeRef.current = theme
-        isDarkModeRef.current = isDarkMode
-    }, [theme, isDarkMode])
-
-    useEffect(() => {
-        previewViewIdRef.current = previewViewId
-    }, [previewViewId])
-
-    useEffect(() => {
-        oxygenApi.window.tab.onClosed((viewId) => {
-            setPreviewViewId((prevState) => (viewId === prevState ? undefined : prevState))
-        })
         const resizeListener = () => {
             setLayout(window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical')
         }
         window.addEventListener('resize', resizeListener)
 
         return () => {
-            oxygenApi.window.tab.offClosed()
-            const previewViewId = previewViewIdRef.current
-            previewViewId && oxygenApi.window.tab.close(previewViewId)
             window.removeEventListener('resize', resizeListener)
         }
     }, [])
@@ -598,7 +461,7 @@ const BaseEditor = () => {
                                         icon={<Icon component={IconOxygenExecute} />}
                                         loading={isLoading || isSubmitting}
                                         disabled={!entryPointPath}
-                                        onClick={handleOnPreview}
+                                        onClick={openPreview}
                                     >
                                         预览
                                     </AntdButton>

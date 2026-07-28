@@ -1,18 +1,9 @@
 import Icon from '@ant-design/icons'
-import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
-import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '%/assets/css/pages/system/tools/code.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
 import { message, modal, checkDesktop } from '$/util/common'
 import { navigateToRepository, navigateToTools } from '$/util/navigation'
-import {
-    addExtraCssVariables,
-    convertObjToJsLiteral,
-    formatToolBaseVersion,
-    generateThemeCssVariables,
-    processBaseDist,
-    removeUselessAttributes
-} from '$/util/tool'
+import { addExtraCssVariables, formatToolBaseVersion } from '$/util/tool'
 import editorExtraLibs from '$/util/editorExtraLibs'
 import { r_sys_tool_get_one } from '$/services/system'
 import { CommonContext } from '$/CommonFramework'
@@ -20,10 +11,10 @@ import FitFullscreen from '$/components/FitFullscreen'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import LoadingMask from '$/components/LoadingMask'
-import Compiler from '$/components/Playground/compiler'
-import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
+import { sourceListToFileTree } from '$/components/Playground/files'
 import CodeEditor from '$/components/Playground/CodeEditor'
 import { usePlaygroundState } from '$/hooks/usePlaygroundState'
+import { useCompilePreview } from '$/hooks/useCompilePreview'
 import ToolBar from '@/components/tools/ToolBar'
 
 const { Text } = AntdTypography
@@ -34,70 +25,20 @@ const Code = () => {
     const navigate = useNavigate()
     const { id } = useParams()
     const { init, fileTree, selectedFileKey, setSelectedFileKey } = usePlaygroundState()
-    const themeRef = useRef(theme)
-    const isDarkModeRef = useRef(isDarkMode)
-    const [toolData, setToolData] = useState<ToolWithSourceVo>()
+    const [layout, setLayout] = useState<'horizontal' | 'vertical'>(
+        window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical'
+    )
     const [isLoading, setIsLoading] = useState(false)
-    const [isExecuting, setIsExecuting] = useState(false)
-
-    const executeTool = () => {
-        if (isExecuting || !toolData) {
-            return
-        }
-        setIsExecuting(true)
-
-        void message.loading({ content: '加载中……', key: 'LOADING', duration: 0 })
-        processBaseDist(toolData.base.id, toolData.base.version, { toolVo: toolData })
-            .then(({ toolVo, toolBaseVo }) =>
-                oxygenApi.window.tab
-                    .create('tool')
-                    .then((viewId) => ({ viewId, toolVo, toolBaseVo }))
-            )
-            .then(async ({ viewId, toolVo, toolBaseVo }) => {
-                const baseDist = toolBaseVo.dist.fileContent
-                const fileTree = sourceListToFileTree(toolVo.sources)
-                const importMap = getImportMap(fileTree)
-                const result = await Compiler.compile(fileTree, importMap, toolVo.entryPoint)
-                return {
-                    viewId,
-                    toolVo,
-                    baseDist,
-                    dist: result.outputFiles[0].text
-                }
-            })
-            .then(({ viewId, toolVo, baseDist, dist }) => {
-                oxygenApi.window.tab.icon(viewId, `data:image/svg+xml;base64,${toolVo.icon}`)
-                oxygenApi.window.tab.title(viewId, `[预览] ${toolVo.name}`)
-
-                oxygenApi.tool.view.render(
-                    setupGlobalJsVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral({
-                            OxygenTheme: {
-                                ...removeUselessAttributes(themeRef.current),
-                                isDarkMode: isDarkModeRef.current
-                            }
-                        })
-                    ),
-                    viewId
-                )
-                oxygenApi.tool.view.render(
-                    setupGlobalCssVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
-                    ),
-                    viewId
-                )
-                oxygenApi.tool.view.render(`(() => {${dist}})();\n(() => {${baseDist}})();`, viewId)
-            })
-            .catch((reason) => {
-                reason && message.error(reason)
-            })
-            .finally(() => {
-                setIsExecuting(false)
-                message.destroy('LOADING')
-            })
-    }
+    const [toolData, setToolData] = useState<ToolWithSourceVo>()
+    const { openPreview } = useCompilePreview(
+        theme,
+        isDarkMode,
+        toolData?.name,
+        toolData?.sources,
+        fileTree,
+        toolData?.entryPoint,
+        toolData?.base
+    )
 
     const handleOnRunTool = () => {
         if (checkDesktop() || toolData!.platform === 'WEB') {
@@ -106,9 +47,7 @@ const Code = () => {
                 maskClosable: true,
                 title: '注意',
                 content: '运行前请仔细查阅工具代码！',
-                onOk: () => {
-                    executeTool()
-                }
+                onOk: openPreview
             })
         } else {
             void message.warning('此应用需要桌面端环境，请在桌面端运行')
@@ -153,13 +92,19 @@ const Code = () => {
     }
 
     useEffect(() => {
-        themeRef.current = theme
-        isDarkModeRef.current = isDarkMode
-    }, [theme, isDarkMode])
-
-    useEffect(() => {
         getTool()
     }, [id])
+
+    useEffect(() => {
+        const resizeListener = () => {
+            setLayout(window.innerWidth > window.innerHeight ? 'horizontal' : 'vertical')
+        }
+        window.addEventListener('resize', resizeListener)
+
+        return () => {
+            window.removeEventListener('resize', resizeListener)
+        }
+    }, [])
 
     return (
         <FitFullscreen className={styles.root}>
@@ -191,7 +136,7 @@ const Code = () => {
                                 type={'primary'}
                                 icon={<Icon component={IconOxygenExecute} />}
                                 disabled={!toolData}
-                                loading={isExecuting}
+                                loading={isLoading}
                                 onClick={handleOnRunTool}
                             >
                                 运行
@@ -199,15 +144,19 @@ const Code = () => {
                         )}
                     </ToolBar>
                     <Card>
-                        <CodeEditor
-                            isDarkMode={isDarkMode}
-                            fileTree={fileTree}
-                            selectedFileKey={selectedFileKey}
-                            readonly
-                            extraLibs={editorExtraLibs}
-                            onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
-                            onSelectedFileChange={setSelectedFileKey}
-                        />
+                        <AntdSplitter layout={layout}>
+                            <AntdSplitter.Panel collapsible>
+                                <CodeEditor
+                                    isDarkMode={isDarkMode}
+                                    fileTree={fileTree}
+                                    selectedFileKey={selectedFileKey}
+                                    readonly
+                                    extraLibs={editorExtraLibs}
+                                    onEditorDidMount={(_, monaco) => addExtraCssVariables(monaco)}
+                                    onSelectedFileChange={setSelectedFileKey}
+                                />
+                            </AntdSplitter.Panel>
+                        </AntdSplitter>
                     </Card>
                 </FlexBox>
             </LoadingMask>

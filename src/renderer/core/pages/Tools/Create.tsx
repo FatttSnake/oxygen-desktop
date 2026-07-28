@@ -1,7 +1,4 @@
 import Icon from '@ant-design/icons'
-import logo from '$/assets/logo.svg?raw'
-import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
-import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
 import useStyles from '@/assets/css/pages/tools/create.style'
 import {
     DATABASE_DUPLICATE_KEY,
@@ -10,12 +7,6 @@ import {
 } from '$/constants/common.constants'
 import { message } from '$/util/common'
 import { navigateToEdit } from '$/util/navigation'
-import {
-    convertObjToJsLiteral,
-    generateThemeCssVariables,
-    processBaseDist,
-    removeUselessAttributes
-} from '$/util/tool'
 import {
     r_tool_category_get,
     r_tool_create,
@@ -27,8 +18,7 @@ import FlexBox from '$/components/FlexBox'
 import Card from '$/components/Card'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
-import Compiler from '$/components/Playground/compiler'
-import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
+import { useCompilePreview } from '$/hooks/useCompilePreview'
 
 const { Link } = AntdTypography
 
@@ -38,8 +28,6 @@ const Create = () => {
     const navigate = useNavigate()
     const [form] = AntdForm.useForm<ToolCreateParam>()
     const formValues = AntdForm.useWatch([], form)
-    const themeRef = useRef(theme)
-    const isDarkModeRef = useRef(isDarkMode)
     const [templateData, setTemplateData] = useState<ToolTemplateVo[]>()
     const [categoryData, setCategoryData] = useState<ToolCategoryVo[]>()
     const [templateDetailData, setTemplateDetailData] = useState<
@@ -48,8 +36,16 @@ const Create = () => {
     const [previewTemplate, setPreviewTemplate] = useState('')
     const [isLoadingTemplate, setIsLoadingTemplate] = useState(false)
     const [isLoadingCategory, setIsLoadingCategory] = useState(false)
-    const [isCompiling, setIsCompiling] = useState(false)
     const [isCreating, setIsCreating] = useState(false)
+    const { openPreview } = useCompilePreview(
+        theme,
+        isDarkMode,
+        templateDetailData[previewTemplate]?.name,
+        templateDetailData[previewTemplate]?.sources,
+        undefined,
+        templateDetailData[previewTemplate]?.entryPoint,
+        templateDetailData[previewTemplate]?.base
+    )
 
     const handleOnFinish = (toolAddParam: ToolCreateParam) => {
         setIsCreating(true)
@@ -146,66 +142,6 @@ const Create = () => {
             })
     }
 
-    const handleOnPreview = () => {
-        const template = templateDetailData[previewTemplate]
-        if (isCompiling || !template) {
-            return
-        }
-        setIsCompiling(true)
-
-        void message.loading({ content: '编译中……', key: 'LOADING', duration: 0 })
-        processBaseDist(template.base.id, template.base.version, { templateVo: template })
-            .then(({ templateVo, toolBaseVo }) =>
-                oxygenApi.window.tab
-                    .create('tool')
-                    .then((viewId) => ({ viewId, templateVo, toolBaseVo }))
-            )
-            .then(async ({ viewId, templateVo, toolBaseVo }) => {
-                const baseDist = toolBaseVo.dist.fileContent
-                const fileTree = sourceListToFileTree(templateVo.sources)
-                const importMap = getImportMap(fileTree)
-                const result = await Compiler.compile(fileTree, importMap, templateVo.entryPoint)
-                return {
-                    viewId,
-                    templateVo,
-                    baseDist,
-                    dist: result.outputFiles[0].text
-                }
-            })
-            .then(({ viewId, templateVo, baseDist, dist }) => {
-                oxygenApi.window.tab.icon(viewId, `data:image/svg+xml;base64,${btoa(logo)}`)
-                oxygenApi.window.tab.title(viewId, `[预览] ${templateVo.name}`)
-
-                oxygenApi.tool.view.render(
-                    setupGlobalJsVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral({
-                            OxygenTheme: {
-                                ...removeUselessAttributes(themeRef.current),
-                                isDarkMode: isDarkModeRef.current
-                            }
-                        })
-                    ),
-                    viewId
-                )
-                oxygenApi.tool.view.render(
-                    setupGlobalCssVariablesCode.replace(
-                        "'${replace_with_code}'",
-                        convertObjToJsLiteral(generateThemeCssVariables(themeRef.current).styles)
-                    ),
-                    viewId
-                )
-                oxygenApi.tool.view.render(`(() => {${dist}})();\n(() => {${baseDist}})();`, viewId)
-            })
-            .catch((reason) => {
-                reason && message.error(reason)
-            })
-            .finally(() => {
-                setIsCompiling(false)
-                message.destroy('LOADING')
-            })
-    }
-
     useEffect(() => {
         const temp: string[] = []
         formValues?.keywords.forEach((item) => {
@@ -215,11 +151,6 @@ const Create = () => {
         })
         form.setFieldValue('keywords', temp)
     }, [form, formValues?.keywords])
-
-    useEffect(() => {
-        themeRef.current = theme
-        isDarkModeRef.current = isDarkMode
-    }, [theme, isDarkMode])
 
     useEffect(() => {
         setIsLoadingCategory(true)
@@ -366,7 +297,7 @@ const Create = () => {
                                         <AntdSpace>
                                             模板
                                             {templateDetailData[previewTemplate] && (
-                                                <Link onClick={handleOnPreview}>
+                                                <Link onClick={openPreview}>
                                                     <Icon component={IconOxygenExecute} />
                                                     预览
                                                 </Link>
