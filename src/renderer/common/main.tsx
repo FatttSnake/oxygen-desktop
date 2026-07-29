@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import toolHtml from '$/assets/template/tool.html?raw'
+import toolHtml from '$/assets/template/playground/tool.html?raw'
 
 const Frame = lazy(() => import('#/Frame'))
 const Core = lazy(() => import('@/Core'))

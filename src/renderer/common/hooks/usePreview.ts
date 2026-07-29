@@ -1,7 +1,8 @@
 import { Theme } from 'antd-style'
 import logo from '$/assets/logo.svg?raw'
-import setupGlobalJsVariablesCode from '$/assets/template/setupGlobalJsVariables.js?raw'
-import setupGlobalCssVariablesCode from '$/assets/template/setupGlobalCssVariables.js?raw'
+import removeOutdatedCssCode from '$/assets/template/playground/removeOutdatedCss.js?raw'
+import setupGlobalJsVariablesCode from '$/assets/template/playground/setupGlobalJsVariables.js?raw'
+import setupGlobalCssVariablesCode from '$/assets/template/playground/setupGlobalCssVariables.js?raw'
 import {
     convertObjToJsLiteral,
     generateThemeCssVariables,
@@ -46,6 +47,7 @@ export const usePreview = (
                 icon || `data:image/svg+xml;base64,${btoa(logo)}`
             )
             oxygenApi.window.tab.title(previewViewId, `[预览] ${name}`)
+            oxygenApi.tool.view.render(removeOutdatedCssCode, previewViewId)
             oxygenApi.tool.view.render(
                 setupGlobalJsVariablesCode.replace(
                     "'${replace_with_code}'",
