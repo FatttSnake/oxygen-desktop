@@ -184,3 +184,17 @@ export const renderTool = (dist: string, key?: string) =>
                   void view.webContents.executeJavaScript(dist)
               }
           })
+
+export const openDevTools = (key: string) => {
+    for (const windowInfo of WindowManager.windows.list()) {
+        const viewInfo = windowInfo.getView(key)
+        if (!viewInfo || viewInfo.type !== 'tool') {
+            continue
+        }
+
+        viewInfo.view.webContents.openDevTools()
+        return true
+    }
+
+    return false
+}

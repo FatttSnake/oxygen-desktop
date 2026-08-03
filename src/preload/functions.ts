@@ -283,7 +283,9 @@ export const createApi = (
             ) =>
                 ipcRenderer.send(IpcEvents.tool.view.load, username, toolId, platform, ver, source),
             render: (dist: string, key?: string) =>
-                ipcRenderer.send(IpcEvents.tool.view.render, dist, key)
+                ipcRenderer.send(IpcEvents.tool.view.render, dist, key),
+            devtools: (key: string): Promise<boolean> =>
+                ipcRenderer.invoke(IpcEvents.tool.view.devtools, key)
         }
     }
 })

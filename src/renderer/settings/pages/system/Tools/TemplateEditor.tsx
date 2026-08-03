@@ -80,7 +80,7 @@ const TemplateEditor = () => {
         !!toolTemplateData &&
         !!baseLatestVersion &&
         baseLatestVersion > toolTemplateData.base.version
-    const { openPreview } = useCompilePreview(
+    const { isPreviewOpen, openPreview, openDevTools } = useCompilePreview(
         theme,
         isDarkMode,
         toolTemplateData?.name,
@@ -381,15 +381,25 @@ const TemplateEditor = () => {
                             </span>
                             {toolTemplateData && (
                                 <AntdSpace>
-                                    <AntdButton
-                                        size={'small'}
-                                        type={'dashed'}
-                                        icon={<Icon component={IconOxygenExecute} />}
-                                        loading={isLoading || isSubmitting}
-                                        onClick={openPreview}
+                                    <AntdTooltip
+                                        title={
+                                            isPreviewOpen && (
+                                                <AntdButton size={'small'} onClick={openDevTools}>
+                                                    调试
+                                                </AntdButton>
+                                            )
+                                        }
                                     >
-                                        预览
-                                    </AntdButton>
+                                        <AntdButton
+                                            size={'small'}
+                                            type={'dashed'}
+                                            icon={<Icon component={IconOxygenExecute} />}
+                                            loading={isLoading || isSubmitting}
+                                            onClick={openPreview}
+                                        >
+                                            预览
+                                        </AntdButton>
+                                    </AntdTooltip>
                                     <AntdButton
                                         size={'small'}
                                         type={'primary'}

@@ -73,7 +73,8 @@ const oxygenApi = {
     tool: {
         view: {
             load: api.tool.view.load,
-            render: api.tool.view.render
+            render: api.tool.view.render,
+            devtools: api.tool.view.devtools
         }
     }
 }

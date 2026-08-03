@@ -131,8 +131,8 @@ const ToolLoader = () => {
         viewId: string,
         username: string,
         toolId: string,
-        ver: string,
         platform: Platform,
+        ver: string,
         source?: string
     ) => {
         void message.loading({
@@ -221,7 +221,7 @@ const ToolLoader = () => {
                               }
                               username &&
                                   toolId &&
-                                  loadTool(viewId, username, toolId, ver, platform, source)
+                                  loadTool(viewId, username, toolId, platform, ver, source)
                           })
                       }
                   )
@@ -247,7 +247,7 @@ const ToolLoader = () => {
                           platform,
                           version = 'latest'
                       }: ToolInfo = JSON.parse(atob(oxygenApi.toolInfo))
-                      loadTool(oxygenApi.windowId!, username, toolId, version, platform)
+                      loadTool(oxygenApi.windowId!, username, toolId, platform, version)
                   } catch (_) {
                       errorMessage(oxygenApi.windowId!, '解析工具信息失败')
                   }

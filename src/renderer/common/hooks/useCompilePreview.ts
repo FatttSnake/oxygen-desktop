@@ -37,6 +37,10 @@ export const useCompilePreview = (
         oxygenApi.window.tab.create('tool').then(setPreviewViewId)
     }
 
+    const openDevTools = () => {
+        previewViewId && void oxygenApi.tool.view.devtools(previewViewId)
+    }
+
     useEffect(() => {
         if (!previewViewId || !(sources || _fileTree) || !entryPoint) {
             return
@@ -183,5 +187,5 @@ export const useCompilePreview = (
         }
     }, [])
 
-    return { openPreview }
+    return { isPreviewOpen: !!previewViewId, openPreview, openDevTools }
 }

@@ -81,7 +81,7 @@ const BaseEditor = () => {
     const [submitStatus, setSubmitStatus] = useState<'process' | 'error'>('process')
     const [isShowSubmittingModal, setIsShowSubmittingModal] = useState(false)
     const [processPercent, setProcessPercent] = useState<number>(0)
-    const { openPreview } = useCompilePreview(
+    const { isPreviewOpen, openPreview, openDevTools } = useCompilePreview(
         theme,
         isDarkMode,
         toolBaseData?.name,
@@ -455,16 +455,26 @@ const BaseEditor = () => {
                             </span>
                             {toolBaseData && (
                                 <AntdSpace>
-                                    <AntdButton
-                                        size={'small'}
-                                        type={'dashed'}
-                                        icon={<Icon component={IconOxygenExecute} />}
-                                        loading={isLoading || isSubmitting}
-                                        disabled={!entryPointPath}
-                                        onClick={openPreview}
+                                    <AntdTooltip
+                                        title={
+                                            isPreviewOpen && (
+                                                <AntdButton size={'small'} onClick={openDevTools}>
+                                                    调试
+                                                </AntdButton>
+                                            )
+                                        }
                                     >
-                                        预览
-                                    </AntdButton>
+                                        <AntdButton
+                                            size={'small'}
+                                            type={'dashed'}
+                                            icon={<Icon component={IconOxygenExecute} />}
+                                            loading={isLoading || isSubmitting}
+                                            disabled={!entryPointPath}
+                                            onClick={openPreview}
+                                        >
+                                            预览
+                                        </AntdButton>
+                                    </AntdTooltip>
                                     <AntdButton
                                         size={'small'}
                                         icon={<Icon component={IconOxygenSave} />}

@@ -76,7 +76,8 @@ export const IpcEvents = {
     tool: {
         view: {
             load: 'tool:view:load',
-            render: 'tool:view:render'
+            render: 'tool:view:render',
+            devtools: 'tool:view:devtools'
         }
     }
 }

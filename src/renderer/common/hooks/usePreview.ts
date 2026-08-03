@@ -31,6 +31,10 @@ export const usePreview = (
         oxygenApi.window.tab.create('tool').then(setPreviewViewId)
     }
 
+    const openDevTools = () => {
+        previewViewId && void oxygenApi.tool.view.devtools(previewViewId)
+    }
+
     useEffect(() => {
         if (!previewViewId || !dist) {
             return
@@ -95,5 +99,5 @@ export const usePreview = (
         }
     }, [])
 
-    return { openPreview }
+    return { isPreviewOpen: !!previewViewId, openPreview, openDevTools }
 }

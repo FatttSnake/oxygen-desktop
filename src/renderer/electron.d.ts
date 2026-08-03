@@ -144,6 +144,7 @@ interface OxygenAPI {
                 source?: string
             ) => void
             render: (dist: string, key?: string) => void
+            devtools: (key: string) => Promise<boolean>
         }
     }
 }

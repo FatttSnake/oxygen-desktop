@@ -29,7 +29,7 @@ const BasePreview = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [toolBaseData, setToolBaseData] = useState<ToolBaseWithSourceVo>()
     const [toolBaseWithDistData, setToolBaseWithDistData] = useState<ToolBaseWithDistVo>()
-    const { openPreview } = usePreview(
+    const { isPreviewOpen, openPreview, openDevTools } = usePreview(
         theme,
         isDarkMode,
         toolBaseData?.name,
@@ -126,15 +126,25 @@ const BasePreview = () => {
                                 {toolBaseData && formatToolBaseVersion(toolBaseData?.version)}
                             </span>
                             {toolBaseWithDistData && (
-                                <AntdButton
-                                    size={'small'}
-                                    type={'dashed'}
-                                    icon={<Icon component={IconOxygenExecute} />}
-                                    loading={isLoading}
-                                    onClick={openPreview}
+                                <AntdTooltip
+                                    title={
+                                        isPreviewOpen && (
+                                            <AntdButton size={'small'} onClick={openDevTools}>
+                                                调试
+                                            </AntdButton>
+                                        )
+                                    }
                                 >
-                                    预览
-                                </AntdButton>
+                                    <AntdButton
+                                        size={'small'}
+                                        type={'dashed'}
+                                        icon={<Icon component={IconOxygenExecute} />}
+                                        loading={isLoading}
+                                        onClick={openPreview}
+                                    >
+                                        预览
+                                    </AntdButton>
+                                </AntdTooltip>
                             )}
                         </ToolBar>
                         <Card>

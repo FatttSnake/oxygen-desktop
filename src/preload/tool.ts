@@ -2,13 +2,11 @@ import { contextBridge } from 'electron'
 import { getArgv } from '%/functions'
 
 const viewId = getArgv('viewId')
-const url = getArgv('url')
 
 const oxygenApi = {
     platform: process.platform,
     renderer: 'tool',
-    viewId,
-    url
+    viewId
 }
 
 if (process.contextIsolated) {

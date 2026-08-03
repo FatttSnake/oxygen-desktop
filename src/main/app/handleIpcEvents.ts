@@ -13,6 +13,7 @@ import {
     getTheme,
     getUserInfo,
     loadTool,
+    openDevTools,
     openUrlWithDefaultApp,
     renderTool,
     updateAccessToken,
@@ -120,4 +121,6 @@ export default () => {
     )
 
     ipcMain.on(IpcEvents.tool.view.render, (_, dist: string, key?: string) => renderTool(dist, key))
+
+    ipcMain.handle(IpcEvents.tool.view.devtools, (_, key: string) => openDevTools(key))
 }

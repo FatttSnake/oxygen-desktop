@@ -91,7 +91,7 @@ const Edit = () => {
     const [processPercent, setProcessPercent] = useState<number>(0)
     const hasNewBaseVersion =
         !!toolData && !!baseLatestVersion && baseLatestVersion > toolData.base.version
-    const { openPreview } = useCompilePreview(
+    const { isPreviewOpen, openPreview, openDevTools } = useCompilePreview(
         theme,
         isDarkMode,
         toolData?.name,
@@ -638,15 +638,28 @@ const Edit = () => {
                                         >
                                             配置
                                         </AntdButton>
-                                        <AntdButton
-                                            size={'small'}
-                                            type={'dashed'}
-                                            icon={<Icon component={IconOxygenExecute} />}
-                                            loading={isLoading || isSubmitting}
-                                            onClick={openPreview}
+                                        <AntdTooltip
+                                            title={
+                                                isPreviewOpen && (
+                                                    <AntdButton
+                                                        size={'small'}
+                                                        onClick={openDevTools}
+                                                    >
+                                                        调试
+                                                    </AntdButton>
+                                                )
+                                            }
                                         >
-                                            预览
-                                        </AntdButton>
+                                            <AntdButton
+                                                size={'small'}
+                                                type={'dashed'}
+                                                icon={<Icon component={IconOxygenExecute} />}
+                                                loading={isLoading || isSubmitting}
+                                                onClick={openPreview}
+                                            >
+                                                预览
+                                            </AntdButton>
+                                        </AntdTooltip>
                                         <AntdButton
                                             size={'small'}
                                             type={'primary'}

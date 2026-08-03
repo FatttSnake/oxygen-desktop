@@ -17,7 +17,7 @@ const handleUrl = (url: string) => {
                 const { username, toolId, platform, version } = toolInfo
                 if (WindowManager.existsMainWindow()) {
                     WindowManager.showMainWindow()
-                    loadTool(username, toolId, version, platform)
+                    loadTool(username, toolId, platform, version)
                 } else {
                     WindowManager.createIndependentWindow(toolInfo)
                 }
