@@ -209,7 +209,7 @@ export const setPageTitle = (title: string) => {
 }
 
 export const rgbaBlackToHex = (rgba: string) => {
-    const match = rgba.match(/rgba?\((\d+), (\d+), (\d+), (\d+(\.\d+)?)\)/)
+    const match = rgba.match(/rgba?\((\d+),\s*(\d+),\s*(\d+),\s*(\d+(\.\d+)?)\)/)
     if (!match) {
         return '#000000'
     }

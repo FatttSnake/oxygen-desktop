@@ -96,6 +96,20 @@ export default createStyles(({ token }) => ({
         }
     },
 
+    offline: {
+        display: 'flex',
+        alignItems: 'center',
+        width: 'unset',
+        padding: `0 ${token.paddingXS}px`,
+        border: '1px dashed #666',
+        '-webkit-app-region': 'no-drag'
+    },
+
+    offlineText: {
+        fontSize: token.fontSizeSM,
+        marginLeft: token.marginXS
+    },
+
     avatar: {
         display: 'flex',
         justifyContent: 'center',

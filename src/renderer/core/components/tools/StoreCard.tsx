@@ -4,9 +4,10 @@ import protocolCheck from 'custom-protocol-check'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/tools/store-card.style'
 import { DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
+import { useConfigValue } from '$/components/config/ConfigContext'
 import { message, modal, checkDesktop, omitTextByByte } from '$/util/common'
 import { getLoginStatus, getUserId } from '$/util/auth'
-import { getAndroidUrl, navigateToSource, navigateToStore, navigateToView } from '$/util/navigation'
+import { getAppUrl, navigateToSource, navigateToStore, navigateToView } from '$/util/navigation'
 import { generateDesktopProtocolUrl, processBaseDist } from '$/util/tool'
 import { r_tool_add_favorite, r_tool_get_dist, r_tool_remove_favorite } from '$/services/tool'
 import { n_tool_get, n_tool_install } from '$/services/native'
@@ -61,6 +62,7 @@ const StoreCard = ({
     const [isInstalling, setIsInstalling] = useState(false)
     const [isInstalled, setIsInstalled] = useState(true)
     const [isAvailableUpdate, setIsAvailableUpdate] = useState(false)
+    const homeUrl = useConfigValue('homeUrl')
 
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
@@ -82,7 +84,10 @@ const StoreCard = ({
                 title: 'Android 端',
                 content: (
                     <FlexBox className={styles.androidQrcode}>
-                        <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
+                        <AntdQRCode
+                            value={getAppUrl(homeUrl, author.username, toolId)}
+                            size={300}
+                        />
                         <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                     </FlexBox>
                 )
@@ -200,7 +205,7 @@ const StoreCard = ({
             title: 'Android 端',
             content: (
                 <FlexBox className={styles.androidQrcode}>
-                    <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
+                    <AntdQRCode value={getAppUrl(homeUrl, author.username, toolId)} size={300} />
                     <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                 </FlexBox>
             )

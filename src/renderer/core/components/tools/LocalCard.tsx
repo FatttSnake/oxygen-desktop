@@ -2,8 +2,9 @@ import { DetailedHTMLProps, HTMLAttributes, MouseEvent } from 'react'
 import VanillaTilt, { TiltOptions } from 'vanilla-tilt'
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/components/tools/local-card.style'
-import { checkDesktop, modal, omitTextByByte } from '$/util/common'
-import { getAndroidUrl, navigateToStore, navigateToView } from '$/util/navigation'
+import { useConfigValueSafe } from '$/components/config/ConfigContext'
+import { checkDesktop, message, modal, omitTextByByte } from '$/util/common'
+import { getAppUrl, navigateToStore, navigateToView } from '$/util/navigation'
 import Card from '$/components/Card'
 import FlexBox from '$/components/FlexBox'
 import DragHandle from '$/components/dnd/DragHandle'
@@ -48,6 +49,7 @@ const LocalCard = ({
     const { styles, theme } = useStyles()
     const navigate = useNavigate()
     const cardRef = useRef<HTMLDivElement>(null)
+    const homeUrl = useConfigValueSafe('homeUrl')
 
     useEffect(() => {
         cardRef.current && VanillaTilt.init(cardRef.current, options)
@@ -55,13 +57,20 @@ const LocalCard = ({
 
     const handleCardOnClick = () => {
         if (platform === 'ANDROID') {
+            if (!homeUrl) {
+                void message.warning('离线模式无法生成二维码')
+                return
+            }
             void modal.info({
                 centered: true,
                 icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
                 title: 'Android 端',
                 content: (
                     <FlexBox className={styles.androidQrcode}>
-                        <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
+                        <AntdQRCode
+                            value={getAppUrl(homeUrl, author.username, toolId)}
+                            size={300}
+                        />
                         <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                     </FlexBox>
                 )
@@ -83,13 +92,17 @@ const LocalCard = ({
 
     const handleOnAndroidBtnClick = (e: MouseEvent<HTMLDivElement>) => {
         e.stopPropagation()
+        if (!homeUrl) {
+            void message.warning('离线模式无法生成二维码')
+            return
+        }
         void modal.info({
             centered: true,
             icon: <Icon style={{ color: theme.colorPrimary }} component={IconOxygenInfo} />,
             title: 'Android 端',
             content: (
                 <FlexBox className={styles.androidQrcode}>
-                    <AntdQRCode value={getAndroidUrl(author.username, toolId)} size={300} />
+                    <AntdQRCode value={getAppUrl(homeUrl, author.username, toolId)} size={300} />
                     <AntdTag>请使用手机端扫描上方二维码</AntdTag>
                 </FlexBox>
             )
@@ -134,14 +147,16 @@ const LocalCard = ({
                                     onClick={handleOnUninstallBtnClick}
                                 />
                             </AntdTooltip>
-                            {platform !== 'ANDROID' && supportPlatform.includes('ANDROID') && (
-                                <AntdTooltip title={'Android 端'}>
-                                    <Icon
-                                        component={IconOxygenMobile}
-                                        onClick={handleOnAndroidBtnClick}
-                                    />
-                                </AntdTooltip>
-                            )}
+                            {homeUrl &&
+                                platform !== 'ANDROID' &&
+                                supportPlatform.includes('ANDROID') && (
+                                    <AntdTooltip title={'Android 端'}>
+                                        <Icon
+                                            component={IconOxygenMobile}
+                                            onClick={handleOnAndroidBtnClick}
+                                        />
+                                    </AntdTooltip>
+                                )}
                             {platform === 'DESKTOP' && supportPlatform.includes('WEB') && (
                                 <AntdTooltip title={'Web 端'}>
                                     <Icon

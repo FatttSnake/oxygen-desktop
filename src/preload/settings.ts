@@ -17,6 +17,12 @@ const oxygenApi = {
         },
         version: {
             get: api.app.version.get
+        },
+        config: {
+            get: api.app.config.get,
+            onUpdate: api.app.config.onUpdate,
+            offUpdate: api.app.config.offUpdate,
+            reload: api.app.config.reload
         }
     },
     window: {

@@ -1,8 +1,10 @@
 import Icon from '@ant-design/icons'
 import useStyles from '#/assets/css/title-bar.style'
+import { useReloadConfig } from '$/components/config/ConfigContext'
 import { getAvatar, getLoginStatus, getNickname, getVerifyStatus } from '$/util/auth'
 import { HideScrollbarElement } from '$/components/HideScrollbar'
 import Tab from '#/components/Tab'
+import { useConnectivityMode } from '#/hooks/useConnectivityMode.ts'
 
 interface TitleBarProps {
     onShowMenuChange?: (visible: boolean) => void
@@ -18,6 +20,8 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
     const [nickname, setNickname] = useState('')
     const [avatar, setAvatar] = useState('')
     const [tabs, setTabs] = useState<TabInstance[]>([])
+    const reloadConfig = useReloadConfig()
+    const connectivityMode = useConnectivityMode()
 
     const handleOnClickExpand = () => {
         oxygenApi.sidebar.collapse.update(!isCollapse)
@@ -49,6 +53,9 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
     }
 
     const handleOnClickUser = () => {
+        if (connectivityMode !== 'online') {
+            return
+        }
         if (isLogin && getVerifyStatus() == true) {
             void oxygenApi.window.tab.create('settings', { navigateTo: '/base/account' })
         } else {
@@ -132,18 +139,34 @@ const TitleBar = ({ onShowMenuChange }: TitleBarProps) => {
                     />
                 </div>
 
-                <span
-                    className={styles.avatar}
-                    title={isLogin ? nickname : '登录'}
-                    onClick={handleOnClickUser}
+                {connectivityMode === 'offline' && (
+                    <button
+                        className={cx(styles.btn, styles.offline)}
+                        title={'点击重连'}
+                        onClick={reloadConfig}
+                    >
+                        <Icon component={IconOxygenOffline} />
+                        <span className={styles.offlineText}>离线模式</span>
+                    </button>
+                )}
+                {connectivityMode === 'online' && (
+                    <span
+                        className={styles.avatar}
+                        title={isLogin ? nickname : '登录'}
+                        onClick={handleOnClickUser}
+                    >
+                        {isLogin ? (
+                            <img src={`data:image/png;base64,${avatar}`} alt={''} />
+                        ) : (
+                            <Icon viewBox={'-20 0 1024 1024'} component={IconOxygenUser} />
+                        )}
+                    </span>
+                )}
+                <button
+                    className={cx(styles.btn, styles.settings)}
+                    title={'设置'}
+                    onClick={handleOnClickSettings}
                 >
-                    {isLogin ? (
-                        <img src={`data:image/png;base64,${avatar}`} alt={''} />
-                    ) : (
-                        <Icon viewBox={'-20 0 1024 1024'} component={IconOxygenUser} />
-                    )}
-                </span>
-                <button className={cx(styles.btn, styles.settings)} onClick={handleOnClickSettings}>
                     <Icon component={IconOxygenSetting} />
                 </button>
             </div>

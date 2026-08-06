@@ -19,6 +19,14 @@ const oxygenApi = {
     windowTitle,
     toolInfo,
 
+    app: {
+        config: {
+            get: api.app.config.get,
+            onUpdate: api.app.config.onUpdate,
+            offUpdate: api.app.config.offUpdate,
+            reload: api.app.config.reload
+        }
+    },
     window: {
         base: {
             close: api.window.base.close,

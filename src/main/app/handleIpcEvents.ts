@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron'
 import { IpcEvents } from '#/constants'
+import ConfigManager from '#/app/configManager'
 import TabManager from '#/app/tabManager'
 import {
     afterLoadFrame,
@@ -123,4 +124,8 @@ export default () => {
     ipcMain.on(IpcEvents.tool.view.render, (_, dist: string, key?: string) => renderTool(dist, key))
 
     ipcMain.handle(IpcEvents.tool.view.devtools, (_, key: string) => openDevTools(key))
+
+    ipcMain.handle(IpcEvents.app.config.get, () => ConfigManager.getState())
+
+    ipcMain.handle(IpcEvents.app.config.reload, () => ConfigManager.reload())
 }

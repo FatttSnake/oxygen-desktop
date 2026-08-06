@@ -18,6 +18,19 @@ export const createApi = (
         },
         version: {
             get: (): Promise<string> => ipcRenderer.invoke(IpcEvents.app.version.get)
+        },
+        config: {
+            get: (): Promise<ConfigState> => ipcRenderer.invoke(IpcEvents.app.config.get),
+            onUpdate: (callback: (state: ConfigState) => void) => {
+                listeners[IpcEvents.app.config.update] = (_, state: ConfigState) => callback(state)
+                ipcRenderer.on(IpcEvents.app.config.update, listeners[IpcEvents.app.config.update])
+            },
+            offUpdate: () =>
+                ipcRenderer.off(
+                    IpcEvents.app.config.update,
+                    listeners[IpcEvents.app.config.update]
+                ),
+            reload: (): Promise<ConfigState> => ipcRenderer.invoke(IpcEvents.app.config.reload)
         }
     },
     window: {

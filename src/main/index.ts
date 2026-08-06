@@ -1,4 +1,4 @@
-import { join } from 'path'
+import { extname, join } from 'path'
 import fs from 'fs'
 import url from 'node:url'
 import { app, protocol, net } from 'electron'
@@ -34,21 +34,73 @@ handleAppEvents()
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
     protocol.handle('local', (request) => {
-        const { host } = new URL(request.url)
+        const rendererRoot = join(__dirname, '../renderer')
+        const isFile = (path: string): boolean => {
+            try {
+                return fs.statSync(path).isFile()
+            } catch {
+                return false
+            }
+        }
+        const safeDecode = (value: string): string => {
+            try {
+                return decodeURIComponent(value)
+            } catch {
+                return value
+            }
+        }
+        const ASSET_EXTENSIONS = new Set([
+            'js',
+            'mjs',
+            'css',
+            'map',
+            'png',
+            'jpg',
+            'jpeg',
+            'gif',
+            'webp',
+            'svg',
+            'ico',
+            'avif',
+            'woff',
+            'woff2',
+            'ttf',
+            'eot',
+            'otf',
+            'mp4',
+            'webm',
+            'mp3',
+            'wav',
+            'json',
+            'wasm'
+        ])
+
+        const { host, pathname } = new URL(request.url)
         if (host === 'oxygen.fatweb.top') {
-            let filePath = request.url.slice('local://oxygen.fatweb.top/'.length)
-            if (fs.existsSync(filePath)) {
+            const filePath = safeDecode(pathname.slice(1))
+
+            if (filePath && isFile(filePath)) {
                 return net.fetch(url.pathToFileURL(filePath).toString())
             }
 
-            filePath = join(join(__dirname, '../renderer'), filePath)
-            if (fs.existsSync(filePath)) {
-                return net.fetch(url.pathToFileURL(filePath).toString())
+            const resolved = join(rendererRoot, filePath)
+            if (isFile(resolved)) {
+                return net.fetch(url.pathToFileURL(resolved).toString())
             }
 
-            return net.fetch(
-                url.pathToFileURL(join(__dirname, '../renderer/index.html')).toString()
-            )
+            if (ASSET_EXTENSIONS.has(extname(filePath).slice(1).toLowerCase())) {
+                const segments = filePath.split(/[\\/]+/).filter(Boolean)
+                while (segments.length > 1) {
+                    segments.shift()
+                    const candidate = join(rendererRoot, ...segments)
+                    if (isFile(candidate)) {
+                        return net.fetch(url.pathToFileURL(candidate).toString())
+                    }
+                }
+                return new Response('Not Found', { status: 404 })
+            }
+
+            return net.fetch(url.pathToFileURL(join(rendererRoot, 'index.html')).toString())
         } else {
             const filePath = request.url.slice('local://'.length)
             return net.fetch(url.pathToFileURL(filePath).toString())

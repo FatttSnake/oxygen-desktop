@@ -131,5 +131,10 @@ export const navigateToToolBaseEditor = (
     navigate(`/system/tools/base/${toolBaseId}${version ? `/${version}` : ''}`, options)
 }
 
-export const getAndroidUrl = (username: string, toolId: string) =>
-    `${import.meta.env.VITE_APP_PROTOCOL}://opentool/${username}/${toolId}`
+export const getAppUrl = (homeUrl: string, username: string, toolId: string) => {
+    const url = new URL('/app', homeUrl)
+    url.searchParams.set('username', username)
+    url.searchParams.set('toolId', toolId)
+
+    return url.href
+}

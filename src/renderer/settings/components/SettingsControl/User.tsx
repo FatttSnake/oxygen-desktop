@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import useStyles from '%/assets/css/components/settings-control/user.style'
+import { useConfigValue } from '$/components/config/ConfigContext'
 import { message, notification } from '$/util/common'
 import { removeAllToken } from '$/util/auth'
 import { r_auth_logout } from '$/services/auth'
@@ -25,14 +26,13 @@ const User = ({
     const { styles, theme } = useStyles()
     const navigate = useNavigate()
     const [isExiting, setIsExiting] = useState(false)
+    const homeUrl = useConfigValue('homeUrl')
 
     const handleOnCopyToClipboard = () => {
         username &&
-            navigator.clipboard
-                .writeText(new URL(`/store/${username}`, import.meta.env.VITE_UI_URL).href)
-                .then(() => {
-                    void message.success('已复制到剪切板')
-                })
+            navigator.clipboard.writeText(new URL(`/store/${username}`, homeUrl).href).then(() => {
+                void message.success('已复制到剪切板')
+            })
     }
 
     const handleOnLogout = () => {
@@ -67,8 +67,7 @@ const User = ({
                     <>
                         <span className={styles.nickname}>{nickname}</span>
                         <a className={styles.url} onClick={handleOnCopyToClipboard}>
-                            {username &&
-                                new URL(`/store/${username}`, import.meta.env.VITE_UI_URL).href}
+                            {username && new URL(`/store/${username}`, homeUrl).href}
                             <Icon component={IconOxygenCopy} />
                         </a>
                         <a className={styles.modifyNickname} onClick={onClickChangeNickname}>

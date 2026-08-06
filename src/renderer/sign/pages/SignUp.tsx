@@ -3,11 +3,11 @@ import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
 import useStyles from '+/assets/css/sign-up.style'
 import {
     DATABASE_DUPLICATE_KEY,
-    H_CAPTCHA_SITE_KEY,
     PERMISSION_REGISTER_SUCCESS,
     SYSTEM_INVALID_CAPTCHA_CODE,
     SYSTEM_MATCH_SENSITIVE_WORD
 } from '$/constants/common.constants'
+import { useConfigValue } from '$/components/config/ConfigContext'
 import { message } from '$/util/common'
 import { getLoginStatus, setAccessToken, setCsrfToken, setRefreshToken } from '$/util/auth'
 import { navigateToLogin } from '$/util/navigation'
@@ -27,6 +27,7 @@ const SignUp = () => {
     const [isFinish, setIsFinish] = useState(false)
     const [isSending, setIsSending] = useState(false)
     const [captchaCode, setCaptchaCode] = useState('')
+    const turnstileSiteKey = useConfigValue('turnstileSiteKey')
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -217,7 +218,7 @@ const SignUp = () => {
                                 <Turnstile
                                     id={'sign-up-turnstile'}
                                     ref={turnstileRef}
-                                    siteKey={H_CAPTCHA_SITE_KEY}
+                                    siteKey={turnstileSiteKey}
                                     options={{
                                         theme: isDarkMode ? 'dark' : 'light',
                                         execution: 'execute',

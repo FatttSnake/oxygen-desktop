@@ -1,4 +1,5 @@
 import useStyles from '%/assets/css/pages/settings-framework.style'
+import { useConfig } from '$/components/config/ConfigContext'
 import { getLoginStatus } from '$/util/auth'
 import FitFullscreen from '$/components/FitFullscreen'
 import Sidebar from '$/components/Sidebar'
@@ -10,10 +11,13 @@ const SettingsFramework = () => {
     const { styles, cx } = useStyles()
     const location = useLocation()
     const navigate = useNavigate()
-    const [baseSettingsRouteJson, setBaseSettingsRouteJson] = useState(getBaseSettingsRouteJson())
-    const [systemSettingsRouteJson, setSystemSettingsRouteJson] = useState(
-        getSystemSettingsRouteJson()
-    )
+    const { mode } = useConfig()
+    const isOffline = mode === 'offline'
+    const getBase = () =>
+        isOffline
+            ? getBaseSettingsRouteJson().filter((route) => route.id === 'settings-base-general')
+            : getBaseSettingsRouteJson()
+    const getSystem = () => (isOffline ? [] : getSystemSettingsRouteJson())
 
     const mapRouterJsonObject = (route: RouteJsonObject[]) =>
         route.map(
@@ -49,16 +53,10 @@ const SettingsFramework = () => {
         )
 
     useEffect(() => {
-        oxygenApi.account.loginStatus.onUpdate(() => {
-            setBaseSettingsRouteJson(getBaseSettingsRouteJson())
-            setSystemSettingsRouteJson(getSystemSettingsRouteJson())
-        })
-
         oxygenApi.navigateTo && navigate(oxygenApi.navigateTo)
         oxygenApi.window.navigate.onGoto((value) => navigate(value))
 
         return () => {
-            oxygenApi.account.loginStatus.offUpdate()
             oxygenApi.window.navigate.offGoto()
         }
     }, [])
@@ -69,11 +67,13 @@ const SettingsFramework = () => {
                 <Sidebar>
                     <Sidebar.ItemList>
                         <Sidebar.Group title={'应用'}>
-                            {mapRouterJsonObject(baseSettingsRouteJson)}
+                            {mapRouterJsonObject(getBase())}
                         </Sidebar.Group>
-                        <Sidebar.Group title={'系统'}>
-                            {mapRouterJsonObject(systemSettingsRouteJson)}
-                        </Sidebar.Group>
+                        {!isOffline && (
+                            <Sidebar.Group title={'系统'}>
+                                {mapRouterJsonObject(getSystem())}
+                            </Sidebar.Group>
+                        )}
                     </Sidebar.ItemList>
                 </Sidebar>
             </div>

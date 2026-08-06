@@ -1,6 +1,7 @@
 import path from 'node:path'
 import { app, BrowserWindow } from 'electron'
 import { optimizer } from '@electron-toolkit/utils'
+import ConfigManager from '#/app/configManager'
 import WindowManager from '#/app/windowManager'
 import { loadTool } from '#/app/services'
 import handleIpcEvents from '#/app/handleIpcEvents'
@@ -78,6 +79,7 @@ const handleProtocol = () => {
 
 export const initializeApplication = () => {
     handleIpcEvents()
+    ConfigManager.start()
     handleAppMenu()
 
     if (!isLoadingUrl) {

@@ -55,13 +55,21 @@ const TwoFactor = () => {
         >
             <AntdForm
                 form={twoFactorForm}
-                labelCol={{ flex: '7em' }}
                 disabled={!hasPermission('system:settings:modify:two-factor')}
+                layout={'vertical'}
             >
-                <AntdForm.Item label={'提供者'} name={'issuer'}>
+                <AntdForm.Item
+                    label={'提供者'}
+                    name={'issuer'}
+                    rules={[{ required: true, whitespace: true }]}
+                >
                     <AntdInput placeholder={'请输入提供者'} />
                 </AntdForm.Item>
-                <AntdForm.Item label={'密钥长度'} name={'secretKeyLength'}>
+                <AntdForm.Item
+                    label={'密钥长度'}
+                    name={'secretKeyLength'}
+                    rules={[{ required: true }]}
+                >
                     <AntdInputNumber
                         min={3}
                         max={64}

@@ -9,6 +9,14 @@ const oxygenApi = {
     renderer: 'core',
     viewId,
 
+    app: {
+        config: {
+            get: api.app.config.get,
+            onUpdate: api.app.config.onUpdate,
+            offUpdate: api.app.config.offUpdate,
+            reload: api.app.config.reload
+        }
+    },
     window: {
         theme: {
             get: api.window.theme.get,

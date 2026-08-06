@@ -71,7 +71,7 @@ const systemSettings: RouteJsonObject[] = [
                 path: 'template/:id',
                 absolutePath: '/system/tools/template',
                 id: 'tools-system-tools-template-editor',
-                component: lazy(() => import('%/pages/system/Tools/TemplateEditor.tsx')),
+                component: lazy(() => import('%/pages/system/Tools/TemplateEditor')),
                 name: '模板编辑器',
                 operationCode: 'system:tool:query:template',
                 titlePostfix: ' - 工具模板编辑器'

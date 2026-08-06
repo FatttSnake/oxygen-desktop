@@ -30,6 +30,12 @@ interface OxygenAPI {
         version: {
             get: () => Promise<string>
         }
+        config: {
+            get: () => Promise<ConfigState>
+            onUpdate: (callback: (state: ConfigState) => void) => void
+            offUpdate: () => void
+            reload: () => Promise<ConfigState>
+        }
     }
     window: {
         base: {

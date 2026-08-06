@@ -84,5 +84,3 @@ export const TOOL_CANCEL_ERROR = 40061
 
 export const API_AVATAR_SUCCESS = 50100
 export const API_AVATAR_ERROR = 50150
-
-export const H_CAPTCHA_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY

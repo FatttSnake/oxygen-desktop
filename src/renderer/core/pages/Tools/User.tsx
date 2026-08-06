@@ -1,6 +1,7 @@
 import Icon from '@ant-design/icons'
 import useStyles from '@/assets/css/pages/tools/user.style'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
+import { useConfigValue } from '$/components/config/ConfigContext'
 import { message, checkDesktop } from '$/util/common'
 import { navigateToRoot } from '$/util/navigation'
 import { r_sys_user_info_get_basic } from '$/services/system'
@@ -22,12 +23,13 @@ const User = () => {
     const [currentPage, setCurrentPage] = useState(0)
     const [hasNextPage, setHasNextPage] = useState(false)
     const [toolData, setToolData] = useState<ToolVo[]>([])
+    const homeUrl = useConfigValue('homeUrl')
 
     const handleOnCopyToClipboard = (username?: string) => {
         return username
             ? () => {
                   navigator.clipboard
-                      .writeText(new URL(`/store/${username}`, import.meta.env.VITE_UI_URL).href)
+                      .writeText(new URL(`/store/${username}`, homeUrl).href)
                       .then(() => {
                           void message.success('已复制到剪切板')
                       })
@@ -148,10 +150,7 @@ const User = () => {
                                 onClick={handleOnCopyToClipboard(userWithInfoVo?.username)}
                             >
                                 {userWithInfoVo?.username &&
-                                    new URL(
-                                        `/store/${userWithInfoVo.username}`,
-                                        import.meta.env.VITE_UI_URL
-                                    ).href}
+                                    new URL(`/store/${userWithInfoVo.username}`, homeUrl).href}
                                 <Icon component={IconOxygenCopy} />
                             </a>
                         </FlexBox>

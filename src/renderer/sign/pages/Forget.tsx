@@ -2,13 +2,13 @@ import Icon from '@ant-design/icons'
 import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
 import useStyles from '+/assets/css/forget.style'
 import {
-    H_CAPTCHA_SITE_KEY,
     PERMISSION_FORGET_SUCCESS,
     PERMISSION_RETRIEVE_CODE_ERROR_OR_EXPIRED,
     PERMISSION_RETRIEVE_SUCCESS,
     PERMISSION_USER_NOT_FOUND,
     SYSTEM_INVALID_CAPTCHA_CODE
 } from '$/constants/common.constants'
+import { useConfigValue } from '$/components/config/ConfigContext'
 import { message } from '$/util/common'
 import { navigateToLogin } from '$/util/navigation'
 import { r_auth_forget, r_auth_retrieve } from '$/services/auth'
@@ -30,6 +30,7 @@ const Forget = () => {
     const [isChanged, setIsChanged] = useState(false)
     const [captchaCode, setCaptchaCode] = useState('')
     const [retrieveCaptchaCode, setRetrieveCaptchaCode] = useState('')
+    const turnstileSiteKey = useConfigValue('turnstileSiteKey')
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -173,7 +174,7 @@ const Forget = () => {
                                     <Turnstile
                                         id={'forget-turnstile'}
                                         ref={turnstileRef}
-                                        siteKey={H_CAPTCHA_SITE_KEY}
+                                        siteKey={turnstileSiteKey}
                                         options={{
                                             theme: isDarkMode ? 'dark' : 'light',
                                             execution: 'execute',
@@ -244,7 +245,7 @@ const Forget = () => {
                                 <Turnstile
                                     id={'retrieve-turnstile'}
                                     ref={retrieveTurnstileRef}
-                                    siteKey={H_CAPTCHA_SITE_KEY}
+                                    siteKey={turnstileSiteKey}
                                     options={{
                                         theme: isDarkMode ? 'dark' : 'light',
                                         execution: 'execute',

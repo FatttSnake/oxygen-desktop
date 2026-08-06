@@ -11,16 +11,14 @@ const AuthRoute = () => {
     const handle = lastMatch.handle as RouteHandle
     const location = useLocation()
     const outlet = useOutlet()
-    const [isLogin, setIsLogin] = useState(getLoginStatus())
-    const isVerify = getVerifyStatus()
 
     useBlocker(({ nextLocation }) => {
         if (checkAuth(router!.routes, nextLocation.pathname)) {
-            if (!isLogin) {
+            if (!getLoginStatus()) {
                 void message.warning('未登录')
                 return true
             }
-            if (isVerify === false) {
+            if (getVerifyStatus() === false) {
                 void message.warning('账户未验证')
                 return true
             }
@@ -29,8 +27,8 @@ const AuthRoute = () => {
     })
 
     useEffect(() => {
-        oxygenApi.account.loginStatus.onUpdate((isLogin) => {
-            setIsLogin(isLogin)
+        oxygenApi.account.loginStatus.onUpdate(() => {
+            document.location.reload()
         })
 
         return () => {
@@ -54,7 +52,6 @@ const AuthRoute = () => {
         handle?.title,
         handle?.titlePostfix,
         handle?.titlePrefix,
-        isLogin,
         lastMatch.pathname,
         location.search,
         matches,

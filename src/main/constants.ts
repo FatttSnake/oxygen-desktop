@@ -5,6 +5,11 @@ export const IpcEvents = {
         },
         version: {
             get: 'app:version:get'
+        },
+        config: {
+            get: 'app:config:get',
+            update: 'app:config:update',
+            reload: 'app:config:reload'
         }
     },
     window: {

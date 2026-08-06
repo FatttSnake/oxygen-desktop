@@ -11,12 +11,8 @@ import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import type { DragEndEvent } from '@dnd-kit/core/dist/types'
 import useStyles from '@/assets/css/pages/tools-framework.style'
 import { tools } from '@/router/tools'
-import {
-    navigateToInstall,
-    navigateToRepository,
-    navigateToStore,
-    navigateToView
-} from '$/util/navigation'
+import { useConfig } from '$/components/config/ConfigContext'
+import { navigateToView } from '$/util/navigation'
 import { getToolMenuItem, saveToolMenuItem } from '$/util/tool'
 import FitFullscreen from '$/components/FitFullscreen'
 import Sidebar from '$/components/Sidebar'
@@ -43,6 +39,11 @@ const ToolsFramework = () => {
     const [activeItem, setActiveItem] = useState<ToolMenuItem>()
     const [isShowDropMask, setIsShowDropMask] = useState(false)
     const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor))
+    const { mode } = useConfig()
+    const primaryMenu =
+        mode === 'offline'
+            ? tools.filter((tool) => tool.id === 'tools-install')
+            : tools.filter((tool) => tool.menu)
 
     const handleOnDragStart = ({ active }: DragStartEvent) => {
         setActiveItem(active.data.current as ToolMenuItem)
@@ -137,24 +138,15 @@ const ToolsFramework = () => {
                     <div className={styles.leftPanel}>
                         <Sidebar onCollapseChange={setIsMenuCollapse}>
                             <Sidebar.ItemList>
-                                <Sidebar.Item
-                                    icon={tools[0].icon}
-                                    text={tools[0].name}
-                                    active={location.pathname === '/store'}
-                                    onClick={() => navigateToStore(navigate)}
-                                />
-                                <Sidebar.Item
-                                    icon={tools[1].icon}
-                                    text={tools[1].name}
-                                    active={location.pathname === '/repository'}
-                                    onClick={() => navigateToRepository(navigate)}
-                                />
-                                <Sidebar.Item
-                                    icon={tools[2].icon}
-                                    text={tools[2].name}
-                                    active={location.pathname === '/install'}
-                                    onClick={() => navigateToInstall(navigate)}
-                                />
+                                {primaryMenu.map((tool) => (
+                                    <Sidebar.Item
+                                        key={tool.id}
+                                        icon={tool.icon}
+                                        text={tool.name}
+                                        active={location.pathname === tool.absolutePath}
+                                        onClick={() => navigate(tool.absolutePath)}
+                                    />
+                                ))}
                             </Sidebar.ItemList>
                             <Sidebar.Separate />
                             <Droppable id={'menu'} className={styles.menuDroppable}>

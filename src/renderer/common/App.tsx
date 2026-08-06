@@ -1,4 +1,5 @@
 import { Router } from '@remix-run/router'
+import { ConfigProvider, useConfig } from '$/components/config/ConfigContext'
 import CommonFramework from '$/CommonFramework'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 
@@ -10,27 +11,38 @@ export const AppContext = createContext<{
 })
 
 interface AppProps {
-    getRouterFunc: () => Router
+    getRouterFunc: (mode: ConnectivityMode) => Router
 }
 
 const App = ({ getRouterFunc }: AppProps) => {
-    const [routerState, setRouterState] = useState(getRouterFunc)
-
     return (
         <CommonFramework>
-            <AppContext.Provider
-                value={{
-                    router: routerState,
-                    refreshRouter: () => {
-                        setRouterState(getRouterFunc())
-                    }
-                }}
-            >
-                <Suspense fallback={<FullscreenLoadingMask />}>
-                    <RouterProvider router={routerState} />
-                </Suspense>
-            </AppContext.Provider>
+            <ConfigProvider>
+                <AppRouter getRouterFunc={getRouterFunc} />
+            </ConfigProvider>
         </CommonFramework>
+    )
+}
+
+const AppRouter = ({ getRouterFunc }: AppProps) => {
+    const { mode } = useConfig()
+    const [routerMap] = useState(() => ({
+        online: getRouterFunc('online'),
+        offline: getRouterFunc('offline')
+    }))
+    const router = mode === 'offline' ? routerMap.offline : routerMap.online
+
+    return (
+        <AppContext.Provider
+            value={{
+                router,
+                refreshRouter: () => {}
+            }}
+        >
+            <Suspense fallback={<FullscreenLoadingMask />}>
+                <RouterProvider key={mode} router={router} />
+            </Suspense>
+        </AppContext.Provider>
     )
 }
 

@@ -5,11 +5,28 @@ type Platform = 'WEB' | 'DESKTOP' | 'ANDROID'
 interface ImportMetaEnv {
     readonly VITE_PLATFORM: Platform
     readonly VITE_DESKTOP_PROTOCOL: string
-    readonly VITE_APP_PROTOCOL: string
-    readonly VITE_UI_URL: string
     readonly VITE_API_URL: string
-    readonly VITE_API_TOKEN_URL: string
-    readonly VITE_TURNSTILE_SITE_KEY: string
+}
+
+interface RemoteConfig {
+    systemName: string
+    desktopProtocol: string
+    applicationProtocol: string
+    tokenExpiryBufferMs: number
+    tokenExpiryCheckIntervalMs: number
+    turnstileSiteKey: string
+    homeUrl: string
+    getAndroidAppUrl: string
+}
+
+type SystemConfig = RemoteConfig
+
+type ConnectivityMode = 'loading' | 'online' | 'offline'
+
+interface ConfigState {
+    mode: ConnectivityMode
+    config: SystemConfig | null
+    error: Error | null
 }
 
 interface ImportMeta {
@@ -124,6 +141,7 @@ interface StoreSchema {
     account_accessToken?: string
     account_refreshToken?: string
     account_userInfo?: UserWithPowerInfoVo
+    config_cache?: SystemConfig
 }
 
 interface ToolInfo {

@@ -4,6 +4,7 @@ import { shell, WebContentsView } from 'electron'
 import { kebabCase } from 'lodash'
 import { is } from '@electron-toolkit/utils'
 import { IpcEvents, WindowConstants } from '#/constants'
+import ConfigManager from '#/app/configManager'
 import windowManager from '#/app/windowManager'
 import { svgToNativeImage } from '#/util/asset'
 
@@ -87,6 +88,9 @@ const TabManager = {
                 getMainWindowViews()
                     ?.find(({ key }) => key === 'settingsView')
                     ?.view.webContents.send(IpcEvents.window.navigate.goto, args['navigateTo'])
+            return
+        }
+        if (type === 'sign' && ConfigManager.getMode() !== 'online') {
             return
         }
         if (type === 'sign' && getMainWindowViews()?.some(({ key }) => key === 'signView')) {
