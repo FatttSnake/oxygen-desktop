@@ -402,13 +402,27 @@ interface AvatarBase64Vo {
 }
 
 interface BaseSettingsVo {
-    appName?: string
-    appUrl?: string
+    systemName?: string
+    desktopProtocol?: string
+    applicationProtocol?: string
+    tokenExpiryBufferMs?: number
+    tokenExpiryCheckIntervalMs?: number
+    turnstileSiteKey?: string
+    turnstileSecretKey?: string
+    homeUrl?: string
+    getAndroidAppUrl?: string
 }
 
 interface BaseSettingsParam {
-    appName: string
-    appUrl: string
+    systemName: string
+    desktopProtocol: string
+    applicationProtocol: string
+    tokenExpiryBufferMs: number
+    tokenExpiryCheckIntervalMs: number
+    turnstileSiteKey: string
+    turnstileSecretKey: string
+    homeUrl: string
+    getAndroidAppUrl: string
 }
 
 interface MailSettingsVo {

@@ -10,7 +10,6 @@ import SettingsCard from '%/components/system/SettingCard'
 
 const Mail = () => {
     const [mailForm] = AntdForm.useForm<MailSettingsParam>()
-    const mailFormValues = AntdForm.useWatch([], mailForm)
     const [isLoading, setIsLoading] = useState(false)
     const [mailSendForm] = AntdForm.useForm<MailSendParam>()
 
@@ -76,15 +75,20 @@ const Mail = () => {
     }
 
     const handleOnSave = () => {
-        r_sys_settings_mail_update(mailFormValues).then((res) => {
-            const response = res.data
-            if (response.success) {
-                void message.success('保存设置成功')
-                getMailSettings()
-            } else {
-                void message.error('保存设置失败，请稍后重试')
-            }
-        })
+        mailForm.validateFields().then(
+            (values) => {
+                r_sys_settings_mail_update(values).then((res) => {
+                    const response = res.data
+                    if (response.success) {
+                        void message.success('保存设置成功')
+                        getMailSettings()
+                    } else {
+                        void message.error('保存设置失败，请稍后重试')
+                    }
+                })
+            },
+            () => {}
+        )
     }
 
     const getMailSettings = () => {

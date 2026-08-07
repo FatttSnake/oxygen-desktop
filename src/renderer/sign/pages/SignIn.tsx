@@ -1,5 +1,4 @@
 import Icon from '@ant-design/icons'
-import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
 import useStyles from '+/assets/css/sign-in.style'
 import {
     PERMISSION_LOGIN_SUCCESS,
@@ -19,41 +18,23 @@ import { r_auth_login } from '$/services/auth'
 import { CommonContext } from '$/CommonFramework'
 import FitCenter from '$/components/FitCenter'
 import FlexBox from '$/components/FlexBox'
+import Captcha, { CaptchaElement } from '$/components/Captcha'
 
 const SignIn = () => {
     const { styles, theme } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
     const navigate = useNavigate()
     const [loginForm] = AntdForm.useForm<LoginParam>()
-    const turnstileRef = useRef<TurnstileInstance>()
-    const [refreshTime, setRefreshTime] = useState(0)
     const [twoFactorForm] = AntdForm.useForm<{ twoFactorCode: string }>()
+    const captchaRef = useRef<CaptchaElement>(null)
     const [isSigningIn, setIsSigningIn] = useState(false)
     const [captchaCode, setCaptchaCode] = useState('')
     const turnstileSiteKey = useConfigValue('turnstileSiteKey')
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            if (window.turnstile) {
-                clearInterval(timer)
-                setRefreshTime(Date.now())
-                if (location.pathname === '/login') {
-                    setTimeout(() => {
-                        turnstileRef.current?.execute()
-                    }, 500)
-                }
-            }
-        })
-        oxygenApi.account.loginAccount
-            .get()
-            .then((value) => loginForm.setFieldValue('account', value))
-    }, [location.pathname])
-
-    useEffect(() => {
         if (!isSigningIn) {
             setCaptchaCode('')
-            turnstileRef.current?.reset()
-            turnstileRef.current?.execute()
+            captchaRef.current?.refresh()
         }
     }, [isSigningIn])
 
@@ -63,7 +44,7 @@ const SignIn = () => {
         }
         setIsSigningIn(true)
 
-        if (!captchaCode) {
+        if (turnstileSiteKey && !captchaCode) {
             void message.warning('请先通过验证')
             setIsSigningIn(false)
             return
@@ -230,21 +211,17 @@ const SignIn = () => {
                             placeholder={'密码'}
                         />
                     </AntdForm.Item>
-                    <AntdForm.Item>
-                        <Turnstile
-                            id={'sign-in-turnstile'}
-                            ref={turnstileRef}
-                            siteKey={turnstileSiteKey}
-                            options={{
-                                theme: isDarkMode ? 'dark' : 'light',
-                                execution: 'execute',
-                                appearance: 'execute',
-                                action: 'login'
-                            }}
-                            onSuccess={setCaptchaCode}
-                            data-refresh={refreshTime}
-                        />
-                    </AntdForm.Item>
+                    {location.pathname === '/login' && turnstileSiteKey && (
+                        <AntdForm.Item>
+                            <Captcha
+                                ref={captchaRef}
+                                turnstileSiteKey={turnstileSiteKey}
+                                isDarkMode={isDarkMode}
+                                action={'login'}
+                                onSuccess={setCaptchaCode}
+                            />
+                        </AntdForm.Item>
+                    )}
                     <FlexBox direction={'horizontal'} className={styles.addition}>
                         <a />
                         <a

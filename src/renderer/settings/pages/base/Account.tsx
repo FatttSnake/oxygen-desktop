@@ -7,7 +7,8 @@ import {
 } from '$/constants/common.constants'
 import { message, modal, notification } from '$/util/common'
 import { utcToLocalTime } from '$/util/datetime'
-import { getUserInfo, removeAllToken } from '$/util/auth'
+import { navigateToRoot } from '$/util/navigation'
+import { getLoginStatus, getUserInfo, removeAllToken } from '$/util/auth'
 import { r_sys_user_info_change_password, r_sys_user_info_update } from '$/services/system'
 import {
     r_auth_two_factor_create,
@@ -22,6 +23,7 @@ import SettingsControl from '%/components/SettingsControl'
 
 const Account = () => {
     const { styles, theme } = useStyles()
+    const navigate = useNavigate()
     const [userInfoForm] = AntdForm.useForm<UserInfoUpdateParam>()
     const [twoFactorForm] = AntdForm.useForm<{ twoFactorCode: string }>()
     const [changePasswordForm] = AntdForm.useForm<UserChangePasswordParam>()
@@ -439,7 +441,11 @@ const Account = () => {
     }
 
     useEffect(() => {
-        refreshUserInfo()
+        if (getLoginStatus()) {
+            refreshUserInfo()
+        } else {
+            navigateToRoot(navigate)
+        }
     }, [])
 
     return (

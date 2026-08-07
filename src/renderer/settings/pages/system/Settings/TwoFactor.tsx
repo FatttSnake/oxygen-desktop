@@ -5,7 +5,6 @@ import SettingsCard from '%/components/system/SettingCard'
 
 const TwoFactor = () => {
     const [twoFactorForm] = AntdForm.useForm<TwoFactorSettingsParam>()
-    const twoFactorFormValues = AntdForm.useWatch([], twoFactorForm)
     const [isLoading, setIsLoading] = useState(false)
 
     const handleOnReset = () => {
@@ -13,15 +12,20 @@ const TwoFactor = () => {
     }
 
     const handleOnSave = () => {
-        r_sys_settings_two_factor_update(twoFactorFormValues).then((res) => {
-            const response = res.data
-            if (response.success) {
-                void message.success('保存设置成功')
-                getTwoFactorSettings()
-            } else {
-                void message.error('保存设置失败，请稍后重试')
-            }
-        })
+        twoFactorForm.validateFields().then(
+            (values) => {
+                r_sys_settings_two_factor_update(values).then((res) => {
+                    const response = res.data
+                    if (response.success) {
+                        void message.success('保存设置成功')
+                        getTwoFactorSettings()
+                    } else {
+                        void message.error('保存设置失败，请稍后重试')
+                    }
+                })
+            },
+            () => {}
+        )
     }
 
     const getTwoFactorSettings = () => {

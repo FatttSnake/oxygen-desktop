@@ -5,23 +5,34 @@ import SettingsCard from '%/components/system/SettingCard'
 
 const Base = () => {
     const [baseForm] = AntdForm.useForm<BaseSettingsParam>()
-    const baseFormValues = AntdForm.useWatch([], baseForm)
     const [isLoading, setIsLoading] = useState(false)
+    const [requireCaptcha, setRequireCaptcha] = useState<boolean>(false)
 
     const handleOnReset = () => {
         getBaseSettings()
     }
 
     const handleOnSave = () => {
-        r_sys_settings_base_update(baseFormValues).then((res) => {
-            const response = res.data
-            if (response.success) {
-                void message.success('保存设置成功')
-                getBaseSettings()
-            } else {
-                void message.error('保存设置失败，请稍后重试')
-            }
-        })
+        baseForm.validateFields().then(
+            (values) => {
+                r_sys_settings_base_update(values).then((res) => {
+                    const response = res.data
+                    if (response.success) {
+                        void message.success('保存设置成功')
+                        getBaseSettings()
+                    } else {
+                        void message.error('保存设置失败，请稍后重试')
+                    }
+                })
+            },
+            () => {}
+        )
+    }
+
+    const handleOnFormChange = () => {
+        const turnstileSiteKey = baseForm.getFieldValue('turnstileSiteKey')
+        const turnstileSecretKey = baseForm.getFieldValue('turnstileSecretKey')
+        setRequireCaptcha(turnstileSiteKey || turnstileSecretKey)
     }
 
     const getBaseSettings = () => {
@@ -35,6 +46,7 @@ const Base = () => {
             if (response.success) {
                 const data = response.data
                 data && baseForm.setFieldsValue(data)
+                handleOnFormChange()
                 setIsLoading(false)
             }
         })
@@ -57,6 +69,7 @@ const Base = () => {
                 form={baseForm}
                 disabled={!hasPermission('system:settings:modify:base')}
                 layout={'vertical'}
+                onChange={handleOnFormChange}
             >
                 <AntdForm.Item
                     label={'系统名称'}
@@ -101,10 +114,18 @@ const Base = () => {
                         placeholder={'请输入 Token 检查周期（毫秒）'}
                     />
                 </AntdForm.Item>
-                <AntdForm.Item label={'Turnstile 站点标识'} name={'turnstileSiteKey'}>
+                <AntdForm.Item
+                    label={'Turnstile 站点标识'}
+                    name={'turnstileSiteKey'}
+                    rules={[{ required: requireCaptcha }]}
+                >
                     <AntdInput placeholder={'留空禁用'} />
                 </AntdForm.Item>
-                <AntdForm.Item label={'Turnstile 密钥'} name={'turnstileSecretKey'}>
+                <AntdForm.Item
+                    label={'Turnstile 密钥'}
+                    name={'turnstileSecretKey'}
+                    rules={[{ required: requireCaptcha }]}
+                >
                     <AntdInput.Password placeholder={'留空禁用'} />
                 </AntdForm.Item>
                 <AntdForm.Item

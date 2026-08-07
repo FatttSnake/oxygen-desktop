@@ -5,10 +5,7 @@ import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 
 export const AppContext = createContext<{
     router?: Router
-    refreshRouter: () => void
-}>({
-    refreshRouter: () => {}
-})
+}>({})
 
 interface AppProps {
     getRouterFunc: (mode: ConnectivityMode) => Router
@@ -35,8 +32,7 @@ const AppRouter = ({ getRouterFunc }: AppProps) => {
     return (
         <AppContext.Provider
             value={{
-                router,
-                refreshRouter: () => {}
+                router
             }}
         >
             <Suspense fallback={<FullscreenLoadingMask />}>

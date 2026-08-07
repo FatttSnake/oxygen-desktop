@@ -1,5 +1,4 @@
 import Icon from '@ant-design/icons'
-import { Turnstile, TurnstileInstance } from '@marsidev/react-turnstile'
 import useStyles from '+/assets/css/forget.style'
 import {
     PERMISSION_FORGET_SUCCESS,
@@ -15,15 +14,15 @@ import { r_auth_forget, r_auth_retrieve } from '$/services/auth'
 import { CommonContext } from '$/CommonFramework'
 import FitCenter from '$/components/FitCenter'
 import FlexBox from '$/components/FlexBox'
+import Captcha, { CaptchaElement } from '$/components/Captcha'
 
 const Forget = () => {
     const { styles } = useStyles()
     const { isDarkMode } = useContext(CommonContext)
     const navigate = useNavigate()
     const [searchParams] = useSearchParams()
-    const turnstileRef = useRef<TurnstileInstance>()
-    const retrieveTurnstileRef = useRef<TurnstileInstance>()
-    const [refreshTime, setRefreshTime] = useState(0)
+    const captchaRef = useRef<CaptchaElement>(null)
+    const retrieveCaptchaRef = useRef<CaptchaElement>(null)
     const [isSending, setIsSending] = useState(false)
     const [isSent, setIsSent] = useState(false)
     const [isChanging, setIsChanging] = useState(false)
@@ -33,37 +32,16 @@ const Forget = () => {
     const turnstileSiteKey = useConfigValue('turnstileSiteKey')
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            if (window.turnstile) {
-                clearInterval(timer)
-                setRefreshTime(Date.now())
-                if (location.pathname === '/forget' && !searchParams.get('code')) {
-                    setTimeout(() => {
-                        turnstileRef.current?.execute()
-                    }, 500)
-                }
-                if (location.pathname === '/forget' && searchParams.get('code')) {
-                    setTimeout(() => {
-                        retrieveTurnstileRef.current?.execute()
-                    }, 500)
-                }
-            }
-        })
-    }, [location.pathname])
-
-    useEffect(() => {
         if (!isSending) {
             setCaptchaCode('')
-            turnstileRef.current?.reset()
-            turnstileRef.current?.execute()
+            captchaRef.current?.refresh()
         }
     }, [isSending])
 
     useEffect(() => {
         if (!isChanging) {
             setRetrieveCaptchaCode('')
-            retrieveTurnstileRef.current?.reset()
-            retrieveTurnstileRef.current?.execute()
+            retrieveCaptchaRef.current?.refresh()
         }
     }, [isChanging])
 
@@ -73,7 +51,7 @@ const Forget = () => {
         }
         setIsSending(true)
 
-        if (!captchaCode) {
+        if (turnstileSiteKey && !captchaCode) {
             void message.warning('请先通过验证')
             setIsSending(false)
             return
@@ -112,7 +90,7 @@ const Forget = () => {
         }
         setIsChanging(true)
 
-        if (!retrieveCaptchaCode) {
+        if (turnstileSiteKey && !retrieveCaptchaCode) {
             void message.warning('请先通过验证')
             setIsChanging(false)
             return
@@ -170,20 +148,19 @@ const Forget = () => {
                                         placeholder={'邮箱'}
                                     />
                                 </AntdForm.Item>
-                                <AntdForm.Item>
-                                    <Turnstile
-                                        id={'forget-turnstile'}
-                                        ref={turnstileRef}
-                                        siteKey={turnstileSiteKey}
-                                        options={{
-                                            theme: isDarkMode ? 'dark' : 'light',
-                                            execution: 'execute',
-                                            appearance: 'execute'
-                                        }}
-                                        onSuccess={setCaptchaCode}
-                                        data-refresh={refreshTime}
-                                    />
-                                </AntdForm.Item>
+                                {location.pathname === '/forget' &&
+                                    !searchParams.get('code') &&
+                                    turnstileSiteKey && (
+                                        <AntdForm.Item>
+                                            <Captcha
+                                                ref={captchaRef}
+                                                turnstileSiteKey={turnstileSiteKey}
+                                                isDarkMode={isDarkMode}
+                                                action={'forget'}
+                                                onSuccess={setCaptchaCode}
+                                            />
+                                        </AntdForm.Item>
+                                    )}
                                 <AntdForm.Item>
                                     <AntdButton
                                         style={{ width: '100%' }}
@@ -241,20 +218,19 @@ const Forget = () => {
                                     placeholder={'确认密码'}
                                 />
                             </AntdForm.Item>
-                            <AntdForm.Item>
-                                <Turnstile
-                                    id={'retrieve-turnstile'}
-                                    ref={retrieveTurnstileRef}
-                                    siteKey={turnstileSiteKey}
-                                    options={{
-                                        theme: isDarkMode ? 'dark' : 'light',
-                                        execution: 'execute',
-                                        appearance: 'execute'
-                                    }}
-                                    onSuccess={setRetrieveCaptchaCode}
-                                    data-refresh={refreshTime}
-                                />
-                            </AntdForm.Item>
+                            {location.pathname === '/forget' &&
+                                searchParams.get('code') &&
+                                turnstileSiteKey && (
+                                    <AntdForm.Item>
+                                        <Captcha
+                                            ref={retrieveCaptchaRef}
+                                            turnstileSiteKey={turnstileSiteKey}
+                                            isDarkMode={isDarkMode}
+                                            action={'retrieve'}
+                                            onSuccess={setRetrieveCaptchaCode}
+                                        />
+                                    </AntdForm.Item>
+                                )}
                             <AntdForm.Item>
                                 <AntdButton
                                     style={{ width: '100%' }}

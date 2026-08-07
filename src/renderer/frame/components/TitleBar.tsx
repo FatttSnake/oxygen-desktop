@@ -4,7 +4,7 @@ import { useReloadConfig } from '$/components/config/ConfigContext'
 import { getAvatar, getLoginStatus, getNickname, getVerifyStatus } from '$/util/auth'
 import { HideScrollbarElement } from '$/components/HideScrollbar'
 import Tab from '#/components/Tab'
-import { useConnectivityMode } from '#/hooks/useConnectivityMode.ts'
+import { useConnectivityMode } from '#/hooks/useConnectivityMode'
 
 interface TitleBarProps {
     onShowMenuChange?: (visible: boolean) => void
