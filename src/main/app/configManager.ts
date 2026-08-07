@@ -57,7 +57,7 @@ class ConfigManager {
             settings.config.saveCache(config)
         } catch (error) {
             this.mode = 'offline'
-            this.error = error instanceof Error ? error : new Error(String(error))
+            this.error = new Error(String(error))
         } finally {
             this.probing = false
             this.notify()
