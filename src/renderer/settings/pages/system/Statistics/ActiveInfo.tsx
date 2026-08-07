@@ -105,7 +105,7 @@ const ActiveInfo = () => {
                             useUTC: true,
                             tooltip: {
                                 ...lineEChartsBaseOption.tooltip,
-                                formatter: getTooltipTimeFormatter('yyyy-MM-DD')
+                                formatter: getTooltipTimeFormatter('YYYY-MM-DD')
                             },
                             dataZoom: [
                                 {

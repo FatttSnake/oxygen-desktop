@@ -1,14 +1,13 @@
-import { Router } from '@remix-run/router'
 import { ConfigProvider, useConfig } from '$/components/config/ConfigContext'
 import CommonFramework from '$/CommonFramework'
 import FullscreenLoadingMask from '$/components/FullscreenLoadingMask'
 
 export const AppContext = createContext<{
-    router?: Router
+    router?: ReturnType<typeof createBrowserRouter>
 }>({})
 
 interface AppProps {
-    getRouterFunc: (mode: ConnectivityMode) => Router
+    getRouterFunc: (mode: ConnectivityMode) => ReturnType<typeof createBrowserRouter>
 }
 
 const App = ({ getRouterFunc }: AppProps) => {

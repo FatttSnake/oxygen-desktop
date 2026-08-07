@@ -1,16 +1,18 @@
-import moment, { unitOfTime } from 'moment/moment'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 
-export const getNowLocalTime = (format: string = 'yyyy-MM-DD HH:mm:ssZ') => {
-    return moment().local().format(format)
+dayjs.extend(utc)
+
+export const getNowLocalTime = (format: string = 'YYYY-MM-DD HH:mm:ssZ') => {
+    return dayjs().local().format(format)
 }
 
 export const getNowUtc = () => {
-    return moment().toISOString()
+    return dayjs().toISOString()
 }
 
-export const utcToLocalTime = (utcTime: string, format: string = 'yyyy-MM-DD HH:mm:ssZ') => {
-    return moment.utc(utcTime).local().format(format)
+export const utcToLocalTime = (utcTime: string, format: string = 'YYYY-MM-DD HH:mm:ssZ') => {
+    return dayjs.utc(utcTime).local().format(format)
 }
 
 export const dayjsToLocalTime = (date: dayjs.Dayjs, format: string = 'YYYY-MM-DD HH:mm:ssZ') => {
@@ -22,35 +24,37 @@ export const dayjsToUtc = (date: dayjs.Dayjs) => {
 }
 
 export const localTimeToUtc = (localTime: string) => {
-    return moment(localTime).toISOString()
+    return dayjs(localTime).toISOString()
 }
 
 export const isPastTime = (utcTime: string) => {
-    return moment.utc(utcTime).isBefore(moment.now())
+    return dayjs.utc(utcTime).isBefore(dayjs())
 }
 
 export const utcToMillisecond = (utcTime: string) => {
-    return moment.utc(utcTime).valueOf()
+    return dayjs.utc(utcTime).valueOf()
 }
 
 export const millisecondToUtc = (millisecond: number) => {
-    return moment(millisecond).toISOString()
+    return dayjs(millisecond).toISOString()
 }
 
 export const getTimesBetweenTwoTimes = (
     startTime: string,
     endTime: string,
-    interval: unitOfTime.Diff
+    interval: dayjs.ManipulateType
 ) => {
     const timesList: string[] = []
-    const start = moment.utc(startTime)
-    const end = moment.utc(endTime)
+    const start = dayjs.utc(startTime)
+    const end = dayjs.utc(endTime)
+    let current = start
 
     const count = end.diff(start, interval)
     timesList.push(start.toISOString())
 
     for (let i = 0; i < count; i++) {
-        timesList.push(start.add(1, interval).toISOString())
+        current = current.add(1, interval)
+        timesList.push(current.toISOString())
     }
 
     return timesList

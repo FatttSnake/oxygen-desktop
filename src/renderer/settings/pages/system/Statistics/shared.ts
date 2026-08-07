@@ -79,7 +79,7 @@ export const barEChartsBaseOption: EChartsOption = {
     }
 }
 
-export const getTooltipTimeFormatter = (format: string = 'yyyy-MM-DD HH:mm:ss') => {
+export const getTooltipTimeFormatter = (format: string = 'YYYY-MM-DD HH:mm:ss') => {
     return (params: CallbackDataParams[]) =>
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error

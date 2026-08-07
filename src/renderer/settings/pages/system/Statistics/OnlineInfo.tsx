@@ -124,12 +124,12 @@ const OnlineInfo = () => {
                             ...lineEChartsBaseOption.tooltip,
                             formatter: getTooltipTimeFormatter(
                                 _scope === 'DAY'
-                                    ? 'yyyy-MM-DD HH:mm'
+                                    ? 'YYYY-MM-DD HH:mm'
                                     : _scope === 'WEEK'
-                                      ? 'yyyy-MM-DD HH:mm'
+                                      ? 'YYYY-MM-DD HH:mm'
                                       : _scope === 'MONTH'
-                                        ? 'yyyy-MM-DD HH时'
-                                        : 'yyyy-MM-DD'
+                                        ? 'YYYY-MM-DD HH时'
+                                        : 'YYYY-MM-DD'
                             )
                         },
                         xAxis: {
