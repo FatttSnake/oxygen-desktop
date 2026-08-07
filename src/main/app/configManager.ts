@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { IpcEvents } from '#/constants'
 import { settings } from '#/dataStore'
 import WindowManager from '#/app/windowManager'
@@ -65,24 +66,16 @@ class ConfigManager {
 
     private async fetchRemoteConfig(): Promise<RemoteConfig> {
         try {
-            const remoteUrl = new URL('/config', import.meta.env.VITE_API_URL)
-
-            const controller = new AbortController()
-            const timeoutId = setTimeout(() => controller.abort(), 3e4)
-
-            const response = await fetch(remoteUrl, {
-                signal: controller.signal,
-                cache: 'no-cache'
+            const { data: config } = await axios.get<RemoteConfig>('/config', {
+                baseURL: import.meta.env.VITE_API_URL,
+                timeout: 3e4,
+                headers: {
+                    'Cache-Control': 'no-cache'
+                }
             })
-            clearTimeout(timeoutId)
-
-            if (!response.ok) {
-                throw new Error(`Failed to load remote config: ${response.status}`)
-            }
-            const config = await response.json()
-
             this.validateRemoteConfig(config)
-            return config as RemoteConfig
+
+            return config
         } catch (error) {
             console.error('Failed to load remote config:', error)
             throw error
