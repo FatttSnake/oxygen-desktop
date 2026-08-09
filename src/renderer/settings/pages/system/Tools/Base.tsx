@@ -118,7 +118,7 @@ const Base = () => {
             dataIndex: 'versions',
             width: '10em',
             align: 'center',
-            render: (versions: number[], { id }) =>
+            render: (versions: number[], { id, platform }) =>
                 versions.length ? (
                     <AntdDropdown
                         menu={{
@@ -137,6 +137,10 @@ const Base = () => {
                             })),
                             onClick: ({ key, domEvent }) => {
                                 domEvent.stopPropagation()
+                                if (!checkDesktop() && platform !== 'WEB') {
+                                    void message.warning('此基板需要桌面端环境，请在桌面端编辑')
+                                    return
+                                }
                                 handleOnVersionClick(id, key)
                             }
                         }}
