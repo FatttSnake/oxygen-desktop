@@ -1,5 +1,6 @@
 import { useTheme } from 'antd-style'
 import { AxiosResponse } from 'axios'
+import logo from '$/assets/logo.svg?raw'
 import setupGlobalJsVariablesCode from '$/assets/template/playground/setupGlobalJsVariables.js?raw'
 import setupGlobalCssVariablesCode from '$/assets/template/playground/setupGlobalCssVariables.js?raw'
 import { DATABASE_NO_RECORD_FOUND, DATABASE_SELECT_SUCCESS } from '$/constants/common.constants'
@@ -14,7 +15,7 @@ import {
 } from '$/util/tool'
 import { n_tool_get_one } from '$/services/native'
 import { r_tool_get_dist, r_tool_get_source } from '$/services/tool'
-import Compiler from '$/components/Playground/compiler'
+import Compiler, { handleBuildError } from '$/components/Playground/compiler'
 import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
 
 const ToolLoader = () => {
@@ -104,8 +105,30 @@ const ToolLoader = () => {
                             baseDist
                         )
                     })
-                    .catch((reason) => {
-                        errorMessage(viewId, `编译失败：${reason}`)
+                    .catch((e) => {
+                        const formattedError = handleBuildError(e)
+                        render(
+                            viewId,
+                            `data:image/svg+xml;base64,${btoa(logo)}`,
+                            `[编译异常] ${toolVo.name}`,
+                            `const errorText = ${JSON.stringify(formattedError)};
+                            const element = document.createElement('div');
+                            element.style.cssText = \`
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                color: #dc4446;
+                                font-family: monospace;
+                                padding: 20px;
+                                white-space: pre-wrap;
+                                word-break: break-word;
+                                max-width: 100%;
+                                overflow: auto;
+                            \`;
+                            element.textContent = errorText;
+                            document.getElementById('root')?.replaceChildren(element);`,
+                            ''
+                        )
                     })
             } catch (e) {
                 errorMessage(viewId, '载入工具失败')

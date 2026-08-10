@@ -21,3 +21,28 @@ export interface ITsconfig {
 }
 
 export type IEditorOptions = editor.IStandaloneEditorConstructionOptions
+
+export interface ErrorLocation {
+    column: number
+    file: string
+    length: number
+    line: number
+    lineText: string
+    namespace: string
+    suggestion: string
+}
+
+export interface BuildError {
+    detail: {
+        message: string
+    }
+    id: string
+    location: ErrorLocation
+    notes: never[]
+    pluginName: string
+    text: string
+}
+
+export interface BuildErrorResponse {
+    errors: BuildError[]
+}

@@ -10,91 +10,13 @@ import esbuild, {
 import wasmURL from 'esbuild-wasm/esbuild.wasm?url'
 import localforage from 'localforage'
 import axios from 'axios'
-import { IFile, IFileTree, IImportMap } from '$/components/Playground/shared'
+import { BuildErrorResponse, IFile, IFileTree, IImportMap } from '$/components/Playground/shared'
 import { addReactImport, cssToJs, flattenFileTree, jsonToJs } from '$/components/Playground/files'
 
 const NAMESPACE_OXYGEN = 'oxygen'
 const NAMESPACE_DEFAULT = 'default'
 const FILE_SUFFIXES = ['.tsx', '.jsx', '.ts', '.js', '.css', '.json', '']
 const INDEX_FILE_NAMES = ['/index.tsx', '/index.jsx', '/index.ts', '/index.js']
-
-/**
- * Extract the directory portion from a file path.
- * Returns empty string for root-level files.
- */
-const dirname = (path: string): string => {
-    const idx = path.lastIndexOf('/')
-    return idx >= 0 ? path.slice(0, idx) : ''
-}
-
-/**
- * Resolve a relative import path (./foo or ../foo) against a base directory.
- * Returns the resolved path WITHOUT extension checks.
- */
-const resolveRelative = (importPath: string, resolveDir: string): string => {
-    // Strip leading / and trailing /
-    const base = resolveDir.replace(/^\/+|\/+$/g, '')
-    const url = new URL(importPath, `file:///${base}/`)
-    // Strip leading / and trailing /
-    return url.pathname.replace(/^\/+|\/+$/g, '')
-}
-
-/**
- * Try to find a file entry by path, appending common suffixes if needed.
- */
-const findFileEntry = (
-    fileMap: Map<string, IFile>,
-    path: string
-): { fullPath: string; file: IFile } | null => {
-    // Try direct match first
-    if (fileMap.has(path)) {
-        return { fullPath: path, file: fileMap.get(path)! }
-    }
-
-    // Try appending suffixes
-    for (const suffix of FILE_SUFFIXES) {
-        const candidate = `${path}${suffix}`
-        if (fileMap.has(candidate)) {
-            return { fullPath: candidate, file: fileMap.get(candidate)! }
-        }
-    }
-
-    // Try as directory with index file
-    for (const indexName of INDEX_FILE_NAMES) {
-        const candidate = `${path}${indexName}`
-        if (fileMap.has(candidate)) {
-            return { fullPath: candidate, file: fileMap.get(candidate)! }
-        }
-    }
-
-    return null
-}
-
-/**
- * Find the entry point path in the file map.
- * Tries: exact match → with suffix dedup → search by basename.
- */
-const resolveEntryPath = (fileMap: Map<string, IFile>, entryPoint: string): string => {
-    const found = findFileEntry(fileMap, entryPoint)
-    if (found) {
-        return found.fullPath
-    }
-
-    // Search by basename (file name without directory)
-    for (const [path] of fileMap) {
-        const basename = path.split('/').pop()!
-        if (basename === entryPoint) {
-            return path
-        }
-        for (const suffix of FILE_SUFFIXES) {
-            if (`${basename}${suffix}` === entryPoint) {
-                return path
-            }
-        }
-    }
-
-    throw new Error(`Entry point "${entryPoint}" not found in file tree`)
-}
 
 class Compiler {
     private initPromise: Promise<void> | null = null
@@ -461,6 +383,84 @@ class Compiler {
 
 // ──────────────────────────── helpers ─────────────────────────────
 
+/**
+ * Extract the directory portion from a file path.
+ * Returns empty string for root-level files.
+ */
+const dirname = (path: string): string => {
+    const idx = path.lastIndexOf('/')
+    return idx >= 0 ? path.slice(0, idx) : ''
+}
+
+/**
+ * Resolve a relative import path (./foo or ../foo) against a base directory.
+ * Returns the resolved path WITHOUT extension checks.
+ */
+const resolveRelative = (importPath: string, resolveDir: string): string => {
+    // Strip leading / and trailing /
+    const base = resolveDir.replace(/^\/+|\/+$/g, '')
+    const url = new URL(importPath, `file:///${base}/`)
+    // Strip leading / and trailing /
+    return url.pathname.replace(/^\/+|\/+$/g, '')
+}
+
+/**
+ * Try to find a file entry by path, appending common suffixes if needed.
+ */
+const findFileEntry = (
+    fileMap: Map<string, IFile>,
+    path: string
+): { fullPath: string; file: IFile } | null => {
+    // Try direct match first
+    if (fileMap.has(path)) {
+        return { fullPath: path, file: fileMap.get(path)! }
+    }
+
+    // Try appending suffixes
+    for (const suffix of FILE_SUFFIXES) {
+        const candidate = `${path}${suffix}`
+        if (fileMap.has(candidate)) {
+            return { fullPath: candidate, file: fileMap.get(candidate)! }
+        }
+    }
+
+    // Try as directory with index file
+    for (const indexName of INDEX_FILE_NAMES) {
+        const candidate = `${path}${indexName}`
+        if (fileMap.has(candidate)) {
+            return { fullPath: candidate, file: fileMap.get(candidate)! }
+        }
+    }
+
+    return null
+}
+
+/**
+ * Find the entry point path in the file map.
+ * Tries: exact match → with suffix dedup → search by basename.
+ */
+const resolveEntryPath = (fileMap: Map<string, IFile>, entryPoint: string): string => {
+    const found = findFileEntry(fileMap, entryPoint)
+    if (found) {
+        return found.fullPath
+    }
+
+    // Search by basename (file name without directory)
+    for (const [path] of fileMap) {
+        const basename = path.split('/').pop()!
+        if (basename === entryPoint) {
+            return path
+        }
+        for (const suffix of FILE_SUFFIXES) {
+            if (`${basename}${suffix}` === entryPoint) {
+                return path
+            }
+        }
+    }
+
+    throw new Error(`Entry point "${entryPoint}" not found in file tree`)
+}
+
 /** Ensure a URL/path ends with / so `new URL(rel, base)` treats base as directory. */
 const appendSlash = (url: string): string => {
     return url.endsWith('/') ? url : `${url}/`
@@ -479,6 +479,90 @@ const getImporterOrigin = (importer: string): string => {
     } catch {
         return ''
     }
+}
+
+const isBuildErrorResponse = (data: unknown): data is BuildErrorResponse => {
+    if (typeof data !== 'object' || data === null) {
+        return false
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const obj = data as any
+
+    if (!Array.isArray(obj.errors)) {
+        return false
+    }
+
+    if (obj.errors.length === 0) {
+        return true
+    }
+
+    const firstError = obj.errors[0]
+    return (
+        firstError &&
+        typeof firstError === 'object' &&
+        'text' in firstError &&
+        'pluginName' in firstError &&
+        'location' in firstError &&
+        firstError.location &&
+        typeof firstError.location === 'object' &&
+        'file' in firstError.location &&
+        'line' in firstError.location &&
+        'column' in firstError.location &&
+        'lineText' in firstError.location
+    )
+}
+
+const formatBuildErrors = (errorData: BuildErrorResponse): string => {
+    const { errors } = errorData
+
+    if (errors.length === 0) {
+        return 'No errors found.'
+    }
+
+    const errorCount = errors.length
+    let output = `Error: Build failed with ${errorCount} ${errorCount === 1 ? 'error' : 'errors'}:\n\n`
+
+    errors.forEach((error, index) => {
+        const { location, pluginName, text } = error
+
+        output += `✘ [ERROR] ${text} [plugin ${pluginName}]\n\n`
+
+        if (location) {
+            output += `    ${location.file}:${location.line}:${location.column}:\n`
+            output += `      ${location.line} │ ${location.lineText}\n`
+
+            const spacesBeforeCaret = location.column + location.line.toString().length + 2
+            const caretLine = ' '.repeat(spacesBeforeCaret) + '~'.repeat(location.length || 1)
+            output += `        ${caretLine}\n`
+        }
+
+        if (index < errors.length - 1) {
+            output += '\n'
+        }
+    })
+
+    return output
+}
+
+export const handleBuildError = (error: unknown): string => {
+    if (isBuildErrorResponse(error)) {
+        return formatBuildErrors(error)
+    }
+
+    if (error instanceof Error) {
+        return error.stack ?? error.message
+    }
+
+    if (typeof error === 'object' && error !== null) {
+        try {
+            return JSON.stringify(error)
+        } catch {
+            return String(error)
+        }
+    }
+
+    return String(error)
 }
 
 export default new Compiler()

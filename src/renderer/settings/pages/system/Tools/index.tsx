@@ -24,7 +24,7 @@ import Card from '$/components/Card'
 import FitFullscreen from '$/components/FitFullscreen'
 import HideScrollbar from '$/components/HideScrollbar'
 import Permission from '$/components/Permission'
-import Compiler from '$/components/Playground/compiler'
+import Compiler, { handleBuildError } from '$/components/Playground/compiler'
 import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
 
 const Tools = () => {
@@ -301,9 +301,13 @@ const Tools = () => {
                                                     } catch (e) {
                                                         resolve()
                                                         message.destroy('COMPILING')
-                                                        void message.error(
-                                                            '编译失败，请检查代码后重试'
-                                                        )
+                                                        void message.error({
+                                                            style: {
+                                                                whiteSpace: 'pre-wrap',
+                                                                wordBreak: 'break-word'
+                                                            },
+                                                            content: `编译失败：${handleBuildError(e)}`
+                                                        })
                                                     }
                                                     break
                                                 default:

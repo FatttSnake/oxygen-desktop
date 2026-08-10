@@ -10,7 +10,7 @@ import {
     processBaseDist,
     removeUselessAttributes
 } from '$/util/tool'
-import Compiler from '$/components/Playground/compiler'
+import Compiler, { handleBuildError } from '$/components/Playground/compiler'
 import { IFileTree } from '$/components/Playground/shared'
 import { getImportMap, sourceListToFileTree } from '$/components/Playground/files'
 
@@ -113,11 +113,12 @@ export const useCompilePreview = (
                         previewViewId
                     )
                 })
-                .catch((reason: Error) => {
+                .catch((e) => {
                     if (controller.signal.aborted) {
                         return
                     }
 
+                    const formattedError = handleBuildError(e)
                     oxygenApi.window.tab.icon(
                         previewViewId,
                         `data:image/svg+xml;base64,${btoa(logo)}`
@@ -147,14 +148,23 @@ export const useCompilePreview = (
                     )
                     oxygenApi.tool.view.render(
                         `(() => {
-                const element = document.createElement('div')
-                element.style.display = 'flex'
-                element.style.justifyContent = 'center'
-                element.style.alignItems = 'center'
-                element.style.color = '#dc4446'
-                element.innerText = ${JSON.stringify(reason.stack)}
-                document.getElementById('root')?.replaceChildren(element)
-                })();`,
+                            const errorText = ${JSON.stringify(formattedError)};
+                            const element = document.createElement('div');
+                            element.style.cssText = \`
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                color: #dc4446;
+                                font-family: monospace;
+                                padding: 20px;
+                                white-space: pre-wrap;
+                                word-break: break-word;
+                                max-width: 100%;
+                                overflow: auto;
+                            \`;
+                            element.textContent = errorText;
+                            document.getElementById('root')?.replaceChildren(element);
+                        })();`,
                         previewViewId
                     )
                 })

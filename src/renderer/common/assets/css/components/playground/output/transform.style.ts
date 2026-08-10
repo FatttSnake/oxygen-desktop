@@ -13,6 +13,9 @@ export default createStyles(({ token }) => ({
         color: token.colorErrorText,
         backgroundColor: token.colorErrorBg,
         padding: '5px 10px',
-        fontSize: token.fontSize
+        fontSize: token.fontSize,
+        whiteSpace: 'pre-wrap',
+        wordBreak: 'break-word',
+        opacity: 0.8
     }
 }))
