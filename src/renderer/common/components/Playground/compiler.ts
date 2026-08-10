@@ -219,14 +219,19 @@ class Compiler {
                             onStatus?.('processing', `  resolve ${found.fullPath}`)
                             return { namespace: NAMESPACE_OXYGEN, path: found.fullPath }
                         }
-                        if (!args.importer) {
+                        throw new Error(`Cannot resolve import '${args.path}'`)
+                    }
+
+                    if (args.namespace !== NAMESPACE_OXYGEN) {
+                        try {
+                            // default namespace files: resolve via importer URL (preserves scheme)
+                            const url = new URL(args.path, getImporterBaseUrl(args.importer)).href
+                            onStatus?.('processing', `Resolve ${url}`)
+                            return { namespace: NAMESPACE_DEFAULT, path: url }
+                        } catch (_) {
                             throw new Error(`Cannot resolve import '${args.path}'`)
                         }
                     }
-                    // default namespace files: resolve via importer URL (preserves scheme)
-                    const url = new URL(args.path, getImporterBaseUrl(args.importer)).href
-                    onStatus?.('processing', `Resolve ${url}`)
-                    return { namespace: NAMESPACE_DEFAULT, path: url }
                 }
 
                 // 4. Root-relative path (/foo) — resolve via importer's origin
