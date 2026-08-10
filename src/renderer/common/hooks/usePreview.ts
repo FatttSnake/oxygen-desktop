@@ -72,7 +72,7 @@ export const usePreview = (
                 previewViewId
             )
             oxygenApi.tool.view.render(
-                `(() => {${dist}})();\n(() => {${baseDist}})();debugger`,
+                `(() => {${dist}})();\n(() => {${baseDist}})();`,
                 previewViewId
             )
         })

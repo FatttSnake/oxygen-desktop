@@ -82,9 +82,9 @@ export const useConfigValueSafe = <K extends keyof SystemConfig>(
     return config?.[key]
 }
 
-export function useConfigValues<const K extends readonly (keyof SystemConfig)[]>(
+export const useConfigValues = <const K extends readonly (keyof SystemConfig)[]>(
     keys: K
-): { [P in keyof K]: SystemConfig[K[P] & keyof SystemConfig] } {
+): { [P in keyof K]: SystemConfig[K[P] & keyof SystemConfig] } => {
     const { config } = useConfig()
     if (!config) {
         throw new Error('Config not loaded')
